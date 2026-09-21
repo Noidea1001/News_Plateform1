@@ -16,20 +16,18 @@ use App\Core\Auth;
 
 $currentLang = $_SESSION['lang'] ?? 'en';
 
-// If already logged in, redirect to dashboard
 if (Auth::check()) {
     header('Location: ' . url('admin/dashboard.php'));
     exit;
 }
 
-$errorMsg = $_GET['error'] ?? null;
-$successMsg = $_GET['msg'] ?? null;
+$errorMsg   = $_GET['error'] ?? null;
+$successMsg = $_GET['msg']   ?? null;
 
-// Handle POST authentication request
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = trim($_POST['password'] ?? '');
-    $token = $_POST['csrf_token'] ?? '';
+    $token    = $_POST['csrf_token'] ?? '';
 
     if (!Auth::verifyCsrfToken($token)) {
         $errorMsg = 'Security validation failed (CSRF token mismatch). Please refresh and try again.';
@@ -57,174 +55,344 @@ $csrfToken = Auth::generateCsrfToken();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?= e(__('admin_portal')) ?> | Authentication</title>
+
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..900;1,14..32,300..900&family=Kantumruy+Pro:ital,wght@0,400..700;1,400..700&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= url('public/assets/css/style.css') ?>">
+
     <style>
-        body.login-bg {
-            background: radial-gradient(circle at 50% 20%, #1e293b 0%, #0f172a 70%, #020617 100%);
-            font-family: 'Inter', 'Noto Sans Khmer', sans-serif;
+        /* CNA-Style Login Page */
+        :root {
+            --cna-red: #c8102e;
+            --cna-red-dark: #a50d25;
+            --cna-navy: #0f172a;
+            --color-accent: #c8102e;
         }
-        .login-card-glass {
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 20px;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+
+        body.login-page {
+            font-family: 'Inter', 'Kantumruy Pro', sans-serif;
+            background: var(--cna-navy);
+            min-height: 100vh;
         }
-        .security-badge-grid {
-            background-color: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
+
+        /* CNA subtle crosshatch grid */
+        body.login-page::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Red accent band at top — CNA signature */
+        body.login-page::after {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+            background: var(--cna-red);
+            z-index: 100;
+        }
+
+        .login-wrapper { position: relative; z-index: 1; }
+
+        .login-card {
+            background: #ffffff;
+            border-radius: 0;                          /* CNA: no rounding */
+            border: none;
+            border-top: 3px solid var(--cna-red);      /* CNA top border */
+            box-shadow: 0 20px 60px rgba(0,0,0,0.45);
+            overflow: hidden;
+        }
+
+        .login-brand-icon {
+            width: 52px; height: 52px;
+            border-radius: 2px;                        /* CNA: square */
+            background: var(--cna-red);
+            color: #fff;
+            font-size: 1.4rem;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: -0.03em;
+        }
+
+        .login-submit-btn {
+            background: var(--cna-red);
+            border: none;
+            color: #fff;
+            border-radius: 2px;                        /* CNA: sharp */
+            padding: 0.75rem;
+            font-weight: 700;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+            transition: background 0.15s ease;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .login-submit-btn:hover { background: var(--cna-red-dark); }
+
+        .login-input {
+            background-color: #f9f9f9 !important;
+            border: 1px solid #e5e7eb !important;
+            border-radius: 2px !important;             /* CNA: sharp */
+            padding: 0.65rem 0.9rem !important;
+            font-size: 0.9rem !important;
+            color: #0f172a !important;
+            font-family: 'Inter', sans-serif !important;
+            transition: border-color 0.15s !important;
+        }
+        .login-input:focus {
+            background-color: #fff !important;
+            border-color: var(--cna-red) !important;
+            box-shadow: 0 0 0 2px rgba(200,16,46,0.10) !important;
+        }
+
+        .login-input-icon {
+            background-color: #f3f4f6 !important;
+            border: 1px solid #e5e7eb !important;
+            border-right: none !important;
+            border-radius: 2px 0 0 2px !important;
+            color: #9ca3af;
+        }
+
+        .login-input-icon-right {
+            background-color: #f3f4f6 !important;
+            border: 1px solid #e5e7eb !important;
+            border-left: none !important;
+            border-radius: 0 2px 2px 0 !important;
+            cursor: pointer;
+            transition: background 0.12s;
+        }
+        .login-input-icon-right:hover { background-color: #ebebeb !important; }
+
+        .login-input.has-left-icon {
+            border-left: none !important;
+            border-radius: 0 2px 2px 0 !important;
+        }
+
+        .login-input.has-both-icons {
+            border-left: none !important;
+            border-right: none !important;
+            border-radius: 0 !important;
+        }
+
+        .security-badges {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1.25rem;
+            padding: 0.75rem 0 0;
+            border-top: 1px solid #f3f4f6;
+        }
+
+        .security-badge-item {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: #6b7280;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .login-float-controls {
+            position: fixed;
+            top: 0; right: 0;
+            padding: 0.75rem 1.1rem;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
     </style>
 </head>
-<body class="login-bg d-flex align-items-center justify-content-center min-vh-100 py-5">
+<body class="login-page d-flex align-items-center justify-content-center py-5">
 
-<!-- Floating Top-Right Language & CDA Controls -->
-<div class="position-absolute top-0 end-0 p-3 p-md-4 d-flex align-items-center gap-2">
+<!-- Floating Top-Right Controls -->
+<div class="login-float-controls">
     <div class="dropdown">
-        <button class="btn btn-outline-light btn-sm rounded-pill px-3 py-1.5 dropdown-toggle border-secondary shadow-sm fw-semibold" type="button" data-bs-toggle="dropdown">
-            <i class="bi bi-translate text-warning me-1"></i>
-            <span><?= $currentLang === 'km' ? 'ភាសាខ្មែរ' : 'English' ?></span>
+        <button class="btn btn-outline-light btn-sm rounded-pill px-3 py-1 dropdown-toggle fw-semibold"
+                style="font-size:0.78rem; border-color:rgba(255,255,255,0.2);"
+                type="button" data-bs-toggle="dropdown">
+            <i class="bi bi-translate me-1" style="color:#fbbf24;"></i>
+            <?= $currentLang === 'km' ? 'ខ្មែរ' : 'English' ?>
         </button>
-        <ul class="dropdown-menu dropdown-menu-end shadow border-0 text-sm mt-2">
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0" style="min-width:160px; border-radius:12px;">
             <li>
-                <a class="dropdown-item d-flex align-items-center gap-2 py-2 <?= $currentLang === 'en' ? 'active fw-bold bg-danger text-white' : '' ?>" href="?lang=en">
-                    <span class="badge bg-secondary-subtle text-dark border me-1">EN</span> English
+                <a class="dropdown-item py-2 <?= $currentLang === 'en' ? 'fw-bold text-danger' : '' ?>" href="?lang=en">
+                    <span class="badge bg-light text-dark border me-1" style="font-size:0.65rem;">EN</span> English
                 </a>
             </li>
             <li>
-                <a class="dropdown-item d-flex align-items-center gap-2 py-2 <?= $currentLang === 'km' ? 'active fw-bold bg-danger text-white' : '' ?>" href="?lang=km">
-                    <span class="badge bg-secondary-subtle text-dark border me-1">KM</span> ភាសាខ្មែរ (Khmer)
+                <a class="dropdown-item py-2 <?= $currentLang === 'km' ? 'fw-bold text-danger' : '' ?>" href="?lang=km">
+                    <span class="badge bg-light text-dark border me-1" style="font-size:0.65rem;">KH</span> ភាសាខ្មែរ
                 </a>
             </li>
         </ul>
     </div>
 
-    <a href="<?= url('public/index.php') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1.5 text-white border-secondary d-none d-sm-inline-flex align-items-center gap-1 shadow-sm">
-        <i class="bi bi-globe2 text-danger"></i>
-        <span><?= __('live_public_site') ?></span>
+    <a href="<?= url('public/index.php') ?>"
+       class="btn btn-outline-light btn-sm rounded-pill px-3 py-1 d-none d-sm-inline-flex align-items-center gap-1 fw-semibold"
+       style="font-size:0.78rem; border-color:rgba(255,255,255,0.2);">
+        <i class="bi bi-globe2 me-1" style="color:var(--color-accent);"></i>
+        <?= __('live_public_site') ?>
     </a>
 </div>
 
-<div class="container px-3" style="max-width: 450px;">
-    
-    <!-- Branding Header -->
+<!-- Login Container -->
+<div class="login-wrapper w-100 px-3" style="max-width:440px;">
+
+    <!-- Brand Header -->
     <div class="text-center mb-4">
-        <div class="d-inline-flex align-items-center justify-content-center bg-danger text-white fw-extrabold rounded-4 shadow-lg mb-2" style="width:58px; height:58px; font-size: 1.6rem;">
-            NP
-        </div>
-        <h2 class="fw-bold text-white editorial-title mb-1 fs-3"><?= __('admin_portal') ?></h2>
-        <p class="text-slate-400 text-white-50 small mb-0"><?= __('staff_login') ?></p>
+        <div class="login-brand-icon mb-3">NP</div>
+        <h1 class="fw-bold mb-1" style="color:#fff; font-size:1.65rem; letter-spacing:-0.03em;">
+            <?= __('admin_portal') ?>
+        </h1>
+        <p style="color:rgba(255,255,255,0.5); font-size:0.875rem; margin:0;">
+            <?= __('staff_login') ?>
+        </p>
     </div>
 
-    <!-- Glassmorphic Card -->
-    <div class="card login-card-glass border-0 overflow-hidden">
-        <div class="card-body p-4 p-md-4.5">
+    <!-- Login Card -->
+    <div class="login-card">
+        <div class="card-body p-4 p-md-5">
 
-            <!-- Security Alert Banners -->
+            <!-- Error / Success Banners -->
             <?php if (!empty($errorMsg)) { ?>
-                <div class="alert alert-danger rounded-3 py-2.5 px-3 small d-flex align-items-center gap-2.5 mb-3 border-0 bg-danger bg-opacity-10 text-danger" role="alert">
-                    <i class="bi bi-shield-x fs-5 flex-shrink-0"></i>
-                    <div class="fw-semibold"><?= e($errorMsg) ?></div>
+                <div class="alert border-0 py-3 px-3 d-flex align-items-start gap-2 mb-4"
+                     style="background:rgba(200,16,46,0.08); color:#a50d25; border-radius:2px;" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill fs-5 flex-shrink-0"></i>
+                    <div class="fw-semibold small"><?= e($errorMsg) ?></div>
                 </div>
             <?php } ?>
 
             <?php if (!empty($successMsg)) { ?>
-                <div class="alert alert-success rounded-3 py-2.5 px-3 small d-flex align-items-center gap-2.5 mb-3 border-0 bg-success bg-opacity-10 text-success" role="alert">
+                <div class="alert border-0 py-3 px-3 d-flex align-items-start gap-2 mb-4"
+                     style="background:rgba(22,163,74,0.08); color:#15803d; border-radius:2px;" role="alert">
                     <i class="bi bi-check-circle-fill fs-5 flex-shrink-0"></i>
-                    <div class="fw-semibold"><?= e($successMsg) ?></div>
+                    <div class="fw-semibold small"><?= e($successMsg) ?></div>
                 </div>
             <?php } ?>
 
-            <!-- Login Credentials Form -->
+            <!-- Login Form -->
             <form action="<?= url('admin/login.php') ?>" method="POST">
                 <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
 
-                <!-- Username Input -->
+                <!-- Username -->
                 <div class="mb-3">
-                    <label for="username" class="form-label fw-bold small text-dark"><?= __('username_label') ?></label>
+                    <label for="username" class="form-label fw-semibold"
+                           style="color:#1e293b; font-size:0.875rem; margin-bottom:0.4rem;">
+                        <?= __('username_label') ?>
+                    </label>
                     <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0 ps-3 text-muted"><i class="bi bi-person-fill"></i></span>
-                        <input type="text" class="form-control bg-light border-start-0 py-2.5 text-dark fw-medium" 
-                               id="username" name="username" placeholder="<?= __('username_label') ?>" required autofocus>
+                        <span class="input-group-text login-input-icon">
+                            <i class="bi bi-person-fill" style="font-size:0.95rem;"></i>
+                        </span>
+                        <input type="text"
+                               class="form-control login-input has-left-icon"
+                               id="username"
+                               name="username"
+                               placeholder="<?= __('username_label') ?>"
+                               required autofocus autocomplete="username">
                     </div>
                 </div>
 
-                <!-- Password Input with Interactive Eye Toggle -->
+                <!-- Password -->
                 <div class="mb-4">
-                    <label for="password" class="form-label fw-bold small text-dark"><?= __('password_label') ?></label>
+                    <label for="password" class="form-label fw-semibold"
+                           style="color:#1e293b; font-size:0.875rem; margin-bottom:0.4rem;">
+                        <?= __('password_label') ?>
+                    </label>
                     <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0 ps-3 text-muted"><i class="bi bi-shield-lock-fill"></i></span>
-                        <input type="password" class="form-control bg-light border-start-0 border-end-0 py-2.5 text-dark fw-medium" 
-                               id="password" name="password" placeholder="••••••••" required>
-                        <button class="btn btn-light border border-start-0 pe-3 text-muted" type="button" id="togglePasswordBtn">
+                        <span class="input-group-text login-input-icon">
+                            <i class="bi bi-shield-lock-fill" style="font-size:0.95rem;"></i>
+                        </span>
+                        <input type="password"
+                               class="form-control login-input has-both-icons"
+                               id="password"
+                               name="password"
+                               placeholder="••••••••"
+                               required autocomplete="current-password">
+                        <button class="btn login-input-icon-right px-3 text-muted"
+                                type="button"
+                                id="togglePasswordBtn"
+                                tabindex="-1">
                             <i class="bi bi-eye" id="togglePasswordIcon"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- Submit Button -->
-                <div class="d-grid mb-3">
-                    <button type="submit" class="btn gradient-btn-danger text-white py-2.5 fw-bold rounded-3 d-flex align-items-center justify-content-center gap-2 shadow">
-                        <i class="bi bi-shield-check fs-5"></i>
-                        <span><?= __('login_btn') ?></span>
-                    </button>
-                </div>
+                <!-- Submit -->
+                <button type="submit" class="login-submit-btn d-flex align-items-center justify-content-center gap-2 mb-2">
+                    <i class="bi bi-shield-check fs-5"></i>
+                    <span><?= __('login_btn') ?></span>
+                </button>
 
             </form>
 
-            <!-- Security Assurance Indicators Bar -->
-            <div class="row g-2 mt-2 pt-2 border-top text-center text-xs text-muted">
-                <div class="col-4">
-                    <i class="bi bi-lock-fill text-success me-1"></i> BCRYPT
+            <!-- Security Badges -->
+            <div class="security-badges mt-3">
+                <div class="security-badge-item">
+                    <i class="bi bi-lock-fill" style="color:#22c55e;"></i>
+                    BCRYPT
                 </div>
-                <div class="col-4">
-                    <i class="bi bi-shield-check text-primary me-1"></i> CSRF 2.0
+                <div class="security-badge-item">
+                    <i class="bi bi-shield-check" style="color:#3b82f6;"></i>
+                    CSRF 2.0
                 </div>
-                <div class="col-4">
-                    <i class="bi bi-cpu-fill text-danger me-1"></i> RBAC Active
+                <div class="security-badge-item">
+                    <i class="bi bi-cpu-fill" style="color:var(--color-accent);"></i>
+                    RBAC Active
                 </div>
             </div>
 
         </div>
-        <div class="card-footer bg-light py-2.5 text-center text-muted text-xs border-top">
-            <a href="<?= url('public/index.php') ?>" class="text-secondary text-decoration-none fw-semibold">
-                <i class="bi bi-arrow-left me-1"></i> <?= __('live_public_site') ?>
+
+        <!-- Card Footer -->
+        <div class="text-center py-3 px-4 border-top" style="background:#f8fafc; font-size:0.82rem;">
+            <a href="<?= url('public/index.php') ?>"
+               class="text-decoration-none fw-semibold d-inline-flex align-items-center gap-1"
+               style="color:#64748b;">
+                <i class="bi bi-arrow-left"></i>
+                <?= __('live_public_site') ?>
             </a>
         </div>
     </div>
 
 </div>
 
-<!-- Bootstrap 5 JS Bundle -->
+<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- Interactive Password Eye Toggle Script -->
+<!-- Password Toggle -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const passwordInput = document.getElementById('password');
-    const toggleBtn = document.getElementById('togglePasswordBtn');
-    const toggleIcon = document.getElementById('togglePasswordIcon');
+    const toggleBtn     = document.getElementById('togglePasswordBtn');
+    const toggleIcon    = document.getElementById('togglePasswordIcon');
 
     if (toggleBtn && passwordInput && toggleIcon) {
         toggleBtn.addEventListener('click', function () {
-            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-            passwordInput.setAttribute('type', type);
-            if (type === 'text') {
-                toggleIcon.classList.remove('bi-eye');
-                toggleIcon.classList.add('bi-eye-slash');
-            } else {
-                toggleIcon.classList.remove('bi-eye-slash');
-                toggleIcon.classList.add('bi-eye');
-            }
+            const isPassword = passwordInput.getAttribute('type') === 'password';
+            passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+            toggleIcon.classList.toggle('bi-eye', !isPassword);
+            toggleIcon.classList.toggle('bi-eye-slash', isPassword);
         });
     }
 });
