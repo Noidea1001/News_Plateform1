@@ -1,0 +1,1858 @@
+/* ==========================================================================
+   News Platform — CNA-Style Professional Editorial Design System
+   Path: public/assets/css/style.css
+   
+   Design Reference: ChannelNewsAsia (CNA) — channelnewsasia.com
+   • Pure white backgrounds, no decorative gradients on content areas
+   • Red (#c8102e) accent — category tags, active states, borders
+   • Navy (#0f172a) for headlines and primary text
+   • Thin border separators instead of box shadows
+   • Image-led cards with text below
+   • Category labels in ALL-CAPS small red text above headlines
+   • Clean section headers with red left-border accent
+   • No rounded corners (0–4px max on small badges only)
+   ========================================================================== */
+
+/* ==========================================================================
+   1. DESIGN TOKENS
+   ========================================================================== */
+:root {
+    /* CNA Brand Colors */
+    --cna-red:         #c8102e;   /* CNA signature red */
+    --cna-red-dark:    #a50d25;
+    --cna-red-light:   #fdf2f4;
+    --cna-navy:        #0f172a;   /* Deep navy for headlines */
+    --cna-navy-soft:   #1e293b;
+    --cna-white:       #ffffff;
+    --cna-bg:          #f9f9f9;   /* Very light gray page background */
+    --cna-bg-alt:      #f3f4f6;
+
+    /* Text Hierarchy */
+    --text-primary:    #0f172a;
+    --text-secondary:  #374151;
+    --text-muted:      #6b7280;
+    --text-light:      #9ca3af;
+
+    /* Borders */
+    --border-color:    #e5e7eb;
+    --border-dark:     #d1d5db;
+    --border-navy:     #0f172a;
+
+    /* Typography */
+    --font-sans: 'Inter', 'Kantumruy Pro', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+    /* Shadows (minimal, CNA-style) */
+    --shadow-card: 0 1px 3px rgba(0,0,0,0.08);
+    --shadow-hover: 0 4px 12px rgba(0,0,0,0.12);
+
+    /* Spacing */
+    --section-gap: 2.5rem;
+}
+
+/* ==========================================================================
+   2. RESET & BASE
+   ========================================================================== */
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+    scroll-behavior: smooth;
+    font-size: 16px;
+}
+
+html, body {
+    overflow-x: hidden !important;
+    width: 100%;
+    margin: 0; padding: 0;
+}
+
+body {
+    font-family: var(--font-sans);
+    color: var(--text-secondary);
+    background-color: var(--cna-white);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-sans);
+    color: var(--text-primary);
+    font-weight: 700;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+    margin-bottom: 0.5em;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.15s ease;
+}
+
+img { max-width: 100%; display: block; }
+
+/* Utility */
+.text-xs   { font-size: 0.75rem  !important; }
+.text-2xs  { font-size: 0.68rem  !important; }
+.text-sm   { font-size: 0.875rem !important; }
+.font-sans { font-family: var(--font-sans) !important; }
+
+/* ==========================================================================
+   3. BUTTONS — CNA SHARP STYLE
+   ========================================================================== */
+.btn {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    border-radius: 2px;
+    transition: all 0.18s ease;
+    touch-action: manipulation;
+    font-size: 0.875rem;
+    letter-spacing: 0.01em;
+}
+
+.btn-danger {
+    background-color: var(--cna-red) !important;
+    border-color: var(--cna-red) !important;
+    color: var(--cna-white) !important;
+}
+.btn-danger:hover {
+    background-color: var(--cna-red-dark) !important;
+    border-color: var(--cna-red-dark) !important;
+    transform: none;
+}
+
+.btn-outline-danger {
+    color: var(--cna-red) !important;
+    border-color: var(--cna-red) !important;
+    background-color: transparent !important;
+}
+.btn-outline-danger:hover {
+    background-color: var(--cna-red) !important;
+    color: var(--cna-white) !important;
+}
+
+.btn-outline-secondary {
+    color: var(--text-secondary) !important;
+    border-color: var(--border-color) !important;
+    background-color: var(--cna-white) !important;
+}
+.btn-outline-secondary:hover {
+    background-color: var(--cna-navy) !important;
+    color: var(--cna-white) !important;
+    border-color: var(--cna-navy) !important;
+}
+
+.btn-navy {
+    background-color: var(--cna-navy) !important;
+    border-color: var(--cna-navy) !important;
+    color: var(--cna-white) !important;
+}
+
+/* ==========================================================================
+   4. FORM CONTROLS
+   ========================================================================== */
+.form-control, .form-select {
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: 2px;
+    padding: 0.6rem 0.85rem;
+    background-color: var(--cna-white);
+    color: var(--text-primary);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.form-control:focus, .form-select:focus {
+    border-color: var(--cna-red);
+    box-shadow: 0 0 0 3px rgba(200, 16, 46, 0.10);
+    outline: none;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    margin-bottom: 0.35rem;
+}
+
+.input-group-text {
+    background-color: var(--cna-bg-alt);
+    border-color: var(--border-color);
+    border-radius: 2px;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+}
+
+/* ==========================================================================
+   5. BADGES & LABELS — CNA EDITORIAL STYLE
+   ========================================================================== */
+
+/* CNA-style: small ALL-CAPS red category label */
+.cna-cat-label {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--cna-red);
+    font-family: var(--font-sans);
+}
+
+.badge-category {
+    background-color: rgba(200, 16, 46, 0.08) !important;
+    color: var(--cna-red) !important;
+    border: 1px solid rgba(200, 16, 46, 0.2) !important;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.25rem 0.55rem;
+    border-radius: 2px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.badge-tmpl-standard,
+.badge-tmpl-investigative,
+.badge-tmpl-opinion {
+    background-color: var(--cna-navy) !important;
+    color: var(--cna-white) !important;
+    border-radius: 2px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    padding: 0.25rem 0.55rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.badge-status-published {
+    background-color: #d1fae5 !important;
+    color: #065f46 !important;
+    border: 1px solid #a7f3d0 !important;
+    border-radius: 2px !important;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+.badge-status-draft {
+    background-color: #fef3c7 !important;
+    color: #92400e !important;
+    border: 1px solid #fde68a !important;
+    border-radius: 2px !important;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
+/* Live pulsing dot */
+.pulsing-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    animation: pulseDot 1.6s ease-in-out infinite;
+}
+
+@keyframes pulseDot {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: 0.45; transform: scale(0.7); }
+}
+
+/* ==========================================================================
+   6. CNA SECTION HEADER — Red left-border accent style
+   ========================================================================== */
+.cna-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    gap: 1rem;
+}
+
+.cna-section-title {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.cna-section-title h3,
+.cna-section-title h2 {
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    padding-left: 0.75rem;
+    border-left: 3px solid var(--cna-red);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+}
+
+/* Legacy class kept for backwards compat */
+.feed-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    gap: 1rem;
+}
+
+.feed-section-title h3 {
+    font-size: 0.95rem;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0;
+    padding-left: 0.75rem;
+    border-left: 3px solid var(--cna-red);
+    line-height: 1.2;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+}
+
+.feed-count-badge {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    background: var(--cna-bg-alt);
+    border: 1px solid var(--border-color);
+    padding: 0.2rem 0.65rem;
+    border-radius: 2px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* ==========================================================================
+   7. TOP UTILITY HEADER — CNA thin top bar (navy)
+   ========================================================================== */
+.top-utility-header {
+    background-color: var(--cna-navy);
+    color: rgba(255,255,255,0.65);
+    font-size: 0.75rem;
+    font-family: var(--font-sans);
+    border-bottom: none;
+    position: relative;
+    z-index: 1035;
+}
+
+.top-utility-header .dropdown-menu {
+    background-color: var(--cna-white) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 2px !important;
+    box-shadow: var(--shadow-hover) !important;
+    z-index: 1050 !important;
+    padding: 0.3rem 0;
+    min-width: 150px;
+}
+
+.top-utility-header .dropdown-item {
+    color: var(--text-primary) !important;
+    font-weight: 600;
+    font-size: 0.8rem;
+    padding: 0.5rem 0.9rem;
+    transition: background 0.12s;
+}
+
+.top-utility-header .dropdown-item:hover {
+    background-color: var(--cna-bg-alt) !important;
+    color: var(--cna-red) !important;
+}
+
+.top-utility-header .dropdown-item.active,
+.top-utility-header .dropdown-item.active:hover {
+    background-color: var(--cna-red) !important;
+    color: var(--cna-white) !important;
+}
+
+/* ==========================================================================
+   8. MAIN NAVBAR — CNA white bar with bottom red line on active
+   ========================================================================== */
+.bg-brand-navy {
+    background-color: var(--cna-navy) !important;
+    color: var(--cna-white) !important;
+}
+
+.navbar-main {
+    background-color: var(--cna-white);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: none;
+}
+
+.navbar-main .dropdown-menu {
+    background-color: var(--cna-white) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 2px !important;
+    box-shadow: var(--shadow-hover) !important;
+    z-index: 1050 !important;
+    padding: 0.3rem 0;
+    min-width: 180px;
+}
+
+.navbar-main .dropdown-item {
+    color: var(--text-primary) !important;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.55rem 1rem;
+    transition: background 0.12s;
+}
+
+.navbar-main .dropdown-item:hover {
+    background-color: var(--cna-bg-alt) !important;
+    color: var(--cna-red) !important;
+}
+
+.navbar-main .dropdown-item.active {
+    background-color: var(--cna-red) !important;
+    color: var(--cna-white) !important;
+}
+
+/* Brand Logo — CNA style (red square badge + name) */
+.brand-logo-badge {
+    background: var(--cna-red);
+    color: var(--cna-white);
+    font-family: var(--font-sans);
+    font-weight: 900;
+    padding: 0.3rem 0.55rem;
+    border-radius: 2px;
+    font-size: 1.05rem;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.brand-title-text {
+    font-family: var(--font-sans);
+    font-weight: 800;
+    color: var(--text-primary);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+}
+
+/* Navbar search — CNA inline search style */
+.navbar-search-form .form-control {
+    font-size: 0.875rem;
+    border-radius: 2px;
+    padding: 0.4rem 0.85rem;
+    background-color: var(--cna-bg-alt);
+    border: 1px solid var(--border-color);
+}
+
+.navbar-search-form .form-control:focus {
+    background-color: var(--cna-white);
+    border-color: var(--cna-red);
+    box-shadow: 0 0 0 2px rgba(200,16,46,0.1);
+}
+
+/* ==========================================================================
+   9. CATEGORY TOOLBAR — CNA horizontal nav with red underline active
+   ========================================================================== */
+.nav-category-toolbar {
+    background-color: var(--cna-white);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.nav-category-scroll {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    height: 44px;
+}
+
+.nav-category-scroll::-webkit-scrollbar { display: none; }
+
+.nav-category-link {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.84rem;
+    padding: 0 1rem;
+    transition: color 0.15s ease;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    border-bottom: 3px solid transparent;
+    position: relative;
+}
+
+.nav-category-link:hover {
+    color: var(--cna-red);
+    border-bottom-color: rgba(200,16,46,0.3);
+}
+
+.nav-category-link.active {
+    color: var(--cna-red) !important;
+    border-bottom-color: var(--cna-red) !important;
+    font-weight: 700;
+}
+
+/* ==========================================================================
+   10. BREAKING NEWS TICKER
+   ========================================================================== */
+.breaking-ticker-bar {
+    background-color: var(--cna-navy);
+    color: var(--cna-white);
+    border-bottom: none;
+    font-size: 0.84rem;
+}
+
+.breaking-badge {
+    background-color: var(--cna-red) !important;
+    color: var(--cna-white) !important;
+    font-weight: 700;
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    flex-shrink: 0;
+    border-radius: 2px !important;
+    padding: 0.25rem 0.55rem !important;
+    text-transform: uppercase;
+}
+
+/* ==========================================================================
+   11. FOOTER — CNA dark navy footer
+   ========================================================================== */
+footer.bg-brand-navy {
+    background-color: var(--cna-navy) !important;
+    color: var(--cna-white) !important;
+    border-top: 3px solid var(--cna-red) !important;
+}
+
+footer.bg-brand-navy h1,
+footer.bg-brand-navy h2,
+footer.bg-brand-navy h3,
+footer.bg-brand-navy h4,
+footer.bg-brand-navy h5,
+footer.bg-brand-navy h6,
+footer.bg-brand-navy .brand-title-text {
+    color: var(--cna-white) !important;
+}
+
+footer.bg-brand-navy p,
+footer.bg-brand-navy li,
+footer.bg-brand-navy span:not(.badge):not(.brand-logo-badge) {
+    color: rgba(255,255,255,0.60) !important;
+}
+
+footer.bg-brand-navy a {
+    color: rgba(255,255,255,0.60);
+    transition: color 0.15s;
+}
+footer.bg-brand-navy a:hover { color: var(--cna-white) !important; }
+
+.footer-social-btn {
+    width: 34px; height: 34px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 2px;
+    background: rgba(255,255,255,0.08);
+    color: rgba(255,255,255,0.65);
+    border: 1px solid rgba(255,255,255,0.12);
+    transition: all 0.15s ease;
+    font-size: 0.9rem;
+}
+.footer-social-btn:hover {
+    background: var(--cna-red);
+    color: var(--cna-white);
+    border-color: var(--cna-red);
+}
+
+/* ==========================================================================
+   12. HOMEPAGE — NO HERO GRADIENT, CNA STYLE
+   ========================================================================== */
+.homepage-wrapper {
+    background-color: var(--cna-bg);
+    min-height: 100vh;
+    padding-bottom: 3rem;
+}
+
+/* CNA-style: replace gradient hero with simple white search bar section */
+.hero-search-section {
+    background: var(--cna-navy);
+    color: var(--cna-white);
+    padding: 2rem 1rem;
+    margin-bottom: 0;
+    border-bottom: 3px solid var(--cna-red);
+}
+
+.hero-search-inner {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: rgba(255,255,255,0.6);
+    margin-bottom: 0.75rem;
+}
+
+.live-dot {
+    width: 7px; height: 7px;
+    background-color: var(--cna-red);
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulseDot 1.6s ease-in-out infinite;
+}
+
+.hero-title {
+    font-size: 1.65rem;
+    font-weight: 800;
+    color: var(--cna-white);
+    margin-bottom: 1.5rem;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+}
+
+@media (max-width: 576px) {
+    .hero-title { font-size: 1.25rem; }
+    .hero-search-section { padding: 1.5rem 0.75rem; }
+}
+
+/* CNA-style search bar — flat, sharp */
+.hero-search-bar {
+    display: flex;
+    align-items: center;
+    background: var(--cna-white);
+    border: none;
+    border-radius: 2px;
+    padding: 0;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+
+.search-icon-left {
+    padding: 0 0.75rem 0 1.1rem;
+    color: var(--text-muted);
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+.hero-search-input {
+    flex: 1;
+    border: none;
+    outline: none;
+    padding: 0.8rem 0.5rem;
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    background: transparent;
+    font-family: var(--font-sans);
+    min-width: 0;
+}
+.hero-search-input::placeholder { color: var(--text-light); }
+
+.hero-search-btn {
+    background: var(--cna-red);
+    color: var(--cna-white);
+    border: none;
+    border-radius: 0;
+    padding: 0.8rem 1.5rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+    font-family: var(--font-sans);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    cursor: pointer;
+    transition: background 0.15s;
+    flex-shrink: 0;
+    white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.hero-search-btn:hover { background: var(--cna-red-dark); }
+
+/* Topic chips */
+.search-topic-chips {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.topic-chip {
+    background: rgba(255,255,255,0.10);
+    color: rgba(255,255,255,0.75);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 2px;
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.18);
+    transition: all 0.15s ease;
+    font-family: var(--font-sans);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.topic-chip:hover {
+    background: rgba(255,255,255,0.20);
+    color: var(--cna-white);
+}
+
+/* ==========================================================================
+   13. LEAD FEATURED ARTICLE — CNA "Big Hero" Style
+       Full image with dark gradient overlay, text on top of image
+   ========================================================================== */
+.lead-article-card {
+    background: var(--cna-white);
+    overflow: hidden;
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    margin-bottom: 2rem;
+    border: 1px solid var(--border-color);
+    transition: box-shadow 0.2s ease;
+}
+
+.lead-article-card:hover {
+    box-shadow: var(--shadow-hover) !important;
+    border-color: var(--border-dark) !important;
+    transform: none;
+}
+
+@media (max-width: 991px) {
+    .lead-article-card { grid-template-columns: 1fr; }
+}
+
+.lead-article-image {
+    position: relative;
+    min-height: 320px;
+    background: var(--cna-navy);
+    overflow: hidden;
+}
+
+@media (max-width: 767px) {
+    .lead-article-image { min-height: 200px; max-height: 240px; }
+}
+
+.lead-article-image img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.lead-article-card:hover .lead-article-image img {
+    transform: scale(1.03);
+}
+
+.lead-badge-left {
+    position: absolute;
+    top: 0.85rem; left: 0.85rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    z-index: 2;
+}
+
+.lead-badge-right {
+    position: absolute;
+    top: 0.85rem; right: 0.85rem;
+    z-index: 2;
+}
+
+.lead-badge-pill {
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.22rem 0.6rem;
+    border-radius: 2px;
+    letter-spacing: 0.05em;
+    font-family: var(--font-sans);
+}
+
+.bg-dark-pill {
+    background: rgba(15,23,42,0.80);
+    color: var(--cna-white);
+}
+
+.tmpl-badge-standard,
+.tmpl-badge-investigative,
+.tmpl-badge-opinion {
+    background: var(--cna-navy);
+    color: var(--cna-white);
+    opacity: 0.90;
+}
+
+.lead-article-body {
+    padding: 1.75rem 2rem;
+    display: flex;
+    flex-direction: column;
+    background: var(--cna-white);
+    border-left: 1px solid var(--border-color);
+}
+
+@media (max-width: 576px) { .lead-article-body { padding: 1.25rem; border-left: none; border-top: 1px solid var(--border-color); } }
+
+.lead-meta-top {
+    font-size: 0.7rem;
+    color: var(--cna-red);
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.lead-article-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 0.75rem;
+    letter-spacing: -0.02em;
+    color: var(--text-primary);
+}
+
+@media (max-width: 576px) { .lead-article-title { font-size: 1.2rem; } }
+
+.lead-article-title a { color: var(--text-primary); }
+.lead-article-title a:hover { color: var(--cna-red); }
+
+.lead-article-summary {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 1.25rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+}
+
+.lead-article-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.85rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+    gap: 1rem;
+}
+
+.lead-read-link {
+    font-weight: 700;
+    color: var(--cna-red);
+    font-size: 0.82rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: gap 0.15s ease;
+}
+.lead-read-link:hover { color: var(--cna-red-dark); gap: 0.45rem; }
+
+/* ==========================================================================
+   14. CNA SECONDARY TOP STORIES — list style with dividers
+   ========================================================================== */
+.cna-secondary-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.cna-secondary-card {
+    display: flex;
+    gap: 0.85rem;
+    background: var(--cna-white);
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.85rem 0;
+    transition: background 0.15s ease;
+    text-decoration: none;
+    align-items: flex-start;
+}
+
+.cna-secondary-card:first-child { padding-top: 0; }
+.cna-secondary-card:last-child { border-bottom: none; }
+
+.cna-secondary-card:hover { background: var(--cna-bg); }
+.cna-secondary-card:hover .cna-secondary-title { color: var(--cna-red) !important; }
+
+.cna-secondary-img {
+    width: 88px; height: 64px;
+    border-radius: 0;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--cna-bg-alt);
+}
+
+.cna-secondary-img img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.cna-secondary-card:hover .cna-secondary-img img { transform: scale(1.06); }
+
+.cna-secondary-body { flex: 1; min-width: 0; }
+
+.cna-secondary-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin-bottom: 0.3rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.15s;
+}
+
+.cna-secondary-meta {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* ==========================================================================
+   15. ARTICLE FEED GRID — CNA card style
+   ========================================================================== */
+.article-feed-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0;
+    border: 1px solid var(--border-color);
+}
+
+@media (max-width: 991px) {
+    .article-feed-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 575px) {
+    .article-feed-grid { grid-template-columns: 1fr; }
+}
+
+/* Feed Card — CNA style: image top, text below, separated by thin borders */
+.feed-card {
+    background: var(--cna-white);
+    border: none;
+    border-right: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    flex-direction: column;
+    box-shadow: none;
+    transition: background 0.15s ease;
+}
+
+.feed-card:nth-child(3n) { border-right: none; }
+
+@media (max-width: 991px) {
+    .feed-card:nth-child(3n) { border-right: 1px solid var(--border-color); }
+    .feed-card:nth-child(2n) { border-right: none; }
+}
+
+@media (max-width: 575px) {
+    .feed-card:nth-child(n) { border-right: none; }
+}
+
+.feed-card:hover { background: var(--cna-bg); }
+
+.feed-card--wide {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+}
+
+@media (max-width: 767px) {
+    .feed-card--wide {
+        grid-column: span 1;
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Card image */
+.feed-card-image {
+    position: relative;
+    height: 185px;
+    overflow: hidden;
+    background: var(--cna-bg-alt);
+    flex-shrink: 0;
+}
+
+.feed-card-image img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+}
+
+.feed-card:hover .feed-card-image img { transform: scale(1.04); }
+
+.feed-card-cat-badge {
+    position: absolute;
+    top: 0.6rem; left: 0.6rem;
+    background: rgba(15,23,42,0.75);
+    color: var(--cna-white);
+    font-size: 0.63rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    padding: 0.2rem 0.5rem;
+    border-radius: 2px;
+}
+
+.feed-card-tmpl-badge {
+    position: absolute;
+    top: 0.6rem; right: 0.6rem;
+    font-size: 0.62rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 0.2rem 0.45rem;
+    border-radius: 2px;
+    color: var(--cna-white);
+    background: var(--cna-navy);
+    opacity: 0.88;
+}
+
+/* Card body */
+.feed-card-body {
+    padding: 1rem 1.1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.feed-card-meta {
+    font-size: 0.7rem;
+    color: var(--cna-red);
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.feed-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.feed-card-title a { color: var(--text-primary); }
+.feed-card-title a:hover { color: var(--cna-red); }
+
+.feed-card-summary {
+    font-size: 0.84rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 0.85rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+}
+
+.feed-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.65rem;
+    border-top: 1px solid var(--border-color);
+    margin-top: auto;
+}
+
+.feed-card-readmore {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--cna-red);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.feed-card-views {
+    font-size: 0.75rem;
+    color: var(--text-light);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+/* ==========================================================================
+   16. PAGINATION — CNA style
+   ========================================================================== */
+.pagination .page-link {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    color: var(--text-primary);
+    border-color: var(--border-color);
+    border-radius: 2px !important;
+    font-size: 0.875rem;
+    transition: all 0.15s ease;
+}
+
+.pagination .page-link:hover {
+    background-color: var(--cna-bg-alt);
+    color: var(--cna-red);
+    border-color: var(--border-color);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--cna-red) !important;
+    border-color: var(--cna-red) !important;
+    color: var(--cna-white) !important;
+}
+
+/* ==========================================================================
+   17. SIDEBAR WIDGETS
+   ========================================================================== */
+.sidebar-newsletter-card {
+    background: var(--cna-navy);
+    border-radius: 0;
+    border: none;
+    overflow: hidden;
+}
+
+.most-read-card {
+    border-radius: 0 !important;
+    border: 1px solid var(--border-color) !important;
+    background-color: var(--cna-white);
+    box-shadow: none !important;
+    overflow: hidden;
+}
+
+.trending-list-item {
+    transition: background 0.12s ease;
+    border-color: var(--border-color) !important;
+}
+
+.trending-list-item:hover {
+    background-color: var(--cna-bg) !important;
+}
+
+.trending-list-item:hover .trending-title {
+    color: var(--cna-red) !important;
+}
+
+.trending-rank-num {
+    width: 28px; height: 28px;
+    border-radius: 2px;
+    background-color: var(--cna-bg-alt);
+    color: var(--text-primary);
+    font-weight: 800;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.rank-top-1 {
+    background-color: var(--cna-red) !important;
+    color: var(--cna-white) !important;
+}
+
+.rank-top-2, .rank-top-3 {
+    background-color: var(--cna-navy) !important;
+    color: var(--cna-white) !important;
+}
+
+/* ==========================================================================
+   18. ARTICLE TEMPLATES
+   ========================================================================== */
+.template-investigative {
+    background-color: var(--cna-white);
+}
+
+.template-investigative .hero-banner {
+    background: var(--cna-navy) !important;
+    color: var(--cna-white) !important;
+    padding: 3.5rem 1rem !important;
+    margin-bottom: 2rem !important;
+    border-bottom: 3px solid var(--cna-red) !important;
+}
+
+.template-investigative .hero-banner h1,
+.template-investigative .hero-banner p,
+.template-investigative .hero-banner div {
+    color: var(--cna-white) !important;
+}
+
+.template-investigative .article-body {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: var(--text-secondary);
+    max-width: 780px;
+    margin: 0 auto;
+}
+
+.template-investigative .article-body > p:first-of-type::first-letter {
+    font-size: 3.5rem;
+    float: left;
+    line-height: 0.8;
+    margin-right: 0.65rem;
+    color: var(--cna-red);
+    font-weight: 900;
+}
+
+.investigative-callout {
+    border-left: 4px solid var(--cna-red);
+    background-color: var(--cna-bg);
+    padding: 1.25rem 1.5rem;
+    margin: 2rem 0;
+    font-size: 1.15rem;
+    font-style: italic;
+    color: var(--text-primary);
+    border-radius: 0;
+}
+
+.template-opinion { background-color: var(--cna-bg); }
+
+.template-opinion .columnist-card {
+    background-color: var(--cna-bg-alt);
+    border: 1px solid var(--border-color);
+    border-radius: 0;
+}
+
+.template-opinion .article-body {
+    font-size: 1.05rem;
+    line-height: 1.85;
+    color: var(--text-secondary);
+}
+
+.template-opinion .opinion-quote {
+    font-size: 1.35rem;
+    font-style: italic;
+    color: var(--text-primary);
+    border-top: 2px solid var(--cna-red);
+    border-bottom: 2px solid var(--cna-red);
+    padding: 1.5rem 0;
+    margin: 2rem 0;
+    text-align: center;
+}
+
+.video-container {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 0;
+    background: #000;
+    margin: 1.5rem 0;
+}
+
+.video-container iframe, .video-container video {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: 0;
+}
+
+/* ==========================================================================
+   19. ADMIN PANEL — CNA-inspired clean professional styles
+   ========================================================================== */
+.admin-navbar {
+    background-color: var(--cna-white);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: none;
+    font-family: var(--font-sans);
+}
+
+.admin-navbar .navbar-brand {
+    font-weight: 800;
+    color: var(--text-primary) !important;
+    letter-spacing: -0.02em;
+}
+
+.admin-navbar .nav-link {
+    font-weight: 600;
+    color: var(--text-secondary) !important;
+    font-size: 0.875rem;
+    padding: 0.55rem 0.85rem !important;
+    transition: color 0.15s;
+    border-radius: 2px;
+}
+
+.admin-navbar .nav-link:hover { color: var(--cna-red) !important; background: none; }
+
+.admin-navbar .nav-link.active {
+    color: var(--cna-red) !important;
+    background: rgba(200,16,46,0.06);
+    font-weight: 700;
+}
+
+.admin-navbar .dropdown-menu {
+    background-color: var(--cna-white) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 2px !important;
+    box-shadow: var(--shadow-hover) !important;
+    padding: 0.3rem 0;
+    min-width: 180px;
+}
+
+.admin-navbar .dropdown-item {
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--text-primary) !important;
+    padding: 0.5rem 0.9rem;
+    transition: background 0.12s;
+}
+
+.admin-navbar .dropdown-item:hover {
+    background-color: var(--cna-bg-alt) !important;
+    color: var(--cna-red) !important;
+}
+
+.admin-navbar .dropdown-item.active {
+    background-color: var(--cna-red) !important;
+    color: var(--cna-white) !important;
+}
+
+/* Stat Cards */
+.stat-card-modern {
+    border-radius: 0 !important;
+    border: 1px solid var(--border-color) !important;
+    transition: box-shadow 0.2s ease;
+    background: var(--cna-white);
+}
+
+.stat-card-modern:hover {
+    box-shadow: var(--shadow-hover) !important;
+    transform: none;
+}
+
+.stat-icon-wrapper {
+    width: 44px; height: 44px;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+}
+
+/* Chart Card */
+.chart-card-header {
+    padding: 1.1rem 1.35rem;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--cna-white);
+}
+
+/* Tables */
+.table-custom thead th {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border-color) !important;
+    padding-top: 0.85rem;
+    padding-bottom: 0.85rem;
+    background-color: var(--cna-bg-alt);
+}
+
+.table-custom tbody tr {
+    transition: background 0.12s ease;
+    border-color: var(--border-color);
+}
+
+.table-custom tbody tr:hover {
+    background-color: var(--cna-bg) !important;
+}
+
+.admin-card-header {
+    background-color: var(--cna-white);
+    border-bottom: 1px solid var(--border-color);
+    padding: 0.9rem 1.1rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    /* CNA-style red left border on section headers */
+    border-left: 3px solid var(--cna-red);
+    padding-left: 0.85rem;
+}
+
+/* ==========================================================================
+   20. EMPTY STATE
+   ========================================================================== */
+.empty-state {
+    padding: 3.5rem 2rem;
+    text-align: center;
+}
+
+.empty-state-icon {
+    width: 64px; height: 64px;
+    border-radius: 2px;
+    background-color: var(--cna-bg-alt);
+    color: var(--text-light);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+}
+
+/* Hover lift - kept for compatibility, less aggressive */
+.hover-lift { transition: box-shadow 0.2s ease; }
+.hover-lift:hover { box-shadow: var(--shadow-hover) !important; transform: none; }
+
+/* ==========================================================================
+   21. RESPONSIVE — MOBILE FIRST
+   ========================================================================== */
+@media (max-width: 575px) {
+    .container { padding-left: 1rem; padding-right: 1rem; }
+
+    .feed-card-body { padding: 0.85rem 0.9rem; }
+    .feed-card-title { font-size: 0.95rem; }
+    .feed-card-image { height: 160px; }
+
+    .brand-logo-badge { font-size: 0.9rem; }
+    .brand-title-text { font-size: 0.95rem; }
+
+    .hero-search-btn span { display: none; }
+
+    .nav-category-link { padding: 0 0.75rem; font-size: 0.8rem; }
+}
+
+@media (max-width: 991px) {
+    .navbar-collapse {
+        padding: 0.5rem 0;
+        border-top: 1px solid var(--border-color);
+        margin-top: 0.35rem;
+    }
+
+    .admin-navbar .nav-link {
+        border-bottom: 1px solid var(--border-color);
+        border-radius: 0;
+        padding: 0.65rem 0.85rem !important;
+    }
+}
+
+@media print {
+    .navbar-main, .top-utility-header,
+    .nav-category-toolbar, .breaking-ticker-bar, footer {
+        display: none !important;
+    }
+}
+
+/* ==========================================================================
+   22. CNA FEED ROW — Vertical News List (Latest Stream)
+   ========================================================================== */
+
+/* Container */
+.cna-news-list {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+}
+
+/* ── Each row is an <a> tag (full-row clickable) ── */
+.cna-feed-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 1.1rem;
+    border-bottom: 1px solid #f3f4f6;
+    text-decoration: none !important;
+    color: inherit !important;
+    background: #ffffff;
+    position: relative;
+    transition: background 0.18s ease, border-left-color 0.18s ease;
+    border-left: 3px solid transparent;
+}
+
+.cna-feed-row:last-child {
+    border-bottom: none;
+}
+
+/* Hover: light gray background + red left accent bar */
+.cna-feed-row:hover {
+    background: #fafafa;
+    border-left-color: #c8102e;
+}
+
+/* ── Number badge — UNIFORM red for ALL items (Main Feed & Sidebar) ── */
+.cna-feed-num,
+.trending-rank-num {
+    flex-shrink: 0;
+    width: 34px;
+    height: 34px;
+    background: #c8102e !important;          /* always red for all items */
+    color: #ffffff !important;
+    font-size: 0.72rem;
+    font-weight: 900;
+    font-family: 'Inter', sans-serif;
+    border-radius: 2px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-self: flex-start;
+    margin-top: 1px;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    transition: transform 0.18s ease;
+}
+
+.cna-feed-row:hover .cna-feed-num,
+.trending-list-item:hover .trending-rank-num {
+    transform: scale(1.08);
+}
+
+/* ── Thumbnail ── */
+.cna-feed-thumb {
+    flex-shrink: 0;
+    width: 112px;
+    height: 76px;
+    overflow: hidden;
+    background: #e5e7eb;
+    border-radius: 2px;
+    align-self: flex-start;
+}
+
+.cna-feed-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.cna-feed-row:hover .cna-feed-thumb img {
+    transform: scale(1.05);
+}
+
+/* Placeholder when no image */
+.cna-feed-thumb-empty {
+    width: 100%;
+    height: 100%;
+    background: #1e293b;
+    color: rgba(255,255,255,0.35);
+    font-size: 0.7rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* ── Body (text content) ── */
+.cna-feed-body {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Meta row: category · time */
+.cna-feed-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-bottom: 0.3rem;
+}
+
+.cna-feed-cat {
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #c8102e;
+    font-family: 'Inter', sans-serif;
+}
+
+.cna-feed-time {
+    font-size: 0.72rem;
+    color: #9ca3af;
+    font-weight: 500;
+}
+
+/* Small separator dot */
+.cna-feed-dot {
+    display: inline-block;
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: #d1d5db;
+    flex-shrink: 0;
+}
+
+/* Title */
+.cna-feed-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    line-height: 1.45;
+    color: #0f172a;
+    margin: 0 0 0.35rem;
+    letter-spacing: -0.01em;
+    font-family: 'Inter', 'Kantumruy Pro', sans-serif;
+    transition: color 0.15s ease;
+
+    /* Clamp to 2 lines */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.cna-feed-row:hover .cna-feed-title {
+    color: #c8102e;
+}
+
+/* Summary */
+.cna-feed-summary {
+    font-size: 0.82rem;
+    color: #6b7280;
+    line-height: 1.55;
+    margin: 0 0 0.5rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Footer row */
+.cna-feed-footer {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+
+.cna-feed-author {
+    font-size: 0.72rem;
+    color: #9ca3af;
+    font-weight: 600;
+}
+
+.cna-feed-views {
+    font-size: 0.72rem;
+    color: #9ca3af;
+}
+
+/* "Read more →" — only appears on hover of the row */
+.cna-feed-read {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #c8102e;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-left: auto;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition: opacity 0.18s ease, transform 0.18s ease;
+    white-space: nowrap;
+}
+
+.cna-feed-row:hover .cna-feed-read {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* ==========================================================================
+   23. CNA PAGINATION — ← Previous / 1 / 2 / 3 / Next →
+   ========================================================================== */
+.pagination {
+    --bs-pagination-border-radius: 2px;
+    --bs-pagination-active-bg:           #c8102e;
+    --bs-pagination-active-border-color: #c8102e;
+    --bs-pagination-color:               #0f172a;
+    --bs-pagination-hover-color:         #c8102e;
+    --bs-pagination-hover-bg:            #f3f4f6;
+    --bs-pagination-focus-box-shadow:    0 0 0 2px rgba(200,16,46,0.15);
+}
+
+.pagination .page-link {
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-radius: 2px !important;
+    border-color: #e5e7eb !important;
+    color: #0f172a;
+    transition: all 0.15s ease;
+    min-width: 38px;
+    text-align: center;
+    line-height: 1.5;
+}
+
+.pagination .page-link:hover {
+    background-color: #f3f4f6;
+    border-color: #d1d5db !important;
+    color: #c8102e;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #c8102e !important;
+    border-color:     #c8102e !important;
+    color: #ffffff !important;
+    box-shadow: 0 2px 6px rgba(200,16,46,0.30);
+    font-weight: 800;
+}
+
+.pagination .page-item.disabled .page-link {
+    opacity: 0.40;
+    pointer-events: none;
+}
+
+/* Mobile responsive */
+@media (max-width: 575px) {
+    .cna-feed-row {
+        padding: 0.85rem 0.85rem;
+        gap: 0.75rem;
+    }
+
+    .cna-feed-num {
+        width: 28px;
+        height: 28px;
+        font-size: 0.65rem;
+    }
+
+    .cna-feed-thumb {
+        width: 86px;
+        height: 62px;
+    }
+
+    .cna-feed-summary { display: none; }
+
+    .cna-feed-read { opacity: 1; transform: none; }
+}
+
+
+
+/* Each article row */
+.cna-list-item {
+    background: var(--cna-white);
+    transition: background 0.15s ease;
+}
+
+.cna-list-item:hover {
+    background: var(--cna-bg) !important;
+}
+
+.cna-list-item:last-child {
+    border-bottom: none !important;
+}
+
+/* Thumbnail */
+.cna-list-item .cna-thumb {
+    width: 110px;
+    height: 76px;
+    border-radius: 0;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: var(--cna-bg-alt);
+    align-self: flex-start;
+}
+
+.cna-list-item .cna-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.35s ease;
+}
+
+.cna-list-item:hover .cna-thumb img {
+    transform: scale(1.05);
+}
+
+/* Article title in list */
+.cna-list-item h4 a:hover {
+    color: var(--cna-red) !important;
+}
+
+/* Rank / index number badge */
+.cna-item-rank {
+    width: 26px;
+    height: 26px;
+    background: var(--cna-bg-alt);
+    border-radius: 2px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: var(--text-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 2px;
+}
+
+/* ==========================================================================
+   23. CNA PAGINATION — Previous / 1 / 2 / 3 / Next style
+   ========================================================================== */
+
+/* Override Bootstrap defaults with CNA sharp style */
+.pagination {
+    --bs-pagination-border-radius: 2px;
+    --bs-pagination-active-bg: #c8102e;
+    --bs-pagination-active-border-color: #c8102e;
+    --bs-pagination-color: #0f172a;
+    --bs-pagination-hover-color: #c8102e;
+    --bs-pagination-hover-bg: #f3f4f6;
+    --bs-pagination-focus-box-shadow: 0 0 0 2px rgba(200,16,46,0.15);
+}
+
+.pagination .page-link {
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-radius: 2px !important;
+    border-color: var(--border-color) !important;
+    color: var(--text-primary);
+    transition: all 0.15s ease;
+    min-width: 36px;
+    text-align: center;
+}
+
+.pagination .page-link:hover {
+    background-color: var(--cna-bg-alt);
+    border-color: var(--border-dark) !important;
+    color: var(--cna-red);
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--cna-red) !important;
+    border-color: var(--cna-red) !important;
+    color: var(--cna-white) !important;
+    box-shadow: 0 2px 8px rgba(200,16,46,0.25);
+}
+
+.pagination .page-item.disabled .page-link {
+    opacity: 0.45;
+    pointer-events: none;
+}
+
+@media (max-width: 575px) {
+    .cna-list-item { flex-wrap: wrap; }
+    .cna-list-item .cna-thumb {
+        width: 90px;
+        height: 62px;
+    }
+    .cna-item-rank { display: none !important; }
+}
+
