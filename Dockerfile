@@ -26,13 +26,16 @@ RUN chown -R www-data:www-data /var/www/html \
     && chmod -R 775 /var/www/html/public/uploads
 
 # Configure Apache DocumentRoot and AllowOverride All
-RUN sed -i 's|/var/www/html|/var/www/html|g' /etc/apache2/sites-available/000-default.conf \
-    && echo '<Directory /var/www/html/>\n\
+RUN echo '<Directory /var/www/html/>\n\
     Options Indexes FollowSymLinks\n\
     AllowOverride All\n\
     Require all granted\n\
 </Directory>' >> /etc/apache2/apache2.conf
 
-EXPOSE 80
+# Copy and configure dynamic port entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
-CMD ["apache2-foreground"]
+EXPOSE 80 10000
+
+ENTRYPOINT ["docker-entrypoint.sh"]
