@@ -1,5 +1,6 @@
 # Environment & Secret Files (NEVER push secrets/passwords)
 .env
+.env.example
 .env.local
 .env.production
 config/database.local.php
