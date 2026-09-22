@@ -950,10 +950,12 @@ footer.bg-brand-navy a:hover {
 .lead-article-title {
     font-size: 1.5rem;
     font-weight: 800;
-    line-height: 1.3;
+    line-height: 1.35;
     margin-bottom: 0.75rem;
     letter-spacing: -0.02em;
     color: var(--text-primary);
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 @media (max-width: 576px) {
@@ -977,10 +979,12 @@ footer.bg-brand-navy a:hover {
     margin-bottom: 1.25rem;
     display: -webkit-box;
     -webkit-line-clamp: 4;
-    line-clamp: 2;
+    line-clamp: 4;
     -webkit-box-orient: vertical;
     overflow: hidden;
     flex: 1;
+    word-break: break-word;
+    overflow-wrap: break-word;
 }
 
 .lead-article-footer {
@@ -1996,6 +2000,8 @@ footer.bg-brand-navy a:hover {
     letter-spacing: -0.01em;
     font-family: 'Inter', 'Kantumruy Pro', sans-serif;
     transition: color 0.15s ease;
+    word-break: break-word;
+    overflow-wrap: break-word;
 
     /* Clamp to 2 lines */
     display: -webkit-box;
@@ -2015,6 +2021,8 @@ footer.bg-brand-navy a:hover {
     color: #6b7280;
     line-height: 1.55;
     margin: 0 0 0.5rem;
+    word-break: break-word;
+    overflow-wrap: break-word;
     display: -webkit-box;
     -webkit-line-clamp: 2;
     line-clamp: 2;

@@ -6,20 +6,6 @@
 ?>
 
 <div class="container-fluid px-4 py-4">
-    
-    <!-- Flash Messages -->
-    <?php if (isset($_GET['msg'])) { ?>
-        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
-            <?= e($_GET['msg']) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php } ?>
-    <?php if (isset($_GET['error'])) { ?>
-        <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
-            <?= e($_GET['error']) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php } ?>
 
     <div class="row g-4">
         <!-- Add / Edit Category Form -->
@@ -34,20 +20,32 @@
                         <input type="hidden" name="id" id="catId" value="">
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold"><?= __('category_name') ?> <span class="text-danger">*</span></label>
-                            <input type="text" name="name" id="catName" class="form-control" placeholder="e.g. Technology & AI" required>
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <label class="form-label fw-semibold mb-0"><?= __('category_name') ?> <span
+                                        class="text-danger">*</span></label>
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-2xs fw-bold px-2 py-0.5">
+                                    Dual-Lang
+                                </span>
+                            </div>
+                            <input type="text" name="name" id="catName" class="form-control"
+                                placeholder="e.g. បច្ចេកវិទ្យា & AI (Technology & AI)" required>
+                            <div class="text-muted text-xs mt-1">
+                                <?= __('manual_translation_hint_cat') ?>
+                            </div>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold"><?= __('description') ?></label>
-                            <textarea name="description" id="catDesc" class="form-control" rows="3" placeholder="Brief overview of topic coverage..."></textarea>
+                            <textarea name="description" id="catDesc" class="form-control" rows="3"
+                                placeholder="Brief overview of topic coverage..."></textarea>
                         </div>
 
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-danger flex-grow-1 fw-semibold">
                                 <?= __('save_category') ?>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary" onclick="resetCatForm()"><?= __('clear_search') ?></button>
+                            <button type="button" class="btn btn-outline-secondary"
+                                onclick="resetCatForm()"><?= __('clear_search') ?></button>
                         </div>
                     </form>
                 </div>
@@ -59,7 +57,9 @@
             <div class="card admin-card-clean">
                 <div class="card-header admin-card-header-clean py-3 d-flex align-items-center justify-content-between">
                     <h5 class="card-title fw-bold mb-0 text-dark"><?= __('topic_categories') ?></h5>
-                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2.5 py-1 fw-bold"><?= count($categories) ?> <?= __('total') ?></span>
+                    <span
+                        class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2.5 py-1 fw-bold"><?= count($categories) ?>
+                        <?= __('total') ?></span>
                 </div>
                 <div class="table-responsive admin-scroll-table">
                     <table class="table table-hover align-middle mb-0">
@@ -78,24 +78,31 @@
                                 <tr>
                                     <td class="fw-bold"><?= $cat['id'] ?></td>
                                     <td class="fw-bold text-dark"><?= e(cat_name($cat['name'])) ?></td>
-                                    <td><code class="text-xs bg-light px-2 py-1 border rounded"><?= e($cat['slug']) ?></code></td>
+                                    <td><code
+                                            class="text-xs bg-light px-2 py-1 border rounded"><?= e($cat['slug']) ?></code>
+                                    </td>
                                     <td class="text-muted small"><?= e($cat['description'] ?? __('no_description')) ?></td>
                                     <td>
                                         <span class="badge bg-info text-dark rounded-pill px-2.5 py-1">
-                                            <?= number_format((int)$cat['article_count']) ?> <?= __('posts') ?>
+                                            <?= number_format((int) $cat['article_count']) ?>     <?= __('posts') ?>
                                         </span>
                                     </td>
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-primary me-1 px-2 py-0.5" style="font-size:0.75rem;" onclick="editCategory(<?= htmlspecialchars(json_encode($cat), ENT_QUOTES, 'UTF-8') ?>)">
+                                        <button class="btn btn-sm btn-outline-primary me-1 px-2 py-0.5"
+                                            style="font-size:0.75rem;"
+                                            onclick="editCategory(<?= htmlspecialchars(json_encode($cat), ENT_QUOTES, 'UTF-8') ?>)">
                                             <?= __('edit') ?>
                                         </button>
-                                        <?php if ((int)$cat['article_count'] === 0) { ?>
-                                            <a href="<?= url('admin/categories.php?action=delete&id=' . $cat['id'] . '&csrf_token=' . e($csrfToken)) ?>" 
-                                               class="btn btn-sm btn-outline-danger px-2 py-0.5" style="font-size:0.75rem;" onclick="return confirm('Delete category?')">
+                                        <?php if ((int) $cat['article_count'] === 0) { ?>
+                                            <?php $delUrl = url('admin/categories.php?action=delete&id=' . $cat['id'] . '&csrf_token=' . e($csrfToken)); ?>
+                                            <button type="button" class="btn btn-sm btn-outline-danger px-2 py-0.5" style="font-size:0.75rem;"
+                                                onclick="confirmDeleteCard('<?= e($delUrl) ?>', '<?= e(addslashes(cat_name($cat['name']))) ?>')">
                                                 <?= __('delete') ?>
-                                            </a>
+                                            </button>
                                         <?php } else { ?>
-                                            <button class="btn btn-sm btn-outline-secondary px-2 py-0.5" style="font-size:0.75rem;" disabled title="Cannot delete: linked articles exist">
+                                            <button class="btn btn-sm btn-outline-secondary px-2 py-0.5"
+                                                style="font-size:0.75rem;" disabled
+                                                title="Cannot delete: linked articles exist">
                                                 <?= __('locked') ?>
                                             </button>
                                         <?php } ?>
@@ -111,14 +118,14 @@
 </div>
 
 <script>
-function editCategory(cat) {
-    document.getElementById('catId').value = cat.id;
-    document.getElementById('catName').value = cat.name;
-    document.getElementById('catDesc').value = cat.description || '';
-}
-function resetCatForm() {
-    document.getElementById('catId').value = '';
-    document.getElementById('catName').value = '';
-    document.getElementById('catDesc').value = '';
-}
+    function editCategory(cat) {
+        document.getElementById('catId').value = cat.id;
+        document.getElementById('catName').value = cat.name;
+        document.getElementById('catDesc').value = cat.description || '';
+    }
+    function resetCatForm() {
+        document.getElementById('catId').value = '';
+        document.getElementById('catName').value = '';
+        document.getElementById('catDesc').value = '';
+    }
 </script>

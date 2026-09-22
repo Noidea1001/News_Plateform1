@@ -281,6 +281,12 @@ $lang['enable_drop_cap_label'] = "បង្ហាញអក្សរធំដើ�
 $lang['enable_drop_cap_hint'] = "បើកជម្រើសនេះ ប្រសិនបើអ្នកចង់រៀបចំទម្រង់អក្សរធំនៅដើមកថាខណ្ឌដំបូងនៃអត្ថបទ។";
 $lang['photo_gallery_title'] = "រូបថត";
 $lang['video_doc_title'] = "វីដេអូឯកសារ";
+$lang['manual_translation_hint_title'] = "ទម្រង់បកប្រែផ្ទាល់ដៃ៖ អ្នកអាចបញ្ចូល \"ចំណងជើងខ្មែរ (English Title)\" ដើម្បីកំណត់ទាំងពីរភាសាដោយផ្ទាល់ដៃ។";
+$lang['manual_translation_hint_cat'] = "ទម្រង់បកប្រែផ្ទាល់ដៃ៖ បញ្ចូល \"ឈ្មោះខ្មែរ (English Name)\" ដើម្បីកំណត់ទាំងពីរភាសាដោយផ្ទាល់ដៃ។";
+$lang['confirm_delete_title'] = "អះអាងការលុបជារៀងរហូត";
+$lang['confirm_delete_msg'] = "តើអ្នកប្រាកដជាចង់លុប \":item\" មែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។";
+$lang['btn_confirm_delete'] = "បាទ/ចាស លុបអត្ថបទ/ប្រភេទនេះ";
+$lang['btn_cancel_delete'] = "បោះបង់";
 
 return $lang;
 

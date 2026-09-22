@@ -15,21 +15,6 @@ foreach (array_slice($articles, 0, 7) as $art) {
 
 <div class="container-fluid px-3 px-md-6 py-4">
 
-    <!-- Flash Notification Alerts -->
-    <?php if (!empty($_GET['msg'])) { ?>
-        <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3 mb-4 border-0 bg-success bg-opacity-10 text-success" role="alert">
-            <span class="fw-semibold"><?= e($_GET['msg']) ?></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php } ?>
-
-    <?php if (!empty($_GET['error'])) { ?>
-        <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3 mb-4 border-0 bg-danger bg-opacity-10 text-danger" role="alert">
-            <span class="fw-semibold"><?= e($_GET['error']) ?></span>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php } ?>
-
     <!-- Dashboard Top Header Bar -->
     <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 pb-3 border-bottom gap-3">
         <div>
@@ -218,11 +203,11 @@ foreach (array_slice($articles, 0, 7) as $art) {
                                         data-template="<?= e($art['template_type']) ?>"
                                         data-search="<?= e(mb_strtolower($art['title'] . ' ' . $art['category_name'] . ' ' . $art['author_name'])) ?>">
                                         <td class="ps-4">
-                                            <div class="fw-bold text-dark text-truncate mb-1" style="max-width: 260px;" title="<?= e($art['title']) ?>">
+                                            <div class="fw-bold text-dark text-truncate mb-1" style="max-width: 260px;" title="<?= e(article_title($art['title'])) ?>">
                                                 <?php if ($art['is_breaking']) { ?>
                                                     <span class="badge bg-danger text-white text-xs me-1"><?= __('breaking') ?></span>
                                                 <?php } ?>
-                                                <?= e($art['title']) ?>
+                                                <?= e(article_title($art['title'])) ?>
                                             </div>
                                             <div class="text-muted text-xs d-flex align-items-center gap-1">
                                                 <span><?= e($art['author_name']) ?></span>
@@ -283,13 +268,14 @@ foreach (array_slice($articles, 0, 7) as $art) {
                                                     <?= __('edit') ?>
                                                 </a>
                                                 <?php if ($currentUser['role'] === 'admin') { ?>
-                                                    <a href="<?= url('admin/actions/delete-article.php?id=' . $art['id'] . '&csrf_token=' . e($csrfToken)) ?>" 
+                                                    <?php $delUrl = url('admin/actions/delete-article.php?id=' . $art['id'] . '&csrf_token=' . e($csrfToken)); ?>
+                                                    <button type="button" 
                                                        class="btn btn-sm btn-outline-danger px-2 py-0.5" 
                                                        style="font-size:0.75rem;"
-                                                       onclick="return confirm('Are you sure you want to delete this article?');" 
+                                                       onclick="confirmDeleteCard('<?= e($delUrl) ?>', '<?= e(addslashes(article_title($art['title']))) ?>')" 
                                                        title="Delete Article">
                                                         <?= __('delete') ?>
-                                                    </a>
+                                                    </button>
                                                 <?php } ?>
                                             </div>
                                         </td>

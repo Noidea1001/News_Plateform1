@@ -23,6 +23,8 @@ $currentLang = $_SESSION['lang'] ?? 'en';
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..900;1,14..32,300..900&family=Kantumruy+Pro:ital,wght@0,400..700;1,400..700&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Bootstrap 5.3 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= url('public/assets/css/style.css') ?>">
 
@@ -48,15 +50,56 @@ $currentLang = $_SESSION['lang'] ?? 'en';
 </head>
 <body class="d-flex flex-column min-vh-100">
 
+<!-- ── Reusable Professional Delete Confirmation Modal Card ───────────────── -->
+<div class="modal fade" id="globalDeleteModal" tabindex="-1" aria-labelledby="globalDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 420px;">
+        <div class="modal-content border-0 shadow-lg" style="border-radius:8px; overflow:hidden; background:#ffffff;">
+            <div class="modal-body p-4 text-center">
+                <h5 class="fw-bold text-dark mb-2" id="globalDeleteModalLabel"><?= __('confirm_delete_title') ?></h5>
+                <p class="text-secondary small mb-4" id="globalDeleteModalText">
+                    <?= __('confirm_delete_msg', ['item' => 'item']) ?>
+                </p>
+                <div class="d-flex gap-2 justify-content-center">
+                    <button type="button" class="btn btn-outline-secondary px-4 fw-semibold text-xs" style="border-radius:4px;" data-bs-dismiss="modal">
+                        <?= __('btn_cancel_delete') ?>
+                    </button>
+                    <a href="#" id="globalDeleteConfirmBtn" class="btn btn-danger px-4 fw-bold text-xs" style="border-radius:4px;">
+                        <?= __('btn_confirm_delete') ?>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function confirmDeleteCard(deleteUrl, itemName) {
+    const modalEl = document.getElementById('globalDeleteModal');
+    if (!modalEl) {
+        if (confirm("Delete " + itemName + "?")) { window.location.href = deleteUrl; }
+        return;
+    }
+    const textEl = document.getElementById('globalDeleteModalText');
+    const btnEl = document.getElementById('globalDeleteConfirmBtn');
+    
+    if (textEl && itemName) {
+        const template = <?= json_encode(__('confirm_delete_msg')) ?>;
+        textEl.innerText = template.replace(':item', itemName);
+    }
+    if (btnEl) {
+        btnEl.setAttribute('href', deleteUrl);
+    }
+    const bsModal = new bootstrap.Modal(modalEl);
+    bsModal.show();
+}
+</script>
+
 <!-- ── CNA Admin Topbar ────────────────────────────────────────────────── -->
 <div class="admin-topbar d-flex align-items-center px-3 px-md-4 py-1">
     <div class="d-flex align-items-center gap-3 flex-grow-1">
         <span style="color:rgba(255,255,255,0.40);"><?= \App\Core\TemplateEngine::formatDate(date('Y-m-d H:i:s'), 'l, d F Y') ?></span>
         <span class="opacity-25">|</span>
-        <span class="d-flex align-items-center gap-1">
-            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#c8102e;"></span>
-            CMS Editorial Platform
-        </span>
+        <span>CMS Editorial Platform</span>
     </div>
     <div>
         <a href="<?= url('public/index.php') ?>" target="_blank"
@@ -68,7 +111,7 @@ $currentLang = $_SESSION['lang'] ?? 'en';
 </div>
 
 <!-- ── CNA Admin Navbar — white bar ────────────────────────────────────── -->
-<nav class="navbar navbar-expand-xl admin-navbar py-0" style="min-height:56px; position:sticky; top:0; z-index:1020; border-bottom: 3px solid #c8102e;">
+<nav class="navbar navbar-expand-xl admin-navbar py-0" style="min-height:56px; position:sticky; top:0; z-index:1020; border-bottom: 1px solid #e5e7eb;">
     <div class="container-fluid px-3 px-md-4 h-100">
 
         <!-- Brand -->
@@ -138,22 +181,22 @@ $currentLang = $_SESSION['lang'] ?? 'en';
             <!-- Right controls -->
             <div class="d-flex flex-wrap align-items-center gap-2 my-2 my-xl-0">
 
-                <!-- Language -->
-                <div class="dropdown">
-                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
-                            style="font-size:0.78rem; border-radius:2px; padding:0.35rem 0.75rem;"
-                            type="button" data-bs-toggle="dropdown">
-                        <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'KH' : 'EN' ?>
+                <!-- Language Switcher -->
+                <div class="dropdown me-2 position-relative">
+                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle fw-bold text-dark"
+                            style="font-size:0.8rem; border-radius:2px; padding:0.35rem 0.75rem; background:#ffffff; border:1px solid #cbd5e1;"
+                            type="button" id="adminLangDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span><?= ($currentLang === 'kh' || $currentLang === 'km') ? 'KH' : 'EN' ?></span>
                     </button>
-                    <ul class="dropdown-menu dropdown-menu-end" style="min-width:140px;">
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border mt-1" aria-labelledby="adminLangDropdown" style="min-width:150px; z-index:2000 !important;">
                         <li>
-                            <a class="dropdown-item <?= $currentLang === 'en' ? 'active' : '' ?>" href="?lang=en">
-                                English
+                            <a class="dropdown-item py-2 fw-bold <?= $currentLang === 'en' ? 'active bg-danger text-white' : '' ?>" href="<?= lang_url('en') ?>">
+                                English (EN)
                             </a>
                         </li>
                         <li>
-                            <a class="dropdown-item <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'active' : '' ?>" href="?lang=kh">
-                                ភាសាខ្មែរ
+                            <a class="dropdown-item py-2 fw-bold <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'active bg-danger text-white' : '' ?>" href="<?= lang_url('kh') ?>">
+                                ភាសាខ្មែរ (KH)
                             </a>
                         </li>
                     </ul>
@@ -204,5 +247,76 @@ $currentLang = $_SESSION['lang'] ?? 'en';
 </nav>
 
 <!-- CNA-style red border bottom already on the nav — the 3px solid red line is the signature -->
+
+<!-- ── Global Professional Toast Notifications (Top-Right, Auto-Close 3s) ── -->
+<div class="toast-container position-fixed top-0 mt-4 end-0 p-3" style="z-index: 3000;">
+    <?php if (!empty($_GET['msg'])) { ?>
+        <div id="adminToastMsg" class="toast align-items-center border-0 shadow-lg show" role="alert" aria-live="assertive" aria-atomic="true"
+             style="background:#ffffff !important; border:1px solid #e2e8f0 !important; border-radius:6px; min-width:280px; max-width:380px;">
+            <div class="d-flex p-3 align-items-center justify-content-between">
+                <div class="toast-body p-0 fw-semibold text-dark small" style="font-size:0.85rem; line-height:1.4;">
+                    <?= e($_GET['msg']) ?>
+                </div>
+                <button type="button" class="btn-close ms-3 me-0 shadow-none" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    <?php } ?>
+
+    <?php if (!empty($_GET['error'])) { ?>
+        <div id="adminToastErr" class="toast align-items-center border-0 shadow-lg show" role="alert" aria-live="assertive" aria-atomic="true"
+             style="background:#ffffff !important; border:1px solid #e2e8f0 !important; border-radius:6px; min-width:280px; max-width:380px;">
+            <div class="d-flex p-3 align-items-center justify-content-between">
+                <div class="toast-body p-0 fw-semibold text-danger small" style="font-size:0.85rem; line-height:1.4;">
+                    <?= e($_GET['error']) ?>
+                </div>
+                <button type="button" class="btn-close ms-3 me-0 shadow-none" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    <?php } ?>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Universal Dropdown Toggle Handler for all dropdowns (Management, Language, User Profile)
+    document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(function (toggleEl) {
+        toggleEl.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            const parent = toggleEl.closest('.dropdown');
+            const menu = parent ? parent.querySelector('.dropdown-menu') : toggleEl.nextElementSibling;
+
+            if (menu) {
+                const isOpen = menu.classList.contains('show');
+                // Close all open dropdown menus first
+                document.querySelectorAll('.dropdown-menu.show').forEach(function (m) {
+                    m.classList.remove('show');
+                });
+                if (!isOpen) {
+                    menu.classList.add('show');
+                }
+            }
+        });
+    });
+
+    // Close open dropdowns when clicking outside
+    document.addEventListener('click', function (e) {
+        if (!e.target.closest('.dropdown')) {
+            document.querySelectorAll('.dropdown-menu.show').forEach(function (m) {
+                m.classList.remove('show');
+            });
+        }
+    });
+
+    // Auto close toast notifications after 3 seconds (3000ms)
+    const toastElems = document.querySelectorAll('.toast');
+    toastElems.forEach(function (toastEl) {
+        setTimeout(function () {
+            toastEl.classList.remove('show');
+            setTimeout(function () { if (toastEl.parentNode) toastEl.parentNode.removeChild(toastEl); }, 300);
+        }, 3000);
+    });
+});
+</script>
 
 <main class="flex-grow-1">

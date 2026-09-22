@@ -281,6 +281,12 @@ $lang['enable_drop_cap_label'] = "Enable First Paragraph Drop-Cap (Large Initial
 $lang['enable_drop_cap_hint'] = "Turn on to display a large styled initial letter at the start of the first paragraph.";
 $lang['photo_gallery_title'] = "Photos";
 $lang['video_doc_title'] = "Documentary Video";
+$lang['manual_translation_hint_title'] = "Manual Dual-Language Format: Enter \"Khmer Title (English Title)\" to manually define both languages.";
+$lang['manual_translation_hint_cat'] = "Manual Dual-Language Format: Enter \"Khmer Name (English Name)\" to manually define both languages.";
+$lang['confirm_delete_title'] = "Confirm Permanent Deletion";
+$lang['confirm_delete_msg'] = "Are you sure you want to delete \":item\"? This action is permanent and cannot be undone.";
+$lang['btn_confirm_delete'] = "Yes, Delete Item";
+$lang['btn_cancel_delete'] = "Cancel";
 
 return $lang;
 
