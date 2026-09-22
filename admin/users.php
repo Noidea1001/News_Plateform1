@@ -4,7 +4,6 @@
  * news-platform / admin / users.php
  */
 
-declare(strict_types=1);
 
 require_once __DIR__ . '/../src/Core/helpers.php';
 require_once __DIR__ . '/../src/Core/Database.php';
@@ -21,3 +20,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     $controller->users();
 }
+?>

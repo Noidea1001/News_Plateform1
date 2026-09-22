@@ -11,7 +11,7 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
     <!-- Dark Hero Banner Section -->
     <div class="hero-banner border-bottom border-danger border-4">
         <div class="container max-width-900 text-center py-4">
-            
+
             <div class="d-flex align-items-center justify-content-center gap-2 mb-3">
                 <span class="badge bg-danger text-uppercase px-3 py-2 fs-6 tracking-wider">
                     <i class="bi bi-shield-check me-1"></i> <?= __('special_report') ?>
@@ -29,17 +29,21 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                 <?= e($article['summary']) ?>
             </p>
 
-            <div class="d-flex align-items-center justify-content-center gap-3 text-secondary small pt-3 border-top border-secondary border-opacity-50">
+            <div
+                class="d-flex align-items-center justify-content-center gap-3 text-secondary small pt-3 border-top border-secondary border-opacity-50">
                 <div class="d-flex align-items-center gap-2">
-                    <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm" style="width: 36px; height: 36px;">
+                    <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center fw-bold shadow-sm"
+                        style="width: 36px; height: 36px;">
                         <?= strtoupper(substr($article['author_name'], 0, 1)) ?>
                     </div>
                     <span class="text-white fw-semibold"><?= e($article['author_name']) ?></span>
                 </div>
                 <span>&bull;</span>
-                <span><i class="bi bi-calendar3 me-1 text-danger"></i> <?= \App\Core\TemplateEngine::formatDate($article['published_at']) ?></span>
+                <span><i class="bi bi-calendar3 me-1 text-danger"></i>
+                    <?= \App\Core\TemplateEngine::formatDate($article['published_at']) ?></span>
                 <span>&bull;</span>
-                <span><i class="bi bi-eye me-1 text-warning"></i> <?= __('total_readers', ['count' => number_format((int)$article['views_count'])]) ?></span>
+                <span><i class="bi bi-eye me-1 text-warning"></i>
+                    <?= __('total_readers', ['count' => number_format((int) $article['views_count'])]) ?></span>
             </div>
 
         </div>
@@ -53,7 +57,8 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                 <!-- Featured High-Res Cover Image -->
                 <?php if (!empty($article['featured_image'])) { ?>
                     <div class="mb-5 rounded-4 overflow-hidden shadow-lg">
-                        <img src="<?= e($article['featured_image']) ?>" class="w-100 h-auto" alt="<?= e($article['title']) ?>">
+                        <img src="<?= e($article['featured_image']) ?>" class="w-100 h-auto"
+                            alt="<?= e($article['title']) ?>">
                         <div class="bg-light p-2 text-center text-muted small border-top">
                             <i class="bi bi-camera me-1"></i> <?= __('featured_evidence') ?>
                         </div>
@@ -72,7 +77,8 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
 
                 <!-- Pull Quote Callout Box -->
                 <div class="investigative-callout shadow-sm rounded-end">
-                    "This investigation relies on verified primary source documents and rigorous data cross-referencing."
+                    "This investigation relies on verified primary source documents and rigorous data
+                    cross-referencing."
                 </div>
 
                 <!-- Photo Gallery Carousel -->
@@ -85,7 +91,8 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                             <span><?= __('photo_gallery_title') ?></span>
                             <span class="badge bg-light border text-muted fw-normal ms-2"><?= count($galleryUrls) ?></span>
                         </h6>
-                        <div id="galleryCarouselInv" class="carousel slide shadow-lg rounded-4 overflow-hidden" data-bs-ride="carousel">
+                        <div id="galleryCarouselInv" class="carousel slide shadow-lg rounded-4 overflow-hidden"
+                            data-bs-ride="carousel">
                             <div class="carousel-indicators">
                                 <?php foreach ($galleryUrls as $gIdx => $gUrl) { ?>
                                     <button type="button" data-bs-target="#galleryCarouselInv" data-bs-slide-to="<?= $gIdx ?>"
@@ -96,16 +103,18 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                                 <?php foreach ($galleryUrls as $gIdx => $gUrl) { ?>
                                     <div class="carousel-item <?= $gIdx === 0 ? 'active' : '' ?>">
                                         <img src="<?= e($gUrl) ?>" class="d-block w-100 object-fit-cover"
-                                            style="max-height: 460px;" alt="Evidence photo <?= $gIdx + 1 ?>"
-                                            loading="lazy" onerror="this.parentElement.style.display='none'">
+                                            style="max-height: 460px;" alt="Evidence photo <?= $gIdx + 1 ?>" loading="lazy"
+                                            onerror="this.parentElement.style.display='none'">
                                     </div>
                                 <?php } ?>
                             </div>
-                            <button class="carousel-control-prev" type="button" data-bs-target="#galleryCarouselInv" data-bs-slide="prev">
+                            <button class="carousel-control-prev" type="button" data-bs-target="#galleryCarouselInv"
+                                data-bs-slide="prev">
                                 <span class="carousel-control-prev-icon"></span>
                                 <span class="visually-hidden">Previous</span>
                             </button>
-                            <button class="carousel-control-next" type="button" data-bs-target="#galleryCarouselInv" data-bs-slide="next">
+                            <button class="carousel-control-next" type="button" data-bs-target="#galleryCarouselInv"
+                                data-bs-slide="next">
                                 <span class="carousel-control-next-icon"></span>
                                 <span class="visually-hidden">Next</span>
                             </button>
@@ -151,10 +160,10 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                 </div>
 
                 <!-- Verified Primary Source Citation Component -->
-                <?php 
+                <?php
                 $referenceUrl = $article['reference_url'] ?? null;
                 $referenceSourceName = $article['reference_source_name'] ?? null;
-                include __DIR__ . '/../components/citation-box.php'; 
+                include __DIR__ . '/../components/citation-box.php';
                 ?>
 
 
@@ -165,7 +174,9 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                         <?= __('support_desc') ?>
                     </p>
                     <div class="d-flex justify-content-center">
-                        <button type="button" class="btn btn-danger px-4 py-2 rounded-pill fw-bold d-inline-flex align-items-center gap-2" data-bs-toggle="modal" data-bs-target="#subscribeModal">
+                        <button type="button"
+                            class="btn btn-danger px-4 py-2 rounded-pill fw-bold d-inline-flex align-items-center gap-2"
+                            data-bs-toggle="modal" data-bs-target="#subscribeModal">
                             <i class="bi bi-bell-fill"></i> <?= __('get_feed_cta') ?>
                         </button>
                     </div>
@@ -173,20 +184,22 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
 
                 <!-- Related Investigative Content -->
                 <?php if (!empty($relatedArticles)) { ?>
-                <div class="pt-4 border-top">
-                    <h4 class="editorial-title fw-bold mb-4 text-dark"><?= __('further_investigations') ?></h4>
-                    <div class="list-group list-group-flush shadow-sm rounded-4 border overflow-hidden">
-                        <?php foreach ($relatedArticles as $rItem) { ?>
-                            <a href="<?= url('article.php?slug=' . urlencode($rItem['slug'])) ?>" class="list-group-item list-group-item-action py-3 px-4 d-flex justify-content-between align-items-center">
-                                <div>
-                                    <span class="badge bg-danger text-uppercase font-monospace text-xs mb-1"><?= e(cat_name($rItem['category_name'])) ?></span>
-                                    <h6 class="mb-0 fw-bold text-dark"><?= e(article_title($rItem['title'])) ?></h6>
-                                </div>
-                                <i class="bi bi-arrow-right text-danger fs-5"></i>
-                            </a>
-                        <?php } ?>
+                    <div class="pt-4 border-top">
+                        <h4 class="editorial-title fw-bold mb-4 text-dark"><?= __('further_investigations') ?></h4>
+                        <div class="list-group list-group-flush shadow-sm rounded-4 border overflow-hidden">
+                            <?php foreach ($relatedArticles as $rItem) { ?>
+                                <a href="<?= url('article.php?slug=' . urlencode($rItem['slug'])) ?>"
+                                    class="list-group-item list-group-item-action py-3 px-4 d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <span
+                                            class="badge bg-danger text-uppercase font-monospace text-xs mb-1"><?= e(cat_name($rItem['category_name'])) ?></span>
+                                        <h6 class="mb-0 fw-bold text-dark"><?= e(article_title($rItem['title'])) ?></h6>
+                                    </div>
+                                    <i class="bi bi-arrow-right text-danger fs-5"></i>
+                                </a>
+                            <?php } ?>
+                        </div>
                     </div>
-                </div>
                 <?php } ?>
 
             </div>

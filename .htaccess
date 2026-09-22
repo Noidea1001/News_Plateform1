@@ -1,0 +1,19 @@
+# NewsPlatform CMS - Root Apache Security & Routing Configuration
+
+AddDefaultCharset UTF-8
+
+# Protect Sensitive Directories & Files from Direct Web Access
+<FilesMatch "^\.(git|env)|(schema\.sql|Dockerfile|render\.yaml|composer\.json)$">
+    Require all denied
+</FilesMatch>
+
+# Prevent directory listings
+Options -Indexes +FollowSymLinks
+
+# Enable Rewrite Engine
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Prevent direct browsing of protected internal folders
+    RewriteRule ^(config|src|templates|languages)/(.*)$ - [F,L]
+</IfModule>

@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: news-platform-cms
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter
+    region: singapore
+    disk:
+      name: news-uploads-data
+      mountPath: /var/www/html/public/uploads
+      sizeGB: 1
+    envVars:
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        value: "3306"
+      - key: DB_NAME
+        value: news_platform
+      - key: DB_USER
+        sync: false
+      - key: DB_PASS
+        sync: false
+      - key: APP_ENV
+        value: production

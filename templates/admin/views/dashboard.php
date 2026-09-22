@@ -3,7 +3,6 @@
  * Admin Dashboard View (CMA Overview)
  * news-platform / templates / admin / views / dashboard.php
  */
-declare(strict_types=1);
 
 // Extract article view totals for analytics chart
 $chartTitles = [];
@@ -19,7 +18,6 @@ foreach (array_slice($articles, 0, 7) as $art) {
     <!-- Flash Notification Alerts -->
     <?php if (!empty($_GET['msg'])) { ?>
         <div class="alert alert-success alert-dismissible fade show shadow-sm rounded-3 mb-4 border-0 bg-success bg-opacity-10 text-success" role="alert">
-            <i class="bi bi-check-circle-fill me-2 fs-5"></i>
             <span class="fw-semibold"><?= e($_GET['msg']) ?></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -27,7 +25,6 @@ foreach (array_slice($articles, 0, 7) as $art) {
 
     <?php if (!empty($_GET['error'])) { ?>
         <div class="alert alert-danger alert-dismissible fade show shadow-sm rounded-3 mb-4 border-0 bg-danger bg-opacity-10 text-danger" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>
             <span class="fw-semibold"><?= e($_GET['error']) ?></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
@@ -48,31 +45,24 @@ foreach (array_slice($articles, 0, 7) as $art) {
             </p>
         </div>
         <div class="d-flex flex-wrap align-items-center gap-2">
-            <a href="<?= url('public/index.php') ?>" target="_blank" class="btn btn-outline-dark px-3 py-2 fw-semibold rounded-3 text-nowrap d-inline-flex align-items-center gap-2 shadow-sm text-xs">
-                <i class="bi bi-globe2"></i>
-                <span><?= __('live_public_site') ?></span>
+            <a href="<?= url('public/index.php') ?>" target="_blank" class="btn btn-outline-dark px-3 py-2 fw-semibold rounded-3 text-nowrap d-inline-flex align-items-center shadow-sm text-xs">
+                <span><?= __('live_public_site') ?> &rarr;</span>
             </a>
-            <a href="<?= url('admin/article-create.php') ?>" class="btn gradient-btn-danger text-white px-3.5 py-2 fw-semibold rounded-3 text-nowrap d-inline-flex align-items-center gap-2 shadow text-xs">
-                <i class="bi bi-plus-circle-fill fs-6"></i>
-                <span><?= __('draft_new_article') ?></span>
+            <a href="<?= url('admin/article-create.php') ?>" class="btn btn-danger text-white px-4 py-2 fw-semibold rounded-3 text-nowrap d-inline-flex align-items-center shadow-sm text-xs">
+                <span>+ <?= __('draft_new_article') ?></span>
             </a>
         </div>
     </div>
 
-    <!-- 4 High Level Stat Cards (2 Columns on Mobile, 4 Columns on Desktop) -->
+    <!-- 4 High Level Stat Cards -->
     <div class="row g-3 mb-4">
         <div class="col-6 col-xl-3">
             <div class="card stat-card-modern border-0 shadow-sm bg-white p-3 p-md-3.5 h-100">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <span class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('total_articles') ?></span>
-                        <h3 class="fw-extrabold text-dark mb-0 fs-3"><?= number_format($totalArticles) ?></h3>
-                        <div class="mt-2 text-xs text-muted d-none d-sm-block">
-                            <span class="text-success fw-bold"><i class="bi bi-graph-up-arrow me-1"></i> +12%</span> vs last month
-                        </div>
-                    </div>
-                    <div class="stat-icon-wrapper bg-primary bg-opacity-10 text-primary flex-shrink-0">
-                        <i class="bi bi-journal-richtext"></i>
+                <div>
+                    <span class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('total_articles') ?></span>
+                    <h3 class="fw-extrabold text-dark mb-0 fs-3"><?= number_format($totalArticles) ?></h3>
+                    <div class="mt-2 text-xs text-muted d-none d-sm-block">
+                        <span class="text-success fw-bold">+12%</span> vs last month
                     </div>
                 </div>
             </div>
@@ -80,16 +70,11 @@ foreach (array_slice($articles, 0, 7) as $art) {
 
         <div class="col-6 col-xl-3">
             <div class="card stat-card-modern border-0 shadow-sm bg-white p-3 p-md-3.5 h-100">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <span class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('published_live') ?></span>
-                        <h3 class="fw-extrabold text-success mb-0 fs-3"><?= number_format($publishedCount) ?></h3>
-                        <div class="mt-2 text-xs text-muted d-none d-sm-block">
-                            <span class="pulsing-dot bg-success me-1"></span> CDA Active
-                        </div>
-                    </div>
-                    <div class="stat-icon-wrapper bg-success bg-opacity-10 text-success flex-shrink-0">
-                        <i class="bi bi-check2-circle"></i>
+                <div>
+                    <span class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('published_live') ?></span>
+                    <h3 class="fw-extrabold text-success mb-0 fs-3"><?= number_format($publishedCount) ?></h3>
+                    <div class="mt-2 text-xs text-muted d-none d-sm-block">
+                        <span class="pulsing-dot bg-success me-1"></span> CDA Active
                     </div>
                 </div>
             </div>
@@ -97,16 +82,11 @@ foreach (array_slice($articles, 0, 7) as $art) {
 
         <div class="col-6 col-xl-3">
             <div class="card stat-card-modern border-0 shadow-sm bg-white p-3 p-md-3.5 h-100">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <span class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('drafts_pending') ?></span>
-                        <h3 class="fw-extrabold text-warning mb-0 fs-3"><?= number_format($draftCount) ?></h3>
-                        <div class="mt-2 text-xs text-muted d-none d-sm-block">
-                            <span class="text-warning fw-semibold"><i class="bi bi-pencil-fill me-1"></i> In Queue</span>
-                        </div>
-                    </div>
-                    <div class="stat-icon-wrapper bg-warning bg-opacity-10 text-warning flex-shrink-0">
-                        <i class="bi bi-file-earmark-text"></i>
+                <div>
+                    <span class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('drafts_pending') ?></span>
+                    <h3 class="fw-extrabold text-warning mb-0 fs-3"><?= number_format($draftCount) ?></h3>
+                    <div class="mt-2 text-xs text-muted d-none d-sm-block">
+                        <span class="text-warning fw-semibold">In Queue</span>
                     </div>
                 </div>
             </div>
@@ -114,16 +94,11 @@ foreach (array_slice($articles, 0, 7) as $art) {
 
         <div class="col-6 col-xl-3">
             <div class="card stat-card-modern border-0 shadow-sm bg-white p-3 p-md-3.5 h-100">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <span class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('active_subscribers') ?></span>
-                        <h3 class="fw-extrabold text-danger mb-0 fs-3"><?= number_format($totalSubscribers) ?></h3>
-                        <div class="mt-2 text-xs text-muted d-none d-sm-block">
-                            <span class="text-danger fw-bold"><i class="bi bi-lightning-charge-fill me-1"></i> AJAX Feed</span>
-                        </div>
-                    </div>
-                    <div class="stat-icon-wrapper bg-danger bg-opacity-10 text-danger flex-shrink-0">
-                        <i class="bi bi-people-fill"></i>
+                <div>
+                    <span class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('active_subscribers') ?></span>
+                    <h3 class="fw-extrabold text-danger mb-0 fs-3"><?= number_format($totalSubscribers) ?></h3>
+                    <div class="mt-2 text-xs text-muted d-none d-sm-block">
+                        <span class="text-danger fw-bold">AJAX Feed</span>
                     </div>
                 </div>
             </div>
@@ -167,15 +142,15 @@ foreach (array_slice($articles, 0, 7) as $art) {
                     </div>
                     <div class="w-100 text-xs">
                         <div class="d-flex justify-content-between align-items-center py-1.5 border-bottom">
-                            <span class="fw-semibold text-dark"><i class="bi bi-circle-fill text-primary me-2"></i> <?= __('tmpl_standard_name') ?></span>
+                            <span class="fw-semibold text-dark"><?= __('tmpl_standard_name') ?></span>
                             <span class="badge bg-primary rounded-pill"><?= $standardCount ?></span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center py-1.5 border-bottom">
-                            <span class="fw-semibold text-dark"><i class="bi bi-circle-fill text-danger me-2"></i> <?= __('tmpl_investigative_name') ?></span>
+                            <span class="fw-semibold text-dark"><?= __('tmpl_investigative_name') ?></span>
                             <span class="badge bg-danger rounded-pill"><?= $investigativeCount ?></span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center py-1.5">
-                            <span class="fw-semibold text-dark"><i class="bi bi-circle-fill text-warning me-2"></i> <?= __('tmpl_opinion_name') ?></span>
+                            <span class="fw-semibold text-dark"><?= __('tmpl_opinion_name') ?></span>
                             <span class="badge bg-warning text-dark rounded-pill"><?= $opinionCount ?></span>
                         </div>
                     </div>
@@ -188,7 +163,7 @@ foreach (array_slice($articles, 0, 7) as $art) {
     <!-- Main Content Repository Table Section -->
     <div class="row g-4 mb-4">
         <div class="col-lg-8">
-            <div class="card border-0 shadow-sm rounded-4 bg-white overflow-hidden">
+            <div class="card admin-card-clean overflow-hidden">
                 
                 <!-- Table Header Bar with Live Filter Controls -->
                 <div class="p-4 border-bottom bg-white">
@@ -208,16 +183,16 @@ foreach (array_slice($articles, 0, 7) as $art) {
                     </div>
 
                     <!-- Row 2: Live Search Input Bar -->
-                    <div class="input-group input-group-sm mb-2 w-50 ">
-                        <span class="input-group-text bg-light border-end-0 rounded-start-pill ps-3">
-                            <i class="bi bi-search text-muted"></i>
+                    <div class="input-group input-group-sm mb-2 w-100 w-md-50">
+                        <span class="input-group-text bg-light border-end-0 rounded-start-pill ps-3 text-muted fw-semibold text-xs">
+                            <i class="bi bi-search me-1"></i> <?= __('search') ?>
                         </span>
                         <input type="text" id="tableSearchInput" class="form-control bg-light border-start-0 rounded-end-pill pe-3 text-xs" placeholder="<?= __('search_repo_placeholder') ?>">
                     </div>
                 </div>
 
-                <!-- Responsive Table Component -->
-                <div class="table-responsive">
+                <!-- Responsive Table Component with Max Height Scrolling -->
+                <div class="table-responsive admin-scroll-table">
                     <table class="table table-hover align-middle mb-0 table-custom" id="articlesTable">
                         <thead class="table-light text-xs text-uppercase text-muted border-bottom">
                             <tr>
@@ -226,15 +201,14 @@ foreach (array_slice($articles, 0, 7) as $art) {
                                 <th style="min-width: 140px;"><?= __('template_blueprint') ?></th>
                                 <th style="min-width: 110px;"><?= __('status') ?></th>
                                 <th style="min-width: 80px;"><?= __('views') ?></th>
-                                <th class="pe-4 text-end" style="min-width: 110px;"><?= __('actions') ?></th>
+                                <th class="pe-4 text-end" style="min-width: 130px;"><?= __('actions') ?></th>
                             </tr>
                         </thead>
                         <tbody>
                             <?php if (empty($articles)) { ?>
                                 <tr>
                                     <td colspan="6" class="text-center py-5 text-muted">
-                                        <i class="bi bi-journal-x fs-1 d-block mb-2 text-muted"></i>
-                                        No articles found. Click "Draft New Article" to publish your first post.
+                                        <?= __('no_articles_found_dash') ?>
                                     </td>
                                 </tr>
                             <?php } else { ?>
@@ -251,7 +225,6 @@ foreach (array_slice($articles, 0, 7) as $art) {
                                                 <?= e($art['title']) ?>
                                             </div>
                                             <div class="text-muted text-xs d-flex align-items-center gap-1">
-                                                <i class="bi bi-person-circle text-secondary"></i>
                                                 <span><?= e($art['author_name']) ?></span>
                                                 <span>&bull;</span>
                                                 <span><?= \App\Core\TemplateEngine::timeAgo($art['created_at']) ?></span>
@@ -265,57 +238,57 @@ foreach (array_slice($articles, 0, 7) as $art) {
                                         <td>
                                             <?php 
                                             $tmplBadges = [
-                                                'standard' => ['bg' => 'badge-tmpl-standard', 'icon' => 'bi-layout-three-columns'],
-                                                'investigative' => ['bg' => 'badge-tmpl-investigative', 'icon' => 'bi-card-text'],
-                                                'opinion' => ['bg' => 'badge-tmpl-opinion', 'icon' => 'bi-person-badge']
+                                                'standard' => 'badge-tmpl-standard',
+                                                'investigative' => 'badge-tmpl-investigative',
+                                                'opinion' => 'badge-tmpl-opinion'
                                             ];
-                                            $badgeStyle = $tmplBadges[$art['template_type']] ?? ['bg' => 'badge-secondary', 'icon' => 'bi-file'];
+                                            $badgeClass = $tmplBadges[$art['template_type']] ?? 'badge-secondary';
                                             ?>
-                                            <span class="badge <?= $badgeStyle['bg'] ?> px-2.5 py-1 text-uppercase text-xs fw-bold d-inline-flex align-items-center gap-1">
-                                                <i class="bi <?= $badgeStyle['icon'] ?>"></i>
-                                                <?= e($art['template_type']) ?>
+                                            <span class="badge <?= $badgeClass ?> px-2.5 py-1 text-uppercase text-xs fw-bold">
+                                                <?= e(tmpl_name($art['template_type'])) ?>
                                             </span>
                                         </td>
                                         <td>
                                             <?php if ($art['status'] === 'published') { ?>
-                                                <span class="badge badge-status-published px-2.5 py-1 fw-semibold d-inline-flex align-items-center gap-1">
+                                                <span class="badge badge-status-published px-2.5 py-1 fw-semibold">
                                                     <span class="pulsing-dot bg-success me-1"></span>
                                                     <?= __('published') ?>
                                                 </span>
                                             <?php } elseif ($art['status'] === 'draft') { ?>
-                                                <span class="badge badge-status-draft px-2.5 py-1 fw-semibold d-inline-flex align-items-center gap-1">
-                                                    <i class="bi bi-hourglass-split"></i>
+                                                <span class="badge badge-status-draft px-2.5 py-1 fw-semibold">
                                                     <?= __('draft') ?>
                                                 </span>
                                             <?php } else { ?>
                                                 <span class="badge bg-dark text-white px-2.5 py-1 fw-semibold">
-                                                    <i class="bi bi-archive me-1"></i>
                                                     <?= __('archived') ?>
                                                 </span>
                                             <?php } ?>
                                         </td>
                                         <td class="text-muted small fw-semibold">
-                                            <i class="bi bi-eye text-primary me-1"></i> <?= number_format((int)$art['views_count']) ?>
+                                            <?= number_format((int)$art['views_count']) ?>
                                         </td>
                                         <td class="pe-4 text-end">
                                             <div class="btn-group btn-group-sm">
                                                 <a href="<?= url('public/article.php?slug=' . urlencode($art['slug'])) ?>" 
                                                    target="_blank" 
-                                                   class="btn btn-outline-secondary rounded-start-3" 
+                                                   class="btn btn-sm btn-outline-secondary px-2 py-0.5" 
+                                                   style="font-size:0.75rem;"
                                                    title="Preview Public Render">
-                                                    <i class="bi bi-box-arrow-up-right"></i>
+                                                    <?= __('view') ?>
                                                 </a>
                                                 <a href="<?= url('admin/article-edit.php?id=' . $art['id']) ?>" 
-                                                   class="btn btn-outline-primary" 
+                                                   class="btn btn-sm btn-outline-primary px-2 py-0.5" 
+                                                   style="font-size:0.75rem;"
                                                    title="Edit Post">
-                                                    <i class="bi bi-pencil-square"></i>
+                                                    <?= __('edit') ?>
                                                 </a>
                                                 <?php if ($currentUser['role'] === 'admin') { ?>
                                                     <a href="<?= url('admin/actions/delete-article.php?id=' . $art['id'] . '&csrf_token=' . e($csrfToken)) ?>" 
-                                                       class="btn btn-outline-danger rounded-end-3" 
+                                                       class="btn btn-sm btn-outline-danger px-2 py-0.5" 
+                                                       style="font-size:0.75rem;"
                                                        onclick="return confirm('Are you sure you want to delete this article?');" 
                                                        title="Delete Article">
-                                                        <i class="bi bi-trash"></i>
+                                                        <?= __('delete') ?>
                                                     </a>
                                                 <?php } ?>
                                             </div>
@@ -334,7 +307,7 @@ foreach (array_slice($articles, 0, 7) as $art) {
         <div class="col-lg-4">
             
             <!-- Live Subscriber Registrations Feed Widget -->
-            <div class="card border-0 shadow-sm rounded-4 bg-white mb-4 overflow-hidden">
+            <div class="card admin-card-clean mb-4 overflow-hidden">
                 <div class="chart-card-header d-flex align-items-center justify-content-between rounded-top-4">
                     <div>
                         <h6 class="fw-bold mb-0 text-dark editorial-title"><?= __('recent_subscribers') ?></h6>
@@ -344,7 +317,7 @@ foreach (array_slice($articles, 0, 7) as $art) {
                         <span class="pulsing-dot bg-danger me-1"></span> <?= __('live_feed') ?>
                     </span>
                 </div>
-                <div class="list-group list-group-flush">
+                <div class="list-group list-group-flush admin-scroll-list">
                     <?php if (empty($recentSubscribers)) { ?>
                         <div class="p-4 text-center text-muted small">
                             <i class="bi bi-inbox fs-2 text-muted d-block mb-1"></i>
@@ -376,9 +349,8 @@ foreach (array_slice($articles, 0, 7) as $art) {
             </div>
 
             <!-- Blueprint Architecture Info Box -->
-            <div class="card border-0 shadow-sm rounded-4 bg-gradient-header-primary text-white p-4">
-                <div class="d-flex align-items-center gap-2 mb-2 text-warning">
-                    <i class="bi bi-stars fs-4"></i>
+            <div class="card border-0 shadow-sm rounded-4 bg-brand-navy text-white p-4">
+                <div class="mb-2">
                     <h6 class="fw-bold mb-0 text-white editorial-title"><?= __('blueprint_engine_title') ?></h6>
                 </div>
                 <p class="small text-white opacity-75 mb-3" style="font-size: 0.85rem;">
@@ -386,15 +358,15 @@ foreach (array_slice($articles, 0, 7) as $art) {
                 </p>
                 <ul class="list-unstyled text-xs text-white opacity-75 mb-0 d-flex flex-column gap-2">
                     <li class="d-flex align-items-center gap-2">
-                        <i class="bi bi-check-circle-fill text-info"></i>
+                        <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#38bdf8;"></span>
                         <span><strong class="text-white"><?= __('tmpl_standard_name') ?>:</strong> <?= __('blueprint_standard_desc') ?></span>
                     </li>
                     <li class="d-flex align-items-center gap-2">
-                        <i class="bi bi-check-circle-fill text-danger"></i>
+                        <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#f87171;"></span>
                         <span><strong class="text-white"><?= __('tmpl_investigative_name') ?>:</strong> <?= __('blueprint_investigative_desc') ?></span>
                     </li>
                     <li class="d-flex align-items-center gap-2">
-                        <i class="bi bi-check-circle-fill text-warning"></i>
+                        <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#fbbf24;"></span>
                         <span><strong class="text-white"><?= __('tmpl_opinion_name') ?>:</strong> <?= __('blueprint_opinion_desc') ?></span>
                     </li>
                 </ul>

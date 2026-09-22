@@ -4,6 +4,6 @@
  * news-platform / public / admin / login.php
  */
 
-declare(strict_types=1);
 
 require_once __DIR__ . '/../../admin/login.php';
+?>

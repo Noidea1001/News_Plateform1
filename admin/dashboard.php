@@ -4,7 +4,6 @@
  * news-platform / admin / dashboard.php
  */
 
-declare(strict_types=1);
 
 require_once __DIR__ . '/../src/Core/helpers.php';
 require_once __DIR__ . '/../src/Core/Database.php';
@@ -22,3 +21,4 @@ try {
     echo "<h1>500 Dashboard Error</h1>";
     echo "<p>" . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</p>";
 }
+?>

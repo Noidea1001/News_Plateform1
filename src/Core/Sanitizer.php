@@ -260,7 +260,7 @@ class Sanitizer
 
         $urls = is_array($galleryImages)
             ? array_values(array_filter(array_map('trim', $galleryImages)))
-            : array_values(array_filter(array_map('trim', explode("\n", (string)$galleryImages))));
+            : array_values(array_filter(array_map('trim', explode("\n", (string) $galleryImages))));
 
         if (empty($urls) || $content === null || trim($content) === '') {
             return $urls;
@@ -270,7 +270,7 @@ class Sanitizer
         $usedIndices = [];
         if (preg_match_all('/\[(?:image|img)[:\-]([0-9]+)(?::[^\]]+)?\]/i', $content, $matches)) {
             foreach ($matches[1] as $idxStr) {
-                $usedIndices[(int)$idxStr] = true;
+                $usedIndices[(int) $idxStr] = true;
             }
         }
 
@@ -301,4 +301,3 @@ class Sanitizer
     }
 }
 ?>
-
