@@ -46,7 +46,7 @@ class Database
             // Auto-initialize schema and sync default admin credentials
             $this->autoInitializeSchema();
         } catch (PDOException $e) {
-            throw new Exception("Database Connection Error: " . $e->getMessage(), (int)$e->getCode());
+            throw new Exception("Database Connection Error: " . $e->getMessage(), (int) $e->getCode());
         }
     }
 

@@ -1,7 +1,7 @@
-FROM php:8.3-apache
+FROM php:8.3-apache-bookworm
 
-# Update base OS packages and install system dependencies required for GD, ZIP, and MySQL extensions
-RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+# Update base OS security patches and install required dependencies
+RUN apt-get update && apt-get dist-upgrade -y && apt-get install -y --no-install-recommends \
     libpng-dev \
     libjpeg62-turbo-dev \
     libfreetype6-dev \

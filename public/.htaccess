@@ -1,13 +1,5 @@
-# NewsPlatform CMS - Public Folder Asset Caching & Upload Shielding
+# NewsPlatform CMS - Public Folder Asset Caching Configuration
 
-# Disable PHP execution inside uploads folder for maximum security
-<Directory "/var/www/html/public/uploads">
-    <FilesMatch "\.(php|php5|php7|php8|phtml|pl|py|jsp|asp|sh|cgi)$">
-        Require all denied
-    </FilesMatch>
-</Directory>
-
-# Asset Caching Headers
 <IfModule mod_headers.c>
     <FilesMatch "\.(css|js|png|jpg|jpeg|gif|webp|svg|ico|ttf|woff|woff2)$">
         Header set Cache-Control "max-age=2592000, public"

@@ -211,29 +211,30 @@ if (!function_exists('article_title')) {
      */
     function article_title(?string $title): string
     {
-        if (empty($title)) return '';
+        if (empty($title))
+            return '';
 
         $currentLang = $_SESSION['lang'] ?? 'en';
         $title = trim($title);
 
         static $kmToEnTitle = [
-            'ការអភិវឌ្ឍប្រព័ន្ធ AI និងសេដ្ឋកិច្ចឌីជីថលនៅកម្ពុជាឆ្នាំ២០២៦' => 'Cambodia Digital Economy and AI Transformation Roadmap 2026',
-            'ការស៊ើបអង្កេត៖ ភាពធន់នៃបណ្តាញខ្សែកាបបាតសមុទ្រ និងសន្តិសុខអ៊ីនធឺណិតតំបន់' => 'Investigation: Subsea Fiber Optic Resilience and Regional Cyber Infrastructure',
-            'បទវិចារណកថា៖ សុចរិតភាពសារព័ត៌មាន និងការប្រយុទ្ធប្រឆាំងព័ត៌មានមិនពិត' => 'Editorial: Journalistic Integrity and the Strategic Fight Against Misinformation',
-            'កំណើនសេដ្ឋកិច្ចកម្ពុជាឆ្នាំ២០២៦៖ ការកើនឡើងនៃការនាំចេញ និងការវិនិយោគបរទេស' => 'Cambodia Economic Growth 2026: Export Surge & Foreign Direct Investment',
-            'គម្រោងថាមពលព្រះអាទិត្យ និងថាមពលបៃតងនៅតំបន់ទន្លេមេគង្គ' => 'Mekong Renewable Solar Energy Projects and Clean Grid Infrastructure',
-            'កិច្ចប្រជុំកំពូលអាស៊ាន៖ ការពង្រឹងកិច្ចសហប្រតិបត្តិការសន្តិសុខ និងពាណិជ្ជកម្មសេរី' => 'ASEAN Summit: Strategic Regional Security & RCEP Free Trade Expansion',
-            'ប្រព័ន្ធទូទាត់បាគង (Bakong FinTech) បន្តពង្រីកការភ្ជាប់ទំនាក់ទំនងហិរញ្ញវត្ថុអន្តរជាតិ' => 'Bakong FinTech System Expands Regional Cross-Border Payment Integration',
-            'ការគាំទ្រអាហារូបករណ៍ STEM និងការបណ្តុះបណ្តាលជំនាញបច្ចេកវិទ្យាដល់យុវជន' => 'National STEM Scholarships and Advanced Tech Skills for Cambodian Youth',
-            'ការអភិរក្សបេតិកភណ្ឌប្រាសាទអង្គរ និងការអភិវឌ្ឍទេសចរណ៍វប្បធម៌ជានិរន្តរភាព' => 'Angkor Wat Heritage Preservation and Sustainable Cultural Tourism Development',
-            'ការប្រែក្លាយប្រព័ន្ធសុខាភិបាលឌីជីថល និងសេវាថែទាំសុខភាពទំនើប' => 'Digital Healthcare Transformation and Modern Telemedicine Infrastructure',
-            'គម្រោងពង្រីកកំពង់ផែស្វយ័តព្រះសីហនុ និងការសម្រួលពាណិជ្ជកម្មអន្តរជាតិ' => 'Sihanoukville Autonomous Port Deep-Water Expansion for Global Shipping',
-            'បទវិចារណកថា៖ ស្ថាបត្យកម្មទីក្រុងឆ្លាតវៃ និងការរស់នៅប្រកបដោយនិរន្តរភាព' => 'Opinion: Smart City Architecture, Electric Transit & Sustainable Living',
+        'ការអភិវឌ្ឍប្រព័ន្ធ AI និងសេដ្ឋកិច្ចឌីជីថលនៅកម្ពុជាឆ្នាំ២០២៦' => 'Cambodia Digital Economy and AI Transformation Roadmap 2026',
+        'ការស៊ើបអង្កេត៖ ភាពធន់នៃបណ្តាញខ្សែកាបបាតសមុទ្រ និងសន្តិសុខអ៊ីនធឺណិតតំបន់' => 'Investigation: Subsea Fiber Optic Resilience and Regional Cyber Infrastructure',
+        'បទវិចារណកថា៖ សុចរិតភាពសារព័ត៌មាន និងការប្រយុទ្ធប្រឆាំងព័ត៌មានមិនពិត' => 'Editorial: Journalistic Integrity and the Strategic Fight Against Misinformation',
+        'កំណើនសេដ្ឋកិច្ចកម្ពុជាឆ្នាំ២០២៦៖ ការកើនឡើងនៃការនាំចេញ និងការវិនិយោគបរទេស' => 'Cambodia Economic Growth 2026: Export Surge & Foreign Direct Investment',
+        'គម្រោងថាមពលព្រះអាទិត្យ និងថាមពលបៃតងនៅតំបន់ទន្លេមេគង្គ' => 'Mekong Renewable Solar Energy Projects and Clean Grid Infrastructure',
+        'កិច្ចប្រជុំកំពូលអាស៊ាន៖ ការពង្រឹងកិច្ចសហប្រតិបត្តិការសន្តិសុខ និងពាណិជ្ជកម្មសេរី' => 'ASEAN Summit: Strategic Regional Security & RCEP Free Trade Expansion',
+        'ប្រព័ន្ធទូទាត់បាគង (Bakong FinTech) បន្តពង្រីកការភ្ជាប់ទំនាក់ទំនងហិរញ្ញវត្ថុអន្តរជាតិ' => 'Bakong FinTech System Expands Regional Cross-Border Payment Integration',
+        'ការគាំទ្រអាហារូបករណ៍ STEM និងការបណ្តុះបណ្តាលជំនាញបច្ចេកវិទ្យាដល់យុវជន' => 'National STEM Scholarships and Advanced Tech Skills for Cambodian Youth',
+        'ការអភិរក្សបេតិកភណ្ឌប្រាសាទអង្គរ និងការអភិវឌ្ឍទេសចរណ៍វប្បធម៌ជានិរន្តរភាព' => 'Angkor Wat Heritage Preservation and Sustainable Cultural Tourism Development',
+        'ការប្រែក្លាយប្រព័ន្ធសុខាភិបាលឌីជីថល និងសេវាថែទាំសុខភាពទំនើប' => 'Digital Healthcare Transformation and Modern Telemedicine Infrastructure',
+        'គម្រោងពង្រីកកំពង់ផែស្វយ័តព្រះសីហនុ និងការសម្រួលពាណិជ្ជកម្មអន្តរជាតិ' => 'Sihanoukville Autonomous Port Deep-Water Expansion for Global Shipping',
+        'បទវិចារណកថា៖ ស្ថាបត្យកម្មទីក្រុងឆ្លាតវៃ និងការរស់នៅប្រកបដោយនិរន្តរភាព' => 'Opinion: Smart City Architecture, Electric Transit & Sustainable Living',
 
-            // schema.sql titles
-            'ប្រព័ន្ធ AI ស្វ័យតជំនាន់ថ្មីផ្លាស់ប្តូរស្ថាបត្យកម្មសូហ្វវែរសហគ្រាស' => 'Next-Generation Autonomous AI Systems Reshape Enterprise Architecture',
-            'ការស៊ើបអង្កេតជម្រៅលើបណ្តាញខ្សែកាបបាតសមុទ្រពិភពលោក' => 'Silent Subsea Cable Revolution: Deep-Dive into Global Fiber Optics',
-            'ហេតុអ្វីបានជាវិចារណញាណរបស់មនុស្សនៅតែមានសារៈសំខាន់ក្នុងយុគសម័យស្វ័យប្រវត្តិកម្ម' => 'Why Human Intuition Remains Imperative in an Automated Era',
+        // schema.sql titles
+        'ប្រព័ន្ធ AI ស្វ័យតជំនាន់ថ្មីផ្លាស់ប្តូរស្ថាបត្យកម្មសូហ្វវែរសហគ្រាស' => 'Next-Generation Autonomous AI Systems Reshape Enterprise Architecture',
+        'ការស៊ើបអង្កេតជម្រៅលើបណ្តាញខ្សែកាបបាតសមុទ្រពិភពលោក' => 'Silent Subsea Cable Revolution: Deep-Dive into Global Fiber Optics',
+        'ហេតុអ្វីបានជាវិចារណញាណរបស់មនុស្សនៅតែមានសារៈសំខាន់ក្នុងយុគសម័យស្វ័យប្រវត្តិកម្ម' => 'Why Human Intuition Remains Imperative in an Automated Era',
         ];
 
         static $enToKmTitle = null;
@@ -241,7 +242,7 @@ if (!function_exists('article_title')) {
             $enToKmTitle = array_flip($kmToEnTitle);
         }
 
-        $hasKhmer = (bool)preg_match('/[\x{1780}-\x{17FF}]/u', $title);
+        $hasKhmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $title);
 
         if ($currentLang === 'kh' || $currentLang === 'km') {
             if ($hasKhmer) {
@@ -258,6 +259,3 @@ if (!function_exists('article_title')) {
     }
 }
 ?>
-
-
-

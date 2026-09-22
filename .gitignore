@@ -1,8 +1,8 @@
 # Environment & Secret Files (NEVER push secrets/passwords)
 .env
-.env.example
 .env.local
 .env.production
+.env.example
 config/database.local.php
 
 # User Uploaded Media (Ignore uploaded files, keep directory structure)
