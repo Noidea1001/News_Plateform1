@@ -1,0 +1,208 @@
+<?php
+/**
+ * CMS Admin Header Layout — CNA-Style Professional
+ * news-platform / templates / layouts / header-admin.php
+ */
+require_once __DIR__ . '/../../languages/common.php';
+$currentLang = $_SESSION['lang'] ?? 'en';
+?>
+<!DOCTYPE html>
+<html lang="<?= e($currentLang) ?>">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?= e($pageTitle ?? __('admin_portal') . ' | ' . __('editorial_overview')) ?></title>
+
+    <!-- Bootstrap 5.3 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..900;1,14..32,300..900&family=Kantumruy+Pro:ital,wght@0,400..700;1,400..700&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="<?= url('public/assets/css/style.css') ?>">
+
+    <style>
+        body  { background-color: #f3f4f6; font-family: 'Inter', 'Kantumruy Pro', sans-serif; }
+
+        /* CNA Admin Topbar — thin navy line like CNA utility bar */
+        .admin-topbar {
+            background: #0f172a;
+            color: rgba(255,255,255,0.60);
+            font-size: 0.72rem;
+            font-weight: 600;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            min-height: 30px;
+        }
+
+        /* Make page body use full height */
+        .admin-content-area {
+            flex: 1;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body class="d-flex flex-column min-vh-100">
+
+<!-- ── CNA Admin Topbar ────────────────────────────────────────────────── -->
+<div class="admin-topbar d-flex align-items-center px-3 px-md-4 py-1">
+    <div class="d-flex align-items-center gap-3 flex-grow-1">
+        <span style="color:rgba(255,255,255,0.40);"><?= \App\Core\TemplateEngine::formatDate(date('Y-m-d H:i:s'), 'l, d F Y') ?></span>
+        <span class="opacity-25">|</span>
+        <span class="d-flex align-items-center gap-1">
+            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#c8102e;"></span>
+            CMS Editorial Platform
+        </span>
+    </div>
+    <div>
+        <a href="<?= url('public/index.php') ?>" target="_blank"
+           class="d-inline-flex align-items-center gap-1 text-decoration-none"
+           style="color:rgba(255,255,255,0.55); font-size:0.72rem; font-weight:600;">
+            <span class="d-none d-sm-inline"><?= __('live_public_site') ?></span> &rarr;
+        </a>
+    </div>
+</div>
+
+<!-- ── CNA Admin Navbar — white bar ────────────────────────────────────── -->
+<nav class="navbar navbar-expand-xl admin-navbar py-0" style="min-height:56px; position:sticky; top:0; z-index:1020; border-bottom: 3px solid #c8102e;">
+    <div class="container-fluid px-3 px-md-4 h-100">
+
+        <!-- Brand -->
+        <a class="navbar-brand d-flex align-items-center gap-2 py-3 text-decoration-none" href="<?= url('admin/dashboard.php') ?>">
+            <span class="brand-logo-badge" style="width:42px; height:36px; font-size:0.95rem; border-radius:2px; font-weight:900;">CMA</span>
+            <span class="d-none d-sm-inline fw-bold" style="color:#0f172a; font-size:1rem; letter-spacing:-0.02em;">
+                <?= __('admin_portal') ?>
+            </span>
+        </a>
+
+        <!-- Divider -->
+        <div class="d-none d-xl-block mx-3" style="width:1px; height:28px; background:#e5e7eb; flex-shrink:0;"></div>
+
+        <!-- Mobile Toggle -->
+        <button class="navbar-toggler border-0 shadow-none p-1 ms-auto me-2" type="button"
+                data-bs-toggle="collapse" data-bs-target="#adminNavbar"
+                aria-controls="adminNavbar" aria-expanded="false">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="adminNavbar">
+            <!-- Nav links — CNA style: red bottom border on active -->
+            <ul class="navbar-nav me-auto mb-0 align-items-xl-stretch">
+                <li class="nav-item">
+                    <a class="nav-link py-0 px-3 d-flex align-items-center <?= str_contains($_SERVER['PHP_SELF'], 'dashboard') ? 'active' : '' ?>"
+                       style="height:56px;"
+                       href="<?= url('admin/dashboard.php') ?>">
+                        <span><?= __('editorial_overview') ?></span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link py-0 px-3 d-flex align-items-center <?= str_contains($_SERVER['PHP_SELF'], 'article-create') ? 'active' : '' ?>"
+                       style="height:56px;"
+                       href="<?= url('admin/article-create.php') ?>">
+                        <span><?= __('draft_new_article') ?></span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link py-0 px-3 d-flex align-items-center dropdown-toggle <?= (str_contains($_SERVER['PHP_SELF'], 'categories') || str_contains($_SERVER['PHP_SELF'], 'users') || str_contains($_SERVER['PHP_SELF'], 'subscribers')) ? 'active' : '' ?>"
+                       style="height:56px;"
+                       href="#" id="adminMgmtDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span><?= __('management') ?></span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="adminMgmtDropdown">
+                        <li>
+                            <a class="dropdown-item <?= str_contains($_SERVER['PHP_SELF'], 'categories') ? 'active' : '' ?>"
+                               href="<?= url('admin/categories.php') ?>">
+                                <?= __('categories') ?>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item <?= str_contains($_SERVER['PHP_SELF'], 'users') ? 'active' : '' ?>"
+                               href="<?= url('admin/users.php') ?>">
+                                <?= __('staff_users') ?>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item <?= str_contains($_SERVER['PHP_SELF'], 'subscribers') ? 'active' : '' ?>"
+                               href="<?= url('admin/subscribers.php') ?>">
+                                <?= __('subscribers') ?>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+            <!-- Right controls -->
+            <div class="d-flex flex-wrap align-items-center gap-2 my-2 my-xl-0">
+
+                <!-- Language -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle"
+                            style="font-size:0.78rem; border-radius:2px; padding:0.35rem 0.75rem;"
+                            type="button" data-bs-toggle="dropdown">
+                        <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'KH' : 'EN' ?>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end" style="min-width:140px;">
+                        <li>
+                            <a class="dropdown-item <?= $currentLang === 'en' ? 'active' : '' ?>" href="?lang=en">
+                                English
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'active' : '' ?>" href="?lang=kh">
+                                ភាសាខ្មែរ
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- New Article CTA -->
+                <a href="<?= url('admin/article-create.php') ?>"
+                   class="btn btn-danger btn-sm d-inline-flex align-items-center gap-1 fw-bold text-nowrap"
+                   style="font-size:0.8rem; border-radius:2px; padding:0.4rem 0.85rem; text-transform:uppercase; letter-spacing:0.04em;">
+                    <span>+ <?= __('draft_new_article') ?></span>
+                </a>
+
+                <!-- User menu -->
+                <?php if (isset($currentUser)) { ?>
+                    <div class="dropdown">
+                        <button class="btn btn-light btn-sm dropdown-toggle d-flex align-items-center gap-2 fw-semibold text-nowrap"
+                                style="font-size:0.8rem; border:1px solid #e5e7eb; border-radius:2px; padding:0.4rem 0.75rem; color:#0f172a;"
+                                type="button" data-bs-toggle="dropdown">
+                            <span class="d-flex align-items-center justify-content-center rounded fw-bold text-white"
+                                  style="width:22px;height:22px;font-size:0.68rem;background:#c8102e;border-radius:2px;flex-shrink:0;">
+                                <?= strtoupper(substr($currentUser['username'], 0, 1)) ?>
+                            </span>
+                            <span><?= e($currentUser['username']) ?></span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end" style="min-width:200px;">
+                            <li>
+                                <div class="px-3 py-2 border-bottom" style="font-size:0.78rem;">
+                                    <div class="fw-semibold text-truncate" style="color:#0f172a; max-width:170px;"><?= e($currentUser['email']) ?></div>
+                                    <span class="badge mt-1 text-uppercase"
+                                          style="background:rgba(200,16,46,0.08);color:#c8102e;border:1px solid rgba(200,16,46,0.2);font-size:0.62rem;border-radius:2px;">
+                                        <?= e($currentUser['role']) ?>
+                                    </span>
+                                </div>
+                            </li>
+                            <li>
+                                <a class="dropdown-item"
+                                   style="color:#c8102e; font-size:0.85rem; font-weight:600; padding:0.6rem 0.9rem;"
+                                   href="<?= url('admin/logout.php') ?>">
+                                    <?= __('logout') ?>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- CNA-style red border bottom already on the nav — the 3px solid red line is the signature -->
+
+<main class="flex-grow-1">
