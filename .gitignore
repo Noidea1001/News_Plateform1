@@ -1,0 +1,29 @@
+# Environment & Secret Files (NEVER push secrets/passwords)
+.env
+.env.local
+.env.production
+config/database.local.php
+
+# User Uploaded Media (Ignore uploaded files, keep directory structure)
+public/uploads/*
+!public/uploads/.gitkeep
+
+# Application Logs & Cache Files
+*.log
+error_log
+logs/
+tmp/
+cache/
+
+# OS & IDE Junk Files
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Dependency Directories
+vendor/
+node_modules/
