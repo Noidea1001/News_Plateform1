@@ -26,7 +26,7 @@ class Auth
         $cookieParams = [
             'lifetime' => 0,
             'path' => '/',
-            'domain' => '',
+            'domain' => 'news-plateform1.onrender.com',   // Add this domain
             'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
             'httponly' => true,
             'samesite' => 'Lax'

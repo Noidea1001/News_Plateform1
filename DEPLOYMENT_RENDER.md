@@ -119,13 +119,13 @@ To ensure uploaded article photos and media inside `/public/uploads/` are never 
 Once deployment is complete (showing a green `Live` status):
 
 1. **Visit your live URL**:
-   `https://news-platform-cms.onrender.com/public/`  
-   *(or `https://news-platform-cms.onrender.com/`)*
+   `https://news-plateform1.onrender.com/public/`  
+   *(or `https://news-plateform1.onrender.com/`)*
    
    > ℹ️ *The first visit automatically initializes all MySQL tables (`articles`, `users`, `categories`, `subscribers`) and seeds 12 full Khmer news posts!*
 
 2. **Access Admin Editorial Control Panel**:
-   `https://news-platform-cms.onrender.com/admin/login.php`
+   `https://news-plateform1.onrender.com/admin/login.php`
 
 3. **Login with Default Credentials**:
    - **Username**: `admin`
