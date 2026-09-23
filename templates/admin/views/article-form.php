@@ -35,13 +35,7 @@ $formAction = url('admin/actions/save-article.php');
         </div>
     </div>
 
-    <!-- Error Alert Display -->
-    <?php if (!empty($_GET['error'])) { ?>
-        <div class="alert alert-danger alert-dismissible fade show shadow-sm mb-4" role="alert">
-            <?= e($_GET['error']) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php } ?>
+    <!-- Top Navigation Bar -->
 
     <form id="articleForm" action="<?= $formAction ?>" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">

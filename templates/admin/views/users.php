@@ -7,20 +7,6 @@
 
 <div class="container-fluid px-4 py-4">
 
-    <!-- Flash Messages -->
-    <?php if (isset($_GET['msg'])) { ?>
-        <div class="alert alert-success alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
-            <?= e($_GET['msg']) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php } ?>
-    <?php if (isset($_GET['error'])) { ?>
-        <div class="alert alert-danger alert-dismissible fade show shadow-sm border-0 mb-4" role="alert">
-            <?= e($_GET['error']) ?>
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-        </div>
-    <?php } ?>
-
     <div class="row g-4">
         <!-- Add / Edit Staff Form -->
         <div class="col-lg-4">

@@ -228,32 +228,35 @@ $currentLang = $_SESSION['lang'] ?? 'en';
 
                     <!-- User menu -->
                     <?php if (isset($currentUser)) { ?>
-                        <div class="dropdown">
+                        <div class="dropdown position-relative">
                             <button
                                 class="btn btn-light btn-sm dropdown-toggle d-flex align-items-center gap-2 fw-semibold text-nowrap"
-                                style="font-size:0.8rem; border:1px solid #e5e7eb; border-radius:2px; padding:0.4rem 0.75rem; color:#0f172a;"
-                                type="button" data-bs-toggle="dropdown">
+                                style="font-size:0.8rem; border:1px solid #cbd5e1; border-radius:4px; padding:0.4rem 0.75rem; color:#0f172a; background:#ffffff;"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <span class="d-flex align-items-center justify-content-center rounded fw-bold text-white"
                                     style="width:22px;height:22px;font-size:0.68rem;background:#c8102e;border-radius:2px;flex-shrink:0;">
                                     <?= strtoupper(substr($currentUser['username'], 0, 1)) ?>
                                 </span>
                                 <span><?= e($currentUser['username']) ?></span>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end" style="min-width:200px;">
+                            <ul class="dropdown-menu dropdown-menu-end shadow-lg border mt-1" 
+                                style="min-width:220px; max-width:300px; right:0; left:auto; border-radius:6px; z-index:3000 !important; box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;">
                                 <li>
-                                    <div class="px-3 py-2 border-bottom" style="font-size:0.78rem;">
-                                        <div class="fw-semibold text-truncate" style="color:#0f172a; max-width:170px;">
-                                            <?= e($currentUser['email']) ?></div>
-                                        <span class="badge mt-1 text-uppercase"
-                                            style="background:rgba(200,16,46,0.08);color:#c8102e;border:1px solid rgba(200,16,46,0.2);font-size:0.62rem;border-radius:2px;">
+                                    <div class="px-3 py-2.5 border-bottom" style="font-size:0.8rem; background:#f8fafc;">
+                                        <div class="fw-bold text-dark mb-1" style="word-break: break-all; line-height: 1.35;">
+                                            <?= e($currentUser['email']) ?>
+                                        </div>
+                                        <span class="badge text-uppercase"
+                                            style="background:rgba(200,16,46,0.10);color:#c8102e;border:1px solid rgba(200,16,46,0.25);font-size:0.65rem;border-radius:3px;padding:0.3em 0.6em;">
                                             <?= e($currentUser['role']) ?>
                                         </span>
                                     </div>
                                 </li>
                                 <li>
-                                    <a class="dropdown-item"
-                                        style="color:#c8102e; font-size:0.85rem; font-weight:600; padding:0.6rem 0.9rem;"
+                                    <a class="dropdown-item py-2.5 px-3 fw-semibold text-danger d-flex align-items-center gap-2"
+                                        style="font-size:0.85rem;"
                                         href="<?= url('admin/logout.php') ?>">
+                                        <i class="bi bi-box-arrow-right"></i>
                                         <?= __('logout') ?>
                                     </a>
                                 </li>
