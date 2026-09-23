@@ -109,7 +109,31 @@
             <?php
             /* ── Pick the first article as the big LEAD HERO ── */
             $lead = $articles[0];
-            $feedArticles = array_slice($articles, 1);   /* rest go to the vertical feed list */
+            $secondaryArticles = [];
+            if (count($articles) >= 3 && $currentPage === 1 && empty($searchQuery)) {
+                $secondaryArticles = array_slice($articles, 1, 2);
+                $feedArticles = array_slice($articles, 3);
+            } else {
+                $feedArticles = array_slice($articles, 1);
+            }
+
+            $leadData = htmlspecialchars(json_encode([
+                'id' => $lead['id'],
+                'title' => article_title($lead['title']),
+                'title_kh' => article_title($lead['title'], 'kh'),
+                'title_en' => article_title($lead['title'], 'en'),
+                'summary' => $lead['summary'],
+                'category' => cat_name($lead['category_name']),
+                'category_kh' => cat_name($lead['category_name'], 'kh'),
+                'category_en' => cat_name($lead['category_name'], 'en'),
+                'author' => $lead['author_name'],
+                'date' => \App\Core\TemplateEngine::formatDate($lead['published_at']),
+                'time_ago' => \App\Core\TemplateEngine::timeAgo($lead['published_at']),
+                'reading_time' => $lead['reading_time'] ?? '3 min read',
+                'views' => number_format((int)$lead['views_count']),
+                'image' => $lead['featured_image'] ?? '',
+                'url' => url('article.php?slug=' . urlencode($lead['slug']))
+            ]), ENT_QUOTES, 'UTF-8');
             ?>
 
             <!-- ==================================================
@@ -158,22 +182,88 @@
 
                     <p class="lead-article-summary"><?= e($lead['summary']) ?></p>
 
-                    <div class="lead-article-footer">
+                    <div class="lead-article-footer d-flex align-items-center justify-content-between w-100">
                         <a href="<?= url('article.php?slug=' . urlencode($lead['slug'])) ?>" class="lead-read-link">
                             <?= __('read_full_article') ?> <i class="bi bi-chevron-right"></i>
                         </a>
-                        <div class="d-flex align-items-center gap-3">
-                            <span class="text-xs text-muted">
-                                <i class="bi bi-clock me-1"></i><?= e($lead['reading_time'] ?? '3 min read') ?>
-                            </span>
-                            <span class="text-xs text-muted">
-                                <i class="bi bi-eye me-1"
-                                    style="color:#c8102e;"></i><?= number_format((int) $lead['views_count']) ?>
-                            </span>
+                        <div class="d-flex align-items-center gap-2 ms-auto">
+                            <button type="button" class="btn btn-quick-view btn-sm qv-trigger-btn" data-article='<?= $leadData ?>'>
+                                <i class="bi bi-eye me-1"></i><?= __('quick_view') ?? 'Quick View' ?>
+                            </button>
+                            <button type="button" class="btn btn-bookmark btn-sm bookmark-toggle-btn" data-id="<?= $lead['id'] ?>" data-article='<?= $leadData ?>'>
+                                <i class="bi bi-bookmark"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
+
+            <!-- ==================================================
+                 SECONDARY FEATURED GRID (Top 2 Highlight Stories)
+            ================================================== -->
+            <?php if (!empty($secondaryArticles)) { ?>
+                <div class="secondary-featured-grid">
+                    <?php foreach ($secondaryArticles as $sItem) { ?>
+                        <?php
+                        $sData = htmlspecialchars(json_encode([
+                            'id' => $sItem['id'],
+                            'title' => article_title($sItem['title']),
+                            'title_kh' => article_title($sItem['title'], 'kh'),
+                            'title_en' => article_title($sItem['title'], 'en'),
+                            'summary' => $sItem['summary'],
+                            'category' => cat_name($sItem['category_name']),
+                            'category_kh' => cat_name($sItem['category_name'], 'kh'),
+                            'category_en' => cat_name($sItem['category_name'], 'en'),
+                            'author' => $sItem['author_name'],
+                            'date' => \App\Core\TemplateEngine::formatDate($sItem['published_at']),
+                            'time_ago' => \App\Core\TemplateEngine::timeAgo($sItem['published_at']),
+                            'reading_time' => $sItem['reading_time'] ?? '3 min read',
+                            'views' => number_format((int)$sItem['views_count']),
+                            'image' => $sItem['featured_image'] ?? '',
+                            'url' => url('article.php?slug=' . urlencode($sItem['slug']))
+                        ]), ENT_QUOTES, 'UTF-8');
+                        ?>
+                        <div class="secondary-grid-card">
+                            <div class="secondary-grid-thumb">
+                                <?php if (!empty($sItem['featured_image'])) { ?>
+                                    <img src="<?= e($sItem['featured_image']) ?>" alt="<?= e(article_title($sItem['title'])) ?>" loading="lazy">
+                                <?php } else { ?>
+                                    <div class="cna-feed-thumb-empty">NP</div>
+                                <?php } ?>
+                                <span class="lead-badge-pill bg-dark-pill position-absolute" style="top:0.6rem; left:0.6rem;">
+                                    <?= e(cat_name($sItem['category_name'])) ?>
+                                </span>
+                            </div>
+                            <div class="secondary-grid-body">
+                                <div class="d-flex align-items-center gap-2 mb-2 text-xs text-muted">
+                                    <span><?= e($sItem['author_name']) ?></span>
+                                    <span>&bull;</span>
+                                    <span><?= \App\Core\TemplateEngine::timeAgo($sItem['published_at']) ?></span>
+                                </div>
+                                <h3 class="secondary-grid-title">
+                                    <a href="<?= url('article.php?slug=' . urlencode($sItem['slug'])) ?>">
+                                        <?= e(article_title($sItem['title'])) ?>
+                                    </a>
+                                </h3>
+                                <p class="secondary-grid-summary"><?= e($sItem['summary']) ?></p>
+                                <div class="d-flex align-items-center justify-content-between mt-auto pt-2 border-top">
+                                    <span class="text-xs text-muted">
+                                        <i class="bi bi-clock me-1"></i><?= e($sItem['reading_time'] ?? '3 min read') ?>
+                                    </span>
+                                    <div class="d-flex align-items-center gap-1.5">
+                                        <button type="button" class="btn btn-quick-view btn-sm qv-trigger-btn" data-article='<?= $sData ?>'>
+                                            <i class="bi bi-eye"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-bookmark btn-sm bookmark-toggle-btn" data-id="<?= $sItem['id'] ?>" data-article='<?= $sData ?>'>
+                                            <i class="bi bi-bookmark"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    <?php } ?>
+                </div>
+            <?php } ?>
 
             <!-- ==================================================
                  2-COLUMN: FEED LIST (left 8) + SIDEBAR (right 4)
@@ -202,56 +292,83 @@
                         <?php } else { ?>
                             <?php foreach ($feedArticles as $idx => $item) { ?>
                                 <?php
-                                /* Absolute number across pages: 1-based */
                                 $absNum = $idx + 1 + (($currentPage - 1) * $perPage);
                                 $numLabel = km_num(str_pad((string) $absNum, 2, '0', STR_PAD_LEFT));
+
+                                $itemData = htmlspecialchars(json_encode([
+                                    'id' => $item['id'],
+                                    'title' => article_title($item['title']),
+                                    'title_kh' => article_title($item['title'], 'kh'),
+                                    'title_en' => article_title($item['title'], 'en'),
+                                    'summary' => $item['summary'],
+                                    'category' => cat_name($item['category_name']),
+                                    'category_kh' => cat_name($item['category_name'], 'kh'),
+                                    'category_en' => cat_name($item['category_name'], 'en'),
+                                    'author' => $item['author_name'],
+                                    'date' => \App\Core\TemplateEngine::formatDate($item['published_at']),
+                                    'time_ago' => \App\Core\TemplateEngine::timeAgo($item['published_at']),
+                                    'reading_time' => $item['reading_time'] ?? '3 min read',
+                                    'views' => number_format((int)$item['views_count']),
+                                    'image' => $item['featured_image'] ?? '',
+                                    'url' => url('article.php?slug=' . urlencode($item['slug']))
+                                ]), ENT_QUOTES, 'UTF-8');
                                 ?>
 
-                                <a href="<?= url('article.php?slug=' . urlencode($item['slug'])) ?>" class="cna-feed-row"
-                                    style="text-decoration:none; color:inherit;">
+                                <div class="cna-feed-row position-relative">
 
                                     <!-- Red number badge — consistent for ALL items -->
                                     <div class="cna-feed-num"><?= $numLabel ?></div>
 
                                     <!-- Thumbnail -->
                                     <div class="cna-feed-thumb">
-                                        <?php if (!empty($item['featured_image'])) { ?>
-                                            <img src="<?= e($item['featured_image']) ?>" alt="<?= e(article_title($item['title'])) ?>" loading="lazy">
-                                        <?php } else { ?>
-                                            <div class="cna-feed-thumb-empty">
-                                                NP
-                                            </div>
-                                        <?php } ?>
+                                        <a href="<?= url('article.php?slug=' . urlencode($item['slug'])) ?>">
+                                            <?php if (!empty($item['featured_image'])) { ?>
+                                                <img src="<?= e($item['featured_image']) ?>" alt="<?= e(article_title($item['title'])) ?>" loading="lazy">
+                                            <?php } else { ?>
+                                                <div class="cna-feed-thumb-empty">NP</div>
+                                            <?php } ?>
+                                        </a>
                                     </div>
 
                                     <!-- Text content -->
                                     <div class="cna-feed-body">
 
-                                        <!-- Category pill + time (no icons) -->
+                                        <!-- Category pill + time -->
                                         <div class="cna-feed-meta">
                                             <span class="cna-feed-cat"><?= e(cat_name($item['category_name'])) ?></span>
                                             <span class="cna-feed-dot"></span>
-                                            <span
-                                                class="cna-feed-time"><?= \App\Core\TemplateEngine::timeAgo($item['published_at']) ?></span>
+                                            <span class="cna-feed-time"><?= \App\Core\TemplateEngine::timeAgo($item['published_at']) ?></span>
                                         </div>
 
                                         <!-- Title -->
-                                        <h4 class="cna-feed-title"><?= e(article_title($item['title'])) ?></h4>
+                                        <h4 class="cna-feed-title">
+                                            <a href="<?= url('article.php?slug=' . urlencode($item['slug'])) ?>" class="text-decoration-none color-inherit">
+                                                <?= e(article_title($item['title'])) ?>
+                                            </a>
+                                        </h4>
 
                                         <!-- Summary -->
                                         <p class="cna-feed-summary"><?= e($item['summary']) ?></p>
 
-                                        <!-- Bottom row: author · views · Read more -->
+                                        <!-- Bottom row: author · views · actions -->
                                         <div class="cna-feed-footer">
                                             <span class="cna-feed-author"><?= e($item['author_name']) ?></span>
                                             <span class="cna-feed-dot"></span>
-                                            <span
-                                                class="cna-feed-views"><?= __('total_readers', ['count' => number_format((int) $item['views_count'])]) ?></span>
-                                            <span class="cna-feed-read"><?= __('read_story') ?> &rarr;</span>
+                                            <span class="cna-feed-views"><?= __('total_readers', ['count' => number_format((int) $item['views_count'])]) ?></span>
+                                            
+                                            <div class="d-inline-flex align-items-center gap-1.5 ms-auto">
+                                                <button type="button" class="btn btn-quick-view btn-sm qv-trigger-btn py-0.5 px-2" data-article='<?= $itemData ?>' title="Quick Preview">
+                                                    <i class="bi bi-eye"></i>
+                                                </button>
+                                                <button type="button" class="btn btn-bookmark btn-sm bookmark-toggle-btn py-0.5 px-2" data-id="<?= $item['id'] ?>" data-article='<?= $itemData ?>' title="Save for later">
+                                                    <i class="bi bi-bookmark"></i>
+                                                </button>
+                                                <a href="<?= url('article.php?slug=' . urlencode($item['slug'])) ?>" class="cna-feed-read ms-1"><?= __('read_story') ?> &rarr;</a>
+                                            </div>
                                         </div>
                                     </div>
 
-                                </a>
+                                </div>
 
                             <?php } ?>
                         <?php } ?>

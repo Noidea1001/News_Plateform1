@@ -45,12 +45,28 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
             <?= e($article['summary']) ?>
         </p>
 
+        <?php
+        $artData = htmlspecialchars(json_encode([
+            'id' => $article['id'],
+            'title' => article_title($article['title']),
+            'summary' => $article['summary'],
+            'category' => cat_name($article['category_name']),
+            'author' => $article['author_name'],
+            'date' => \App\Core\TemplateEngine::formatDate($article['published_at']),
+            'time_ago' => \App\Core\TemplateEngine::timeAgo($article['published_at']),
+            'reading_time' => $article['reading_time'] ?? '3 min read',
+            'views' => number_format((int)$article['views_count']),
+            'image' => $article['featured_image'] ?? '',
+            'url' => url('article.php?slug=' . urlencode($article['slug']))
+        ]), ENT_QUOTES, 'UTF-8');
+        ?>
+
         <!-- Author & Published Metadata Bar -->
-        <div
-            class="d-flex flex-wrap align-items-center justify-content-between gap-3 p-3 bg-white rounded-4 border mb-4 shadow-sm">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 p-3 bg-white border mb-4" style="border-radius:2px;">
+            <!-- Author Info -->
             <div class="d-flex align-items-center gap-3">
-                <div class="bg-danger text-white rounded-circle d-flex align-items-center justify-content-center fw-bold fs-5 shadow-sm"
-                    style="width: 44px; height: 44px;">
+                <div class="bg-danger text-white d-flex align-items-center justify-content-center fw-bold fs-5 flex-shrink-0"
+                    style="width: 44px; height: 44px; border-radius:2px;">
                     <?= strtoupper(substr($article['author_name'], 0, 1)) ?>
                 </div>
                 <div>
@@ -58,12 +74,16 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                     <span class="text-muted text-xs"><?= e($article['author_role'] ?? 'Reporter') ?></span>
                 </div>
             </div>
-            <div class="text-md-end text-muted small">
-                <div><i class="bi bi-clock me-1 text-danger"></i>
-                    <?= str_replace(':date', \App\Core\TemplateEngine::formatDate($article['published_at']), __('published_date')) ?>
-                </div>
-                <div class="text-xs text-secondary mt-1"><i class="bi bi-eye me-1"></i>
-                    <?= str_replace(':count', number_format((int) $article['views_count']), __('total_readers')) ?>
+
+            <!-- Date & Views Metadata -->
+            <div class="d-flex align-items-center gap-3 text-muted small ms-auto">
+                <div class="d-flex flex-column gap-1 text-end">
+                    <div class="text-xs text-secondary"><i class="bi bi-clock me-1 text-danger"></i>
+                        <?= str_replace(':date', \App\Core\TemplateEngine::formatDate($article['published_at']), __('published_date')) ?>
+                    </div>
+                    <div class="text-xs text-secondary"><i class="bi bi-eye me-1"></i>
+                        <?= str_replace(':count', number_format((int) $article['views_count']), __('total_readers')) ?>
+                    </div>
                 </div>
             </div>
         </div>
@@ -180,7 +200,7 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                 <!-- Related Articles Grid -->
                 <?php if (!empty($relatedArticles)) { ?>
                     <div class="mt-5 pt-4 border-top">
-                        <h4 class="editorial-title fw-bold mb-4 text-dark">Related Coverage</h4>
+                        <h4 class="editorial-title fw-bold mb-4 text-dark"><?= __('related_coverage') ?></h4>
                         <div class="row g-3">
                             <?php foreach ($relatedArticles as $rItem) { ?>
                                 <div class="col-md-4">

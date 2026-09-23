@@ -55,8 +55,24 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                     &ldquo;<?= e($article['summary']) ?>&rdquo;
                 </p>
 
+                <?php
+                $artData = htmlspecialchars(json_encode([
+                    'id' => $article['id'],
+                    'title' => article_title($article['title']),
+                    'summary' => $article['summary'],
+                    'category' => cat_name($article['category_name']),
+                    'author' => $article['author_name'],
+                    'date' => \App\Core\TemplateEngine::formatDate($article['published_at']),
+                    'time_ago' => \App\Core\TemplateEngine::timeAgo($article['published_at']),
+                    'reading_time' => $article['reading_time'] ?? '3 min read',
+                    'views' => number_format((int)$article['views_count']),
+                    'image' => $article['featured_image'] ?? '',
+                    'url' => url('article.php?slug=' . urlencode($article['slug']))
+                ]), ENT_QUOTES, 'UTF-8');
+                ?>
+
                 <div
-                    class="d-flex align-items-center justify-content-center gap-3 text-muted small mb-4 pb-3 border-bottom">
+                    class="d-flex flex-wrap align-items-center justify-content-center gap-3 text-muted small mb-4 pb-3 border-bottom">
                     <span><i class="bi bi-calendar-event me-1 text-danger"></i>
                         <?= __('published_date', ['date' => \App\Core\TemplateEngine::formatDate($article['published_at'])]) ?></span>
                     <span>&bull;</span>
