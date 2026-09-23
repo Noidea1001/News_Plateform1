@@ -75,54 +75,70 @@ if (!function_exists('tmpl_name')) {
     }
 }
 
+if (!function_exists('get_translation_maps')) {
+    /**
+     * Centralized Translation Dictionary Map for both PHP and Client JS
+     */
+    function get_translation_maps(): array
+    {
+        return [
+            'categories' => [
+                'Technology & AI' => 'បច្ចេកវិទ្យា & AI',
+                'Global Politics' => 'នយោបាយសកល',
+                'Climate & Science' => 'បរិស្ថាន & វិទ្យាសាស្ត្រ',
+                'Economy & Markets' => 'សេដ្ឋកិច្ច & ទីផ្សារ',
+                'Infrastructure' => 'ហេដ្ឋារចនាសម្ព័ន្ធ & ដឹកជញ្ជូន',
+                'Infrastructure & Logistics' => 'ហេដ្ឋារចនាសម្ព័ន្ធ & ដឹកជញ្ជូន',
+                'Education & Health' => 'អប់រំ & សុខាភិបាល',
+                'National News' => 'ព័ត៌មានជាតិ',
+                'International' => 'ព័ត៌មានអន្តរជាតិ',
+                'Business' => 'អាជីវកម្ម',
+                'Sports' => 'កីឡា',
+                'Entertainment' => 'កម្សាន្ត',
+                'Culture' => 'វប្បធម៌'
+            ],
+            'titles' => [
+                'ការអភិវឌ្ឍប្រព័ន្ធ AI និងសេដ្ឋកិច្ចឌីជីថលនៅកម្ពុជាឆ្នាំ២០២៦' => 'Cambodia Digital Economy and AI Transformation Roadmap 2026',
+                'ការស៊ើបអង្កេត៖ ភាពធន់នៃបណ្តាញខ្សែកាបបាតសមុទ្រ និងសន្តិសុខអ៊ីនធឺណិតតំបន់' => 'Investigation: Subsea Fiber Optic Resilience and Regional Cyber Infrastructure',
+                'បទវិចារណកថា៖ សុចរិតភាពសារព័ត៌មាន និងការប្រយុទ្ធប្រឆាំងព័ត៌មានមិនពិត' => 'Editorial: Journalistic Integrity and the Strategic Fight Against Misinformation',
+                'កំណើនសេដ្ឋកិច្ចកម្ពុជាឆ្នាំ២០២៦៖ ការកើនឡើងនៃការនាំចេញ និងការវិនិយោគបរទេស' => 'Cambodia Economic Growth 2026: Export Surge & Foreign Direct Investment',
+                'គម្រោងថាមពលព្រះអាទិត្យ និងថាមពលបៃតងនៅតំបន់ទន្លេមេគង្គ' => 'Mekong Renewable Solar Energy Projects and Clean Grid Infrastructure',
+                'កិច្ចប្រជុំកំពូលអាស៊ាន៖ ការពង្រឹងកិច្ចសហប្រតិបត្តិការសន្តិសុខ និងពាណិជ្ជកម្មសេរី' => 'ASEAN Summit: Strategic Regional Security & RCEP Free Trade Expansion',
+                'ប្រព័ន្ធទូទាត់បាគង (Bakong FinTech) បន្តពង្រីកការភ្ជាប់ទំនាក់ទំនងហិរញ្ញវត្ថុអន្តរជាតិ' => 'Bakong FinTech System Expands Regional Cross-Border Payment Integration',
+                'ការគាំទ្រអាហារូបករណ៍ STEM និងការបណ្តុះបណ្តាលជំនាញបច្ចេកវិទ្យាដល់យុវជន' => 'National STEM Scholarships and Advanced Tech Skills for Cambodian Youth',
+                'ការអភិរក្សបេតិកភណ្ឌប្រាសាទអង្គរ និងការអភិវឌ្ឍទេសចរណ៍វប្បធម៌ជានិរន្តរភាព' => 'Angkor Wat Heritage Preservation and Sustainable Cultural Tourism Development',
+                'ការប្រែក្លាយប្រព័ន្ធសុខាភិបាលឌីជីថល និងសេវាថែទាំសុខភាពទំនើប' => 'Digital Healthcare Transformation and Modern Telemedicine Infrastructure',
+                'គម្រោងពង្រីកកំពង់ផែស្វយ័តព្រះសីហនុ និងការសម្រួលពាណិជ្ជកម្មអន្តរជាតិ' => 'Sihanoukville Autonomous Port Deep-Water Expansion for Global Shipping',
+                'បទវិចារណកថា៖ ស្ថាបត្យកម្មទីក្រុងឆ្លាតវៃ និងការរស់នៅប្រកបដោយនិរន្តរភាព' => 'Opinion: Smart City Architecture, Electric Transit & Sustainable Living',
+                'ប្រព័ន្ធ AI ស្វ័យតជំនាន់ថ្មីផ្លាស់ប្តូរស្ថាបត្យកម្មសូហ្វវែរសហគ្រាស' => 'Next-Generation Autonomous AI Systems Reshape Enterprise Architecture',
+                'ការស៊ើបអង្កេតជម្រៅលើបណ្តាញខ្សែកាបបាតសមុទ្រពិភពលោក' => 'Silent Subsea Cable Revolution: Deep-Dive into Global Fiber Optics',
+                'ហេតុអ្វីបានជាវិចារណញាណរបស់មនុស្សនៅតែមានសារៈសំខាន់ក្នុងយុគសម័យស្វ័យប្រវត្តិកម្ម' => 'Why Human Intuition Remains Imperative in an Automated Era'
+            ]
+        ];
+    }
+}
+
 if (!function_exists('cat_name')) {
     /**
      * Category Name Language Translation & Formatting Resolver
      * Ensures pure Khmer when Khmer is selected, and pure English when English is selected.
      * Strips leading index numbers (e.g., '5 ') and removes parenthetical translation labels.
      */
-    function cat_name(?string $categoryName): string
+    function cat_name(?string $categoryName, ?string $targetLang = null): string
     {
         if (empty($categoryName)) {
             return '';
         }
 
-        $currentLang = $_SESSION['lang'] ?? 'en';
+        $currentLang = $targetLang ?? ($_SESSION['lang'] ?? 'en');
 
         // 1. Strip leading digits / bullet numbers (e.g. "5 ", "5. ", "05- ")
         $str = preg_replace('/^[\d\.\-\s]+/u', '', trim($categoryName));
 
         // 2. Mapping dictionaries for exact lookup fallback
-        $enToKm = [
-            'Technology & AI' => 'បច្ចេកវិទ្យា & AI',
-            'Global Politics' => 'នយោបាយសកល',
-            'Climate & Science' => 'បរិស្ថាន & វិទ្យាសាស្ត្រ',
-            'Economy & Markets' => 'សេដ្ឋកិច្ច & ទីផ្សារ',
-            'Infrastructure' => 'ហេដ្ឋារចនាសម្ព័ន្ធ & ដឹកជញ្ជូន',
-            'Infrastructure & Logistics' => 'ហេដ្ឋារចនាសម្ព័ន្ធ & ដឹកជញ្ជូន',
-            'Education & Health' => 'អប់រំ & សុខាភិបាល',
-            'National News' => 'ព័ត៌មានជាតិ',
-            'International' => 'ព័ត៌មានអន្តរជាតិ',
-            'Business' => 'អាជីវកម្ម',
-            'Sports' => 'កីឡា',
-            'Entertainment' => 'កម្សាន្ត',
-            'Culture' => 'វប្បធម៌',
-        ];
-
-        $kmToEn = [
-            'បច្ចេកវិទ្យា & AI' => 'Technology & AI',
-            'នយោបាយសកល' => 'Global Politics',
-            'បរិស្ថាន & វិទ្យាសាស្ត្រ' => 'Climate & Science',
-            'សេដ្ឋកិច្ច & ទីផ្សារ' => 'Economy & Markets',
-            'ហេដ្ឋារចនាសម្ព័ន្ធ & ដឹកជញ្ជូន' => 'Infrastructure',
-            'អប់រំ & សុខាភិបាល' => 'Education & Health',
-            'ព័ត៌មានជាតិ' => 'National News',
-            'ព័ត៌មានអន្តរជាតិ' => 'International',
-            'អាជីវកម្ម' => 'Business',
-            'កីឡា' => 'Sports',
-            'កម្សាន្ត' => 'Entertainment',
-            'វប្បធម៌' => 'Culture',
-        ];
+        $maps = get_translation_maps();
+        $enToKm = $maps['categories'];
+        $kmToEn = array_flip($enToKm);
 
         // 3. Extract parts if format is "KhmerText (EnglishText)" or "EnglishText (KhmerText)"
         if (preg_match('/^([^()]+)\s*\(([^()]+)\)$/u', $str, $matches)) {
@@ -210,12 +226,12 @@ if (!function_exists('article_title')) {
      * Translates article titles between Khmer and English based on current session language.
      * Supports manual dual-language format: "Khmer Title (English Title)" or "English Title (Khmer Title)"
      */
-    function article_title(?string $title): string
+    function article_title(?string $title, ?string $targetLang = null): string
     {
         if (empty($title))
             return '';
 
-        $currentLang = $_SESSION['lang'] ?? 'en';
+        $currentLang = $targetLang ?? ($_SESSION['lang'] ?? 'en');
         $str = trim($title);
 
         // 1. Check parenthetical dual-language pattern "Part1 (Part2)"
@@ -236,29 +252,10 @@ if (!function_exists('article_title')) {
             }
         }
 
-        // 2. Exact static mapping fallback
-        static $kmToEnTitle = [
-            'ការអភិវឌ្ឍប្រព័ន្ធ AI និងសេដ្ឋកិច្ចឌីជីថលនៅកម្ពុជាឆ្នាំ២០២៦' => 'Cambodia Digital Economy and AI Transformation Roadmap 2026',
-            'ការស៊ើបអង្កេត៖ ភាពធន់នៃបណ្តាញខ្សែកាបបាតសមុទ្រ និងសន្តិសុខអ៊ីនធឺណិតតំបន់' => 'Investigation: Subsea Fiber Optic Resilience and Regional Cyber Infrastructure',
-            'បទវិចារណកថា៖ សុចរិតភាពសារព័ត៌មាន និងការប្រយុទ្ធប្រឆាំងព័ត៌មានមិនពិត' => 'Editorial: Journalistic Integrity and the Strategic Fight Against Misinformation',
-            'កំណើនសេដ្ឋកិច្ចកម្ពុជាឆ្នាំ២០២៦៖ ការកើនឡើងនៃការនាំចេញ និងការវិនិយោគបរទេស' => 'Cambodia Economic Growth 2026: Export Surge & Foreign Direct Investment',
-            'គម្រោងថាមពលព្រះអាទិត្យ និងថាមពលបៃតងនៅតំបន់ទន្លេមេគង្គ' => 'Mekong Renewable Solar Energy Projects and Clean Grid Infrastructure',
-            'កិច្ចប្រជុំកំពូលអាស៊ាន៖ ការពង្រឹងកិច្ចសហប្រតិបត្តិការសន្តិសុខ និងពាណិជ្ជកម្មសេរី' => 'ASEAN Summit: Strategic Regional Security & RCEP Free Trade Expansion',
-            'ប្រព័ន្ធទូទាត់បាគង (Bakong FinTech) បន្តពង្រីកការភ្ជាប់ទំនាក់ទំនងហិរញ្ញវត្ថុអន្តរជាតិ' => 'Bakong FinTech System Expands Regional Cross-Border Payment Integration',
-            'ការគាំទ្រអាហារូបករណ៍ STEM និងការបណ្តុះបណ្តាលជំនាញបច្ចេកវិទ្យាដល់យុវជន' => 'National STEM Scholarships and Advanced Tech Skills for Cambodian Youth',
-            'ការអភិរក្សបេតិកភណ្ឌប្រាសាទអង្គរ និងការអភិវឌ្ឍទេសចរណ៍វប្បធម៌ជានិរន្តរភាព' => 'Angkor Wat Heritage Preservation and Sustainable Cultural Tourism Development',
-            'ការប្រែក្លាយប្រព័ន្ធសុខាភិបាលឌីជីថល និងសេវាថែទាំសុខភាពទំនើប' => 'Digital Healthcare Transformation and Modern Telemedicine Infrastructure',
-            'គម្រោងពង្រីកកំពង់ផែស្វយ័តព្រះសីហនុ និងការសម្រួលពាណិជ្ជកម្មអន្តរជាតិ' => 'Sihanoukville Autonomous Port Deep-Water Expansion for Global Shipping',
-            'បទវិចារណកថា៖ ស្ថាបត្យកម្មទីក្រុងឆ្លាតវៃ និងការរស់នៅប្រកបដោយនិរន្តរភាព' => 'Opinion: Smart City Architecture, Electric Transit & Sustainable Living',
-            'ប្រព័ន្ធ AI ស្វ័យតជំនាន់ថ្មីផ្លាស់ប្តូរស្ថាបត្យកម្មសូហ្វវែរសហគ្រាស' => 'Next-Generation Autonomous AI Systems Reshape Enterprise Architecture',
-            'ការស៊ើបអង្កេតជម្រៅលើបណ្តាញខ្សែកាបបាតសមុទ្រពិភពលោក' => 'Silent Subsea Cable Revolution: Deep-Dive into Global Fiber Optics',
-            'ហេតុអ្វីបានជាវិចារណញាណរបស់មនុស្សនៅតែមានសារៈសំខាន់ក្នុងយុគសម័យស្វ័យប្រវត្តិកម្ម' => 'Why Human Intuition Remains Imperative in an Automated Era',
-        ];
-
-        static $enToKmTitle = null;
-        if ($enToKmTitle === null) {
-            $enToKmTitle = array_flip($kmToEnTitle);
-        }
+        // 2. Exact static mapping fallback from centralized get_translation_maps()
+        $maps = get_translation_maps();
+        $kmToEnTitle = $maps['titles'];
+        $enToKmTitle = array_flip($kmToEnTitle);
 
         $hasKhmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $str);
 
@@ -276,4 +273,3 @@ if (!function_exists('article_title')) {
         }
     }
 }
-?>
