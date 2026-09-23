@@ -168,4 +168,3 @@ class Database
         return $this->pdo->rollBack();
     }
 }
-?>

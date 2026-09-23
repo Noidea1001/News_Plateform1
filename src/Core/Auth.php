@@ -17,7 +17,19 @@ class Auth
      */
     public static function startSession(): void
     {
+        if (!ob_get_level()) {
+            ob_start();
+        }
+
         if (self::$sessionStarted || session_status() === PHP_SESSION_ACTIVE) {
+            self::$sessionStarted = true;
+            return;
+        }
+
+        if (headers_sent()) {
+            if (session_status() === PHP_SESSION_NONE) {
+                @session_start();
+            }
             self::$sessionStarted = true;
             return;
         }
@@ -32,21 +44,8 @@ class Auth
             'samesite' => 'Lax'
         ];
 
-        // 🔒 FIX: Dynamic domain for Render
-        $host = $_SERVER['HTTP_HOST'] ?? '';
-        
-        // Remove port if present (e.g., "example.com:3000" → "example.com")
-        $host = preg_replace('/:\d+$/', '', $host);
-        
-        // Remove "www." if present (Render works best with naked domain)
-        $host = preg_replace('/^www\./', '', $host);
-        
-        if (!empty($host)) {
-            $cookieParams['domain'] = $host;
-        }
-
-        session_set_cookie_params($cookieParams);
-        session_start();    
+        @session_set_cookie_params($cookieParams);
+        @session_start();
         self::$sessionStarted = true;
 
         // Verify session fingerprint to prevent session hijacking
@@ -183,12 +182,22 @@ class Auth
         self::startSession();
 
         if (!self::check()) {
-            header('Location: ' . url('admin/login.php?error=' . urlencode('Please log in to access the control panel.')));
+            $redirectUrl = url('admin/login.php?error=' . urlencode('Please log in to access the control panel.'));
+            if (!headers_sent()) {
+                header('Location: ' . $redirectUrl);
+            } else {
+                echo "<script>window.location.href=" . json_encode($redirectUrl) . ";</script>";
+            }
             exit;
         }
 
         if (!empty($allowedRoles) && !self::hasRole($allowedRoles)) {
-            header('Location: ' . url('admin/dashboard.php?error=' . urlencode('Access Denied: Insufficient editorial privileges.')));
+            $redirectUrl = url('admin/dashboard.php?error=' . urlencode('Access Denied: Insufficient editorial privileges.'));
+            if (!headers_sent()) {
+                header('Location: ' . $redirectUrl);
+            } else {
+                echo "<script>window.location.href=" . json_encode($redirectUrl) . ";</script>";
+            }
             exit;
         }
 
@@ -246,4 +255,4 @@ class Auth
         );
     }
 }
-?>
+

@@ -724,6 +724,6 @@ class AdminController
         exit;
     }
 }
-?>
+
 
 

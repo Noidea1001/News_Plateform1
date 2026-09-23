@@ -300,4 +300,3 @@ class Sanitizer
         return self::parseArticleMedia($html, $galleryImages, $featuredImage, $videoEmbedUrls);
     }
 }
-?>
