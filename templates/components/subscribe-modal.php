@@ -7,8 +7,8 @@
 
 <div class="modal fade" id="subscribeModal" tabindex="-1" aria-labelledby="subscribeModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow-lg">
-            <div class="modal-header bg-brand-navy text-white p-4 position-relative">
+        <div class="modal-content border-0 shadow-lg" style="overflow: hidden !important; border-radius: 4px !important;">
+            <div class="modal-header bg-brand-navy text-white p-4 position-relative" style="border-top-left-radius: inherit; border-top-right-radius: inherit;">
                 <div>
                     <span class="badge bg-danger text-uppercase px-2 py-1 mb-2"><?= __('feed_sub_title') ?></span>
                     <h5 class="modal-title fw-bold editorial-title h4 mb-0" id="subscribeModalLabel"><?= __('modal_headline') ?></h5>

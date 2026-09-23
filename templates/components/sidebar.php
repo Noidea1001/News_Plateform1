@@ -31,7 +31,7 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
     <div class="card border-0 overflow-hidden most-read-card">
         <!-- Header — CNA red left-border style -->
         <div class="card-header bg-white py-3 border-bottom d-flex align-items-center justify-content-between px-3"
-             style="border-left:3px solid #c8102e;">
+             style="border-left:3px solid #c8102e; border-top-left-radius: inherit !important;">
             <h6 class="mb-0 fw-bold d-flex align-items-center gap-2"
                 style="font-size:0.9rem; color:#0f172a; letter-spacing:-0.01em;">
                 <?= __('most_read') ?>
@@ -77,7 +77,7 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
     <?php if (!empty($categories)) { ?>
     <div class="card border-0 overflow-hidden" style="border:1px solid #e5e7eb !important; border-radius:2px;">
         <div class="card-header bg-white py-3 border-bottom d-flex align-items-center gap-2 px-3"
-             style="border-left:3px solid #c8102e;">
+             style="border-left:3px solid #c8102e; border-top-left-radius: inherit !important;">
             <h6 class="mb-0 fw-bold" style="font-size:0.9rem; color:#0f172a;">
                 <?= __('explore_topics') ?>
             </h6>
