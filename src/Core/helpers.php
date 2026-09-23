@@ -184,13 +184,23 @@ if (!function_exists('cat_name')) {
 
 if (!function_exists('url')) {
     /**
-     * Dynamic URL generator that automatically detects base subdirectories (e.g. /News-platefrom/)
+     * Dynamic URL generator that automatically detects base subdirectories and deployment environments
      */
     function url(string $path = ''): string
     {
         $path = ltrim($path, '/');
+
         $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
-        $dir = dirname($scriptName);
+        $dir = str_replace('\\', '/', dirname($scriptName));
+        $docRoot = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT'] ?? '');
+
+        // Detect if server DocumentRoot is set directly to /public or if running from public folder
+        $isPublicDocRoot = str_ends_with(rtrim($docRoot, '/'), '/public') 
+                        || ($dir === '/' && !file_exists(($docRoot !== '' ? $docRoot : '.') . '/public'));
+
+        if ($isPublicDocRoot && str_starts_with($path, 'public/')) {
+            $path = substr($path, 7);
+        }
 
         $base = '';
         if (str_contains($dir, '/public')) {
@@ -201,7 +211,7 @@ if (!function_exists('url')) {
             $base = ($dir === '/' || $dir === '\\') ? '' : $dir;
         }
 
-        $base = rtrim(str_replace('\\', '/', $base), '/');
+        $base = rtrim($base, '/');
 
         return ($base !== '' ? $base : '') . '/' . $path;
     }

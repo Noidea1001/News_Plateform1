@@ -65,7 +65,7 @@ $csrfToken = Auth::generateCsrfToken();
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,300..900;1,14..32,300..900&family=Kantumruy+Pro:ital,wght@0,400..700;1,400..700&family=Noto+Sans+Khmer:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= url('public/assets/css/style.css') ?>">
+    <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
 
     <style>
         /* CNA-Style Login Page */

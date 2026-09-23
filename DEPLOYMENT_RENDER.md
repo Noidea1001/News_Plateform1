@@ -142,6 +142,10 @@ Once deployment is complete (showing a green `Live` status):
 ### Q: Uploaded images disappear after a few days?
 - Make sure you attached the **Persistent Disk** mounted at `/var/www/html/public/uploads` as shown in Step 5.
 
+### Q: Layout looks broken or images appear huge on deployment?
+- This happens when `style.css` fails to load due to `public/` path mismatch between local Apache (`htdocs`) and production Docker (`/public` root).
+- Ensure asset references use `url('assets/css/style.css')` which works automatically in both subfolder and root domain setups via Apache mod_rewrite.
+
 ### Q: How do I change admin password for production?
 - Log into admin dashboard, navigate to **Staff Users** (`/admin/users.php`), or update password hash directly in phpMyAdmin / database client.
 
