@@ -287,6 +287,14 @@ $lang['confirm_delete_title'] = "អះអាងការលុបជារៀ�
 $lang['confirm_delete_msg'] = "តើអ្នកប្រាកដជាចង់លុប \":item\" មែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។";
 $lang['btn_confirm_delete'] = "បាទ/ចាស លុបអត្ថបទ/ប្រភេទនេះ";
 $lang['btn_cancel_delete'] = "បោះបង់";
+$lang['save_for_later'] = "រក្សាទុក";
+$lang['saved'] = "បានរក្សាទុក";
+$lang['saved_reading_list'] = "បញ្ជីអត្ថបទបានរក្សាទុក";
+$lang['quick_view'] = "មើលរហ័ស";
+$lang['no_saved_articles'] = "មិនទាន់មានអត្ថបទបានរក្សាទុកនៅឡើយទេ។";
+$lang['click_bookmark_hint'] = "ចុចលើរូបតំណាង bookmark លើអត្ថបទណាមួយដើម្បីរក្សាទុកអានពេលក្រោយ។";
+$lang['clear_all_saved'] = "សម្អាតបញ្ជីរក្សាទុកទាំងអស់";
+$lang['confirm_clear_saved'] = "តើអ្នកប្រាកដជាចង់សម្អាតបញ្ជីអត្ថបទដែលបានរក្សាទុកទាំងអស់មែនទេ?";
 
 return $lang;
 

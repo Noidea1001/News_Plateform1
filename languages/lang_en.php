@@ -287,6 +287,14 @@ $lang['confirm_delete_title'] = "Confirm Permanent Deletion";
 $lang['confirm_delete_msg'] = "Are you sure you want to delete \":item\"? This action is permanent and cannot be undone.";
 $lang['btn_confirm_delete'] = "Yes, Delete Item";
 $lang['btn_cancel_delete'] = "Cancel";
+$lang['save_for_later'] = "Save Article";
+$lang['saved'] = "Saved";
+$lang['saved_reading_list'] = "Saved Reading List";
+$lang['quick_view'] = "Quick View";
+$lang['no_saved_articles'] = "No saved articles yet.";
+$lang['click_bookmark_hint'] = "Click the bookmark icon on any article to save it for later.";
+$lang['clear_all_saved'] = "Clear Saved Reading List";
+$lang['confirm_clear_saved'] = "Are you sure you want to clear all saved articles?";
 
 return $lang;
 
