@@ -34,18 +34,24 @@
                         <input type="hidden" name="id" id="userId" value="">
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold"><?= __('username') ?> <span class="text-danger">*</span></label>
-                            <input type="text" name="username" id="userName" class="form-control" placeholder="e.g. john_doe" required>
+                            <label class="form-label fw-semibold"><?= __('username') ?> <span
+                                    class="text-danger">*</span></label>
+                            <input type="text" name="username" id="userName" class="form-control"
+                                placeholder="e.g. john_doe" required>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold"><?= __('email_address') ?> <span class="text-danger">*</span></label>
-                            <input type="email" name="email" id="userEmail" class="form-control" placeholder="staff@newsplatform.local" required>
+                            <label class="form-label fw-semibold"><?= __('email_address') ?> <span
+                                    class="text-danger">*</span></label>
+                            <input type="email" name="email" id="userEmail" class="form-control"
+                                placeholder="staff@newsplatform.local" required>
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold"><?= __('password') ?> <span class="text-muted small" id="pwHelp"><?= __('req_new_user') ?></span></label>
-                            <input type="password" name="password" id="userPassword" class="form-control" placeholder="••••••••">
+                            <label class="form-label fw-semibold"><?= __('password') ?> <span class="text-muted small"
+                                    id="pwHelp"><?= __('req_new_user') ?></span></label>
+                            <input type="password" name="password" id="userPassword" class="form-control"
+                                placeholder="••••••••">
                         </div>
 
                         <div class="mb-3">
@@ -59,19 +65,23 @@
 
                         <div class="mb-3">
                             <label class="form-label fw-semibold"><?= __('bio_profile') ?></label>
-                            <textarea name="bio" id="userBio" class="form-control" rows="2" placeholder="Brief author bio for opinion blueprints..."></textarea>
+                            <textarea name="bio" id="userBio" class="form-control" rows="2"
+                                placeholder="Brief author bio for opinion blueprints..."></textarea>
                         </div>
 
                         <div class="form-check form-switch mb-4">
-                            <input class="form-check-input" type="checkbox" name="is_active" id="userActive" value="1" checked>
-                            <label class="form-check-label fw-semibold" for="userActive"><?= __('account_active') ?></label>
+                            <input class="form-check-input" type="checkbox" name="is_active" id="userActive" value="1"
+                                checked>
+                            <label class="form-check-label fw-semibold"
+                                for="userActive"><?= __('account_active') ?></label>
                         </div>
 
                         <div class="d-flex gap-2">
                             <button type="submit" class="btn btn-danger flex-grow-1 fw-semibold">
                                 <?= __('save_staff_user') ?>
                             </button>
-                            <button type="button" class="btn btn-outline-secondary" onclick="resetUserForm()"><?= __('clear_search') ?></button>
+                            <button type="button" class="btn btn-outline-secondary"
+                                onclick="resetUserForm()"><?= __('clear_search') ?></button>
                         </div>
                     </form>
                 </div>
@@ -83,7 +93,9 @@
             <div class="card admin-card-clean">
                 <div class="card-header admin-card-header-clean py-3 d-flex align-items-center justify-content-between">
                     <h5 class="card-title fw-bold mb-0 text-dark"><?= __('cms_staff_members') ?></h5>
-                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2.5 py-1 fw-bold"><?= count($usersList) ?> <?= __('total_staff') ?></span>
+                    <span
+                        class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2.5 py-1 fw-bold"><?= count($usersList) ?>
+                        <?= __('total_staff') ?></span>
                 </div>
                 <div class="table-responsive admin-scroll-table">
                     <table class="table table-hover align-middle mb-0">
@@ -102,18 +114,22 @@
                                 <tr>
                                     <td>
                                         <div class="d-flex align-items-center gap-2">
-                                            <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width:36px; height:36px;">
+                                            <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold"
+                                                style="width:36px; height:36px;">
                                                 <?= strtoupper(substr($u['username'], 0, 1)) ?>
                                             </div>
                                             <div>
                                                 <div class="fw-bold text-dark"><?= e($u['username']) ?></div>
-                                                <div class="text-xs text-muted"><?= __('created') ?> <?= \App\Core\TemplateEngine::formatDate($u['created_at'], 'M j, Y') ?></div>
+                                                <div class="text-xs text-muted"><?= __('created') ?>
+                                                    <?= \App\Core\TemplateEngine::formatDate($u['created_at'], 'M j, Y') ?>
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
                                     <td class="small text-muted"><?= e($u['email']) ?></td>
                                     <td>
-                                        <span class="badge bg-<?= $u['role'] === 'admin' ? 'danger' : ($u['role'] === 'editor' ? 'warning text-dark' : 'primary') ?> text-uppercase">
+                                        <span
+                                            class="badge bg-<?= $u['role'] === 'admin' ? 'danger' : ($u['role'] === 'editor' ? 'warning text-dark' : 'primary') ?> text-uppercase">
                                             <?= e($u['role']) ?>
                                         </span>
                                     </td>
@@ -124,9 +140,12 @@
                                             <span class="badge bg-secondary"><?= __('unsubscribed') ?></span>
                                         <?php } ?>
                                     </td>
-                                    <td class="fw-bold text-dark"><?= number_format((int)$u['article_count']) ?> <?= __('posts') ?></td>
+                                    <td class="fw-bold text-dark"><?= number_format((int) $u['article_count']) ?>
+                                        <?= __('posts') ?></td>
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-primary px-2 py-0.5" style="font-size:0.75rem;" onclick="editUser(<?= htmlspecialchars(json_encode($u), ENT_QUOTES, 'UTF-8') ?>)">
+                                        <button class="btn btn-sm btn-outline-primary px-2 py-0.5"
+                                            style="font-size:0.75rem;"
+                                            onclick="editUser(<?= htmlspecialchars(json_encode($u), ENT_QUOTES, 'UTF-8') ?>)">
                                             <?= __('edit') ?>
                                         </button>
                                     </td>
@@ -141,23 +160,23 @@
 </div>
 
 <script>
-function editUser(u) {
-    document.getElementById('userId').value = u.id;
-    document.getElementById('userName').value = u.username;
-    document.getElementById('userEmail').value = u.email;
-    document.getElementById('userRole').value = u.role;
-    document.getElementById('userBio').value = u.bio || '';
-    document.getElementById('userActive').checked = (parseInt(u.is_active) === 1);
-    document.getElementById('pwHelp').innerText = '<?= addslashes(__('blank_keep_pw')) ?>';
-}
-function resetUserForm() {
-    document.getElementById('userId').value = '';
-    document.getElementById('userName').value = '';
-    document.getElementById('userEmail').value = '';
-    document.getElementById('userPassword').value = '';
-    document.getElementById('userRole').value = 'reporter';
-    document.getElementById('userBio').value = '';
-    document.getElementById('userActive').checked = true;
-    document.getElementById('pwHelp').innerText = '<?= addslashes(__('req_new_user')) ?>';
-}
+    function editUser(u) {
+        document.getElementById('userId').value = u.id;
+        document.getElementById('userName').value = u.username;
+        document.getElementById('userEmail').value = u.email;
+        document.getElementById('userRole').value = u.role;
+        document.getElementById('userBio').value = u.bio || '';
+        document.getElementById('userActive').checked = (parseInt(u.is_active) === 1);
+        document.getElementById('pwHelp').innerText = '<?= addslashes(__('blank_keep_pw')) ?>';
+    }
+    function resetUserForm() {
+        document.getElementById('userId').value = '';
+        document.getElementById('userName').value = '';
+        document.getElementById('userEmail').value = '';
+        document.getElementById('userPassword').value = '';
+        document.getElementById('userRole').value = 'reporter';
+        document.getElementById('userBio').value = '';
+        document.getElementById('userActive').checked = true;
+        document.getElementById('pwHelp').innerText = '<?= addslashes(__('req_new_user')) ?>';
+    }
 </script>
