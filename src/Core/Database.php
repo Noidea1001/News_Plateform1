@@ -94,15 +94,25 @@ class Database
                 }
             }
 
-            // Ensure audio_embed_url and gallery_images columns exist on articles table
-            @$this->pdo->exec("ALTER TABLE articles ADD COLUMN `audio_embed_url` VARCHAR(500) NULL AFTER `video_embed_url`");
-            @$this->pdo->exec("ALTER TABLE articles ADD COLUMN `gallery_images` TEXT NULL AFTER `audio_embed_url`");
+            // Ensure audio_embed_url, gallery_images, and has_drop_cap columns exist on articles table safely
+            $columnsQuery = $this->pdo->query("SHOW COLUMNS FROM articles");
+            $existingColumns = $columnsQuery ? $columnsQuery->fetchAll(PDO::FETCH_COLUMN) : [];
+
+            if (!in_array('audio_embed_url', $existingColumns, true)) {
+                $this->pdo->exec("ALTER TABLE articles ADD COLUMN `audio_embed_url` VARCHAR(500) NULL AFTER `video_embed_url`");
+            }
+            if (!in_array('gallery_images', $existingColumns, true)) {
+                $this->pdo->exec("ALTER TABLE articles ADD COLUMN `gallery_images` TEXT NULL AFTER `audio_embed_url`");
+            }
+            if (!in_array('has_drop_cap', $existingColumns, true)) {
+                $this->pdo->exec("ALTER TABLE articles ADD COLUMN `has_drop_cap` TINYINT(1) NOT NULL DEFAULT 0");
+            }
 
             // Ensure category names are translated to Khmer in DB
-            @$this->pdo->exec("UPDATE categories SET name = 'បច្ចេកវិទ្យា & AI' WHERE id = 1 AND name LIKE '%Technology%'");
-            @$this->pdo->exec("UPDATE categories SET name = 'នយោបាយសកល' WHERE id = 2 AND name LIKE '%Politics%'");
-            @$this->pdo->exec("UPDATE categories SET name = 'បរិស្ថាន & វិទ្យាសាស្ត្រ' WHERE id = 3 AND name LIKE '%Climate%'");
-            @$this->pdo->exec("UPDATE categories SET name = 'សេដ្ឋកិច្ច & ទីផ្សារ' WHERE id = 4 AND name LIKE '%Economy%'");
+            $this->pdo->exec("UPDATE categories SET name = 'បច្ចេកវិទ្យា & AI' WHERE id = 1 AND name LIKE '%Technology%'");
+            $this->pdo->exec("UPDATE categories SET name = 'នយោបាយសកល' WHERE id = 2 AND name LIKE '%Politics%'");
+            $this->pdo->exec("UPDATE categories SET name = 'បរិស្ថាន & វិទ្យាសាស្ត្រ' WHERE id = 3 AND name LIKE '%Climate%'");
+            $this->pdo->exec("UPDATE categories SET name = 'សេដ្ឋកិច្ច & ទីផ្សារ' WHERE id = 4 AND name LIKE '%Economy%'");
 
         } catch (PDOException $e) {
             error_log("Schema auto-initialization exception: " . $e->getMessage());

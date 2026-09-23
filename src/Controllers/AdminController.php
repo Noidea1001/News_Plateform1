@@ -24,9 +24,12 @@ class AdminController
 
         // Silent column migration for optional manual drop cap
         try {
-            $this->db->execute("ALTER TABLE articles ADD COLUMN has_drop_cap TINYINT(1) NOT NULL DEFAULT 0");
+            $cols = $this->db->getPdo()->query("SHOW COLUMNS FROM articles LIKE 'has_drop_cap'");
+            if ($cols && $cols->rowCount() === 0) {
+                $this->db->execute("ALTER TABLE articles ADD COLUMN has_drop_cap TINYINT(1) NOT NULL DEFAULT 0");
+            }
         } catch (\Throwable $e) {
-            // Column already exists
+            // Column already exists or check ignored
         }
     }
 

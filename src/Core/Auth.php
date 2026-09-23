@@ -32,22 +32,21 @@ class Auth
             'samesite' => 'Lax'
         ];
 
-        // Fix session cookie domain issue on Render
-        if (isset($_SERVER['HTTP_HOST'])) {
-            $host = $_SERVER['HTTP_HOST'];
-            // Remove :port if present
-            if (strpos($host, ':') !== false) {
-                $host = substr($host, 0, strpos($host, ':'));
-            }
-            // Use naked domain (remove www. if present)
-            if (strpos($host, 'www.') === 0) {
-                $host = substr($host, 4);
-            }
+        // 🔒 FIX: Dynamic domain for Render
+        $host = $_SERVER['HTTP_HOST'] ?? '';
+        
+        // Remove port if present (e.g., "example.com:3000" → "example.com")
+        $host = preg_replace('/:\d+$/', '', $host);
+        
+        // Remove "www." if present (Render works best with naked domain)
+        $host = preg_replace('/^www\./', '', $host);
+        
+        if (!empty($host)) {
             $cookieParams['domain'] = $host;
         }
 
         session_set_cookie_params($cookieParams);
-        session_start();
+        session_start();    
         self::$sessionStarted = true;
 
         // Verify session fingerprint to prevent session hijacking
