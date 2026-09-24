@@ -139,7 +139,7 @@
                     'time_ago' => \App\Core\TemplateEngine::timeAgo($lead['published_at']),
                     'reading_time' => $lead['reading_time'] ?? '3 min read',
                     'views' => number_format((int)$lead['views_count']),
-                    'image' => $lead['featured_image'] ?? '',
+                    'image' => image_url($lead['featured_image'] ?? ''),
                     'url' => url('article.php?slug=' . urlencode($lead['slug']))
                 ]), ENT_QUOTES, 'UTF-8');
             }
@@ -153,7 +153,7 @@
                     <!-- Image -->
                     <div class="lead-article-image">
                         <?php if (!empty($lead['featured_image'])) { ?>
-                            <img src="<?= e($lead['featured_image']) ?>" alt="<?= e(article_title($lead['title'])) ?>" loading="eager">
+                            <img src="<?= e(image_url($lead['featured_image'])) ?>" alt="<?= e(article_title($lead['title'])) ?>" loading="eager">
                         <?php } else { ?>
                             <div class="d-flex align-items-center justify-content-center h-100 fs-1 text-muted"
                                 style="background:#1e293b;">
@@ -232,14 +232,14 @@
                             'time_ago' => \App\Core\TemplateEngine::timeAgo($sItem['published_at']),
                             'reading_time' => $sItem['reading_time'] ?? '3 min read',
                             'views' => number_format((int)$sItem['views_count']),
-                            'image' => $sItem['featured_image'] ?? '',
+                            'image' => image_url($sItem['featured_image'] ?? ''),
                             'url' => url('article.php?slug=' . urlencode($sItem['slug']))
                         ]), ENT_QUOTES, 'UTF-8');
                         ?>
                         <div class="secondary-grid-card">
                             <div class="secondary-grid-thumb">
                                 <?php if (!empty($sItem['featured_image'])) { ?>
-                                    <img src="<?= e($sItem['featured_image']) ?>" alt="<?= e(article_title($sItem['title'])) ?>" loading="lazy">
+                                    <img src="<?= e(image_url($sItem['featured_image'])) ?>" alt="<?= e(article_title($sItem['title'])) ?>" loading="lazy">
                                 <?php } else { ?>
                                     <div class="cna-feed-thumb-empty">NP</div>
                                 <?php } ?>
@@ -324,7 +324,7 @@
                                     'time_ago' => \App\Core\TemplateEngine::timeAgo($item['published_at']),
                                     'reading_time' => $item['reading_time'] ?? '3 min read',
                                     'views' => number_format((int)$item['views_count']),
-                                    'image' => $item['featured_image'] ?? '',
+                                    'image' => image_url($item['featured_image'] ?? ''),
                                     'url' => url('article.php?slug=' . urlencode($item['slug']))
                                 ]), ENT_QUOTES, 'UTF-8');
                                 ?>
@@ -338,7 +338,7 @@
                                     <div class="cna-feed-thumb">
                                         <a href="<?= url('article.php?slug=' . urlencode($item['slug'])) ?>">
                                             <?php if (!empty($item['featured_image'])) { ?>
-                                                <img src="<?= e($item['featured_image']) ?>" alt="<?= e(article_title($item['title'])) ?>" loading="lazy">
+                                                <img src="<?= e(image_url($item['featured_image'])) ?>" alt="<?= e(article_title($item['title'])) ?>" loading="lazy">
                                             <?php } else { ?>
                                                 <div class="cna-feed-thumb-empty">NP</div>
                                             <?php } ?>

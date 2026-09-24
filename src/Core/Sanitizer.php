@@ -108,32 +108,46 @@ class Sanitizer
             $images = array_values(array_filter(array_map('trim', explode("\n", $galleryImages))));
         }
 
-        // Image shortcodes regex pattern (matching optional wrapping <p>...</p>)
-        $imgPattern = '/(?:<p\b[^>]*>\s*)?\[(?:image|img)[:\-]([0-9]+)(?::([^\]]+))?\](?:\s*<\/p>)?/i';
+        // 1. Process explicit image shortcodes: [image:1], [image:1:left], [image:https://...:right], [image:public/uploads/...:center]
+        $imgPattern = '/(?:<p\b[^>]*>\s*)?\[(?:image|img)[:\-]([0-9\x{17E0}-\x{17E9}]+|https?:\/\/[^\s\]]+|\/?[a-zA-Z0-9_\-\.\/]+\.(?:jpg|jpeg|png|webp|gif|svg))(?::([^\]]+))?\](?:\s*<\/p>)?/iu';
 
         $parsed = preg_replace_callback($imgPattern, function ($matches) use ($images, $featuredImage) {
-            $index = (int) $matches[1];
+            $targetRaw = trim($matches[1]);
+            $targetNumStr = strtr($targetRaw, [
+                '០' => '0', '១' => '1', '២' => '2', '៣' => '3', '៤' => '4',
+                '៥' => '5', '៦' => '6', '៧' => '7', '៨' => '8', '៩' => '9'
+            ]);
+
             $params = self::parseMediaParams($matches[2] ?? null);
             $align = $params['align'];
             $customCaption = $params['caption'];
 
             $imgUrl = null;
-            if (isset($images[$index - 1]) && !empty($images[$index - 1])) {
-                $imgUrl = $images[$index - 1];
-            } elseif ($index === 1 && !empty($featuredImage)) {
-                $imgUrl = $featuredImage;
+            $index = null;
+
+            if (is_numeric($targetNumStr)) {
+                $index = (int) $targetNumStr;
+                if (isset($images[$index - 1]) && !empty($images[$index - 1])) {
+                    $imgUrl = $images[$index - 1];
+                } elseif ($index === 1 && !empty($featuredImage)) {
+                    $imgUrl = $featuredImage;
+                }
+            } else {
+                // Direct URL or local image path passed in shortcode
+                $imgUrl = $targetRaw;
             }
 
             if (!$imgUrl) {
-                return '<div class="alert alert-warning text-xs py-1 px-2.5 my-3 d-inline-block rounded-2 border"><i class="bi bi-exclamation-circle me-1"></i>[Image #' . $index . ' not found]</div>';
+                $label = $index ? ('#' . $index) : $targetRaw;
+                return '<div class="alert alert-warning text-xs py-1 px-2.5 my-3 d-inline-block rounded-2 border"><i class="bi bi-exclamation-circle me-1"></i>[Image ' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . ' not found]</div>';
             }
 
             $isKh = (($_SESSION['lang'] ?? 'en') === 'kh' || ($_SESSION['lang'] ?? 'en') === 'km');
-            $defaultCaption = $isKh ? ('រូបភាពទី ' . km_num($index)) : ('Image #' . $index);
-            $captionText = $customCaption ?: $defaultCaption;
+            $numCaption = $index ? ($isKh ? ('រូបភាពទី ' . km_num($index)) : ('Image #' . $index)) : ($isKh ? 'រូបភាព' : 'Photo');
+            $captionText = $customCaption ?: $numCaption;
             $badgeLabel = $isKh ? 'រូបភាព' : 'Photo';
 
-            $safeUrl = htmlspecialchars($imgUrl, ENT_QUOTES, 'UTF-8');
+            $safeUrl = htmlspecialchars(image_url($imgUrl), ENT_QUOTES, 'UTF-8');
             $safeCaption = htmlspecialchars($captionText, ENT_QUOTES, 'UTF-8');
             $alignClass = 'align-' . $align;
 
@@ -154,6 +168,36 @@ class Sanitizer
             ';
         }, $clean);
 
+        // 2. Catch standalone raw image links wrapped in <p> tags (e.g. <p>https://images.unsplash.com/...</p> or <p>/public/uploads/...</p>)
+        $plainUrlPattern = '/<p\b[^>]*>\s*(https?:\/\/[^\s<]+\.(?:jpg|jpeg|png|webp|gif|svg)(?:\?[^\s<]*)?|\/?(?:public\/)?uploads\/[^\s<]+\.(?:jpg|jpeg|png|webp|gif|svg))\s*<\/p>/iu';
+        $parsed = preg_replace_callback($plainUrlPattern, function ($matches) {
+            $imgUrl = trim($matches[1]);
+            $safeUrl = htmlspecialchars(image_url($imgUrl), ENT_QUOTES, 'UTF-8');
+            $isKh = (($_SESSION['lang'] ?? 'en') === 'kh' || ($_SESSION['lang'] ?? 'en') === 'km');
+            $badgeLabel = $isKh ? 'រូបភាព' : 'Photo';
+
+            return '
+            <figure class="article-content-embedded-image align-center my-3">
+                <div class="embedded-img-wrapper position-relative">
+                    <a href="' . $safeUrl . '" target="_blank" rel="noopener" class="d-block text-decoration-none media-img-zoom rounded-4 overflow-hidden shadow-sm border">
+                        <img src="' . $safeUrl . '" alt="' . $badgeLabel . '" class="img-fluid w-100 h-auto object-fit-cover d-block" loading="lazy">
+                    </a>
+                </div>
+            </figure>
+            ';
+        }, $parsed);
+
+        // 3. Catch all existing HTML <img> tags and normalize their src attribute using image_url()
+        $parsed = preg_replace_callback('/<img\b([^>]*)\bsrc=["\']([^"\']+)["\']([^>]*)>/iu', function ($matches) {
+            $beforeSrc = $matches[1];
+            $rawSrc = $matches[2];
+            $afterSrc = $matches[3];
+
+            $resolvedSrc = image_url($rawSrc);
+
+            return '<img' . $beforeSrc . 'src="' . htmlspecialchars($resolvedSrc, ENT_QUOTES, 'UTF-8') . '"' . $afterSrc . '>';
+        }, $parsed);
+
         // Process videos
         $videos = [];
         if (is_array($videoEmbedUrls)) {
@@ -162,11 +206,15 @@ class Sanitizer
             $videos = array_values(array_filter(array_map('trim', explode("\n", $videoEmbedUrls))));
         }
 
-        // Video shortcodes regex pattern (matching optional wrapping <p>...</p>)
-        $videoPattern = '/(?:<p\b[^>]*>\s*)?\[(?:video|vid)[:\-]([0-9]+|https?:\/\/[^\s\]]+)(?::([^\]]+))?\](?:\s*<\/p>)?/i';
+        // Video shortcodes regex pattern (matching optional wrapping <p>...</p>, supporting both ASCII & Khmer digits)
+        $videoPattern = '/(?:<p\b[^>]*>\s*)?\[(?:video|vid)[:\-]([0-9\x{17E0}-\x{17E9}]+|https?:\/\/[^\s\]]+)(?::([^\]]+))?\](?:\s*<\/p>)?/iu';
 
         $parsed = preg_replace_callback($videoPattern, function ($matches) use ($videos) {
-            $target = trim($matches[1]);
+            $targetRaw = trim($matches[1]);
+            $target = strtr($targetRaw, [
+                '០' => '0', '១' => '1', '២' => '2', '៣' => '3', '៤' => '4',
+                '៥' => '5', '៦' => '6', '៧' => '7', '៨' => '8', '៩' => '9'
+            ]);
             $params = self::parseMediaParams($matches[2] ?? null);
             $align = $params['align'];
             $customCaption = $params['caption'];

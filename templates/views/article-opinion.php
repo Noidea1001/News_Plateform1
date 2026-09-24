@@ -17,7 +17,7 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                     <div class="d-flex align-items-center gap-4">
                         <div class="position-relative">
                             <?php if (!empty($article['author_avatar'])) { ?>
-                                <img src="<?= e($article['author_avatar']) ?>"
+                                <img src="<?= e(image_url($article['author_avatar'])) ?>"
                                     class="rounded-circle object-fit-cover border border-3 border-warning shadow"
                                     style="width: 80px; height: 80px;" alt="<?= e($article['author_name']) ?>">
                             <?php } else { ?>
@@ -66,7 +66,7 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                     'time_ago' => \App\Core\TemplateEngine::timeAgo($article['published_at']),
                     'reading_time' => $article['reading_time'] ?? '3 min read',
                     'views' => number_format((int)$article['views_count']),
-                    'image' => $article['featured_image'] ?? '',
+                    'image' => image_url($article['featured_image'] ?? ''),
                     'url' => url('article.php?slug=' . urlencode($article['slug']))
                 ]), ENT_QUOTES, 'UTF-8');
                 ?>
@@ -86,7 +86,7 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                 <!-- Featured Cover Image -->
                 <?php if (!empty($article['featured_image'])) { ?>
                     <div class="mb-5 rounded-4 overflow-hidden shadow-sm">
-                        <img src="<?= e($article['featured_image']) ?>" class="w-100 h-auto"
+                        <img src="<?= e(image_url($article['featured_image'])) ?>" class="w-100 h-auto"
                             alt="<?= e($article['title']) ?>">
                     </div>
                 <?php } ?>
@@ -128,7 +128,7 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                             <div class="carousel-inner">
                                 <?php foreach ($galleryUrls as $gIdx => $gUrl) { ?>
                                     <div class="carousel-item <?= $gIdx === 0 ? 'active' : '' ?>">
-                                        <img src="<?= e($gUrl) ?>" class="d-block w-100 object-fit-cover"
+                                        <img src="<?= e(image_url($gUrl)) ?>" class="d-block w-100 object-fit-cover"
                                             style="max-height: 440px;" alt="Gallery photo <?= $gIdx + 1 ?>" loading="lazy"
                                             onerror="this.parentElement.style.display='none'">
                                     </div>

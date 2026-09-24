@@ -21,17 +21,36 @@ if (!function_exists('e')) {
 
 if (!function_exists('km_num')) {
     /**
-     * Convert digits to Khmer digits if active language is Khmer
+     * Convert ASCII digits (0-9) to Khmer digits (០-៩) when active language is Khmer.
+     * Preserves numbers inside HTML tags, attributes (e.g. src="..."), and media shortcodes ([image:N]).
      */
     function km_num($num): string
     {
         $currentLang = $_SESSION['lang'] ?? 'en';
         $str = (string) $num;
-        if ($currentLang === 'kh' || $currentLang === 'km') {
-            $digitsKm = ['0' => '០', '1' => '១', '2' => '២', '3' => '៣', '4' => '៤', '5' => '៥', '6' => '៦', '7' => '៧', '8' => '៨', '9' => '៩'];
-            return strtr($str, $digitsKm);
+        if ($str === '' || ($currentLang !== 'kh' && $currentLang !== 'km')) {
+            return $str;
         }
-        return $str;
+
+        $digitsKm = ['0' => '០', '1' => '១', '2' => '២', '3' => '៣', '4' => '៤', '5' => '៥', '6' => '៦', '7' => '៧', '8' => '៨', '9' => '៩'];
+
+        // If string contains HTML tags or media shortcodes, only convert numbers in plain text content
+        if (str_contains($str, '<') || str_contains($str, '[')) {
+            $pattern = '/(<[^>]+>|\[(?:image|img|video|vid|audio)[:\-][^\]]+\])/iu';
+            $tokens = preg_split($pattern, $str, -1, PREG_SPLIT_DELIM_CAPTURE);
+            $result = '';
+            foreach ($tokens as $token) {
+                if ($token === '') continue;
+                if (preg_match('/^(<[^>]+>|\[(?:image|img|video|vid|audio)[:\-][^\]]+\])$/iu', $token)) {
+                    $result .= $token;
+                } else {
+                    $result .= strtr($token, $digitsKm);
+                }
+            }
+            return $result;
+        }
+
+        return strtr($str, $digitsKm);
     }
 }
 
@@ -184,28 +203,26 @@ if (!function_exists('cat_name')) {
 
 if (!function_exists('url')) {
     /**
-     * Dynamic URL generator that automatically detects base subdirectories and deployment environments
+     * Dynamic URL generator that automatically detects base subdirectories and deployment environments.
+     * Prevents path duplication (/News-platform-1/News-platform-1/...) and resolves relative upload/asset paths safely.
      */
     function url(string $path = ''): string
     {
-        $path = ltrim($path, '/');
+        $path = trim($path);
+        if ($path === '') {
+            return '';
+        }
+
+        // Return external URLs, protocol-relative URLs, and data URIs unchanged
+        if (preg_match('#^(https?:)?\/\/#i', $path) || str_starts_with($path, 'data:')) {
+            return $path;
+        }
 
         $scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
         $dir = str_replace('\\', '/', dirname($scriptName));
         $docRoot = str_replace('\\', '/', $_SERVER['DOCUMENT_ROOT'] ?? '');
 
-        // Detect if server DocumentRoot is set directly to /public or if running from public folder
-        $isPublicDocRoot = str_ends_with(rtrim($docRoot, '/'), '/public') 
-                        || ($dir === '/' && !file_exists(($docRoot !== '' ? $docRoot : '.') . '/public'));
-
-        if ($isPublicDocRoot && str_starts_with($path, 'public/')) {
-            $path = substr($path, 7);
-        } elseif (!$isPublicDocRoot && !str_starts_with($path, 'public/') && !str_starts_with($path, 'admin/')) {
-            if (str_starts_with($path, 'assets/') || str_starts_with($path, 'uploads/')) {
-                $path = 'public/' . $path;
-            }
-        }
-
+        // Detect base folder (e.g. /News-platform-1 or /News-platform-submission)
         $base = '';
         if (str_contains($dir, '/public')) {
             $base = substr($dir, 0, strpos($dir, '/public'));
@@ -214,12 +231,56 @@ if (!function_exists('url')) {
         } else {
             $base = ($dir === '/' || $dir === '\\') ? '' : $dir;
         }
-
         $base = rtrim($base, '/');
+
+        // Strip base folder or any project directory prefix if $path already starts with it
+        if ($base !== '') {
+            $basePattern = '#^' . preg_quote($base, '#') . '(/|$)#i';
+            if (preg_match($basePattern, $path)) {
+                $path = preg_replace($basePattern, '', $path);
+            }
+        }
+        $path = preg_replace('#^/?(?:News-platform-1|News-platform-submission|News-platform-[a-zA-Z0-9_\-]+)(/|$)#i', '', $path);
+
+        $path = ltrim($path, '/');
+
+        // Detect if server DocumentRoot is set directly to /public or if running from public folder
+        $isPublicDocRoot = str_ends_with(rtrim($docRoot, '/'), '/public') 
+                        || ($dir === '/' && !file_exists(($docRoot !== '' ? $docRoot : '.') . '/public'));
+
+        if ($isPublicDocRoot) {
+            if (str_starts_with($path, 'public/')) {
+                $path = substr($path, 7);
+            }
+        } else {
+            if (!str_starts_with($path, 'public/') && !str_starts_with($path, 'admin/')) {
+                if (str_starts_with($path, 'assets/') || str_starts_with($path, 'uploads/')) {
+                    $path = 'public/' . $path;
+                }
+            }
+        }
 
         return ($base !== '' ? $base : '') . '/' . $path;
     }
 }
+
+if (!function_exists('image_url')) {
+    /**
+     * Safely resolve image asset URLs whether they are local uploads, relative paths, or external HTTP/HTTPS links.
+     */
+    function image_url(?string $path): string
+    {
+        if (empty($path)) {
+            return '';
+        }
+        $path = trim($path);
+        if (preg_match('#^(https?:)?\/\/#i', $path) || str_starts_with($path, 'data:')) {
+            return $path;
+        }
+        return url($path);
+    }
+}
+
 
 if (!function_exists('lang_url')) {
     /**
