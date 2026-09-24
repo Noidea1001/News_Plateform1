@@ -172,7 +172,7 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                     </div>
                 <?php } ?>
 
-                <!-- Reading Toolbar (Font Size Controls A-/A+/Reset, Read Time, Copy Link, Progress Bar) -->
+                <!-- Reading Toolbar (Scroll Progress Bar) -->
                 <?php include __DIR__ . '/../components/reading-toolbar.php'; ?>
 
                 <!-- Article Content -->

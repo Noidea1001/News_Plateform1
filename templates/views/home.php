@@ -107,96 +107,105 @@
         <?php } else { ?>
 
             <?php
-            /* ── Pick the first article as the big LEAD HERO ── */
-            $lead = $articles[0];
+            /* ── Lead Hero & Secondary Grid logic (Only on default page 1 without search) ── */
+            $lead = null;
             $secondaryArticles = [];
-            if (count($articles) >= 3 && $currentPage === 1 && empty($searchQuery)) {
-                $secondaryArticles = array_slice($articles, 1, 2);
-                $feedArticles = array_slice($articles, 3);
-            } else {
-                $feedArticles = array_slice($articles, 1);
+            $feedArticles = $articles;
+
+            if (empty($searchQuery) && empty($activeCategoryId) && $currentPage === 1 && count($articles) > 0) {
+                $lead = $articles[0];
+                if (count($articles) >= 3) {
+                    $secondaryArticles = array_slice($articles, 1, 2);
+                    $feedArticles = array_slice($articles, 3);
+                } else {
+                    $feedArticles = array_slice($articles, 1);
+                }
             }
 
-            $leadData = htmlspecialchars(json_encode([
-                'id' => $lead['id'],
-                'title' => article_title($lead['title']),
-                'title_kh' => article_title($lead['title'], 'kh'),
-                'title_en' => article_title($lead['title'], 'en'),
-                'summary' => $lead['summary'],
-                'category' => cat_name($lead['category_name']),
-                'category_kh' => cat_name($lead['category_name'], 'kh'),
-                'category_en' => cat_name($lead['category_name'], 'en'),
-                'author' => $lead['author_name'],
-                'date' => \App\Core\TemplateEngine::formatDate($lead['published_at']),
-                'time_ago' => \App\Core\TemplateEngine::timeAgo($lead['published_at']),
-                'reading_time' => $lead['reading_time'] ?? '3 min read',
-                'views' => number_format((int)$lead['views_count']),
-                'image' => $lead['featured_image'] ?? '',
-                'url' => url('article.php?slug=' . urlencode($lead['slug']))
-            ]), ENT_QUOTES, 'UTF-8');
+            if (!empty($lead)) {
+                $leadData = htmlspecialchars(json_encode([
+                    'id' => $lead['id'],
+                    'title' => article_title($lead['title']),
+                    'title_kh' => article_title($lead['title'], 'kh'),
+                    'title_en' => article_title($lead['title'], 'en'),
+                    'summary' => $lead['summary'],
+                    'category' => cat_name($lead['category_name']),
+                    'category_kh' => cat_name($lead['category_name'], 'kh'),
+                    'category_en' => cat_name($lead['category_name'], 'en'),
+                    'author' => $lead['author_name'],
+                    'date' => \App\Core\TemplateEngine::formatDate($lead['published_at']),
+                    'time_ago' => \App\Core\TemplateEngine::timeAgo($lead['published_at']),
+                    'reading_time' => $lead['reading_time'] ?? '3 min read',
+                    'views' => number_format((int)$lead['views_count']),
+                    'image' => $lead['featured_image'] ?? '',
+                    'url' => url('article.php?slug=' . urlencode($lead['slug']))
+                ]), ENT_QUOTES, 'UTF-8');
+            }
             ?>
 
-            <!-- ==================================================
-                 LEAD ARTICLE — Full-width hero card (CNA style)
-            ================================================== -->
-            <div class="lead-article-card mb-4">
-                <!-- Image -->
-                <div class="lead-article-image">
-                    <?php if (!empty($lead['featured_image'])) { ?>
-                        <img src="<?= e($lead['featured_image']) ?>" alt="<?= e(article_title($lead['title'])) ?>" loading="eager">
-                    <?php } else { ?>
-                        <div class="d-flex align-items-center justify-content-center h-100 fs-1 text-muted"
-                            style="background:#1e293b;">
-                            <i class="bi bi-newspaper"></i>
-                        </div>
-                    <?php } ?>
-                    <!-- Floating badges -->
-                    <div class="lead-badge-left">
-                        <?php if (!empty($lead['is_breaking'])) { ?>
-                            <span class="lead-badge-pill" style="background:#c8102e; color:#fff;">
-                                <i class="bi bi-lightning-fill me-1"></i><?= __('breaking') ?>
-                            </span>
+            <?php if (!empty($lead)) { ?>
+                <!-- ==================================================
+                     LEAD ARTICLE — Full-width hero card (CNA style)
+                ================================================== -->
+                <div class="lead-article-card mb-4">
+                    <!-- Image -->
+                    <div class="lead-article-image">
+                        <?php if (!empty($lead['featured_image'])) { ?>
+                            <img src="<?= e($lead['featured_image']) ?>" alt="<?= e(article_title($lead['title'])) ?>" loading="eager">
+                        <?php } else { ?>
+                            <div class="d-flex align-items-center justify-content-center h-100 fs-1 text-muted"
+                                style="background:#1e293b;">
+                                <i class="bi bi-newspaper"></i>
+                            </div>
                         <?php } ?>
-                        <span class="lead-badge-pill bg-dark-pill"><?= e(cat_name($lead['category_name'])) ?></span>
+                        <!-- Floating badges -->
+                        <div class="lead-badge-left">
+                            <?php if (!empty($lead['is_breaking'])) { ?>
+                                <span class="lead-badge-pill" style="background:#c8102e; color:#fff;">
+                                    <i class="bi bi-lightning-fill me-1"></i><?= __('breaking') ?>
+                                </span>
+                            <?php } ?>
+                            <span class="lead-badge-pill bg-dark-pill"><?= e(cat_name($lead['category_name'])) ?></span>
+                        </div>
+                        <div class="lead-badge-right">
+                            <span class="lead-badge-pill tmpl-badge-<?= e($lead['template_type']) ?>">
+                                <?= mb_strtoupper(e(tmpl_name($lead['template_type']))) ?>
+                            </span>
+                        </div>
                     </div>
-                    <div class="lead-badge-right">
-                        <span class="lead-badge-pill tmpl-badge-<?= e($lead['template_type']) ?>">
-                            <?= mb_strtoupper(e(tmpl_name($lead['template_type']))) ?>
-                        </span>
-                    </div>
-                </div>
 
-                <!-- Body -->
-                <div class="lead-article-body">
-                    <div class="lead-meta-top">
-                        <span><?= e($lead['author_name']) ?></span>
-                        <span>&bull;</span>
-                        <span><?= \App\Core\TemplateEngine::timeAgo($lead['published_at']) ?></span>
-                    </div>
+                    <!-- Body -->
+                    <div class="lead-article-body">
+                        <div class="lead-meta-top">
+                            <span><?= e($lead['author_name']) ?></span>
+                            <span>&bull;</span>
+                            <span><?= \App\Core\TemplateEngine::timeAgo($lead['published_at']) ?></span>
+                        </div>
 
-                    <h2 class="lead-article-title">
-                        <a href="<?= url('article.php?slug=' . urlencode($lead['slug'])) ?>">
-                            <?= e(article_title($lead['title'])) ?>
-                        </a>
-                    </h2>
+                        <h2 class="lead-article-title">
+                            <a href="<?= url('article.php?slug=' . urlencode($lead['slug'])) ?>">
+                                <?= e(article_title($lead['title'])) ?>
+                            </a>
+                        </h2>
 
-                    <p class="lead-article-summary"><?= e($lead['summary']) ?></p>
+                        <p class="lead-article-summary"><?= e($lead['summary']) ?></p>
 
-                    <div class="lead-article-footer d-flex align-items-center justify-content-between w-100">
-                        <a href="<?= url('article.php?slug=' . urlencode($lead['slug'])) ?>" class="lead-read-link">
-                            <?= __('read_full_article') ?> <i class="bi bi-chevron-right"></i>
-                        </a>
-                        <div class="d-flex align-items-center gap-2 ms-auto">
-                            <button type="button" class="btn btn-quick-view btn-sm qv-trigger-btn" data-article='<?= $leadData ?>'>
-                                <i class="bi bi-eye me-1"></i><?= __('quick_view') ?? 'Quick View' ?>
-                            </button>
-                            <button type="button" class="btn btn-bookmark btn-sm bookmark-toggle-btn" data-id="<?= $lead['id'] ?>" data-article='<?= $leadData ?>'>
-                                <i class="bi bi-bookmark"></i>
-                            </button>
+                        <div class="lead-article-footer d-flex align-items-center justify-content-between w-100">
+                            <a href="<?= url('article.php?slug=' . urlencode($lead['slug'])) ?>" class="lead-read-link">
+                                <?= __('read_full_article') ?> <i class="bi bi-chevron-right"></i>
+                            </a>
+                            <div class="d-flex align-items-center gap-2 ms-auto">
+                                <button type="button" class="btn btn-quick-view btn-sm qv-trigger-btn" data-article='<?= $leadData ?>'>
+                                    <i class="bi bi-eye me-1"></i><?= __('quick_view') ?? 'Quick View' ?>
+                                </button>
+                                <button type="button" class="btn btn-bookmark btn-sm bookmark-toggle-btn" data-id="<?= $lead['id'] ?>" data-article='<?= $leadData ?>'>
+                                    <i class="bi bi-bookmark"></i>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            <?php } ?>
 
             <!-- ==================================================
                  SECONDARY FEATURED GRID (Top 2 Highlight Stories)
