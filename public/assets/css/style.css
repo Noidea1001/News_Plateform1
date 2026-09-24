@@ -2733,6 +2733,27 @@ input[type="text"]::-webkit-search-cancel-button {
     word-break: break-word;
 }
 
+/* Force all text spans, paragraphs, and headings to strip pasted white background highlights */
+.article-body span,
+.article-body p,
+.article-body strong,
+.article-body em,
+.article-body b,
+.article-body i,
+.article-body u,
+.article-body s,
+.article-body a,
+.article-body h1,
+.article-body h2,
+.article-body h3,
+.article-body h4,
+.article-body h5,
+.article-body h6,
+[class*="ql-bg-"] {
+    background-color: transparent !important;
+    background: transparent !important;
+}
+
 .article-body p {
     margin-bottom: 1.75rem;
     line-height: 2;
