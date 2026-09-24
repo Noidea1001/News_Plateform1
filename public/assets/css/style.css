@@ -2733,7 +2733,7 @@ input[type="text"]::-webkit-search-cancel-button {
     word-break: break-word;
 }
 
-/* Force all text spans, paragraphs, and headings to strip pasted white background highlights */
+/* Force all text spans, paragraphs, and headings to strip pasted white background highlights
 .article-body span,
 .article-body p,
 .article-body strong,
@@ -2752,7 +2752,7 @@ input[type="text"]::-webkit-search-cancel-button {
 [class*="ql-bg-"] {
     background-color: transparent !important;
     background: transparent !important;
-}
+} */
 
 .article-body p {
     margin-bottom: 1.75rem;
