@@ -14,7 +14,7 @@ require_once __DIR__ . '/../../src/Controllers/AdminController.php';
 use App\Controllers\AdminController;
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    header('Location: /admin/dashboard.php');
+    header('Location: ' . url('admin/dashboard.php'));
     exit;
 }
 
@@ -22,7 +22,7 @@ try {
     $controller = new AdminController();
     $controller->saveArticle($_POST, $_FILES);
 } catch (Throwable $e) {
-    header('Location: /admin/dashboard.php?error=' . urlencode('Save Error: ' . $e->getMessage()));
+    header('Location: ' . url('admin/dashboard.php?error=' . urlencode('Save Error: ' . $e->getMessage())));
     exit;
 }
 ?>

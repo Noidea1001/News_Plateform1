@@ -270,32 +270,30 @@ $currentLang = $_SESSION['lang'] ?? 'en';
 
     <!-- CNA-style red border bottom already on the nav — the 3px solid red line is the signature -->
 
-    <!-- ── Global Professional Toast Notifications (Top-Right, Auto-Close 3s) ── -->
-    <div class="toast-container position-fixed top-0 mt-4 end-0 p-3" style="z-index: 3000;">
+    <!-- ── Global Professional Toast Notifications (Floats below header, right-aligned) ── -->
+    <div class="toast-container position-fixed" style="top: 96px; right: 1.5rem; z-index: 9999; pointer-events: none;">
         <?php if (!empty($_GET['msg'])) { ?>
-            <div id="adminToastMsg" class="toast align-items-center border-0 shadow-lg show" role="alert"
-                aria-live="assertive" aria-atomic="true"
-                style="background:#ffffff !important; border:1px solid #e2e8f0 !important; border-radius:6px; min-width:280px; max-width:380px;">
-                <div class="d-flex p-3 align-items-center justify-content-between">
-                    <div class="toast-body p-0 fw-semibold text-dark small" style="font-size:0.85rem; line-height:1.4;">
+            <div id="adminToastMsg" class="toast border-0 show" role="alert" aria-live="assertive" aria-atomic="true"
+                style="background: #ffffff !important; border: 1px solid #cbd5e1 !important; border-radius: 10px !important; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important; min-width: 320px; max-width: 440px; width: auto; pointer-events: auto; margin-bottom: 0.75rem;">
+                <div class="d-flex align-items-center justify-content-between gap-3" style="padding: 0.9rem 1.25rem !important;">
+                    <div class="toast-body p-0 fw-semibold" style="font-size: 0.925rem; color: #0f172a !important; line-height: 1.45;">
                         <?= e(__($_GET['msg'])) ?>
                     </div>
-                    <button type="button" class="btn-close ms-3 me-0 shadow-none" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close shadow-none opacity-60 flex-shrink-0" data-bs-dismiss="toast"
+                        aria-label="Close" style="font-size: 0.8rem; margin: 0 !important;"></button>
                 </div>
             </div>
         <?php } ?>
 
         <?php if (!empty($_GET['error'])) { ?>
-            <div id="adminToastErr" class="toast align-items-center border-0 shadow-lg show" role="alert"
-                aria-live="assertive" aria-atomic="true"
-                style="background:#ffffff !important; border:1px solid #e2e8f0 !important; border-radius:6px; min-width:280px; max-width:380px;">
-                <div class="d-flex p-3 align-items-center justify-content-between">
-                    <div class="toast-body p-0 fw-semibold text-danger small" style="font-size:0.85rem; line-height:1.4;">
+            <div id="adminToastErr" class="toast border-0 show" role="alert" aria-live="assertive" aria-atomic="true"
+                style="background: #ffffff !important; border: 1px solid #fecdd3 !important; border-radius: 10px !important; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important; min-width: 320px; max-width: 440px; width: auto; pointer-events: auto; margin-bottom: 0.75rem;">
+                <div class="d-flex align-items-center justify-content-between gap-3" style="padding: 0.9rem 1.25rem !important;">
+                    <div class="toast-body p-0 fw-semibold text-danger" style="font-size: 0.925rem; line-height: 1.45;">
                         <?= e(__($_GET['error'])) ?>
                     </div>
-                    <button type="button" class="btn-close ms-3 me-0 shadow-none" data-bs-dismiss="toast"
-                        aria-label="Close"></button>
+                    <button type="button" class="btn-close shadow-none opacity-60 flex-shrink-0" data-bs-dismiss="toast"
+                        aria-label="Close" style="font-size: 0.8rem; margin: 0 !important;"></button>
                 </div>
             </div>
         <?php } ?>
@@ -334,15 +332,51 @@ $currentLang = $_SESSION['lang'] ?? 'en';
                 }
             });
 
-            // Auto close toast notifications after 3 seconds (3000ms)
+            // Auto close toast notifications after 4 seconds (4000ms)
             const toastElems = document.querySelectorAll('.toast');
             toastElems.forEach(function (toastEl) {
                 setTimeout(function () {
                     toastEl.classList.remove('show');
                     setTimeout(function () { if (toastEl.parentNode) toastEl.parentNode.removeChild(toastEl); }, 300);
-                }, 3000);
+                }, 4000);
             });
         });
+
+        // Global Helper Function for Triggering Toast Notifications via JS
+        window.showAdminToast = function(message, type = 'error') {
+            let container = document.querySelector('.toast-container');
+            if (!container) {
+                container = document.createElement('div');
+                container.className = 'toast-container position-fixed';
+                container.style.cssText = 'top: 96px; right: 1.5rem; z-index: 9999; pointer-events: none;';
+                document.body.appendChild(container);
+            }
+
+            const toast = document.createElement('div');
+            toast.className = 'toast border-0 show';
+            toast.setAttribute('role', 'alert');
+
+            const borderColor = type === 'error' ? '#fecdd3' : '#cbd5e1';
+            const textColorClass = type === 'error' ? 'text-danger' : 'text-dark';
+
+            toast.style.cssText = 'background: #ffffff !important; border: 1px solid ' + borderColor + ' !important; border-radius: 10px !important; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important; min-width: 320px; max-width: 440px; width: auto; pointer-events: auto; margin-bottom: 0.75rem;';
+
+            toast.innerHTML = `
+                <div class="d-flex align-items-center justify-content-between gap-3" style="padding: 0.9rem 1.25rem !important;">
+                    <div class="toast-body p-0 fw-semibold ${textColorClass}" style="font-size: 0.925rem; line-height: 1.45;">
+                        ${message}
+                    </div>
+                    <button type="button" class="btn-close shadow-none opacity-60 flex-shrink-0" onclick="this.closest('.toast').remove()" aria-label="Close" style="font-size: 0.8rem; margin: 0 !important;"></button>
+                </div>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(function() {
+                toast.classList.remove('show');
+                setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
+            }, 4000);
+        };
     </script>
 
     <main class="flex-grow-1">

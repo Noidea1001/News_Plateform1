@@ -20,7 +20,7 @@ try {
     $controller = new AdminController();
     $controller->deleteArticle($id, $token);
 } catch (Throwable $e) {
-    header('Location: /admin/dashboard.php?error=' . urlencode('Delete Error: ' . $e->getMessage()));
+    header('Location: ' . url('admin/dashboard.php?error=' . urlencode('Delete Error: ' . $e->getMessage())));
     exit;
 }
 ?>

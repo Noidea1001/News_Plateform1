@@ -28,7 +28,7 @@ $formAction = url('admin/actions/save-article.php');
                 class="btn btn-outline-secondary px-3.5 py-2 fw-semibold rounded-3 text-nowrap shadow-sm">
                 <span><?= __('cancel') ?></span>
             </a>
-            <button type="submit" form="articleForm"
+            <button type="submit" form="articleForm" id="btnSaveArticleSubmit"
                 class="btn btn-danger px-4 py-2 fw-semibold rounded-3 text-nowrap shadow">
                 <span><?= $isEdit ? __('update_article') : __('publish_save') ?></span>
             </button>
@@ -223,8 +223,7 @@ $formAction = url('admin/actions/save-article.php');
                             <?= $article['content'] ?? '' ?>
                         </div>
                         <!-- Hidden Form Textarea Syncing with Quill -->
-                        <textarea class="d-none" id="content" name="content"
-                            required><?= e($article['content'] ?? '') ?></textarea>
+                        <textarea class="d-none" id="content" name="content"><?= e($article['content'] ?? '') ?></textarea>
                         <div class="text-muted text-xs mt-1">
                             <?= __('manual_translation_hint_content') ?>
                         </div>
@@ -337,7 +336,7 @@ $formAction = url('admin/actions/save-article.php');
                                     class="text-danger">*</span></span>
                         </label>
                         <input type="hidden" id="template_type" name="template_type"
-                            value="<?= e($article['template_type'] ?? 'standard') ?>" required>
+                            value="<?= e($article['template_type'] ?? 'standard') ?>">
 
                         <div class="blueprint-picker-grid">
                             <!-- Card 1: Standard -->
@@ -616,10 +615,46 @@ $formAction = url('admin/actions/save-article.php');
             });
 
 
+            // Live sync Quill changes to hidden content textarea
+            quill.on('text-change', function () {
+                const contentInput = document.getElementById('content');
+                if (contentInput) {
+                    contentInput.value = quill.root.innerHTML;
+                }
+            });
+
+            // Initial sync
+            const contentInput = document.getElementById('content');
+            if (contentInput && quill.root.innerHTML) {
+                contentInput.value = quill.root.innerHTML;
+            }
+
             const articleForm = document.getElementById('articleForm');
             if (articleForm) {
-                articleForm.addEventListener('submit', function () {
-                    const contentInput = document.getElementById('content');
+                articleForm.addEventListener('submit', function (e) {
+                    if (contentInput) {
+                        contentInput.value = quill.root.innerHTML;
+                    }
+                    const titleVal = document.getElementById('title') ? document.getElementById('title').value.trim() : '';
+                    const catVal = document.getElementById('category_id') ? document.getElementById('category_id').value : '';
+                    const quillText = quill.getText().trim();
+                    const hasMedia = quill.root.querySelector('img, video, iframe') !== null;
+                    
+                    if (!titleVal || !catVal || (!quillText && !hasMedia)) {
+                        e.preventDefault();
+                        if (typeof window.showAdminToast === 'function') {
+                            window.showAdminToast('Title, category, and article body content are required.', 'error');
+                        } else {
+                            alert('Title, category, and article body content are required.');
+                        }
+                        return false;
+                    }
+                });
+            }
+
+            const btnSaveSubmit = document.getElementById('btnSaveArticleSubmit');
+            if (btnSaveSubmit && articleForm) {
+                btnSaveSubmit.addEventListener('click', function() {
                     if (contentInput) {
                         contentInput.value = quill.root.innerHTML;
                     }

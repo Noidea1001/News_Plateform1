@@ -97,7 +97,7 @@ class AdminController
      */
     public function createArticleForm(): void
     {
-        $user = Auth::requireAuth(['admin', 'editor']);
+        $user = Auth::requireAuth(['admin', 'editor', 'reporter']);
         $categories = $this->db->fetchAll("SELECT * FROM categories ORDER BY name ASC");
         $authors = $this->db->fetchAll("SELECT id, username, role FROM users WHERE is_active = 1 ORDER BY username ASC");
 
@@ -116,7 +116,7 @@ class AdminController
      */
     public function editArticleForm(int $id): void
     {
-        $user = Auth::requireAuth(['admin', 'editor']);
+        $user = Auth::requireAuth(['admin', 'editor', 'reporter']);
         $article = $this->db->fetch("SELECT * FROM articles WHERE id = :id", ['id' => $id]);
 
         if (!$article) {
@@ -142,7 +142,7 @@ class AdminController
      */
     public function saveArticle(array $postData, array $files): void
     {
-        $user = Auth::requireAuth(['admin', 'editor']);
+        $user = Auth::requireAuth(['admin', 'editor', 'reporter']);
 
         // 1. Verify CSRF
         if (!Auth::verifyCsrfToken($postData['csrf_token'] ?? '')) {
@@ -278,7 +278,8 @@ class AdminController
                 'id' => $id
             ]);
 
-            header("Location: " . url("admin/dashboard.php?msg=" . urlencode("Article successfully updated!")));
+            $msg = ($status === 'draft') ? 'Article draft successfully updated!' : 'Article successfully updated!';
+            header("Location: " . url("admin/dashboard.php?msg=" . urlencode($msg)));
             exit;
         } else {
             // Create
@@ -307,7 +308,8 @@ class AdminController
                 'published_at' => $publishedAt,
             ]);
 
-            header("Location: " . url("admin/dashboard.php?msg=" . urlencode("New article post successfully created!")));
+            $msg = ($status === 'draft') ? 'New article draft successfully saved!' : 'New article post successfully created!';
+            header("Location: " . url("admin/dashboard.php?msg=" . urlencode($msg)));
             exit;
         }
     }
@@ -704,7 +706,7 @@ class AdminController
 
         header('Content-Type: application/json; charset=utf-8');
 
-        if (!Auth::check() || !Auth::hasRole(['admin', 'editor'])) {
+        if (!Auth::check() || !Auth::hasRole(['admin', 'editor', 'reporter'])) {
             echo json_encode(['error' => 'Session expired or insufficient privileges. Please refresh and log in.']);
             exit;
         }
