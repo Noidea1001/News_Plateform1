@@ -153,28 +153,30 @@ class Sanitizer
                 return '<div class="alert alert-warning text-xs py-1 px-2.5 my-3 d-inline-block rounded-2 border"><i class="bi bi-exclamation-circle me-1"></i>[Image ' . htmlspecialchars($label, ENT_QUOTES, 'UTF-8') . ' not found]</div>';
             }
 
-            $isKh = (($_SESSION['lang'] ?? 'en') === 'kh' || ($_SESSION['lang'] ?? 'en') === 'km');
-            $numCaption = $index ? ($isKh ? ('រូបភាពទី ' . km_num($index)) : ('Image #' . $index)) : ($isKh ? 'រូបភាព' : 'Photo');
-            $captionText = $customCaption ?: $numCaption;
-            $badgeLabel = $isKh ? 'រូបភាព' : 'Photo';
-
             $safeUrl = htmlspecialchars(image_url($imgUrl), ENT_QUOTES, 'UTF-8');
-            $safeCaption = htmlspecialchars($captionText, ENT_QUOTES, 'UTF-8');
             $alignClass = 'align-' . $align;
 
-            return '
-            <figure class="article-content-embedded-image ' . $alignClass . '">
-                <div class="embedded-img-wrapper position-relative">
-                    <a href="' . $safeUrl . '" target="_blank" rel="noopener" class="d-block text-decoration-none media-img-zoom rounded-4 overflow-hidden shadow-sm border">
-                        <img src="' . $safeUrl . '" alt="' . $safeCaption . '" class="img-fluid w-100 h-auto object-fit-cover d-block" loading="lazy">
-                    </a>
-                </div>
+            $figcaptionHtml = '';
+            if (!empty($customCaption)) {
+                $isKh = (($_SESSION['lang'] ?? 'en') === 'kh' || ($_SESSION['lang'] ?? 'en') === 'km');
+                $badgeLabel = $isKh ? 'រូបភាព' : 'Photo';
+                $safeCaption = htmlspecialchars($customCaption, ENT_QUOTES, 'UTF-8');
+                $figcaptionHtml = '
                 <figcaption class="figure-caption text-muted mt-2 text-center small fw-semibold">
                     <span class="badge bg-danger text-white px-2 py-0.5 text-2xs text-uppercase me-1 fw-bold rounded-1" style="font-size: 0.65rem;">
                         <i class="bi bi-camera-fill me-1"></i>' . $badgeLabel . '
                     </span>
                     <span>' . $safeCaption . '</span>
-                </figcaption>
+                </figcaption>';
+            }
+
+            return '
+            <figure class="article-content-embedded-image ' . $alignClass . '">
+                <div class="embedded-img-wrapper position-relative">
+                    <a href="' . $safeUrl . '" target="_blank" rel="noopener" class="d-block text-decoration-none media-img-zoom rounded-4 overflow-hidden shadow-sm border">
+                        <img src="' . $safeUrl . '" alt="' . htmlspecialchars($customCaption ?: 'Article image', ENT_QUOTES, 'UTF-8') . '" class="img-fluid w-100 h-auto object-fit-cover d-block" loading="lazy">
+                    </a>
+                </div>' . $figcaptionHtml . '
             </figure>
             ';
         }, $clean);
