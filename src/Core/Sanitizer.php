@@ -29,7 +29,18 @@ class Sanitizer
 
         $sanitized = strip_tags($html, $allowedTags);
 
-        // 3. Ensure iframe embeds only allow trusted domains (YouTube, Spotify, SoundCloud, Vimeo)
+        // 3. Remove inline background-color & background styles pasted from Quill/rich-text editors
+        $sanitized = preg_replace_callback('/style=["\']([^"\']*)["\']/i', function ($matches) {
+            $styleContent = $matches[1];
+            $cleanedStyle = preg_replace('/background(?:-color)?\s*:\s*[^;]+;?/i', '', $styleContent);
+            $cleanedStyle = trim($cleanedStyle, " \t\n\r\0\x0B;");
+            return !empty($cleanedStyle) ? 'style="' . htmlspecialchars($cleanedStyle, ENT_QUOTES, 'UTF-8') . '"' : '';
+        }, $sanitized);
+
+        // 4. Remove ql-bg-* white highlight classes from Quill editor output
+        $sanitized = preg_replace('/\bql-bg-[a-zA-Z0-9_\-]+\b/i', '', $sanitized);
+
+        // 5. Ensure iframe embeds only allow trusted domains (YouTube, Spotify, SoundCloud, Vimeo)
         $sanitized = preg_replace_callback('/<iframe[^>]+src=["\']([^"\']+)["\'][^>]*>.*?<\/iframe>/i', function ($matches) {
             $src = $matches[1];
             if (preg_match('#^(https?:)?\/\/(www\.)?(youtube\.com|youtube-nocookie\.com|youtu\.be|player\.vimeo\.com|open\.spotify\.com|w\.soundcloud\.com)#i', $src)) {
