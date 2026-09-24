@@ -128,7 +128,9 @@
                     'title' => article_title($lead['title']),
                     'title_kh' => article_title($lead['title'], 'kh'),
                     'title_en' => article_title($lead['title'], 'en'),
-                    'summary' => $lead['summary'],
+                    'summary' => article_summary($lead['summary']),
+                    'summary_kh' => article_summary($lead['summary'], 'kh'),
+                    'summary_en' => article_summary($lead['summary'], 'en'),
                     'category' => cat_name($lead['category_name']),
                     'category_kh' => cat_name($lead['category_name'], 'kh'),
                     'category_en' => cat_name($lead['category_name'], 'en'),
@@ -188,7 +190,7 @@
                             </a>
                         </h2>
 
-                        <p class="lead-article-summary"><?= e($lead['summary']) ?></p>
+                        <p class="lead-article-summary"><?= e(article_summary($lead['summary'])) ?></p>
 
                         <div class="lead-article-footer d-flex align-items-center justify-content-between w-100">
                             <a href="<?= url('article.php?slug=' . urlencode($lead['slug'])) ?>" class="lead-read-link">
@@ -219,7 +221,9 @@
                             'title' => article_title($sItem['title']),
                             'title_kh' => article_title($sItem['title'], 'kh'),
                             'title_en' => article_title($sItem['title'], 'en'),
-                            'summary' => $sItem['summary'],
+                            'summary' => article_summary($sItem['summary']),
+                            'summary_kh' => article_summary($sItem['summary'], 'kh'),
+                            'summary_en' => article_summary($sItem['summary'], 'en'),
                             'category' => cat_name($sItem['category_name']),
                             'category_kh' => cat_name($sItem['category_name'], 'kh'),
                             'category_en' => cat_name($sItem['category_name'], 'en'),
@@ -254,7 +258,7 @@
                                         <?= e(article_title($sItem['title'])) ?>
                                     </a>
                                 </h3>
-                                <p class="secondary-grid-summary"><?= e($sItem['summary']) ?></p>
+                                <p class="secondary-grid-summary"><?= e(article_summary($sItem['summary'])) ?></p>
                                 <div class="d-flex align-items-center justify-content-between mt-auto pt-2 border-top">
                                     <span class="text-xs text-muted">
                                         <i class="bi bi-clock me-1"></i><?= e($sItem['reading_time'] ?? '3 min read') ?>
@@ -309,7 +313,9 @@
                                     'title' => article_title($item['title']),
                                     'title_kh' => article_title($item['title'], 'kh'),
                                     'title_en' => article_title($item['title'], 'en'),
-                                    'summary' => $item['summary'],
+                                    'summary' => article_summary($item['summary']),
+                                    'summary_kh' => article_summary($item['summary'], 'kh'),
+                                    'summary_en' => article_summary($item['summary'], 'en'),
                                     'category' => cat_name($item['category_name']),
                                     'category_kh' => cat_name($item['category_name'], 'kh'),
                                     'category_en' => cat_name($item['category_name'], 'en'),
@@ -357,7 +363,7 @@
                                         </h4>
 
                                         <!-- Summary -->
-                                        <p class="cna-feed-summary"><?= e($item['summary']) ?></p>
+                                        <p class="cna-feed-summary"><?= e(article_summary($item['summary'])) ?></p>
 
                                         <!-- Bottom row: author · views · actions -->
                                         <div class="cna-feed-footer">

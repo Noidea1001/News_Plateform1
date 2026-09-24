@@ -42,14 +42,14 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
         <!-- Summary Paragraph -->
         <p
             class="lead text-secondary fw-normal fs-5 mb-4 border-start border-4 border-danger ps-3 py-2 bg-light rounded-end">
-            <?= e($article['summary']) ?>
+            <?= e(article_summary($article['summary'])) ?>
         </p>
 
         <?php
         $artData = htmlspecialchars(json_encode([
             'id' => $article['id'],
             'title' => article_title($article['title']),
-            'summary' => $article['summary'],
+            'summary' => article_summary($article['summary']),
             'category' => cat_name($article['category_name']),
             'author' => $article['author_name'],
             'date' => \App\Core\TemplateEngine::formatDate($article['published_at']),
@@ -182,7 +182,7 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
 
                 <!-- Article Body Content -->
                 <div class="article-body mb-4 <?= !empty($article['has_drop_cap']) ? 'has-drop-cap' : '' ?>">
-                    <?= \App\Core\Sanitizer::parseArticleMedia($article['content'], $article['gallery_images'] ?? null, $article['featured_image'] ?? null, $article['video_embed_url'] ?? null) ?>
+                    <?= \App\Core\Sanitizer::parseArticleMedia(article_content($article['content']), $article['gallery_images'] ?? null, $article['featured_image'] ?? null, $article['video_embed_url'] ?? null) ?>
                 </div>
 
                 <!-- Social Share Buttons -->
