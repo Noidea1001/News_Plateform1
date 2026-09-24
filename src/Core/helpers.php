@@ -287,3 +287,116 @@ if (!function_exists('article_title')) {
         }
     }
 }
+
+if (!function_exists('parse_dual_lang')) {
+    /**
+     * General Multi-Format Dual-Language Content Extractor
+     * Supports:
+     * 1. Delimiters: '---', '///', '|||', '<!-- lang:en -->', '<hr class="lang-separator">', '[en]...[/en][kh]...[/kh]'
+     * 2. Parentheses: "Khmer text (English text)"
+     */
+    function parse_dual_lang(?string $text, ?string $targetLang = null): string
+    {
+        if (empty($text)) {
+            return '';
+        }
+
+        $currentLang = $targetLang ?? ($_SESSION['lang'] ?? 'en');
+        $isKhmerMode = ($currentLang === 'kh' || $currentLang === 'km');
+        $str = trim($text);
+
+        // 1. Check explicit language markers [kh]...[/kh] [en]...[/en]
+        if (str_contains($str, '[kh]') || str_contains($str, '[en]')) {
+            if ($isKhmerMode && preg_match('/\[kh\](.*?)\[\/kh\]/is', $str, $m)) {
+                return km_num(trim($m[1]));
+            }
+            if (!$isKhmerMode && preg_match('/\[en\](.*?)\[\/en\]/is', $str, $m)) {
+                return trim($m[1]);
+            }
+        }
+
+        // 2. Check HTML comment tags <!-- lang:kh --> or <!-- kh --> vs <!-- lang:en --> or <!-- en -->
+        if (preg_match('/<!--\s*(?:lang:)?kh\s*-->(.*?)<!--\s*(?:lang:)?en\s*-->(.*?)$/is', $str, $m)) {
+            return $isKhmerMode ? km_num(trim($m[1])) : trim($m[2]);
+        }
+
+        // 3. Check explicit delimiters like '---', '///', '|||', or '<hr class="lang-separator">'
+        $delimiters = ['<hr class="lang-separator">', '<hr class="lang-separator"/>', '<hr class="lang-separator" />', '---', '///', '|||'];
+        foreach ($delimiters as $delim) {
+            if (str_contains($str, $delim)) {
+                $parts = explode($delim, $str, 2);
+                $part1 = trim($parts[0]);
+                $part2 = trim($parts[1]);
+
+                $isPart1Khmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $part1);
+                $isPart2Khmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $part2);
+
+                if ($isKhmerMode) {
+                    if ($isPart1Khmer) return km_num($part1);
+                    if ($isPart2Khmer) return km_num($part2);
+                    return km_num($part1);
+                } else {
+                    if (!$isPart1Khmer && !empty($part1)) return $part1;
+                    if (!$isPart2Khmer && !empty($part2)) return $part2;
+                    return $part2 ?: $part1;
+                }
+            }
+        }
+
+        // 4. Check parenthetical format: "Part1 (Part2)"
+        if (preg_match('/^([^()]+)\s*\(([^()]+)\)$/us', $str, $matches)) {
+            $part1 = trim($matches[1]);
+            $part2 = trim($matches[2]);
+
+            $isPart1Khmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $part1);
+            $isPart2Khmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $part2);
+
+            if ($isKhmerMode) {
+                if ($isPart1Khmer) return km_num($part1);
+                if ($isPart2Khmer) return km_num($part2);
+                return km_num($part1);
+            } else {
+                if (!$isPart1Khmer && !empty($part1)) return $part1;
+                if (!$isPart2Khmer && !empty($part2)) return $part2;
+                return $part2 ?: $part1;
+            }
+        }
+
+        // Fallback: single language text
+        if ($isKhmerMode) {
+            return km_num($str);
+        }
+
+        return $str;
+    }
+}
+
+if (!function_exists('article_summary')) {
+    /**
+     * Dynamic Article Summary Language Translation Resolver
+     */
+    function article_summary(?string $summary, ?string $targetLang = null): string
+    {
+        return parse_dual_lang($summary, $targetLang);
+    }
+}
+
+if (!function_exists('article_content')) {
+    /**
+     * Dynamic Article Content Language Translation Resolver
+     */
+    function article_content(?string $content, ?string $targetLang = null): string
+    {
+        return parse_dual_lang($content, $targetLang);
+    }
+}
+
+if (!function_exists('cat_desc')) {
+    /**
+     * Dynamic Category Description Language Translation Resolver
+     */
+    function cat_desc(?string $description, ?string $targetLang = null): string
+    {
+        return parse_dual_lang($description, $targetLang);
+    }
+}
