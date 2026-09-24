@@ -296,5 +296,14 @@ $lang['click_bookmark_hint'] = "Click the bookmark icon on any article to save i
 $lang['clear_all_saved'] = "Clear Saved Reading List";
 $lang['confirm_clear_saved'] = "Are you sure you want to clear all saved articles?";
 
+// System & Authentication Feedback Messages
+$lang['You have been safely logged out.'] = "You have been safely logged out.";
+$lang['Invalid staff credentials or account disabled.'] = "Invalid staff credentials or account disabled.";
+$lang['Please log in to access the control panel.'] = "Please log in to access the control panel.";
+$lang['Please provide both username and password.'] = "Please provide both username and password.";
+$lang['Security validation failed (CSRF token mismatch). Please refresh and try again.'] = "Security validation failed (CSRF token mismatch). Please refresh and try again.";
+$lang['Too many failed login attempts. Please try again in 15 minutes.'] = "Too many failed login attempts. Please try again in 15 minutes.";
+$lang['Access Denied: Insufficient editorial privileges.'] = "Access Denied: Insufficient editorial privileges.";
+
 return $lang;
 

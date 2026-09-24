@@ -296,5 +296,14 @@ $lang['click_bookmark_hint'] = "ចុចលើរូបតំណាង bookmark
 $lang['clear_all_saved'] = "សម្អាតបញ្ជីរក្សាទុកទាំងអស់";
 $lang['confirm_clear_saved'] = "តើអ្នកប្រាកដជាចង់សម្អាតបញ្ជីអត្ថបទដែលបានរក្សាទុកទាំងអស់មែនទេ?";
 
+// System & Authentication Feedback Messages
+$lang['You have been safely logged out.'] = "អ្នកបានចាកចេញពីប្រព័ន្ធដោយសុវត្ថិភាព។";
+$lang['Invalid staff credentials or account disabled.'] = "គណនី ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ ឬគណនីត្រូវបានបិទ។";
+$lang['Please log in to access the control panel.'] = "សូមចូលប្រើប្រព័ន្ធដើម្បីចូលទៅកាន់បន្ទះគ្រប់គ្រង។";
+$lang['Please provide both username and password.'] = "សូមបញ្ចូលទាំងឈ្មោះអ្នកប្រើប្រាស់ និងពាក្យសម្ងាត់។";
+$lang['Security validation failed (CSRF token mismatch). Please refresh and try again.'] = "ការផ្ទៀងផ្ទាត់សុវត្ថិភាពបរាជ័យ (CSRF token mismatch)។ សូមព្យាយាមម្តងទៀត។";
+$lang['Too many failed login attempts. Please try again in 15 minutes.'] = "ការចូលប្រើប្រព័ន្ធបរាជ័យច្រើនដងពេក។ សូមព្យាយាមម្តងទៀតក្នុងរយៈពេល ១៥ នាទី។";
+$lang['Access Denied: Insufficient editorial privileges.'] = "ការចូលប្រើប្រាស់ត្រូវបានបដិសេធ៖ គ្មានសិទ្ធិគ្រប់គ្រាន់។";
+
 return $lang;
 
