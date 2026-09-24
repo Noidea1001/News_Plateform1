@@ -161,17 +161,17 @@ $csrfToken = Auth::generateCsrfToken();
             position: fixed;
             top: 1rem;
             right: 1.5rem;
-            z-index: 10;
+            z-index: 1000;
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.85rem;
         }
-
         .top-nav-controls a, .top-nav-controls button {
             font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.75);
             text-decoration: none;
             font-weight: 500;
+            transition: color 0.15s ease-in-out;
         }
         .top-nav-controls a:hover, .top-nav-controls button:hover {
             color: #ffffff;
@@ -182,11 +182,22 @@ $csrfToken = Auth::generateCsrfToken();
 
 <!-- Top Controls -->
 <div class="top-nav-controls">
-    <a href="?lang=<?= $currentLang === 'km' ? 'en' : 'km' ?>">
-        <?= $currentLang === 'km' ? 'English' : 'ភាសាខ្មែរ' ?>
-    </a>
-    <span class="text-white-50">|</span>
-    <a href="<?= url('public/index.php') ?>">
+    <div class="lang-select-box d-inline-flex align-items-center gap-1 px-2.5 py-1 rounded">
+        <i class="bi bi-globe2 text-white-50" style="font-size: 0.8rem;"></i>
+        <select class="form-select form-select-sm border-0 bg-transparent text-white shadow-none py-0 ps-1 pe-4"
+                id="loginTopLangSelect"
+                style="font-size: 0.8rem; font-weight: 600; cursor: pointer; background-image: url('data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 16 16\' fill=\'%23ffffff\'%3e%3cpath fill-rule=\'evenodd\' d=\'M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z\'/%3e%3c/svg%3e'); background-size: 10px;"
+                onchange="if(this.value) window.location.href=this.value;">
+            <option value="<?= lang_url('en') ?>" <?= $currentLang === 'en' ? 'selected' : '' ?> class="text-dark fw-semibold">
+                English (EN)
+            </option>
+            <option value="<?= lang_url('kh') ?>" <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'selected' : '' ?> class="text-dark fw-semibold">
+                ភាសាខ្មែរ (KH)
+            </option>
+        </select>
+    </div>
+    <span class="text-white-50 opacity-50">|</span>
+    <a href="<?= url('public/index.php') ?>" class="text-white-50 text-decoration-none">
         <?= __('live_public_site') ?> &rarr;
     </a>
 </div>
@@ -212,13 +223,13 @@ $csrfToken = Auth::generateCsrfToken();
             <!-- Error / Success Messages -->
             <?php if (!empty($errorMsg)) { ?>
                 <div class="alert alert-danger border-0 small py-2 px-3 mb-3" style="border-radius: 4px;" role="alert">
-                    <?= e($errorMsg) ?>
+                    <?= e(__($errorMsg)) ?>
                 </div>
             <?php } ?>
 
             <?php if (!empty($successMsg)) { ?>
                 <div class="alert alert-success border-0 small py-2 px-3 mb-3" style="border-radius: 4px;" role="alert">
-                    <?= e($successMsg) ?>
+                    <?= e(__($successMsg)) ?>
                 </div>
             <?php } ?>
 
@@ -275,9 +286,13 @@ $csrfToken = Auth::generateCsrfToken();
 
 </div>
 
+<!-- Bootstrap 5.3 JS Bundle -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <!-- Password Toggle Script -->
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    // Password Toggle
     const passwordInput = document.getElementById('password');
     const toggleBtn     = document.getElementById('togglePasswordBtn');
     const toggleIcon    = document.getElementById('togglePasswordIcon');
