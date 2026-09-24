@@ -278,7 +278,7 @@ $currentLang = $_SESSION['lang'] ?? 'en';
                 style="background:#ffffff !important; border:1px solid #e2e8f0 !important; border-radius:6px; min-width:280px; max-width:380px;">
                 <div class="d-flex p-3 align-items-center justify-content-between">
                     <div class="toast-body p-0 fw-semibold text-dark small" style="font-size:0.85rem; line-height:1.4;">
-                        <?= e($_GET['msg']) ?>
+                        <?= e(__($_GET['msg'])) ?>
                     </div>
                     <button type="button" class="btn-close ms-3 me-0 shadow-none" data-bs-dismiss="toast"
                         aria-label="Close"></button>
@@ -292,7 +292,7 @@ $currentLang = $_SESSION['lang'] ?? 'en';
                 style="background:#ffffff !important; border:1px solid #e2e8f0 !important; border-radius:6px; min-width:280px; max-width:380px;">
                 <div class="d-flex p-3 align-items-center justify-content-between">
                     <div class="toast-body p-0 fw-semibold text-danger small" style="font-size:0.85rem; line-height:1.4;">
-                        <?= e($_GET['error']) ?>
+                        <?= e(__($_GET['error'])) ?>
                     </div>
                     <button type="button" class="btn-close ms-3 me-0 shadow-none" data-bs-dismiss="toast"
                         aria-label="Close"></button>

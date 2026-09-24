@@ -184,8 +184,10 @@ $currentLang = $_SESSION['lang'] ?? 'en';
                     const query = this.value.trim();
 
                     // 1. Real-time DOM filter for articles rendered on current page
-                    const feedRows = document.querySelectorAll('.cna-feed-row');
+                    const feedRows = document.querySelectorAll('.cna-feed-row, .secondary-grid-card');
                     const heroCard = document.querySelector('.lead-article-card') || document.querySelector('.cna-hero-card');
+
+                    let visibleCount = 0;
 
                     if (feedRows.length > 0 || heroCard) {
                         const lowerQ = query.toLowerCase();
@@ -193,6 +195,7 @@ $currentLang = $_SESSION['lang'] ?? 'en';
                             const text = row.textContent.toLowerCase();
                             if (!query || text.includes(lowerQ)) {
                                 row.style.display = '';
+                                visibleCount++;
                             } else {
                                 row.style.display = 'none';
                             }
@@ -202,8 +205,36 @@ $currentLang = $_SESSION['lang'] ?? 'en';
                             const heroText = heroCard.textContent.toLowerCase();
                             if (!query || heroText.includes(lowerQ)) {
                                 heroCard.style.display = '';
+                                visibleCount++;
                             } else {
                                 heroCard.style.display = 'none';
+                            }
+                        }
+
+                        // Dynamic Live "Not Found" Message Toggle
+                        let liveNoResultsMsg = document.getElementById('liveNoResultsMsg');
+                        if (!liveNoResultsMsg) {
+                            const container = document.querySelector('.cna-news-list') || document.querySelector('.homepage-body');
+                            if (container) {
+                                liveNoResultsMsg = document.createElement('div');
+                                liveNoResultsMsg.id = 'liveNoResultsMsg';
+                                liveNoResultsMsg.className = 'text-center py-5 bg-white border my-3';
+                                liveNoResultsMsg.style.borderRadius = '2px';
+                                liveNoResultsMsg.style.display = 'none';
+                                liveNoResultsMsg.innerHTML = `
+                                    <div class="mb-3" style="font-size:3rem; color:#d1d5db;"><i class="bi bi-search"></i></div>
+                                    <h4 class="fw-bold mb-2" style="color:#0f172a;"><?= addslashes(__('no_articles_found')) ?></h4>
+                                    <p class="text-muted mb-0"><?= addslashes(__('no_articles_desc')) ?></p>
+                                `;
+                                container.parentNode.insertBefore(liveNoResultsMsg, container);
+                            }
+                        }
+
+                        if (liveNoResultsMsg) {
+                            if (query && visibleCount === 0) {
+                                liveNoResultsMsg.style.display = 'block';
+                            } else {
+                                liveNoResultsMsg.style.display = 'none';
                             }
                         }
                     }

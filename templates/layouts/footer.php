@@ -411,9 +411,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         qvBmBtn.setAttribute('data-id', art.id);
                         qvBmBtn.setAttribute('data-article', dataRaw);
                         if (isSaved(art.id)) {
-                            qvBmBtn.className = 'btn btn-danger btn-sm fw-bold d-inline-flex align-items-center gap-1.5';
+                            qvBmBtn.className = 'btn btn-outline-danger btn-sm fw-bold d-inline-flex align-items-center gap-1.5';
                             qvBmBtn.querySelector('span').textContent = '<?= __('saved') ?? 'Saved' ?>';
-                            qvBmBtn.querySelector('i').className = 'bi bi-bookmark-fill';
+                            qvBmBtn.querySelector('i').className = 'bi bi-bookmark-fill text-danger';
                         } else {
                             qvBmBtn.className = 'btn btn-outline-secondary btn-sm fw-bold d-inline-flex align-items-center gap-1.5';
                             qvBmBtn.querySelector('span').textContent = '<?= __('save_for_later') ?? 'Save Article' ?>';
@@ -438,9 +438,9 @@ document.addEventListener('DOMContentLoaded', function () {
                     const art = JSON.parse(dataRaw);
                     toggleSaveArticle(art);
                     if (isSaved(art.id)) {
-                        this.className = 'btn btn-danger btn-sm fw-bold d-inline-flex align-items-center gap-1.5';
+                        this.className = 'btn btn-outline-danger btn-sm fw-bold d-inline-flex align-items-center gap-1.5';
                         this.querySelector('span').textContent = '<?= __('saved') ?? 'Saved' ?>';
-                        this.querySelector('i').className = 'bi bi-bookmark-fill';
+                        this.querySelector('i').className = 'bi bi-bookmark-fill text-danger';
                     } else {
                         this.className = 'btn btn-outline-secondary btn-sm fw-bold d-inline-flex align-items-center gap-1.5';
                         this.querySelector('span').textContent = '<?= __('save_for_later') ?? 'Save Article' ?>';
