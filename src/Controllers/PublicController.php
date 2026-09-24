@@ -283,6 +283,7 @@ class PublicController
 
         foreach ($articles as &$art) {
             $art['title'] = article_title($art['title']);
+            $art['summary'] = article_summary($art['summary']);
             $art['category_display'] = cat_name($art['category_name']);
             $art['url'] = url('article.php?slug=' . urlencode($art['slug']));
             $art['time_ago'] = TemplateEngine::timeAgo($art['published_at']);
