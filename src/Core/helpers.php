@@ -200,6 +200,10 @@ if (!function_exists('url')) {
 
         if ($isPublicDocRoot && str_starts_with($path, 'public/')) {
             $path = substr($path, 7);
+        } elseif (!$isPublicDocRoot && !str_starts_with($path, 'public/') && !str_starts_with($path, 'admin/')) {
+            if (str_starts_with($path, 'assets/') || str_starts_with($path, 'uploads/')) {
+                $path = 'public/' . $path;
+            }
         }
 
         $base = '';
