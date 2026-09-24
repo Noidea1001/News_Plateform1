@@ -282,7 +282,10 @@ $lang['enable_drop_cap_hint'] = "បើកជម្រើសនេះ ប្រ�
 $lang['photo_gallery_title'] = "រូបថត";
 $lang['video_doc_title'] = "វីដេអូឯកសារ";
 $lang['manual_translation_hint_title'] = "ទម្រង់បកប្រែផ្ទាល់ដៃ៖ អ្នកអាចបញ្ចូល \"ចំណងជើងខ្មែរ (English Title)\" ដើម្បីកំណត់ទាំងពីរភាសាដោយផ្ទាល់ដៃ។";
+$lang['manual_translation_hint_summary'] = "ទម្រង់បកប្រែផ្ទាល់ដៃ៖ អ្នកអាចបញ្ចូល \"សេចក្តីសង្ខេបខ្មែរ (English Summary)\" ឬប្រើ \"---\" ដើម្បីបំបែករវាងភាសាខ្មែរ និងអង់គ្លេស។";
+$lang['manual_translation_hint_content'] = "ទម្រង់បកប្រែផ្ទាល់ដៃ៖ អ្នកអាចប្រើ \"---\" ឬ <hr class=\"lang-separator\"> ដើម្បីបំបែករវាងអត្ថបទភាសាខ្មែរ និងអង់គ្លេស។";
 $lang['manual_translation_hint_cat'] = "ទម្រង់បកប្រែផ្ទាល់ដៃ៖ បញ្ចូល \"ឈ្មោះខ្មែរ (English Name)\" ដើម្បីកំណត់ទាំងពីរភាសាដោយផ្ទាល់ដៃ។";
+$lang['manual_translation_hint_desc'] = "ទម្រង់បកប្រែផ្ទាល់ដៃ៖ បញ្ចូល \"ការពិពណ៌នាខ្មែរ (English Description)\" ឬប្រើ \"---\" ដើម្បីកំណត់ទាំងពីរភាសា។";
 $lang['confirm_delete_title'] = "អះអាងការលុបជារៀងរហូត";
 $lang['confirm_delete_msg'] = "តើអ្នកប្រាកដជាចង់លុប \":item\" មែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។";
 $lang['btn_confirm_delete'] = "បាទ/ចាស លុបអត្ថបទ/ប្រភេទនេះ";

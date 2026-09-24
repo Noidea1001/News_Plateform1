@@ -1,70 +1,91 @@
 # NewsPlatform CMS
 
-**A production-grade Decoupled Content Management System (CMS) & Content Delivery Application (CDA) for independent journalism, digital newsrooms, and editorial publishing.**
+![PHP Version](https://img.shields.io/badge/PHP-8.2%2B-777BB4?style=flat-square&logo=php&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-8.0%2B-4479A1?style=flat-square&logo=mysql&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3.2-7952B3?style=flat-square&logo=bootstrap&logoColor=white)
+![Architecture](https://img.shields.io/badge/Architecture-Decoupled_CMA%2FCDA-007ACC?style=flat-square)
 
-Built with **PHP 8.2+**, MySQL, a clean decoupled architecture, dynamic multi-template layout blueprints, MS Word-style media text wrapping, an interactive **Saved Reading List Engine** with instant dual-language switching, a **Quick Article Preview Modal**, and a CNA/BBC-style flat light editorial design system.
+A production-grade, decoupled **Content Management System (CMS)** and **Content Delivery Application (CDA)** built for digital newsrooms, editorial publishing, and journalism.
+
+---
+
+> 🎓 **Student & Presentation Summary (Quick Guide for Class):**
+> 
+> This web application is a full-featured **News Publishing Platform** (similar to BBC News or Fresh News). It is divided into two distinct sections:
+> 
+> 1. **🌐 Public Reader Website (`/public`)**: Allows readers to browse breaking news, switch between Khmer & English languages instantly, save articles offline to a reading list, preview summaries via popups, and read full articles across 3 custom design templates.
+> 2. **🔐 Backend Admin Panel (`/public/admin`)**: A secure control dashboard for journalists and editors to draft articles, manage categories, upload media, select layout blueprints, and publish content.
+
+---
+
+## 💡 Quick Reference Card for Beginners
+
+| Topic | Details & Instructions |
+| :--- | :--- |
+| 🌐 **Public Reader Website** | `http://localhost/News-platform-1/public/` |
+| 🔐 **Admin Login Portal** | `http://localhost/News-platform-1/public/admin/login.php` |
+| 🔑 **Default Admin Credentials** | **Username:** `admin` \| **Password:** `admin123` |
+| 🔑 **Default Editor Credentials** | **Username:** `eleanor_vane` \| **Password:** `admin123` |
+| 🗄️ **Database Setup** | Automatic! Tables & sample news articles auto-create on first page load. |
 
 ---
 
 ## 📋 Table of Contents
 
+- [💡 Quick Reference Card for Beginners](#-quick-reference-card-for-beginners)
 - [✨ Key System Features](#-key-system-features)
 - [💻 Prerequisites & Technical Stack](#-prerequisites--technical-stack)
 - [🚀 Quick Installation & Setup Guide](#-quick-installation--setup-guide)
-- [🔑 Admin Login Credentials](#-admin-login-credentials)
-- [⚙️ System Architecture & How It Works](#️-system-architecture--how-it-works)
-  - [1. Decoupled Architecture (CMA vs CDA)](#1-decoupled-architecture-cma-vs-cda)
-  - [2. Interactive Saved Reading List & Offcanvas Drawer](#2-interactive-saved-reading-list--offcanvas-drawer)
-  - [3. Quick Article Preview Modal](#3-quick-article-preview-modal)
-  - [4. Centralized Single-Source-of-Truth Language Engine](#4-centralized-single-source-of-truth-language-engine)
-  - [5. CNA/BBC-Style Flat Light Aesthetic](#5-cnabbc-style-flat-light-aesthetic)
-  - [6. Mobile Readability & High-Legibility Typography](#6-mobile-readability--high-legibility-typography)
-  - [7. 3 Multi-Template Layout Blueprints](#7-3-multi-template-layout-blueprints)
-  - [8. MS Word-Style Media Shortcodes & Text Wrapping](#8-ms-word-style-media-shortcodes--text-wrapping)
-  - [9. Scroll Reading Progress Bar](#9-scroll-reading-progress-bar)
-- [📁 Project Directory Structure](#-project-directory-structure)
-- [🗄️ Database Schema & Auto-Migration](#-database-schema--auto-migration)
-- [❓ Troubleshooting & FAQs](#-troubleshooting--faqs)
+- [🔑 Admin Credentials & Access Levels](#-admin-credentials--access-levels)
+- [⚙️ Deep-Dive Architecture & Implementation](#️-deep-dive-architecture--implementation)
+  - [1. Decoupled Webroot Isolation (CMA vs CDA)](#1-decoupled-webroot-isolation-cma-vs-cda)
+  - [2. Public Bridge Script Delegation Pattern](#2-public-bridge-script-delegation-pattern)
+  - [3. Centralized Bilingual Engine (Khmer & English)](#3-centralized-bilingual-engine-khmer--english)
+  - [4. Interactive Saved Reading List & Drawer](#4-interactive-saved-reading-list--drawer)
+  - [5. Quick Article Preview Modal](#5-quick-article-preview-modal)
+  - [6. Multi-Template Layout Blueprints](#6-multi-template-layout-blueprints)
+  - [7. Media Shortcodes & Text Wrapping](#7-media-shortcodes--text-wrapping)
+- [📁 Comprehensive Directory Structure](#-comprehensive-directory-structure)
+- [🗄️ Database Relational Schema](#️-database-relational-schema)
+- [❓ Troubleshooting & FAQ](#-troubleshooting--faq)
 
 ---
 
 ## ✨ Key System Features
 
-- 📰 **CNA / BBC-Style Flat Editorial Aesthetic**: Clean, high-contrast light mode with `#c8102e` red accents, `#0f172a` navy header text, and flat sharp borders (`#e5e7eb`) with zero elevation shadows.
-- 🔖 **Saved Reading List Offcanvas Modal**: Persisted via browser `localStorage` with a real-time header count badge `#savedCountBadge` and single-click removal.
-- 👁️ **Quick Article Preview Modal**: Instant pop-up preview allowing readers to preview summaries, metadata, reading times, view counts, and bookmark articles without leaving the feed.
-- 🌐 **Single Source of Truth Bilingual System (Khmer & English)**: Centralized translation maps in `src/Core/helpers.php` passed to JavaScript via `json_encode(get_translation_maps())`. Language switches immediately re-render saved articles in the newly active language without clearing `localStorage`.
-- 📱 **Mobile Typography Overhaul**: Long-form mobile font size enhanced to `1.05rem` (16.8px) with `1.75` line height for comfortable mobile reading.
-- 📐 **3 Article Layout Blueprints**:
-  - `Standard`: 2-column layout with interactive sticky sidebar and author spotlight.
+- 📰 **BBC/CNA Flat Editorial Design**: High-contrast, sharp light mode with crimson red accents (`#c8102e`), navy headings (`#0f172a`), and zero elevation box-shadows (`border: 1px solid #e5e7eb`).
+- 🌐 **Single-Source Bilingual System**: Centralized translation dictionary mapping Khmer and English. Allows real-time client-side language switching without losing user state.
+- 🔖 **Saved Reading List**: Client-side article bookmarking using `localStorage` with a live header badge counter (`#savedCountBadge`) and offcanvas drawer.
+- 👁️ **Quick Article Preview**: Popup modal for reading article summaries, metadata, view counts, and reading times without full page reloads.
+- 📐 **3 Custom Article Layout Blueprints**:
+  - `Standard`: 2-column editorial layout with sticky sidebar and author spotlight.
   - `Investigative`: 1-column deep-read layout with dark hero banner and verified primary citation cards.
-  - `Opinion`: Columnist avatar spotlight header card with pull quotes and author commentary.
-- 🖼️ **MS Word-Style Media Shortcodes & Text Wrapping**: Floating image and video alignment tags (`[image:1:left]`, `[image:1:right]`, `[video:1:full]`) with automated text wrapping.
-- 📊 **Scroll Reading Progress Bar**: Real-time top progress bar `#readingProgressBar` that fills dynamically as the reader scrolls down an article page.
+  - `Opinion`: Columnist avatar header card with styled pull quotes and commentary player.
+- 🖼️ **Media Shortcodes & Text Wrapping**: Alignment shortcodes (`[image:1:left]`, `[image:1:right]`, `[video:1:full]`) for seamless paragraph text wrapping.
+- 📊 **Reading Progress Bar**: Dynamic top scroll progress bar (`#readingProgressBar`) tracking long-form reading depth.
 
 ---
 
 ## 💻 Prerequisites & Technical Stack
 
-| Technology | Minimum Requirement | Recommended |
-|------------|---------------------|-------------|
-| **Web Server** | Apache 2.4+ (`mod_rewrite` enabled) | XAMPP / WAMP / Laragon |
-| **PHP Engine** | PHP 8.0+ | PHP 8.2 or 8.3 |
-| **PHP Extensions** | `pdo`, `pdo_mysql`, `gd`, `json`, `session` | Included with XAMPP |
-| **Database** | MySQL 5.7+ or MariaDB 10.3+ | MySQL 8.0+ |
-| **Frontend Dependencies** | Bootstrap 5.3.2, Bootstrap Icons | CDN Loaded |
+| Component | Minimum Requirement | Recommended | Notes |
+| :--- | :--- | :--- | :--- |
+| **Web Server** | Apache 2.4+ | XAMPP / WAMP / Laragon | `mod_rewrite` enabled |
+| **PHP Engine** | PHP 8.0+ | PHP 8.2 or 8.3 | `pdo_mysql`, `gd`, `session` enabled |
+| **Database** | MySQL 5.7+ | MySQL 8.0+ / MariaDB 10.3+ | UTF-8 (`utf8mb4_unicode_ci`) |
+| **Frontend Framework** | Bootstrap 5.3.2 | Loaded via CDN | Includes Bootstrap Icons |
 
 ---
 
 ## 🚀 Quick Installation & Setup Guide
 
-### Step 1: Clone / Copy to Local Web Server Root
-Place the project directory inside your local Apache `htdocs` root:
-- **XAMPP**: `C:\xampp\htdocs\News-platefrom-1\`
-- **WAMP**: `C:\wamp64\www\News-platefrom-1\`
+### Step 1: Copy Project to Apache `htdocs`
+Copy the project folder to your local web server root directory:
+- **XAMPP**: `C:\xampp\htdocs\News-platform-1\`
+- **WAMP**: `C:\wamp64\www\News-platform-1\`
 
-### Step 2: Configure Database Credentials
-Edit `config/database.php` to set your local MySQL connection settings:
+### Step 2: Database Configuration
+Verify your database connection settings in [config/database.php](file:///c:/xampp/htdocs/News-platform-1/config/database.php):
 
 ```php
 return [
@@ -77,223 +98,160 @@ return [
 ];
 ```
 
-### Step 3: Automatic Database Schema Migration & Seeding
-You **do not need to manually import SQL files!**  
-On your first browser visit, `Database::autoInitializeSchema()` automatically:
+### Step 3: Automatic Database Schema Creation & Data Seeding
+No manual database imports required! Opening the website automatically:
 1. Creates the `news_platform` database.
-2. Creates all required database tables (`users`, `categories`, `articles`, `subscribers`, `login_attempts`).
-3. Seeds sample news articles and staff user accounts.
+2. Creates all 5 relational tables (`users`, `categories`, `articles`, `subscribers`, `login_attempts`).
+3. Seeds initial staff user accounts and news stories.
 
-*(Optional data re-seeding: Run `http://localhost/News-platefrom-1/seed_news.php` in your browser to re-seed 12 real informative news stories).*
-
-### Step 4: Access the Application
-
-- 🌐 **Public Reader Homepage (CDA)**:  
-  `http://localhost/News-platefrom-1/public/` *(or `http://localhost/News-platefrom-1/`)*
-
-- 🔐 **Admin Login Portal (CMA)**:  
-  `http://localhost/News-platefrom-1/public/admin/login.php`
+*(Optional: Run `http://localhost/News-platform-1/seed_news.php` in your browser anytime to re-seed 12 fresh news articles).*
 
 ---
 
-## 🔑 Admin Login Credentials
+## 🔑 Admin Credentials & Access Levels
 
-Use the pre-configured staff accounts to log into the backend Content Management Application (`/admin/login.php`):
+Log into the backend Content Management Application at `http://localhost/News-platform-1/public/admin/login.php`:
 
-| Role | Username | Password | Access Level |
-|------|----------|----------|--------------|
-| **Administrator** | `admin` | `admin123` | Full access (articles, categories, user management, subscribers) |
-| **Senior Editor** | `eleanor_vane` | `admin123` | Article drafting, editing, and publishing across all blueprints |
-
----
-
-## ⚙️ System Architecture & How It Works
-
-### 1. Decoupled Architecture (CMA vs CDA)
-- **CMA (Content Management Application)**: Backend admin suite (`/admin/*`) for journalists and editors to manage posts, select layout blueprints, upload media, and monitor traffic metrics.
-- **CDA (Content Delivery Application)**: Public reader frontend (`/public/*`) optimized for speed, responsive legibility, accessibility, and high contrast.
+| Role | Username | Password | Privileges & Access |
+| :--- | :--- | :--- | :--- |
+| **Administrator** | `admin` | `admin123` | Full control (articles, categories, users, subscribers) |
+| **Senior Editor** | `eleanor_vane` | `admin123` | Article drafting, editing, and layout publishing |
 
 ---
 
-### 2. Interactive Saved Reading List & Offcanvas Drawer
-- Clicking the bookmark icon `[🔖]` on any article card toggles its saved state in `localStorage`.
-- The navbar displays an icon-only bookmark button with a live badge counter `#savedCountBadge`.
-- Opening the offcanvas drawer lists all bookmarked articles with thumbnail, category, title, reading time, direct read link (`អានអត្ថបទ →` / `Read Story →`), and individual remove buttons `[✖]`.
+## ⚙️ Deep-Dive Architecture & Implementation
 
----
+### 1. Decoupled Webroot Isolation (CMA vs CDA)
+- **CMA (Content Management Application)**: Located in `/admin/` and `/src/Controllers/AdminController.php`. Provides administrative workflows.
+- **CDA (Content Delivery Application)**: Located in `/public/` and `/templates/`. Delivers lightweight, optimized reader views.
 
-### 3. Quick Article Preview Modal
-- Clicking the quick view icon `[👁️]` triggers a Bootstrap modal containing:
-  - High-res cover image
-  - Category pill & reading time
-  - Article title & full summary
-  - Author name, publication date, and total page views
-  - One-click bookmark toggle button & direct link to full article page
-
----
-
-### 4. Centralized Single-Source-of-Truth Language Engine
-All translations are managed centrally in `src/Core/helpers.php` via `get_translation_maps()` and `languages/lang_kh.php` / `languages/lang_en.php`:
+### 2. Public Bridge Script Delegation Pattern
+To prevent visitors from directly opening private backend files over HTTP, public URLs use **Bridge Scripts**:
 
 ```php
-// In src/Core/helpers.php
-function get_translation_maps(): array {
-    return [
-        'categories' => ['Technology & AI' => 'បច្ចេកវិទ្យា & AI', ...],
-        'titles'     => ['ការអភិវឌ្ឍប្រព័ន្ធ AI...' => 'Cambodia Digital Economy...', ...]
-    ];
-}
+<?php
+// Inside public/admin/article-create.php
+require_once __DIR__ . '/../../admin/article-create.php';
+?>
 ```
+This forwards web requests from the public folder to the protected core controller outside the public directory.
 
-In `footer.php`, JavaScript inherits `get_translation_maps()` directly via `json_encode()`:
-- **Zero hardcoded JS dictionaries**: When adding new articles or categories in CMS, you **never** need to touch `footer.php`!
-- **Automatic Parenthetical Detection**: Titles formatted as `KhmerTitle (EnglishTitle)` are automatically parsed via Unicode regex `[\x{1780}-\x{17FF}]`.
+### 3. Centralized Bilingual Engine (Khmer & English)
+All language translations are stored in a single source of truth in `src/Core/helpers.php` via `get_translation_maps()`. JavaScript receives this data via `json_encode()`, allowing instant client-side translation without page reloads.
 
----
+### 4. Interactive Saved Reading List & Drawer
+- Clicking bookmark `[🔖]` saves the article ID and title metadata into `localStorage`.
+- Live badge `#savedCountBadge` updates the count immediately.
+- Opening the offcanvas drawer lists all bookmarked items with one-click removal `[✖]`.
 
-### 5. CNA/BBC-Style Flat Light Aesthetic
-- **Flat Borders**: Strict `border: 1px solid #e5e7eb` styling with **zero elevation box-shadows**.
-- **Red Accent Lines**: Left border accents (`border-left: 3px solid #c8102e`).
-- **Clean Corner Clipping**: All modals, cards, and offcanvas drawers use `overflow: hidden !important` and `border-top-left-radius: inherit !important` so red left borders never overflow modal corners.
-- **Explicit Button Spacing**: Quick View `[👁️]` and Bookmark `[🔖]` buttons maintain explicit `margin-right: 0.35rem` / `margin-left: 0.35rem` spacing.
+### 5. Quick Article Preview Modal
+Displays a modal pop-up with full summary, category tags, author details, reading time, view count, and a direct link to the full article page.
 
----
+### 6. Multi-Template Layout Blueprints
+- **Standard (`standard`)**: Classic 2-column layout with main article body, sticky sidebar, and author box.
+- **Investigative (`investigative`)**: Deep-read single-column view with dark hero banner and verified primary citation cards.
+- **Opinion (`opinion`)**: Author spotlight header with columnist bio avatar, red-bordered pull quotes, and commentary section.
 
-### 6. Mobile Readability & High-Legibility Typography
-- **Mobile Body Text**: Increased to `1.05rem` (16.8px) with `1.75` line height.
-- **Metadata Text**: High-contrast `0.8rem` (12.8px) text for mobile viewports.
-- **Interactive Font Size Toolbar**: Readers can scale article text using `A-`, `100%`, and `A+` controls (saved across browser sessions).
+### 7. Media Shortcodes & Text Wrapping
+Authors can format uploaded media in the text editor using clean shortcodes:
 
----
-
-### 7. 3 Multi-Template Layout Blueprints
-
-1. **Standard Blueprint (`standard`)**:
-   - Classic 2-column editorial layout with main content column, sticky right sidebar, author metadata bar, photo gallery carousel, video/audio embeds, citation box, and related articles grid.
-
-2. **Investigative Blueprint (`investigative`)**:
-   - Single-column immersive deep-read layout featuring a dark hero header banner, verified primary citation cards, audio report player, and pull quote callout boxes.
-
-3. **Opinion Blueprint (`opinion`)**:
-   - Columnist profile spotlight header card with columnist bio, avatar, stylized pull quotes with red top/bottom borders, audio commentary player, and author bio callout footer.
+| Shortcode | Alignment & Layout Behavior |
+| :--- | :--- |
+| `[image:1:left]` | Floated left with paragraph text wrapping around right side |
+| `[image:1:right]` | Floated right with paragraph text wrapping around left side |
+| `[image:1:center]` | Centered block image |
+| `[video:1:left]` | Floated left video player with text wrapping |
+| `[video:1:right]` | Floated right video player with text wrapping |
 
 ---
 
-### 8. MS Word-Style Media Shortcodes & Text Wrapping
-Authors can align images and videos between paragraphs using simple shortcode tags:
+## 📁 Comprehensive Directory Structure
 
-| Shortcode | Alignment / Formatting Effect |
-|-----------|--------------------------------|
-| `[image:1]` / `[image:1:center]` | Centered photo block |
-| `[image:1:left]` | **Floated Left with text wrapping around right side** |
-| `[image:1:right]` | **Floated Right with text wrapping around left side** |
-| `[image:1:full]` | Full-width photo block |
-| `[video:1:left]` | **Floated Left video player with text wrapping** |
-| `[video:1:right]` | **Floated Right video player with text wrapping** |
-
----
-
-### 9. Scroll Reading Progress Bar
-A fixed top red progress bar `#readingProgressBar` tracks the reader's scroll position on article pages:
-
-```javascript
-window.addEventListener('scroll', function () {
-    const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-    const scrolled = (winScroll / height) * 100;
-    progressBar.style.width = scrolled + '%';
-});
-```
-
----
-
-## 📁 Project Directory Structure
-
-```
-News-platefrom-1/
-│
-├── admin/                          # Backend CMA Entry Points
+```text
+News-platform-1/
+├── admin/                          # Backend CMA Controllers & Actions
 │   ├── dashboard.php               # Admin Editorial Control Panel
-│   ├── article-create.php          # Draft New Article Form
-│   ├── article-edit.php            # Edit Article Form
-│   ├── users.php                   # Staff Account Management
-│   ├── subscribers.php             # Reader Feed Subscribers List
+│   ├── article-create.php          # Draft Article Form Controller
+│   ├── article-edit.php            # Edit Article Form Controller
+│   ├── users.php                   # Staff User Management
+│   ├── subscribers.php             # Reader Subscription List
 │   └── actions/                    # POST Action Handlers (save, delete, upload)
 │
 ├── config/
-│   └── database.php                # Database Credentials Configuration
+│   └── database.php                # PDO Connection Credentials Configuration
 │
 ├── languages/                      # Translation Dictionaries
 │   ├── common.php                  # Session Language Controller
 │   ├── lang_en.php                 # English Translation Dictionary
 │   └── lang_kh.php                 # Khmer Translation Dictionary
 │
-├── public/                         # Public CDA Reader Root
-│   ├── index.php                   # Homepage Feed Stream
+├── public/                         # Public Webroot (Exposed to Web)
+│   ├── index.php                   # Homepage Feed Entry Point
 │   ├── article.php                 # Single Article View Controller
-│   ├── subscribe.php               # AJAX Subscriber Endpoint
+│   ├── subscribe.php               # Subscriber AJAX Endpoint
+│   ├── admin/                      # Public Admin Bridge Files
 │   └── assets/
-│       └── css/style.css           # CNA Light Editorial CSS System
+│       └── css/style.css           # BBC/CNA Flat Light CSS Styling System
 │
-├── src/
-│   ├── Controllers/                # Admin & Public Business Controllers
+├── src/                            # Application Core & Business Logic
+│   ├── Controllers/                # Controllers (AdminController, PublicController)
 │   └── Core/
-│       ├── Auth.php                # Authentication, CSRF, Rate Limiting
+│       ├── Auth.php                # Authentication, CSRF, Password Hashing
 │       ├── Database.php            # PDO Singleton & Auto Schema Migration
-│       ├── Sanitizer.php           # XSS Cleaner & Media Shortcode Parser
-│       ├── TemplateEngine.php      # View Layout & Date Engine
-│       └── helpers.php             # Centralized Helper Functions & Translation Maps
+│       ├── Sanitizer.php           # XSS Security Cleaner & Shortcode Parser
+│       ├── TemplateEngine.php      # Layout Rendering & Date Formatter
+│       └── helpers.php             # Helper Functions & Translation Engine
 │
-├── templates/                      # Views & Reusable Components
+├── templates/                      # Presentation Views & UI Components
 │   ├── layouts/
-│   │   ├── header-public.php       # Public Header & Sticky Navbar
-│   │   ├── header-admin.php        # Admin Navigation Header
+│   │   ├── header-public.php       # Reader Navigation & Sticky Header
+│   │   ├── header-admin.php        # Admin Dashboard Navigation Header
 │   │   └── footer.php              # Footer & JS Interactivity Engine
 │   ├── views/
-│   │   ├── home.php                # Homepage Feed Layout
-│   │   ├── article-standard.php    # Standard Layout Blueprint
-│   │   ├── article-investigative.php # Investigative Layout Blueprint
-│   │   └── article-opinion.php     # Opinion Layout Blueprint
+│   │   ├── home.php                # Homepage Feed View
+│   │   ├── article-standard.php    # Standard 2-Column Layout View
+│   │   ├── article-investigative.php # Investigative Deep-Read Layout View
+│   │   └── article-opinion.php     # Opinion Columnist Spotlight Layout View
 │   └── components/
-│       ├── quick-view-modal.php    # Quick Preview Modal Component
-│       ├── saved-articles-modal.php# Saved Reading List Offcanvas Drawer
-│       ├── reading-toolbar.php     # Reader Font Size Scale Widget (A-/100%/A+)
-│       ├── citation-box.php        # Verified Primary Source Citation Card
-│       └── sidebar.php             # Public Sidebar (Most Read, Digest CTA)
+│       ├── quick-view-modal.php    # Article Preview Modal Component
+│       ├── saved-articles-modal.php# Saved Reading List Drawer Component
+│       ├── reading-toolbar.php     # Reading Progress Bar Component
+│       ├── citation-box.php        # Verified Primary Source Citation Box
+│       └── sidebar.php             # Public Sidebar Component
 │
-├── seed_news.php                   # Real Data Seeder Script (12 Articles)
-├── schema.sql                      # Production MySQL Database Schema
+├── seed_news.php                   # Database Seeder (12 Sample Articles)
+├── schema.sql                      # Production Database SQL Schema
 └── README.md                       # Comprehensive Project Documentation
 ```
 
 ---
 
-## 🗄️ Database Schema & Auto-Migration
+## 🗄️ Database Relational Schema
 
-The application manages 5 core relational tables:
+The application uses 5 relational tables:
 
-1. **`users`**: Staff accounts (`admin`, `editor`, `reporter`) with bcrypt password hashes.
-2. **`categories`**: Article categories (`technology-ai`, `global-politics`, `climate-science`, `economy-markets`, etc.).
-3. **`articles`**: Article repository storing headlines, HTML content, template type (`standard`, `investigative`, `opinion`), featured images, video/audio embeds, drop-cap toggle, and views counter.
-4. **`subscribers`**: Reader email subscription records with category preferences.
-5. **`login_attempts`**: Security logging for brute-force rate-limiting on login.
+1. **`users`**: Stores staff accounts with bcrypt password hashes (`id`, `username`, `password_hash`, `email`, `role`, `created_at`).
+2. **`categories`**: Stores article categories with Khmer/English names (`id`, `slug`, `name_en`, `name_kh`).
+3. **`articles`**: Main repository for articles (`id`, `title_en`, `title_kh`, `slug`, `category_id`, `author_id`, `template`, `content_en`, `content_kh`, `featured_image`, `views`, `created_at`).
+4. **`subscribers`**: Email subscription list (`id`, `email`, `category_preference`, `created_at`).
+5. **`login_attempts`**: Security log for brute-force rate-limiting (`id`, `ip_address`, `username`, `attempted_at`).
 
 ---
 
-## ❓ Troubleshooting & FAQs
+## ❓ Troubleshooting & FAQ
 
-### Q: Why do saved articles switch language instantly when toggling Khmer / English?
-- **A**: `localStorage` saves the article ID along with pre-calculated `title_kh`, `title_en`, `category_kh`, and `category_en` fields. JavaScript directly renders the field matching `$_SESSION['lang']`, ensuring instant client-side language switching without page reloads or clearing data.
+### Q1: How do I open the website on XAMPP?
+- Start **Apache** and **MySQL** in XAMPP Control Panel.
+- Open `http://localhost/News-platform-1/public/` in your browser.
 
-### Q: How do I float an image or video to the left/right of text?
-- **A**: In the editor, click the **Left** or **Right** button under the media reference section (e.g. `[image:1:left]` or `[video:1:right]`). Text paragraphs placed after the tag will wrap cleanly around the media element.
+### Q2: What are the admin login details?
+- Go to `http://localhost/News-platform-1/public/admin/login.php`.
+- **Username:** `admin` | **Password:** `admin123`.
 
-### Q: Why were modal corners leaking white background pixels previously?
-- **A**: Fixed by enforcing `overflow: hidden !important` on `.modal-content`, `.offcanvas`, and `.card` containers, while setting `border-top-left-radius: inherit !important` on header elements.
+### Q3: How do I re-seed sample news data?
+- Visit `http://localhost/News-platform-1/seed_news.php` in your browser to reload 12 sample news stories.
 
 ---
 
 ## 📄 License
-
-Built for professional editorial newsrooms and independent journalism.  
-© 2026 **NewsPlatform CMS**. All rights reserved.
+© 2026 **NewsPlatform CMS**. Built for professional digital newsrooms and student learning. All rights reserved.

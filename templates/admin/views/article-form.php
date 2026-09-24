@@ -84,9 +84,17 @@ $formAction = url('admin/actions/save-article.php');
 
                     <!-- Summary / Standfirst -->
                     <div class="mb-4">
-                        <label for="summary" class="form-label fw-semibold text-dark"><?= __('summary_label') ?></label>
+                        <div class="d-flex align-items-center justify-content-between mb-1">
+                            <label for="summary" class="form-label fw-semibold text-dark mb-0"><?= __('summary_label') ?></label>
+                            <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-2xs fw-bold px-2 py-0.5">
+                                Dual-Language Support
+                            </span>
+                        </div>
                         <textarea class="form-control" id="summary" name="summary" rows="3"
                             placeholder="<?= __('summary_placeholder') ?>"><?= e($article['summary'] ?? '') ?></textarea>
+                        <div class="text-muted text-xs mt-1">
+                            <?= __('manual_translation_hint_summary') ?>
+                        </div>
                     </div>
 
                     <!-- Content Media Reference Helper Panel (Images & Videos) -->
@@ -192,6 +200,9 @@ $formAction = url('admin/actions/save-article.php');
                                         class="text-danger">*</span></span>
                                 <span
                                     class="badge bg-light text-secondary border fw-normal"><?= __('rich_editor_badge') ?></span>
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-2xs fw-bold px-2 py-0.5">
+                                    Dual-Language Support
+                                </span>
                             </label>
 
                             <!-- Manual Drop-Cap Toggle Switch (No bg, no border) -->
@@ -214,6 +225,9 @@ $formAction = url('admin/actions/save-article.php');
                         <!-- Hidden Form Textarea Syncing with Quill -->
                         <textarea class="d-none" id="content" name="content"
                             required><?= e($article['content'] ?? '') ?></textarea>
+                        <div class="text-muted text-xs mt-1">
+                            <?= __('manual_translation_hint_content') ?>
+                        </div>
                     </div>
 
                 </div>

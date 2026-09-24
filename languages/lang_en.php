@@ -282,7 +282,10 @@ $lang['enable_drop_cap_hint'] = "Turn on to display a large styled initial lette
 $lang['photo_gallery_title'] = "Photos";
 $lang['video_doc_title'] = "Documentary Video";
 $lang['manual_translation_hint_title'] = "Manual Dual-Language Format: Enter \"Khmer Title (English Title)\" to manually define both languages.";
+$lang['manual_translation_hint_summary'] = "Manual Dual-Language Format: Enter \"Khmer Summary (English Summary)\" or use \"---\" to separate Khmer and English summaries.";
+$lang['manual_translation_hint_content'] = "Manual Dual-Language Format: Use \"---\" or <hr class=\"lang-separator\"> between Khmer and English body content sections.";
 $lang['manual_translation_hint_cat'] = "Manual Dual-Language Format: Enter \"Khmer Name (English Name)\" to manually define both languages.";
+$lang['manual_translation_hint_desc'] = "Manual Dual-Language Format: Enter \"Khmer Description (English Description)\" or use \"---\" to define both languages.";
 $lang['confirm_delete_title'] = "Confirm Permanent Deletion";
 $lang['confirm_delete_msg'] = "Are you sure you want to delete \":item\"? This action is permanent and cannot be undone.";
 $lang['btn_confirm_delete'] = "Yes, Delete Item";

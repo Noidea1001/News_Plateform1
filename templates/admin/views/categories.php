@@ -35,9 +35,17 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label fw-semibold"><?= __('description') ?></label>
+                            <div class="d-flex align-items-center justify-content-between mb-1">
+                                <label class="form-label fw-semibold mb-0"><?= __('description') ?></label>
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-2xs fw-bold px-2 py-0.5">
+                                    Dual-Lang
+                                </span>
+                            </div>
                             <textarea name="description" id="catDesc" class="form-control" rows="3"
                                 placeholder="Brief overview of topic coverage..."></textarea>
+                            <div class="text-muted text-xs mt-1">
+                                <?= __('manual_translation_hint_desc') ?>
+                            </div>
                         </div>
 
                         <div class="d-flex gap-2">
@@ -81,7 +89,7 @@
                                     <td><code
                                             class="text-xs bg-light px-2 py-1 border rounded"><?= e($cat['slug']) ?></code>
                                     </td>
-                                    <td class="text-muted small"><?= e($cat['description'] ?? __('no_description')) ?></td>
+                                    <td class="text-muted small"><?= e(cat_desc($cat['description']) ?: __('no_description')) ?></td>
                                     <td>
                                         <span class="badge bg-info text-dark rounded-pill px-2.5 py-1">
                                             <?= number_format((int) $cat['article_count']) ?>     <?= __('posts') ?>

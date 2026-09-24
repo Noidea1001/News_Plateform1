@@ -83,17 +83,17 @@ INSERT IGNORE INTO `users` (`id`, `username`, `email`, `password_hash`, `role`, 
 (2, 'eleanor_vane', 'eleanor@newsplatform.local', '$2y$10$59b3W/B4X0jX54cO/K2wve5v92XN5kS1F8k8j7I2P.P1B5k2W7wGG', 'editor', 'Senior Opinion Columnist and Political Analyst.', 1);
 
 INSERT IGNORE INTO `categories` (`id`, `name`, `slug`, `description`) VALUES
-(1, 'បច្ចេកវិទ្យា & AI (Technology & AI)', 'technology-ai', 'បច្ចេកវិទ្យាបញ្ញាសិប្បនិម្មិត និងការអភិវឌ្ឍប្រព័ន្ធសូហ្វវែរ។'),
-(2, 'នយោបាយសកល (Global Politics)', 'global-politics', 'ការវិភាគគោលនយោបាយអន្តរជាតិ និងការទូត។'),
-(3, 'បរិស្ថាន & វិទ្យាសាស្ត្រ (Climate & Science)', 'climate-science', 'ការស្រាវជ្រាវវិទ្យាសាស្ត្រ និងថាមពលកកើតឡើងវិញ។'),
-(4, 'សេដ្ឋកិច្ច & ទីផ្សារ (Economy & Markets)', 'economy-markets', 'ទីផ្សារហិរញ្ញវត្ថុ និងសេដ្ឋកិច្ចពិភពលោក។');
+(1, 'បច្ចេកវិទ្យា & AI (Technology & AI)', 'technology-ai', 'បច្ចេកវិទ្យាបញ្ញាសិប្បនិម្មិត និងការអភិវឌ្ឍប្រព័ន្ធសូហ្វវែរ។ (Artificial intelligence technology and software development.)'),
+(2, 'នយោបាយសកល (Global Politics)', 'global-politics', 'ការវិភាគគោលនយោបាយអន្តរជាតិ និងការទូត។ (International policy analysis and diplomacy.)'),
+(3, 'បរិស្ថាន & វិទ្យាសាស្ត្រ (Climate & Science)', 'climate-science', 'ការស្រាវជ្រាវវិទ្យាសាស្ត្រ និងថាមពលកកើតឡើងវិញ។ (Scientific research and renewable energy.)'),
+(4, 'សេដ្ឋកិច្ច & ទីផ្សារ (Economy & Markets)', 'economy-markets', 'ទីផ្សារហិរញ្ញវត្ថុ និងសេដ្ឋកិច្ចពិភពលោក។ (Financial markets and global economy.)');
 
 INSERT IGNORE INTO `articles` 
 (`id`, `title`, `slug`, `summary`, `content`, `featured_image`, `video_embed_url`, `reference_url`, `reference_source_name`, `category_id`, `author_id`, `template_type`, `is_breaking`, `status`, `views_count`, `published_at`) 
 VALUES
 (1, 'ប្រព័ន្ធ AI ស្វ័យតជំនាន់ថ្មីផ្លាស់ប្តូរស្ថាបត្យកម្មសូហ្វវែរសហគ្រាស', 'next-generation-autonomous-ai-systems-reshape-enterprise-architecture',
-'ក្រុមស្ថាបត្យករសូហ្វវែរឈានមុខគេកំពុងអនុវត្តប្រព័ន្ធ AI ស្វ័យតដែលមានសុវត្ថិភាព និងប្រសិទ្ធភាពខ្ពស់ក្នុងហេដ្ឋារចនាសម្ព័ន្ធអាជីវកម្ម។',
-'ក្រុមវិស្វករសូហ្វវែរនៅទូទាំងពិភពលោកកំពុងផ្លាស់ប្តូរពីប្រព័ន្ធបែបបុរាណទៅកាន់ប្រព័ន្ធស្វ័យប្រវត្តដែលដំណើរការដោយ AI។ នៅពេលដែលប្រព័ន្ធចែកចាយកាន់តែមានភាពស្មុគស្មាញ បណ្តាញបច្ចេកវិទ្យាទំនិញទំនើបៗបានប្រើប្រាស់ការសង្កេតតាមពេលវេលាជាក់ស្តែង ដើម្បីរៀបចំកូដឡើងវិញដោយស្វ័យប្រវត្តិ ការសាកល្បងបន្ត និងការកាត់បន្ថយឧប្បត្តិហេតុដោយរហ័ស។\n\nផ្អែកលើការវាស់វែងស្ថាបត្យកម្មថ្មីៗ ការរចនាដែលមានការបែងចែកដាច់ដោយឡែករួមផ្សំជាមួយការគ្រប់គ្រងសិទ្ធិយ៉ាងម៉ត់ចត់ អាចកាត់បន្ថយពេលវេលារំខានដល់ប្រតិបត្តិការរហូតដល់ ៤៣%។ អ្នកជំនាញឧស្សាហកម្មបញ្ជាក់ថា សុវត្ថិភាពនៃប្រព័ន្ធស្វ័យប្រវត្តិកម្មទាមទារឱ្យមានការស៊ើបអង្កេតប្រកបដោយតម្លាភាព និងការគ្រប់គ្រងការចូលប្រើប្រាស់យ៉ាងត្រឹមត្រូវ។',
+'ក្រុមស្ថាបត្យករសូហ្វវែរឈានមុខគេកំពុងអនុវត្តប្រព័ន្ធ AI ស្វ័យតដែលមានសុវត្ថិភាព និងប្រសិទ្ធភាពខ្ពស់ក្នុងហេដ្ឋារចនាសម្ព័ន្ធអាជីវកម្ម។ (Leading software architects are implementing autonomous AI systems across enterprise infrastructure.)',
+'ក្រុមវិស្វករសូហ្វវែរនៅទូទាំងពិភពលោកកំពុងផ្លាស់ប្តូរពីប្រព័ន្ធបែបបុរាណទៅកាន់ប្រព័ន្ធស្វ័យប្រវត្តដែលដំណើរការដោយ AI។ នៅពេលដែលប្រព័ន្ធចែកចាយកាន់តែមានភាពស្មុគស្មាញ បណ្តាញបច្ចេកវិទ្យាទំនិញទំនើបៗបានប្រើប្រាស់ការសង្កេតតាមពេលវេលាជាក់ស្តែង ដើម្បីរៀបចំកូដឡើងវិញដោយស្វ័យប្រវត្តិ ការសាកល្បងបន្ត និងការកាត់បន្ថយឧប្បត្តិហេតុដោយរហ័ស។\n\nផ្អែកលើការវាស់វែងស្ថាបត្យកម្មថ្មីៗ ការរចនាដែលមានការបែងចែកដាច់ដោយឡែករួមផ្សំជាមួយការគ្រប់គ្រងសិទ្ធិយ៉ាងម៉ត់ចត់ អាចកាត់បន្ថយពេលវេលារំខានដល់ប្រតិបត្តិការរហូតដល់ ៤៣%។\n--- \nSoftware engineering teams worldwide are transitioning from legacy setups to autonomous AI-driven systems. As distributed architectures grow complex, modern stacks leverage real-time observability for automated code refactoring, continuous testing, and rapid incident mitigation.',
 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=1200&q=80',
 'https://www.youtube.com/embed/dQw4w9WgXcQ',
 'https://arxiv.org',
@@ -101,8 +101,8 @@ VALUES
 1, 1, 'standard', 1, 'published', 1420, NOW()),
 
 (2, 'ការស៊ើបអង្កេតជម្រៅលើបណ្តាញខ្សែកាបបាតសមុទ្រពិភពលោក', 'silent-subsea-cable-revolution-deep-dive-global-fiber-optics',
-'ការស៊ើbអង្កេតយ៉ាងល្អិតល្អន់លើហេដ្ឋារចនាសម្ព័ន្ធទូរគមនាគមន៍បាតសមុទ្រដែលទ្រទ្រង់ ៩៩% នៃចរាចរណ៍អ៊ីនធឺណិតពិភពលោក។',
-'នៅក្រោមផ្ទៃសមុទ្រដ៏ជ្រៅ មានបណ្តាញខ្សែកាបហ្វៃប័រអុបទិកដែលមានសមត្ថភាពខ្ពស់ ដឹកជញ្ជូនប្រតិបត្តិការហិរញ្ញវត្ថុ ការទំនាក់ទំនងផ្ទាល់ខ្លួន និងទិន្នន័យក្លោដរាប់ពាន់តេរ៉ាបៃរៀងរាល់វិនាទី។ ទោះបីជាបណ្តាញរណបអវកាសទទួលបានការចាប់អារម្មណ៍ខ្លាំងយ៉ាងណាក៏ដោយ ហេដ្ឋារចនាសម្ព័ន្ធខ្សែកាបសមុទ្រនៅតែជាឆ្អឹងខ្នងដែលមិនអាចជំនួសបាននៃការភ្ជាប់ទំនាក់ទំនងសកល។\n\nការស៊ើបអង្កេតរយៈពេលបីខែរបស់យើងបង្ហាញពីរបៀបដែលសម្ព័ន្ធអន្តរជាតិរក្សាភាពធន់នឹងកំហុសឆ្លងកាត់តំបន់រញ្ជួយដី ព្រមទាំងរុករកផ្ទៃទឹកភូមិសាស្ត្រនយោបាយដ៏ស្មុគស្មាញ។ ប្រព័ន្ធពង្រីកសញ្ញាទំនើបឥឡូវនេះប្រើប្រាស់ Erbium-doped fiber amplifiers ដើម្បីបង្កើនភាពត្រឹមត្រូវនៃសញ្ញាឆ្លងកាត់មហាសមុទ្រដោយគ្មានការអាក់ខាន។',
+'ការស៊ើបអង្កេតយ៉ាងល្អិតល្អន់លើហេដ្ឋារចនាសម្ព័ន្ធទូរគមនាគមន៍បាតសមុទ្រដែលទ្រទ្រង់ ៩៩% នៃចរាចរណ៍អ៊ីនធឺណិតពិភពលោក។ (Meticulous investigation into subsea telecommunications infrastructure supporting 99% of global internet traffic.)',
+'នៅក្រោមផ្ទៃសមុទ្រដ៏ជ្រៅ មានបណ្តាញខ្សែកាបហ្វៃប័រអុបទិកដែលមានសមត្ថភាពខ្ពស់ ដឹកជញ្ជូនប្រតិបត្តិការហិរញ្ញវត្ថុ ការទំនាក់ទំនងផ្ទាល់ខ្លួន និងទិន្នន័យក្លោដរាប់ពាន់តេរ៉ាបៃរៀងរាល់វិនាទី។\n--- \nBeneath the deep ocean waters lies a high-capacity fiber optic cable network carrying financial transactions, communications, and cloud data every second.',
 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&q=80',
 'https://www.youtube.com/embed/dQw4w9WgXcQ',
 'https://www.submarinenetworks.com',
@@ -110,8 +110,8 @@ VALUES
 3, 1, 'investigative', 0, 'published', 3890, NOW()),
 
 (3, 'ហេតុអ្វីបានជាវិចារណញាណរបស់មនុស្សនៅតែមានសារៈសំខាន់ក្នុងយុគសម័យស្វ័យប្រវត្តិកម្ម', 'why-human-intuition-remains-imperative-in-an-automated-era',
-'អាល់កូរីតអាចបង្កើនប្រសិទ្ធភាពសម្រាប់គោលដៅប្រវត្តិសាស្ត្រ ប៉ុន្តែសិល្បៈ និងទស្សនវិជ្ជាបំបែកកំណត់ត្រាទាមទារការក្លាហាន និងគំនិតច្នៃប្រឌិតរបស់មនុស្ស។',
-'យើងរស់នៅក្នុងយុគសម័យដែលវាស់វែងដោយទិន្នផល និងការព្យាករណ៍តាមអាល់កូរីត។ ប៉ុន្តែរាល់ការលោតផ្លោះដ៏អស្ចារ្យនៅក្នុងវប្បធម៌មនុស្សជាតិ—ចាប់ពីអក្សរសិល្ប៍បុរាណរហូតដល់ការរចនាឧស្សាហកម្មបដិវត្តន៍—បានកើតចេញពីការចង់ដឹងចង់ឃើញដែលមិនអាចកាត់ថ្លៃបាន ជាជាងការបូកសរុបតាមប្រូបាប៊ីលីតេ។\n\nនៅពេលដែលអាល់កូរីតបំពេញភារកិច្ចដែលច្រកដែលដដែលៗ តម្លៃនៃភាពទន់ភ្លន់ ការយល់ចិត្ត និងការគ្រប់គ្រងផ្នែកសីលធម៌របស់មនុស្សកាន់តែមានការកើនឡើងជាលំដាប់។ ការសាកល្បងពិតប្រាកដនៃកាដឹកនាំសម័យទំនើប មិនមែនជាល្បឿនដែលយើងដំណើរការទិន្នន័យនោះទេ ប៉ុន្តែជាជម្រៅដែលយើងយល់អំពីកិត្តិយសរបស់មនុស្សជាតិ។',
+'អាល់កូរីតអាចបង្កើនប្រសិទ្ធភាពសម្រាប់គោលដៅប្រវត្តិសាស្ត្រ ប៉ុន្តែសិល្បៈ និងទស្សនវិជ្ជាបំបែកកំណត់ត្រាទាមទារការក្លាហាន និងគំនិតច្នៃប្រឌិតរបស់មនុស្ស។ (Algorithms optimize historical targets, but groundbreaking art and philosophy demand human courage and intuition.)',
+'យើងរស់នៅក្នុងយុគសម័យដែលវាស់វែងដោយទិន្នផល និងការព្យាករណ៍តាមអាល់កូរីត។ ប៉ុន្តែរាល់ការលោតផ្លោះដ៏អស្ចារ្យនៅក្នុងវប្បធម៌មនុស្សជាតិ—ចាប់ពីអក្សរសិល្ប៍បុរាណរហូតដល់ការរចនាឧស្សាហកម្មបដិវត្តន៍—បានកើតចេញពីការចង់ដឹងចង់ឃើញដែលមិនអាចកាត់ថ្លៃបាន ជាជាងការបូកសរុបតាមប្រូបាប៊ីលីតេ។\n--- \nWe live in an era measured by yield and algorithmic forecasts. But every milestone in human culture—from literature to industrial design—stemmed from boundless curiosity.',
 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80',
 NULL,
 'https://plato.stanford.edu',

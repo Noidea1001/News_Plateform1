@@ -19,12 +19,12 @@ try {
     
     // 1. Ensure Categories Exist with Khmer & English names
     $categoriesData = [
-        ['id' => 1, 'name' => 'បច្ចេកវិទ្យា & AI (Technology & AI)', 'slug' => 'technology-ai', 'description' => 'បច្ចេកវិទ្យាបញ្ញាសិប្បនិម្មិត និងការអភិវឌ្ឍសេដ្ឋកិច្ចឌីជីថល។'],
-        ['id' => 2, 'name' => 'នយោបាយសកល (Global Politics)', 'slug' => 'global-politics', 'description' => 'ការវិភាគគោលនយោបាយអន្តរជាតិ កិច្ចប្រជុំអាស៊ាន និងការទូត។'],
-        ['id' => 3, 'name' => 'បរិស្ថាន & វិទ្យាសាស្ត្រ (Climate & Science)', 'slug' => 'climate-science', 'description' => 'ការស្រាវជ្រាវវិទ្យាសាស្ត្រ ថាមពលកកើតឡើងវិញ និងកសិកម្មបៃតង។'],
-        ['id' => 4, 'name' => 'សេដ្ឋកិច្ច & ទីផ្សារ (Economy & Markets)', 'slug' => 'economy-markets', 'description' => 'ទីផ្សារហិរញ្ញវត្ថុ ពាណិជ្ជកម្មអន្តរជាតិ និងសេដ្ឋកិច្ចជាតិ។'],
-        ['id' => 5, 'name' => 'ហេដ្ឋារចនាសម្ព័ន្ធ & ដឹកជញ្ជូន (Infrastructure)', 'slug' => 'infrastructure-logistics', 'description' => 'គម្រោងផ្លូវល្បឿនលឿន កំពង់ផែ និងប្រព័ន្ធដឹកជញ្ជូន។'],
-        ['id' => 6, 'name' => 'អប់រំ & សុខាភិបាល (Education & Health)', 'slug' => 'education-health', 'description' => 'ការអភិវឌ្ឍជំនាញ STEM សុខាភិបាលសាធារណៈ និងសមាសភាពសង្គម។']
+        ['id' => 1, 'name' => 'បច្ចេកវិទ្យា & AI (Technology & AI)', 'slug' => 'technology-ai', 'description' => 'បច្ចេកវិទ្យាបញ្ញាសិប្បនិម្មិត និងការអភិវឌ្ឍសេដ្ឋកិច្ចឌីជីថល។ (Artificial intelligence technology and digital economy development.)'],
+        ['id' => 2, 'name' => 'នយោបាយសកល (Global Politics)', 'slug' => 'global-politics', 'description' => 'ការវិភាគគោលនយោបាយអន្តរជាតិ កិច្ចប្រជុំអាស៊ាន និងការទូត។ (International policy analysis, ASEAN summits, and diplomacy.)'],
+        ['id' => 3, 'name' => 'បរិស្ថាន & វិទ្យាសាស្ត្រ (Climate & Science)', 'slug' => 'climate-science', 'description' => 'ការស្រាវជ្រាវវិទ្យាសាស្ត្រ ថាមពលកកើតឡើងវិញ និងកសិកម្មបៃតង។ (Scientific research, renewable energy, and green agriculture.)'],
+        ['id' => 4, 'name' => 'សេដ្ឋកិច្ច & ទីផ្សារ (Economy & Markets)', 'slug' => 'economy-markets', 'description' => 'ទីផ្សារហិរញ្ញវត្ថុ ពាណិជ្ជកម្មអន្តរជាតិ និងសេដ្ឋកិច្ចជាតិ។ (Financial markets, international trade, and national economy.)'],
+        ['id' => 5, 'name' => 'ហេដ្ឋារចនាសម្ព័ន្ធ & ដឹកជញ្ជូន (Infrastructure)', 'slug' => 'infrastructure-logistics', 'description' => 'គម្រោងផ្លូវល្បឿនលឿន កំពង់ផែ និងប្រព័ន្ធដឹកជញ្ជូន។ (Expressway projects, deep ports, and logistics transport.)'],
+        ['id' => 6, 'name' => 'អប់រំ & សុខាភិបាល (Education & Health)', 'slug' => 'education-health', 'description' => 'ការអភិវឌ្ឍជំនាញ STEM សុខាភិបាលសាធារណៈ និងសមាសភាពសង្គម។ (STEM skills development, public healthcare, and social welfare.)']
     ];
 
     foreach ($categoriesData as $cat) {
@@ -66,8 +66,8 @@ try {
             'id' => 1,
             'title' => 'ការអភិវឌ្ឍប្រព័ន្ធ AI និងសេដ្ឋកិច្ចឌីជីថលនៅកម្ពុជាឆ្នាំ២០២៦',
             'slug' => 'cambodia-digital-economy-and-ai-transformation-2026',
-            'summary' => 'ក្រសួងប្រៃសណីយ៍និងទូរគមនាគមន៍ជម្រុញការអនុវត្តប្រព័ន្ធ AI និងហេដ្ឋារចនាសម្ព័ន្ធឌីជីថលដើម្បីពង្រឹងសេដ្ឋកិច្ចជាតិ។',
-            'content' => '<p>ការអភិវឌ្ឍសេដ្ឋកិច្ចឌីជីថលនៅកម្ពុជាបានឈានដល់របត់ថ្មីមួយក្នុងឆ្នាំ២០២៦ ដោយមានការកើនឡើងយ៉ាងខ្លាំងនូវការប្រប្រាស់ប្រព័ន្ធបច្ចេកវិទ្យាបញ្ញាសិប្បនិម្មិត (AI) និងប្រព័ន្ធស្វ័យប្រវត្តនៅក្នុងវិស័យសាធារណៈ និងឯកជន។ ការពង្រីកបណ្តាញអ៊ីនធឺណិតល្បឿនលឿន និងមជ្ឈមណ្ឌលទិន្នន័យ (Data Center) ថ្នាក់ជាតិ បានក្លាយជាគ្រឹះយ៉ាងរឹងមាំសម្រាប់សហគ្រាសធុនតូច និងមធ្យម។</p>[image:1:រូបភាពមជ្ឈមណ្ឌលទិន្នន័យ Data Center ថ្នាក់ជាតិ]<p>លោកអ្នកជំនាញបច្ចេកវិទ្យាបានគូសបញ្ជាក់ថា ការបណ្តុះបណ្តាលធនធានមនុស្សផ្នែកវិទ្យាសាស្ត្រទិន្នន័យ និងកូដសូហ្វវែរ គឺជាកត្តាស្នូលក្នុងការបង្កើតដំណោះស្រាយឌីជីថលផ្ទាល់ខ្លួនសម្រាប់ទីផ្សារក្នុងស្រុក និងតំបន់អាស៊ាន។</p>[image:2:រូបភាពការបណ្តុះបណ្តាលបច្ចេកវិទ្យា AI ដល់យុវជន]<blockquote>«ការវិនិយោគលើហេដ្ឋារចនាសម្ព័ន្ធឌីជីថល និងបច្ចេកវិទ្យា AI មិនត្រឹមតែបង្កើនប្រសិទ្ធភាពការងារប៉ុណ្ណោះទេ ប៉ុន្តែថែមទាំងបង្កើតឱកាសការងារថ្មីៗរាប់ម៉ឺនកន្លែងសម្រាប់យុវជនជំនាន់ក្រោយ» — របាយការណ៍អភិវឌ្ឍន៍ឌីជីថល</blockquote>',
+            'summary' => 'ក្រសួងប្រៃសណីយ៍និងទូរគមនាគមន៍ជម្រុញការអនុវត្តប្រព័ន្ធ AI និងហេដ្ឋារចនាសម្ព័ន្ធឌីជីថលដើម្បីពង្រឹងសេដ្ឋកិច្ចជាតិ។ (The Ministry of Posts and Telecommunications promotes AI deployment and digital infrastructure to boost national economy.)',
+            'content' => '<p>ការអភិវឌ្ឍសេដ្ឋកិច្ចឌីជីថលនៅកម្ពុជាបានឈានដល់របត់ថ្មីមួយក្នុងឆ្នាំ២០២៦ ដោយមានការកើនឡើងយ៉ាងខ្លាំងនូវការប្រប្រាស់ប្រព័ន្ធបច្ចេកវិទ្យាបញ្ញាសិប្បនិម្មិត (AI) និងប្រព័ន្ធស្វ័យប្រវត្តនៅក្នុងវិស័យសាធារណៈ និងឯកជន។ ការពង្រីកបណ្តាញអ៊ីនធឺណិតល្បឿនលឿន និងមជ្ឈមណ្ឌលទិន្នន័យ (Data Center) ថ្នាក់ជាតិ បានក្លាយជាគ្រឹះយ៉ាងរឹងមាំសម្រាប់សហគ្រាសធុនតូច និងមធ្យម។</p>[image:1:រូបភាពមជ្ឈមណ្ឌលទិន្នន័យ Data Center ថ្នាក់ជាតិ]<p>លោកអ្នកជំនាញបច្ចេកវិទ្យាបានគូសបញ្ជាក់ថា ការបណ្តុះបណ្តាលធនធានមនុស្សផ្នែកវិទ្យាសាស្ត្រទិន្នន័យ និងកូដសូហ្វវែរ គឺជាកត្តាស្នូលក្នុងការបង្កើតដំណោះស្រាយឌីជីថលផ្ទាល់ខ្លួនសម្រាប់ទីផ្សារក្នុងស្រុក និងតំបន់អាស៊ាន។</p>[image:2:រូបភាពការបណ្តុះបណ្តាលបច្ចេកវិទ្យា AI ដល់យុវជន]---<p>Digital economy development in Cambodia reached a major turning point in 2026 with rapid adoption of artificial intelligence (AI) and automated systems across public and private sectors. Fast fiber expansion and national data centers provide a solid digital foundation for SMEs.</p>[image:1]<p>Technology experts highlighted that workforce development in data science and software engineering remains essential for building customized digital solutions across Cambodia and ASEAN.</p>[image:2]',
             'featured_image' => 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80',
             'video_embed_url' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
             'audio_embed_url' => null,
@@ -87,8 +87,8 @@ try {
             'id' => 2,
             'title' => 'ការស៊ើបអង្កេត៖ ភាពធន់នៃបណ្តាញខ្សែកាបបាតសមុទ្រ និងសន្តិសុខអ៊ីនធឺណិតតំបន់',
             'slug' => 'deep-dive-subsea-cable-networks-and-regional-cyber-security',
-            'summary' => 'របាយការណ៍ស៊ើបអង្កេតជម្រៅលើហេដ្ឋារចនាសម្ព័ន្ធខ្សែកាបបាតសមុទ្រដែលតភ្ជាប់ទិន្នន័យអាស៊ាន និងវិធានការការពារសន្តិសុខឌីជីថល។',
-            'content' => '<p>នៅក្រោមផ្ទៃសមុទ្រដ៏ជ្រៅនៃតំបន់អាស៊ីអាគ្នេយ៍ បណ្តាញខ្សែកាបហ្វៃប័រអុបទិកបាតសមុទ្របានដឹកជញ្ជូនប្រតិបត្តិការហិរញ្ញវត្ថុ ការទំនាក់ទំនង និងទិន្នន័យក្លោដរាប់ពាន់តេរ៉ាបៃក្នុងមួយវិនាទី។ ការស៊ើបអង្កេតរយៈពេល ៣ខែរបស់យើងបង្ហាញពីបណ្តាញតភ្ជាប់ខ្សែកាបដែលទើបតែដំឡើងថ្មី ដើម្បីពង្រឹងភាពធន់នឹងការដាច់សញ្ញា។</p>[image:1]<p>ប្រព័ន្ធពង្រីកសញ្ញាទំនើប Erbium-Doped Fiber Amplifiers (EDFA) ត្រូវបានបំពាក់តាមបណ្តោយខ្សែកាប ដើម្បីធានាថាការបញ្ជូនទិន្នន័យមិនមានការរអាក់រអួល សូម្បីតែក្នុងកំឡុងពេលមានការប្រែប្រួលធាតុអាកាកាសធ្ងន់ធ្ងរ។</p>[image:2:រូបភាពបណ្តាញខ្សែកាបបាតសមុទ្រឌីជីថល]',
+            'summary' => 'របាយការណ៍ស៊ើបអង្កេតជម្រៅលើហេដ្ឋារចនាសម្ព័ន្ធខ្សែកាបបាតសមុទ្រដែលតភ្ជាប់ទិន្នន័យអាស៊ាន និងវិធានការការពារសន្តិសុខឌីជីថល។ (An in-depth investigation into subsea fiber optic cable infrastructure connecting ASEAN data and digital security measures.)',
+            'content' => '<p>នៅក្រោមផ្ទៃសមុទ្រដ៏ជ្រៅនៃតំបន់អាស៊ីអាគ្នេយ៍ បណ្តាញខ្សែកាបហ្វៃប័រអុបទិកបាតសមុទ្របានដឹកជញ្ជូនប្រតិបត្តិការហិរញ្ញវត្ថុ ការទំនាក់ទំនង និងទិន្នន័យក្លោដរាប់ពាន់តេរ៉ាបៃក្នុងមួយវិនាទី។ ការស៊ើបអង្កេតរយៈពេល ៣ខែរបស់យើងបង្ហាញពីបណ្តាញតភ្ជាប់ខ្សែកាបដែលទើបតែដំឡើងថ្មី ដើម្បីពង្រឹងភាពធន់នឹងការដាច់សញ្ញា។</p>[image:1]<p>ប្រព័ន្ធពង្រីកសញ្ញាទំនើប Erbium-Doped Fiber Amplifiers (EDFA) ត្រូវបានបំពាក់តាមបណ្តោយខ្សែកាប ដើម្បីធានាថាការបញ្ជូនទិន្នន័យមិនមានការរអាក់រអួល សូម្បីតែក្នុងកំឡុងពេលមានការប្រែប្រួលធាតុអាកាកាសធ្ងន់ធ្ងរ។</p>[image:2:រូបភាពបណ្តាញខ្សែកាបបាតសមុទ្រឌីជីថល]---<p>Beneath the deep subsea waters of Southeast Asia, high-capacity fiber optic cable networks transport financial transactions, private communications, and cloud data every second. Our three-month investigation reveals how international cable consortia maintain fault tolerance and regional cyber resilience.</p>[image:1]<p>Advanced Erbium-Doped Fiber Amplifiers (EDFA) enhance signal integrity across ocean routes seamlessly without interruption.</p>[image:2]',
             'featured_image' => 'https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&w=1200&q=80',
             'video_embed_url' => 'https://www.youtube.com/embed/dQw4w9WgXcQ',
             'audio_embed_url' => null,
@@ -107,9 +107,9 @@ try {
             'id' => 3,
             'title' => 'បទវិចារណកថា៖ សុចរិតភាពសារព័ត៌មាន និងការប្រយុទ្ធប្រឆាំងព័ត៌មានមិនពិត',
             'slug' => 'editorial-journalistic-integrity-combating-misinformation',
-            'summary' => 'ក្នុងយុគសម័យព័ត៌មានរីកសាយភាយ ជម្រៅនៃការផ្ទៀងផ្ទាត់ និងការទទួលខុសត្រូវសីលធម៌ គឺជាឆ្អឹងខ្នងនៃសារព័ត៌មានឯករាជ្យ។',
+            'summary' => 'ក្នុងយុគសម័យព័ត៌មានរីកសាយភាយ ជម្រៅនៃការផ្ទៀងផ្ទាត់ និងការទទួលខុសត្រូវសីលធម៌ គឺជាឆ្អឹងខ្នងនៃសារព័ត៌មានឯករាជ្យ។ (In an era of rampant information flow, verification depth and ethical accountability remain the backbone of independent journalism.)',
             'content' => '<p>យើងរស់នៅក្នុងយុគសម័យដែលព័ត៌មានត្រូវបានចែករំលែកក្នុងល្បឿនលឿនជាងពេលណាៗទាំងអស់។ ទោះជាយ៉ាងណា ល្បឿននៃការរាយការណ៍មិនត្រូវជំនួសឱ្យភាពត្រឹមត្រូវ និងសុចរិតភាពនៃប្រភពដើមនោះទេ។ សារព័ត៌មានដែលមានលក្ខណៈសម្បត្តិគ្រប់គ្រាន់ ទាមទារការផ្ទៀងផ្ទាត់ឯកសារបឋម ការពិនិត្យមើលការពិត និងការវិភាគដោយប្រុងប្រយ័ត្ន។</p>
-            <p>ការបង្កើតទំនុកចិត្តជាមួយអ្នកអាន គឺជាដំណើរការរយៈពេលវែងដែលទាមទារភាពតម្លាភាពក្នុងការរាយការណ៍ និងការគោរពតាមបទដ្ឋានសីលធម៌សារព័ត៌មានអន្តរជាតិ។</p>',
+            <p>ការបង្កើតទំនុកចិត្តជាមួយអ្នកអាន គឺជាដំណើរការរយៈពេលវែងដែលទាមទារភាពតម្លាភាពក្នុងការរាយការណ៍ និងការគោរពតាមបទដ្ឋានសីលធម៌សារព័ត៌មានអន្តរជាតិ។</p>---<p>We live in an era measured by speed and viral information dissemination. However, reporting speed must never compromise factual accuracy and primary source integrity. Quality journalism demands rigorous primary document verification, fact-checking, and ethical oversight.</p><p>Earning reader trust is a long-term commitment that requires transparent reporting and adherence to international journalistic standards.</p>',
             'featured_image' => 'https://images.unsplash.com/photo-1455390582262-044cdead277a?auto=format&fit=crop&w=1200&q=80',
             'video_embed_url' => null,
             'audio_embed_url' => null,

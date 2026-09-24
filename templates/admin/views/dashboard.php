@@ -4,12 +4,27 @@
  * news-platform / templates / admin / views / dashboard.php
  */
 
-// Extract article view totals for analytics chart
-$chartTitles = [];
-$chartViews = [];
-foreach (array_slice($articles, 0, 7) as $art) {
-    $chartTitles[] = mb_strimwidth($art['title'], 0, 22, '...');
-    $chartViews[] = (int) $art['views_count'];
+// 1. Top Stories Analytics (Sorted by highest views_count)
+$topArticlesList = $articles;
+usort($topArticlesList, fn($a, $b) => (int)$b['views_count'] <=> (int)$a['views_count']);
+
+$topStoryTitles = [];
+$topStoryViews = [];
+foreach (array_slice($topArticlesList, 0, 7) as $art) {
+    $topStoryTitles[] = mb_strimwidth(article_title($art['title']), 0, 20, '...');
+    $topStoryViews[] = (int) $art['views_count'];
+}
+
+// 2. 30 Days Trend Analytics (Sorted chronologically by publication date)
+$recentArticlesList = $articles;
+usort($recentArticlesList, fn($a, $b) => strtotime($a['published_at'] ?? $a['created_at']) <=> strtotime($b['published_at'] ?? $b['created_at']));
+
+$trendTitles = [];
+$trendViews = [];
+foreach (array_slice($recentArticlesList, -7) as $art) {
+    $dateLabel = !empty($art['published_at']) ? date('M d', strtotime($art['published_at'])) : date('M d');
+    $trendTitles[] = $dateLabel . ': ' . mb_strimwidth(article_title($art['title']), 0, 14, '...');
+    $trendViews[] = (int) $art['views_count'];
 }
 ?>
 
@@ -111,10 +126,10 @@ foreach (array_slice($articles, 0, 7) as $art) {
                         <h5 class="fw-bold mb-0 text-dark editorial-title fs-5"><?= __('traffic_impressions') ?></h5>
                         <p class="text-muted text-xs mb-0"><?= __('traffic_impressions_sub') ?></p>
                     </div>
-                    <div class="btn-group btn-group-sm" role="group">
-                        <button type="button"
-                            class="btn btn-outline-secondary active fw-semibold text-xs"><?= __('top_stories') ?></button>
-                        <button type="button"
+                    <div class="btn-group btn-group-sm" role="group" id="trafficChartFilterGroup">
+                        <button type="button" id="btnTopStories"
+                            class="btn btn-danger active fw-semibold text-xs"><?= __('top_stories') ?></button>
+                        <button type="button" id="btn30Days"
                             class="btn btn-outline-secondary fw-semibold text-xs"><?= __('30_days') ?></button>
                     </div>
                 </div>
@@ -220,7 +235,7 @@ foreach (array_slice($articles, 0, 7) as $art) {
                                 <?php foreach ($articles as $art) { ?>
                                     <tr class="article-row" data-status="<?= e($art['status']) ?>"
                                         data-template="<?= e($art['template_type']) ?>"
-                                        data-search="<?= e(mb_strtolower($art['title'] . ' ' . $art['category_name'] . ' ' . $art['author_name'])) ?>">
+                                        data-search="<?= e(mb_strtolower(article_title($art['title']) . ' ' . cat_name($art['category_name']) . ' ' . $art['author_name'])) ?>">
                                         <td class="ps-4">
                                             <div class="fw-bold text-dark text-truncate mb-1" style="max-width: 260px;"
                                                 title="<?= e(article_title($art['title'])) ?>">
@@ -401,13 +416,18 @@ foreach (array_slice($articles, 0, 7) as $art) {
         gradient.addColorStop(0, 'rgba(217, 4, 41, 0.30)');
         gradient.addColorStop(1, 'rgba(217, 4, 41, 0.0)');
 
-        new Chart(trafficCtx, {
+        const topTitles = <?= json_encode($topStoryTitles) ?>;
+        const topViews = <?= json_encode($topStoryViews) ?>;
+        const trendTitles = <?= json_encode($trendTitles) ?>;
+        const trendViews = <?= json_encode($trendViews) ?>;
+
+        const trafficChart = new Chart(trafficCtx, {
             type: 'line',
             data: {
-                labels: <?= json_encode($chartTitles) ?>,
+                labels: topTitles,
                 datasets: [{
-                    label: 'Reader Impressions',
-                    data: <?= json_encode($chartViews) ?>,
+                    label: '<?= addslashes(__('top_stories')) ?>',
+                    data: topViews,
                     borderColor: '#d90429',
                     borderWidth: 2.5,
                     backgroundColor: gradient,
@@ -447,6 +467,36 @@ foreach (array_slice($articles, 0, 7) as $art) {
                 }
             }
         });
+
+        // Toggle handlers for Top Stories vs 30 Days Chart Filters
+        const btnTopStories = document.getElementById('btnTopStories');
+        const btn30Days = document.getElementById('btn30Days');
+
+        if (btnTopStories && btn30Days) {
+            btnTopStories.addEventListener('click', function () {
+                btnTopStories.classList.add('active', 'btn-danger');
+                btnTopStories.classList.remove('btn-outline-secondary');
+                btn30Days.classList.remove('active', 'btn-danger');
+                btn30Days.classList.add('btn-outline-secondary');
+
+                trafficChart.data.labels = topTitles;
+                trafficChart.data.datasets[0].data = topViews;
+                trafficChart.data.datasets[0].label = '<?= addslashes(__('top_stories')) ?>';
+                trafficChart.update();
+            });
+
+            btn30Days.addEventListener('click', function () {
+                btn30Days.classList.add('active', 'btn-danger');
+                btn30Days.classList.remove('btn-outline-secondary');
+                btnTopStories.classList.remove('active', 'btn-danger');
+                btnTopStories.classList.add('btn-outline-secondary');
+
+                trafficChart.data.labels = trendTitles;
+                trafficChart.data.datasets[0].data = trendViews;
+                trafficChart.data.datasets[0].label = '<?= addslashes(__('30_days')) ?> Trend';
+                trafficChart.update();
+            });
+        }
 
         // 2. Template Blueprint Doughnut Chart
         const doughnutCtx = document.getElementById('templateDoughnutChart').getContext('2d');
