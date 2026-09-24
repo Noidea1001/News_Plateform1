@@ -5,8 +5,8 @@
 .env.example
 config/database.local.php
 
-# User Uploaded Media (Ignore uploaded files, keep directory structure)
-public/uploads/*
+# User Uploaded Media (Allow sample uploads to be committed to Git)
+# public/uploads/*
 !public/uploads/.gitkeep
 
 # Application Logs & Cache Files
