@@ -86,8 +86,8 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                 <!-- Featured Cover Image -->
                 <?php if (!empty($article['featured_image'])) { ?>
                     <div class="mb-5 rounded-4 overflow-hidden shadow-sm">
-                        <img src="<?= e(image_url($article['featured_image'])) ?>" class="w-100 h-auto"
-                            alt="<?= e($article['title']) ?>">
+                        <img src="<?= e(image_url($article['featured_image'])) ?>" class="w-100 h-auto object-fit-cover"
+                            alt="<?= e($article['title']) ?>" style="max-height: 480px;">
                     </div>
                 <?php } ?>
 
