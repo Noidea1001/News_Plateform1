@@ -3240,6 +3240,32 @@ input[type="text"]::-webkit-search-cancel-button {
 .template-opinion img {
     max-width: 100%;
     height: auto;
-    max-height: 500px;
+    max-height: 520px;
     object-fit: cover;
+    object-position: center;
+}
+
+#qvImageWrapper {
+    max-height: 380px;
+}
+
+#qvImage {
+    max-height: 380px;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+@media (max-width: 768px) {
+    #qvImageWrapper,
+    #qvImage {
+        max-height: 280px !important;
+    }
+}
+
+@media (max-width: 576px) {
+    #qvImageWrapper,
+    #qvImage {
+        max-height: 220px !important;
+    }
 }
