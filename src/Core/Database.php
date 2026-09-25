@@ -9,6 +9,7 @@ namespace App\Core;
 use PDO;
 use PDOException;
 use Exception;
+use Throwable;
 
 class Database
 {
@@ -118,7 +119,7 @@ class Database
                     $this->pdo->exec("ALTER TABLE articles ADD COLUMN `has_drop_cap` TINYINT(1) NOT NULL DEFAULT 0");
                 }
             }
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             error_log("Schema auto-initialization exception: " . $e->getMessage());
         }
     }
