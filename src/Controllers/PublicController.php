@@ -30,11 +30,15 @@ class PublicController
     public function home(): void
     {
         // 0. Auto-seed real Khmer news articles if database count is under 10
-        $totalArticlesCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM articles");
-        if ($totalArticlesCount < 10 && file_exists(__DIR__ . '/../../seed_news.php')) {
-            ob_start();
-            @include __DIR__ . '/../../seed_news.php';
-            ob_end_clean();
+        try {
+            $totalArticlesCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM articles");
+            if ($totalArticlesCount < 10 && file_exists(__DIR__ . '/../../seed_news.php')) {
+                ob_start();
+                @include __DIR__ . '/../../seed_news.php';
+                ob_end_clean();
+            }
+        } catch (\Throwable $seedEx) {
+            error_log("Auto-seed error: " . $seedEx->getMessage());
         }
 
         // 1. Fetch breaking news

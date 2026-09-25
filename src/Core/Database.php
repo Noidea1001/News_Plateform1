@@ -33,15 +33,22 @@ class Database
         $options = $config['options'];
 
         try {
-            // First attempt connection to host (without dbname to ensure database exists)
-            $dsnHostOnly = "mysql:host={$host};port={$port};charset={$charset}";
-            $tmpPdo = new PDO($dsnHostOnly, $username, $password, $options);
-            $tmpPdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbname}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
-            unset($tmpPdo);
-
-            // Connect to specific database
+            // First attempt direct connection to specified database (standard for managed/cloud MySQL databases)
             $dsn = "mysql:host={$host};port={$port};dbname={$dbname};charset={$charset}";
-            $this->pdo = new PDO($dsn, $username, $password, $options);
+            try {
+                $this->pdo = new PDO($dsn, $username, $password, $options);
+            } catch (PDOException $directEx) {
+                // If database does not exist yet (local dev environment), attempt host-level database creation
+                try {
+                    $dsnHostOnly = "mysql:host={$host};port={$port};charset={$charset}";
+                    $tmpPdo = new PDO($dsnHostOnly, $username, $password, $options);
+                    $tmpPdo->exec("CREATE DATABASE IF NOT EXISTS `{$dbname}` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci");
+                    unset($tmpPdo);
+                    $this->pdo = new PDO($dsn, $username, $password, $options);
+                } catch (PDOException $fallbackEx) {
+                    throw $directEx;
+                }
+            }
 
             // Auto-initialize schema and sync default admin credentials
             $this->autoInitializeSchema();
@@ -70,7 +77,9 @@ class Database
     {
         try {
             $check = $this->pdo->query("SHOW TABLES LIKE 'articles'");
-            if ($check && $check->rowCount() === 0) {
+            $tablesExist = ($check && $check->rowCount() > 0);
+
+            if (!$tablesExist) {
                 $schemaFile = __DIR__ . '/../../schema.sql';
                 if (file_exists($schemaFile)) {
                     $sql = file_get_contents($schemaFile);
@@ -80,7 +89,7 @@ class Database
                 }
             }
 
-            // Sync default admin staff user password_hash for 'admin123'
+            // Sync default admin staff user password_hash for 'admin123' if needed
             $adminUser = $this->fetch("SELECT id, password_hash FROM users WHERE username = 'admin' LIMIT 1");
             if (!$adminUser || !password_verify('admin123', $adminUser['password_hash'])) {
                 $freshHash = password_hash('admin123', PASSWORD_BCRYPT);
@@ -94,27 +103,22 @@ class Database
                 }
             }
 
-            // Ensure audio_embed_url, gallery_images, and has_drop_cap columns exist on articles table safely
-            $columnsQuery = $this->pdo->query("SHOW COLUMNS FROM articles");
-            $existingColumns = $columnsQuery ? $columnsQuery->fetchAll(PDO::FETCH_COLUMN) : [];
+            // Ensure columns exist on articles table if table was created earlier without them
+            if ($tablesExist) {
+                $columnsQuery = $this->pdo->query("SHOW COLUMNS FROM articles");
+                $existingColumns = $columnsQuery ? $columnsQuery->fetchAll(PDO::FETCH_COLUMN) : [];
 
-            if (!in_array('audio_embed_url', $existingColumns, true)) {
-                $this->pdo->exec("ALTER TABLE articles ADD COLUMN `audio_embed_url` VARCHAR(500) NULL AFTER `video_embed_url`");
+                if (!in_array('audio_embed_url', $existingColumns, true)) {
+                    $this->pdo->exec("ALTER TABLE articles ADD COLUMN `audio_embed_url` VARCHAR(500) NULL AFTER `video_embed_url`");
+                }
+                if (!in_array('gallery_images', $existingColumns, true)) {
+                    $this->pdo->exec("ALTER TABLE articles ADD COLUMN `gallery_images` TEXT NULL AFTER `audio_embed_url`");
+                }
+                if (!in_array('has_drop_cap', $existingColumns, true)) {
+                    $this->pdo->exec("ALTER TABLE articles ADD COLUMN `has_drop_cap` TINYINT(1) NOT NULL DEFAULT 0");
+                }
             }
-            if (!in_array('gallery_images', $existingColumns, true)) {
-                $this->pdo->exec("ALTER TABLE articles ADD COLUMN `gallery_images` TEXT NULL AFTER `audio_embed_url`");
-            }
-            if (!in_array('has_drop_cap', $existingColumns, true)) {
-                $this->pdo->exec("ALTER TABLE articles ADD COLUMN `has_drop_cap` TINYINT(1) NOT NULL DEFAULT 0");
-            }
-
-            // Ensure category names are translated to Khmer in DB
-            $this->pdo->exec("UPDATE categories SET name = 'បច្ចេកវិទ្យា & AI' WHERE id = 1 AND name LIKE '%Technology%'");
-            $this->pdo->exec("UPDATE categories SET name = 'នយោបាយសកល' WHERE id = 2 AND name LIKE '%Politics%'");
-            $this->pdo->exec("UPDATE categories SET name = 'បរិស្ថាន & វិទ្យាសាស្ត្រ' WHERE id = 3 AND name LIKE '%Climate%'");
-            $this->pdo->exec("UPDATE categories SET name = 'សេដ្ឋកិច្ច & ទីផ្សារ' WHERE id = 4 AND name LIKE '%Economy%'");
-
-        } catch (PDOException $e) {
+        } catch (\Throwable $e) {
             error_log("Schema auto-initialization exception: " . $e->getMessage());
         }
     }
