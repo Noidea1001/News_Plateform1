@@ -14,7 +14,7 @@ $lang = array();
 // ----------------------------------------------------------------------------
 $lang['site_title'] = "វេទិកាព័ត៌មាន";
 $lang['site_tagline'] = "សារព័ត៌មានឯករាជ្យ និងការវិភាគស៊ីជម្រៅ";
-$lang['cda_badge'] = "ម៉ាស៊ីនចែកចាយមាតិកា (CDA)";
+$lang['cda_badge'] = "ម៉ាស៊ីនចែកចាយមាតិកា";
 $lang['cma_link'] = "បន្ទះគ្រប់គ្រង CMS";
 $lang['search_placeholder'] = "ស្វែងរកអត្ថបទស៊ើបអង្កេត ប្រធានបទ...";
 $lang['search_results_for'] = "លទ្ធផលស្វែងរកសម្រាប់";
@@ -167,6 +167,8 @@ $lang['upload_cover'] = "បង្ហោះរូបភាពគម្រប (�
 $lang['current_image'] = "រូបភាពបច្ចុប្បន្ន";
 $lang['permitted_formats'] = "ទម្រង់ឯកសារដែលអនុញ្ញាត: JPG, PNG, WEBP.";
 $lang['rich_editor_badge'] = "កម្មវិធីកែសម្រួលអត្ថបទ";
+$lang['dual_language_support_badge'] = "គាំទ្រពីរភាសា";
+$lang['dual_language_badge'] = "ពីរភាសា";
 $lang['multimedia_embeds_title'] = "ប្រព័ន្ធផ្សព្វផ្សាយ & Embeds អន្តរកម្ម";
 $lang['audio_embed_label'] = "URL ផតខាស / របាយការណ៍អូឌីយ៉ូ";
 $lang['audio_embed_hint'] = "គាំទ្រ URL embed Spotify / SoundCloud ឬតំណ MP3 ផ្ទាល់។";
@@ -187,8 +189,8 @@ $lang['footer_tmpl_2'] = "ពុម្ពគំរូទី២៖ ស៊ើប�
 $lang['footer_tmpl_3'] = "ពុម្ពគំរូទី៣៖ វិចារណកថា — ប្លង់បង្ហាញអ្នកព័ត៌មាន និងបទវិចារណកថា។";
 $lang['sub_desc_footer'] = "ចូលរួមជាមួយអ្នកសារព័ត៌មាន និងអ្នកស្រាវជ្រាវជាង ១៥,០០០+ នាក់ ដើម្បីទទួលសេចក្តីសង្ខេបព័ត៌មានប្រចាំថ្ងៃ។";
 $lang['lang_en'] = "English";
-$lang['lang_km'] = "ភាសាខ្មែរ (Khmer)";
-$lang['lang_kh'] = "ភាសាខ្មែរ (Khmer)";
+$lang['lang_km'] = "ភាសាខ្មែរ";
+$lang['lang_kh'] = "ភាសាខ្មែរ";
 
 // Dynamic Article Component Labels
 $lang['about_columnist'] = "អំពីអ្នកវិចារណកថា :name";
@@ -226,8 +228,12 @@ $lang['staff_account_mgmt'] = "ការគ្រប់គ្រងគណនី�
 $lang['username'] = "ឈ្មោះអ្នកប្រើ";
 $lang['email_address'] = "អាសយដ្ឋានអ៊ីមែល";
 $lang['password'] = "ពាក្យសម្ងាត់";
-$lang['req_new_user'] = "(តម្រូវសម្រាប់អ្នកប្រើថ្មី)";
-$lang['blank_keep_pw'] = "(ទុកទំនេរប្រសិនបើមិនផ្លាស់ប្តូរ)";
+$lang['req_new_user'] = "(តម្រូវយ៉ាងតិច ៨ តួអក្សរ)";
+$lang['blank_keep_pw'] = "(ទុកទំនេរប្រសិនបើមិនប្រែ ឬយ៉ាងតិច ៨ តួអក្សរ)";
+$lang['password_min_hint'] = "ពាក្យសម្ងាត់ត្រូវមានយ៉ាងតិច ៨ តួអក្សរឡើងទៅ។";
+$lang['featured_image_url_label'] = "អាសយដ្ឋានតំណភ្ជាប់រូបភាពគម្រប";
+$lang['featured_image_url_hint'] = "បញ្ចូល URL រូបភាពផ្ទាល់ (ឧទាហរណ៍ Unsplash ឬតំណរូបភាពវេបសាយ) ឬបង្ហោះឯកសារខាងក្រោម។";
+$lang['or_upload_file'] = "ឬ បង្ហោះឯកសាររូបភាព";
 $lang['staff_role'] = "តួនាទីបុគ្គលិក";
 $lang['bio_profile'] = "ជីវប្រវត្តិ / ប្រវត្តិរូបអ្នកសរសេរ";
 $lang['account_active'] = "គណនីសកម្ម";
@@ -258,6 +264,9 @@ $lang['total_articles_count'] = "អត្ថបទសរុប :count";
 $lang['tmpl_standard'] = "បទដ្ឋាន";
 $lang['tmpl_investigative'] = "ស៊ើបអង្កេត";
 $lang['tmpl_opinion'] = "វិចារណកថា";
+
+$lang['cat_name_placeholder'] = "ឧទាហរណ៍៖ បច្ចេកវិទ្យា & AI";
+$lang['cat_desc_placeholder'] = "សេចក្តីសង្ខេបខ្លីៗនៃប្រធានបទ...";
 
 // Media & Reference Helpers for Article Form
 $lang['title_placeholder'] = "ឧទាហរណ៍៖ ការអភិវឌ្ឍប្រព័ន្ធ AI និងសេដ្ឋកិច្ចឌីជីថលនៅកម្ពុជាឆ្នាំ២០២៦";

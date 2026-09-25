@@ -167,6 +167,8 @@ $lang['upload_cover'] = "Upload Cover File (Max 5MB)";
 $lang['current_image'] = "Current Uploaded Image";
 $lang['permitted_formats'] = "Permitted file formats: JPG, PNG, WEBP.";
 $lang['rich_editor_badge'] = "Rich Visual Editor";
+$lang['dual_language_support_badge'] = "Dual-Language Support";
+$lang['dual_language_badge'] = "Dual-Language";
 $lang['multimedia_embeds_title'] = "Multi-Media & Interactive Embeds";
 $lang['audio_embed_label'] = "Audio Podcast / Audio Report Embed URL";
 $lang['audio_embed_hint'] = "Supports Spotify / SoundCloud embed URLs or direct MP3 audio stream links.";
@@ -226,8 +228,12 @@ $lang['staff_account_mgmt'] = "Staff Account Management";
 $lang['username'] = "Username";
 $lang['email_address'] = "Email Address";
 $lang['password'] = "Password";
-$lang['req_new_user'] = "(Required for new user)";
-$lang['blank_keep_pw'] = "(Leave blank to keep current password)";
+$lang['req_new_user'] = "(Required, min 8 characters)";
+$lang['blank_keep_pw'] = "(Leave blank to keep current, or min 8 chars)";
+$lang['password_min_hint'] = "Password must be at least 8 characters long.";
+$lang['featured_image_url_label'] = "Main Cover Image URL / Direct Link";
+$lang['featured_image_url_hint'] = "Enter a direct web image link (e.g. Unsplash, external CDN) or upload a file below.";
+$lang['or_upload_file'] = "OR Upload Local Image File";
 $lang['staff_role'] = "Staff Role";
 $lang['bio_profile'] = "Bio / Editorial Profile";
 $lang['account_active'] = "Account Active";
@@ -258,6 +264,9 @@ $lang['total_articles_count'] = ":count total articles";
 $lang['tmpl_standard'] = "Standard";
 $lang['tmpl_investigative'] = "Investigative";
 $lang['tmpl_opinion'] = "Opinion";
+
+$lang['cat_name_placeholder'] = "e.g. Technology & AI";
+$lang['cat_desc_placeholder'] = "Brief overview of topic coverage...";
 
 // Media & Reference Helpers for Article Form
 $lang['title_placeholder'] = "e.g. Next-Generation Autonomous AI Systems Reshape Enterprise Architecture";
