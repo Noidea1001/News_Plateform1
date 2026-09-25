@@ -28,8 +28,8 @@ class AdminController
             if ($cols && $cols->rowCount() === 0) {
                 $this->db->execute("ALTER TABLE articles ADD COLUMN has_drop_cap TINYINT(1) NOT NULL DEFAULT 0");
             }
+            $this->db->execute("ALTER TABLE articles MODIFY COLUMN featured_image VARCHAR(500) NULL");
         } catch (\Throwable $e) {
-            // Column already exists or check ignored
         }
     }
 
@@ -185,7 +185,13 @@ class AdminController
         $slug = $this->generateUniqueSlug($slugBase, $id);
 
         // Featured Image Upload Processing
+        $featuredImageUrl = trim($postData['featured_image_url'] ?? '');
         $featuredImage = $postData['existing_featured_image'] ?? null;
+
+        if (!empty($featuredImageUrl)) {
+            $featuredImage = $featuredImageUrl;
+        }
+
         if (isset($files['featured_image']) && $files['featured_image']['error'] === UPLOAD_ERR_OK) {
             $uploadedPath = $this->handleImageUpload($files['featured_image']);
             if (is_array($uploadedPath) && isset($uploadedPath['error'])) {
@@ -615,6 +621,10 @@ class AdminController
         }
 
         if ($id) {
+            if (!empty($password) && strlen($password) < 8) {
+                header('Location: ' . url('admin/users.php?error=' . urlencode('Password must be at least 8 characters long.')));
+                exit;
+            }
             $params = ['username' => $username, 'email' => $email, 'role' => $role, 'bio' => $bio, 'active' => $isActive, 'id' => $id];
             $sql = "UPDATE users SET username = :username, email = :email, role = :role, bio = :bio, is_active = :active";
             if (!empty($password)) {
@@ -627,6 +637,10 @@ class AdminController
         } else {
             if (empty($password)) {
                 header('Location: ' . url('admin/users.php?error=' . urlencode('Password is required for new staff accounts.')));
+                exit;
+            }
+            if (strlen($password) < 8) {
+                header('Location: ' . url('admin/users.php?error=' . urlencode('Password must be at least 8 characters long.')));
                 exit;
             }
             $hash = password_hash($password, PASSWORD_BCRYPT);
