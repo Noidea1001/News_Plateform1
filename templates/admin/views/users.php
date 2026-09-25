@@ -15,7 +15,7 @@
                     <?= __('staff_account_mgmt') ?>
                 </div>
                 <div class="card-body p-4">
-                    <form action="<?= url('admin/users.php') ?>" method="POST">
+                    <form action="<?= url('admin/users.php') ?>" method="POST" id="staffUserForm">
                         <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
                         <input type="hidden" name="id" id="userId" value="">
 
@@ -37,7 +37,10 @@
                             <label class="form-label fw-semibold"><?= __('password') ?> <span class="text-muted small"
                                     id="pwHelp"><?= __('req_new_user') ?></span></label>
                             <input type="password" name="password" id="userPassword" class="form-control"
-                                placeholder="••••••••">
+                                placeholder="••••••••" minlength="8">
+                            <div class="form-text text-muted text-xs mt-1" id="pwSubHelp">
+                                <?= __('password_min_hint') ?>
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -165,4 +168,34 @@
         document.getElementById('userActive').checked = true;
         document.getElementById('pwHelp').innerText = '<?= addslashes(__('req_new_user')) ?>';
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('staffUserForm');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const uId = document.getElementById('userId').value;
+                const pw = document.getElementById('userPassword').value;
+
+                if (!uId && !pw) {
+                    e.preventDefault();
+                    if (typeof window.showAdminToast === 'function') {
+                        window.showAdminToast('Password is required for new staff accounts.', 'error');
+                    } else {
+                        alert('Password is required for new staff accounts.');
+                    }
+                    return false;
+                }
+
+                if (pw && pw.length < 8) {
+                    e.preventDefault();
+                    if (typeof window.showAdminToast === 'function') {
+                        window.showAdminToast('Password must be at least 8 characters long.', 'error');
+                    } else {
+                        alert('Password must be at least 8 characters long.');
+                    }
+                    return false;
+                }
+            });
+        }
+    });
 </script>

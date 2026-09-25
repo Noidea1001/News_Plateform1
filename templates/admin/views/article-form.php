@@ -55,9 +55,9 @@ $formAction = url('admin/actions/save-article.php');
                     <div class="mb-3">
                         <div class="d-flex align-items-center justify-content-between mb-1">
                             <label for="title" class="form-label fw-bold text-dark mb-0"><?= __('article_title') ?> <span
-                                    class="text-danger">*</span></label>
+                                     class="text-danger">*</span></label>
                             <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-2xs fw-bold px-2 py-0.5">
-                                Dual-Language Support
+                                <?= __('dual_language_support_badge') ?>
                             </span>
                         </div>
                         <input type="text" class="form-control form-control-lg" id="title" name="title"
@@ -68,7 +68,6 @@ $formAction = url('admin/actions/save-article.php');
                         </div>
                     </div>
 
-                    <!-- Slug Input (Auto-generated via JS) -->
                     <div class="mb-4">
                         <label for="slug"
                             class="form-label fw-semibold small text-muted"><?= __('url_slug_label') ?></label>
@@ -82,12 +81,11 @@ $formAction = url('admin/actions/save-article.php');
                         </div>
                     </div>
 
-                    <!-- Summary / Standfirst -->
                     <div class="mb-4">
                         <div class="d-flex align-items-center justify-content-between mb-1">
-                            <label for="summary" class="form-label fw-semibold text-dark mb-0"><?= __('summary_label') ?></label>
+                            <label for="summary" class="form-label fw-bold text-dark mb-0"><?= __('summary_label') ?></label>
                             <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-2xs fw-bold px-2 py-0.5">
-                                Dual-Language Support
+                                <?= __('dual_language_support_badge') ?>
                             </span>
                         </div>
                         <textarea class="form-control" id="summary" name="summary" rows="3"
@@ -196,12 +194,12 @@ $formAction = url('admin/actions/save-article.php');
                     <div class="mb-3">
                         <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
                             <label class="form-label fw-bold text-dark mb-0 d-flex align-items-center gap-2">
-                                <span><?= __('article_body_label') ?> (WYSIWYG Rich Text) <span
+                                <span><?= __('article_body_label') ?> <span
                                         class="text-danger">*</span></span>
                                 <span
                                     class="badge bg-light text-secondary border fw-normal"><?= __('rich_editor_badge') ?></span>
                                 <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-2xs fw-bold px-2 py-0.5">
-                                    Dual-Language Support
+                                    <?= __('dual_language_badge') ?>
                                 </span>
                             </label>
 
@@ -332,8 +330,8 @@ $formAction = url('admin/actions/save-article.php');
                     <!-- Template Type Picker — Visual Interactive Cards -->
                     <div class="mb-4 p-3 bg-light rounded-3 border">
                         <label class="form-label fw-bold text-dark d-flex align-items-center gap-2 mb-2">
-                            <span><?= __('template_blueprint') ?> (ពុម្ពគំរូប្លង់) <span
-                                    class="text-danger">*</span></span>
+                            <span><?= __('template_blueprint') ?> <span
+                                     class="text-danger">*</span></span>
                         </label>
                         <input type="hidden" id="template_type" name="template_type"
                             value="<?= e($article['template_type'] ?? 'standard') ?>">
@@ -434,15 +432,29 @@ $formAction = url('admin/actions/save-article.php');
 
                     <?php if ($isEdit && !empty($article['featured_image'])) { ?>
                         <div class="mb-3 text-center">
-                            <img src="<?= e($article['featured_image']) ?>" class="img-fluid rounded border shadow-sm"
-                                style="max-height: 180px;" alt="Cover">
+                            <img src="<?= e(image_url($article['featured_image'])) ?>" class="img-fluid rounded border shadow-sm"
+                                style="max-height: 180px; width: auto;" alt="Cover Preview" id="featuredImagePreview">
                             <div class="text-xs text-muted mt-1"><?= __('current_image') ?></div>
                         </div>
                     <?php } ?>
 
+                    <div class="mb-3">
+                        <label for="featured_image_url" class="form-label fw-semibold small text-dark">
+                            <i class="bi bi-link-45deg me-1 text-danger"></i><?= __('featured_image_url_label') ?>
+                        </label>
+                        <input type="url" class="form-control form-control-sm font-monospace" id="featured_image_url"
+                            name="featured_image_url" value="<?= e($article['featured_image'] ?? '') ?>"
+                            placeholder="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe">
+                        <div class="text-muted text-xs mt-1">
+                            <?= __('featured_image_url_hint') ?>
+                        </div>
+                    </div>
+
+                    <div class="text-center text-muted small my-2 fw-semibold">— <?= __('or_upload_file') ?> —</div>
+
                     <div class="mb-2">
                         <label for="featured_image"
-                            class="form-label fw-semibold small text-dark"><?= __('upload_cover') ?></label>
+                            class="form-label fw-semibold small text-dark"><i class="bi bi-cloud-arrow-up me-1 text-primary"></i><?= __('upload_cover') ?></label>
                         <input type="file" class="form-control form-control-sm" id="featured_image"
                             name="featured_image" accept="image/jpeg,image/png,image/webp">
                     </div>

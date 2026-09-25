@@ -24,11 +24,11 @@
                                 <label class="form-label fw-semibold mb-0"><?= __('category_name') ?> <span
                                         class="text-danger">*</span></label>
                                 <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-2xs fw-bold px-2 py-0.5">
-                                    Dual-Lang
+                                    <?= __('dual_language_badge') ?>
                                 </span>
                             </div>
                             <input type="text" name="name" id="catName" class="form-control"
-                                placeholder="e.g. បច្ចេកវិទ្យា & AI (Technology & AI)" required>
+                                placeholder="<?= e(__('cat_name_placeholder')) ?>" required>
                             <div class="text-muted text-xs mt-1">
                                 <?= __('manual_translation_hint_cat') ?>
                             </div>
@@ -38,11 +38,11 @@
                             <div class="d-flex align-items-center justify-content-between mb-1">
                                 <label class="form-label fw-semibold mb-0"><?= __('description') ?></label>
                                 <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-2xs fw-bold px-2 py-0.5">
-                                    Dual-Lang
+                                    <?= __('dual_language_badge') ?>
                                 </span>
                             </div>
                             <textarea name="description" id="catDesc" class="form-control" rows="3"
-                                placeholder="Brief overview of topic coverage..."></textarea>
+                                placeholder="<?= e(__('cat_desc_placeholder')) ?>"></textarea>
                             <div class="text-muted text-xs mt-1">
                                 <?= __('manual_translation_hint_desc') ?>
                             </div>
