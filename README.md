@@ -51,6 +51,7 @@ A production-grade, decoupled **Content Management System (CMS)** and **Content 
   - [9. Quick Article Preview Modal](#9-quick-article-preview-modal)
 - [📁 Comprehensive Directory Structure](#-comprehensive-directory-structure)
 - [🗄️ Database Relational Schema](#️-database-relational-schema)
+- [🚀 Future Enhancements & Roadmap](#-future-enhancements--roadmap-features-to-improve)
 - [❓ Troubleshooting & FAQ](#-troubleshooting--faq)
 
 ---
@@ -58,10 +59,13 @@ A production-grade, decoupled **Content Management System (CMS)** and **Content 
 ## ✨ Key System Features
 
 - 📰 **BBC / CNA Flat Editorial Aesthetic**: Clean, high-contrast light mode with signature crimson red accents (`#c8102e`), dark navy headings (`#0f172a`), flat sharp borders (`#e5e7eb`), and zero box-shadow elevation for maximum readability.
+- 🌐 **Pure Single-Source Dual-Language Engine (Khmer & English)**: Centralized translation dictionary mapping Khmer and English keys. Allows instant language switching across public feeds and admin portals with 100% clean single-language output (zero parenthetical text or raw mixed strings).
+- 🔐 **Enforced Password Security Policy**: Strict minimum 8-character password validation enforced on both PHP backend controllers (`AdminController.php`) and client-side form submission for staff creation and account updates.
+- 🖼️ **Dual Main Cover Image Sourcing**: Support for direct web Image URLs (Unsplash, Cloudflare CDN) alongside local file uploads (JPG, PNG, WEBP max 5MB), backed by automatic DB schema migration (`VARCHAR(500)`).
+- 📱 **Device-Adaptive Aspect Ratio & Image Protection**: Responsive CSS `object-fit: cover; object-position: center;` layout protection with max-height guards (`380px` desktop, `280px` tablet, `220px` mobile) ensuring zero image clipping or distortion across all viewports.
 - 🔔 **Context-Aware Floating Toast Notifications**: Custom `window.showAdminToast()` system with floating auto-dismiss status cards positioned neatly below the navigation bar (`top: 96px; right: 1.5rem;`). Displays real-time feedback for published articles, saved drafts, field validation warnings, and errors.
 - 👥 **3-Tier Role-Based Access Control (RBAC)**: Granular permission levels enforcing strict authorization across `admin`, `editor`, and `reporter` roles.
 - 📝 **Article Publishing & Draft Workflow**: Support for saving articles as drafts or publishing them immediately, complete with status tags and filter tabs in the admin panel.
-- 🌐 **Single-Source Bilingual System**: Centralized translation dictionary mapping Khmer and English keys. Allows instant client-side language switching without page refreshes or state loss.
 - 🔖 **Saved Reading List Engine**: Client-side article bookmarking stored in `localStorage`, complete with live header counter badge (`#savedCountBadge`) and an offcanvas drawer with one-click article removal.
 - 👁️ **Quick Article Preview Modal**: AJAX-powered modal pop-up enabling readers to view summaries, author metadata, publication dates, view counts, and reading times directly from the feed.
 - 📐 **3 Custom Article Layout Blueprints**:
@@ -376,6 +380,43 @@ erdiagram
         datetime attempted_at
     }
 ```
+
+---
+
+## 🚀 Future Enhancements & Roadmap (Features to Improve)
+
+To further elevate **NewsPlatform CMS** into an enterprise-grade digital newsroom platform, the following key features and architectural upgrades are planned for upcoming releases:
+
+### 1. 🤖 AI-Powered Automatic Dual-Language Translation
+* **DeepL / OpenAI API Integration**: Implement an automated translation pipeline inside the article creation form. When a journalist drafts a story in Khmer or English, clicking a **"Translate with AI"** button automatically populates the alternate language fields (`title`, `summary`, `content`) using DeepL or GPT-4o API.
+* **Smart Terminology Dictionary**: Maintain a specialized glossary for technical terms, government ministry titles, and Cambodian geography to ensure 100% accurate context-aware translations.
+
+### 2. 📱 Headless CMS & Mobile App REST API Endpoints
+* **Decoupled JSON REST API**: Expose authenticated RESTful JSON endpoints (`/api/v1/articles`, `/api/v1/categories`, `/api/v1/search`) with JWT (JSON Web Tokens) or OAuth2 authentication.
+* **Cross-Platform Mobile Integration**: Enable mobile applications built on Flutter or React Native to seamlessly consume published articles, breaking news push alerts, and reader category preferences.
+
+### 3. 🔔 Web Push Notifications & Progressive Web App (PWA)
+* **Service Worker Integration**: Upgrade the CDA reader frontend into a full Progressive Web App (PWA) supporting offline article caching and installability on iOS and Android homescreens.
+* **Browser Push Alerts**: Integrate Web Push API (VAPID keys) to send real-time browser notifications to opted-in subscribers whenever a **Breaking News** ticker item is published.
+
+### 4. 📈 Advanced Editorial Analytics & Reader Heatmaps
+* **In-Depth Editorial Dashboard**: Expand the CMA admin panel with visual analytics powered by Chart.js tracking average reading scroll depth, reader drop-off points, peak readership hours, and category popularity trends.
+* **Author Performance Metrics**: Provide editors with detailed performance reports on article engagement per reporter.
+
+### 5. 🛡️ Multi-Factor Authentication (MFA / 2FA) & Security Hardening
+* **TOTP / Authenticator App Support**: Add Two-Factor Authentication (2FA) via Google Authenticator or Authy for administrator and editor login sessions.
+* **Audit Logging & Activity History**: Introduce an immutable admin audit log recording all user login activity, article edits, category updates, and password changes.
+
+### 6. 💬 Threaded Reader Comments & AI Moderation System
+* **Nested Comment Section**: Add reader discussion threads under published articles with support for likes, replies, and community flags.
+* **Automated Toxicity Filtering**: Integrate automated spam and toxicity detection to auto-hold inappropriate comments for manual editorial approval.
+
+### 7. 🗃️ Digital Asset Management (DAM) & Cloud Storage Integration
+* **AWS S3 / Cloudflare R2 Media Storage**: Offload local file uploads from Apache disk storage to cloud bucket storage (S3/R2) with direct CDN distribution.
+* **Automatic WebP Compression**: Automatically generate responsive srcset image sizes (thumbnail, tablet, high-res desktop) and compress uploaded media into WebP/AVIF formats on the fly.
+
+### 8. 🔍 ElasticSearch / Algolia Instant Search Engine
+* **Typo-Tolerant Full-Text Search**: Upgrade the search API to use ElasticSearch or Algolia for sub-millisecond search results with fuzzy matching, Khmer word segmentation, and category facet filtering.
 
 ---
 

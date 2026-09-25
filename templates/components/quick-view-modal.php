@@ -18,8 +18,8 @@
             <div class="modal-body p-4 bg-white">
                 <h3 id="qvTitle" class="fw-bold mb-3" style="color:#0f172a; font-size:1.35rem; line-height:1.35; letter-spacing:-0.015em;">Article Title</h3>
                 
-                <div id="qvImageWrapper" class="mb-3 overflow-hidden" style="max-height: 260px; background:#f3f4f6; display:none;">
-                    <img id="qvImage" src="" alt="Article Preview" class="w-100 h-100 object-fit-cover">
+                <div id="qvImageWrapper" class="mb-3 overflow-hidden rounded-1 position-relative" style="max-height: 380px; background:#0f172a; display:none;">
+                    <img id="qvImage" src="" alt="Article Preview" class="w-100 h-auto d-block" style="max-height: 380px; object-fit: cover; object-position: center;">
                 </div>
 
                 <div class="d-flex align-items-center gap-3 text-muted text-xs mb-3 pb-2 border-bottom">
