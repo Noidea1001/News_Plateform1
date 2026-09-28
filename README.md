@@ -165,6 +165,21 @@ This forwards web requests originating from the exposed `/public/` webroot into 
 #### `src/Core/Database.php`
 - **Pattern**: PDO Singleton Pattern.
 - **Functionality**: Manages database connection pool with prepared statement enforcement, auto-detects missing tables, executes auto-migrations from schema definitions, and seeds default database content.
+- **PDO Connection Configuration (`$options`) Breakdown**:
+  ```php
+  $options = [
+      PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+      PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+      PDO::ATTR_EMULATE_PREPARES => false,
+      PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
+  ];
+  ```
+  | PDO Option Key | Configured Value | Purpose & Architectural Impact |
+  | :--- | :--- | :--- |
+  | `PDO::ATTR_ERRMODE` | `PDO::ERRMODE_EXCEPTION` | Configures PDO to throw `PDOException` on database errors, allowing structured `try/catch` error handling instead of failing silently. |
+  | `PDO::ATTR_DEFAULT_FETCH_MODE` | `PDO::FETCH_ASSOC` | Automatically formats query results as associative arrays (`$row['title']`), halving memory usage compared to default `FETCH_BOTH`. |
+  | `PDO::ATTR_EMULATE_PREPARES` | `false` | Enforces native MySQL prepared statements for 100% protection against SQL Injection attacks and preserving native integer data types. |
+  | `PDO::MYSQL_ATTR_INIT_COMMAND` | `"SET NAMES utf8mb4..."` | Forces 4-byte UTF-8 encoding immediately upon connection, ensuring full support for Khmer script (`ភាសាខ្មែរ`) and modern emojis without encoding artifacts. |
 
 #### `src/Core/Auth.php`
 - **Functionality**: Handles staff user sessions, password hashing via `PASSWORD_BCRYPT`, CSRF token generation and validation (`verifyCsrfToken()`), and brute-force protection using `login_attempts` to temporarily block IP addresses exceeding login limits.

@@ -178,7 +178,7 @@
 
                     <!-- Body -->
                     <div class="lead-article-body">
-                        <div class="lead-meta-top">
+                        <div class="lead-meta-top d-flex align-items-center gap-2 mb-2 text-xs text-muted">
                             <span><?= e($lead['author_name']) ?></span>
                             <span>&bull;</span>
                             <span><?= \App\Core\TemplateEngine::timeAgo($lead['published_at']) ?></span>
