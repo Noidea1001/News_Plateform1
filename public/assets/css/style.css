@@ -402,6 +402,10 @@ img {
     font-family: var(--font-sans);
     border-bottom: none;
     position: relative;
+    top: 0;
+    margin: 0 !important;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
     z-index: 1055;
     overflow: visible;
 }
@@ -2973,6 +2977,11 @@ input[type="text"]::-webkit-search-cancel-button {
     background-color: var(--cna-red);
     z-index: 1080;
     transition: width 0.1s ease-out;
+    pointer-events: none;
+    line-height: 0;
+    font-size: 0;
+    margin: 0;
+    padding: 0;
 }
 
 /* ==========================================================================
@@ -3272,4 +3281,69 @@ input[type="text"]::-webkit-search-cancel-button {
     #qvImage {
         max-height: 220px !important;
     }
+}
+
+/* ==========================================================================
+   30. READER SETTINGS & ACCOUNT MANAGEMENT (Full Format Layout)
+   ========================================================================== */
+.settings-page {
+    background-color: #f8fafc;
+    min-height: calc(100vh - 140px);
+}
+
+.settings-hero-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.settings-nav-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.settings-nav-card .nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.75rem 1rem;
+    color: #475569;
+    font-size: 0.86rem;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    transition: all 0.15s ease;
+}
+
+.settings-nav-card .nav-link:hover {
+    background-color: #f1f5f9;
+    color: #0f172a;
+}
+
+.settings-nav-card .nav-link.active {
+    background-color: var(--cna-red);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(217, 4, 41, 0.25);
+}
+
+.settings-nav-card .nav-link.text-danger:not(.active):hover {
+    background-color: #fff1f2;
+    color: var(--cna-red) !important;
+}
+
+.settings-content-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
+}
+
+.settings-stat-chip {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.65rem 1.1rem;
 }
