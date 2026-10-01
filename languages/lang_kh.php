@@ -499,5 +499,10 @@ $lang['settings_delete_desc'] = "នៅពេលលុបគណនី ទិន�
 $lang['settings_type_delete'] = "វាយ delete ដើម្បីបញ្ជាក់";
 $lang['settings_delete_btn'] = "លុបគណនីរបស់ខ្ញុំ";
 $lang['settings_delete_confirm_js'] = "តើអ្នកប្រាកដជាចង់លុបគណនីនេះមែនទេ?";
+
+// 24. Bookmark Authentication Guard
+$lang['bookmark_login_prompt_title'] = "បង្កើតគណនីដើម្បីរក្សាទុកអត្ថបទ";
+$lang['bookmark_login_prompt_desc'] = "សូមចុះឈ្មោះគណនីអ្នកអានឥតគិតថ្លៃដើម្បីអាចរក្សាទុកអត្ថបទ និងអានពេលក្រោយបានគ្រប់ពេលវេលា។";
+$lang['bookmark_account_required'] = "តម្រូវឱ្យមានគណនីដើម្បីរក្សាទុកអត្ថបទ";
 return $lang;
 

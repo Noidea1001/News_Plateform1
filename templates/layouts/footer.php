@@ -144,6 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const CURRENT_LANG = '<?= $_SESSION['lang'] ?? 'en' ?>';
     const IS_KHMER = (CURRENT_LANG === 'kh' || CURRENT_LANG === 'km');
     const TXT_READ_STORY = '<?= __('read_story') ?>';
+    const IS_LOGGED_IN = <?= (\App\Core\Auth::readerCheck() || \App\Core\Auth::check()) ? 'true' : 'false' ?>;
 
     // Inherit central translation dictionary from PHP src/Core/helpers.php
     const translationMaps = <?= json_encode(get_translation_maps(), JSON_UNESCAPED_UNICODE) ?>;
@@ -368,6 +369,19 @@ document.addEventListener('DOMContentLoaded', function () {
         if (btn) {
             e.preventDefault();
             e.stopPropagation();
+
+            // Require account to bookmark articles
+            if (!IS_LOGGED_IN) {
+                const authModalEl = document.getElementById('readerAuthModal');
+                if (authModalEl && typeof bootstrap !== 'undefined') {
+                    const modal = bootstrap.Modal.getOrCreateInstance(authModalEl);
+                    modal.show();
+                } else {
+                    window.location.href = '<?= url("register.php") ?>';
+                }
+                return;
+            }
+
             const dataRaw = btn.getAttribute('data-article');
             if (dataRaw) {
                 try {
@@ -450,6 +464,19 @@ document.addEventListener('DOMContentLoaded', function () {
     const qvBmBtn = document.getElementById('qvBookmarkBtn');
     if (qvBmBtn) {
         qvBmBtn.addEventListener('click', function () {
+            // Require account to bookmark
+            if (!IS_LOGGED_IN) {
+                if (qvModalInstance) qvModalInstance.hide();
+                const authModalEl = document.getElementById('readerAuthModal');
+                if (authModalEl && typeof bootstrap !== 'undefined') {
+                    const modal = bootstrap.Modal.getOrCreateInstance(authModalEl);
+                    modal.show();
+                } else {
+                    window.location.href = '<?= url("register.php") ?>';
+                }
+                return;
+            }
+
             const dataRaw = this.getAttribute('data-article');
             if (dataRaw) {
                 try {

@@ -499,5 +499,10 @@ $lang['settings_delete_desc'] = "Deleting your account will permanently remove y
 $lang['settings_type_delete'] = "Type delete to confirm";
 $lang['settings_delete_btn'] = "Delete My Account";
 $lang['settings_delete_confirm_js'] = "Are you sure you want to permanently delete your account? This cannot be undone!";
+
+// 24. Bookmark Authentication Guard
+$lang['bookmark_login_prompt_title'] = "Create Account to Save Articles";
+$lang['bookmark_login_prompt_desc'] = "Create a free reader account to save stories and access your reading list anytime.";
+$lang['bookmark_account_required'] = "Create an account to save articles";
 return $lang;
 

@@ -135,50 +135,46 @@ $currentReader = \App\Core\Auth::reader();
 <body class="d-flex flex-column min-vh-100">
     <div id="readingProgressBar"></div>
 
-    <!-- ── CNA-Style Top Utility Bar ──────────────────────────────────────── -->
-    <div class="top-utility-header py-1">
-        <div class="container-fluid px-3 px-md-4">
-            <div class="d-flex justify-content-between align-items-center" style="min-height:30px;">
-                <!-- Left: Date -->
-                <div class="d-flex align-items-center gap-3" style="font-size:0.72rem; color:rgba(255,255,255,0.6);">
-                    <span><?= \App\Core\TemplateEngine::formatDate(date('Y-m-d H:i:s'), 'l, d F Y') ?></span>
-                    <span class="opacity-25 d-none d-sm-inline">|</span>
-                    <span class="d-none d-md-inline" style="color:rgba(255,255,255,0.45);"><?= __('cda_badge') ?></span>
-                </div>
+    <!-- ── CNA-Style Top Utility Bar (Matches Admin Site Fit) ──────────── -->
+    <div class="top-utility-header d-flex align-items-center justify-content-between px-3 px-md-4 py-1">
+        <!-- Left: Date & CDA Badge -->
+        <div class="d-flex align-items-center gap-2.5" style="font-size:0.72rem; font-weight:600;">
+            <span style="color:rgba(255,255,255,0.40);"><?= \App\Core\TemplateEngine::formatDate(date('Y-m-d H:i:s'), 'l, d F Y') ?></span>
+            <span class="opacity-25">|</span>
+            <span style="color:rgba(255,255,255,0.60);"><?= __('cda_badge') ?></span>
+        </div>
 
-                <!-- Right: PWA Install & Language -->
-                <div class="d-flex align-items-center gap-2.5">
-                    <button type="button" id="pwaInstallBtn"
-                        class="btn btn-outline-light btn-sm py-0 px-2 d-none align-items-center gap-1"
-                        style="font-size:0.7rem; border-radius:2px; border-color:rgba(255,255,255,0.3); opacity:0.85;"
-                        title="<?= __('pwa_install') ?>">
-                        <i class="bi bi-download" style="font-size:0.68rem;"></i>
-                        <span class="d-none d-sm-inline"><?= __('pwa_install') ?></span>
-                    </button>
+        <!-- Right: PWA Install & Language -->
+        <div class="d-flex align-items-center gap-2.5">
+            <button type="button" id="pwaInstallBtn"
+                class="btn btn-outline-light btn-sm py-0 px-2 d-none align-items-center gap-1"
+                style="font-size:0.7rem; border-radius:2px; border-color:rgba(255,255,255,0.3); opacity:0.85;"
+                title="<?= __('pwa_install') ?>">
+                <i class="bi bi-download" style="font-size:0.68rem;"></i>
+                <span class="d-none d-sm-inline"><?= __('pwa_install') ?></span>
+            </button>
 
-                    <div class="dropdown">
-                        <button class="btn btn-link text-white p-0 text-decoration-none dropdown-toggle"
-                            style="font-size:0.72rem; font-weight:600; opacity:0.75;" type="button"
-                            data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-globe2 me-1" style="font-size:0.7rem;"></i>
-                            <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'ខ្មែរ' : 'EN' ?>
-                        </button>
-                        <ul class="dropdown-menu dropdown-menu-end" style="min-width:140px;">
-                            <li>
-                                <a class="dropdown-item <?= $currentLang === 'en' ? 'active' : '' ?>"
-                                    href="<?= lang_url('en') ?>">
-                                    English (EN)
-                                </a>
-                            </li>
-                            <li>
-                                <a class="dropdown-item <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'active' : '' ?>"
-                                    href="<?= lang_url('kh') ?>">
-                                    ភាសាខ្មែរ (KH)
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+            <div class="dropdown">
+                <button class="btn btn-link text-white p-0 text-decoration-none dropdown-toggle"
+                    style="font-size:0.72rem; font-weight:600; opacity:0.75;" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="bi bi-globe2 me-1" style="font-size:0.7rem;"></i>
+                    <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'ខ្មែរ' : 'EN' ?>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" style="min-width:140px;">
+                    <li>
+                        <a class="dropdown-item <?= $currentLang === 'en' ? 'active' : '' ?>"
+                            href="<?= lang_url('en') ?>">
+                            English (EN)
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'active' : '' ?>"
+                            href="<?= lang_url('kh') ?>">
+                            ភាសាខ្មែរ (KH)
+                        </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -252,14 +248,23 @@ $currentReader = \App\Core\Auth::reader();
                 <!-- Reader Controls, Notifications & CTAs -->
                 <div class="d-flex align-items-center gap-2 ms-lg-auto pe-1">
                     
-                    <!-- Saved Reading List Offcanvas Trigger -->
-                    <button type="button"
-                        class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
-                        data-bs-toggle="offcanvas" data-bs-target="#savedArticlesModal"
-                        title="<?= __('saved_reading_list') ?? 'Saved Reading List' ?>">
-                        <i class="bi bi-bookmark-fill text-danger" style="font-size: 1.2rem;"></i>
-                        <span id="savedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center" style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; display: none;">0</span>
-                    </button>
+                    <!-- Saved Reading List Offcanvas Trigger (Account Required) -->
+                    <?php if ($currentReader || \App\Core\Auth::check()) { ?>
+                        <button type="button"
+                            class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
+                            data-bs-toggle="offcanvas" data-bs-target="#savedArticlesModal"
+                            title="<?= __('saved_reading_list') ?? 'Saved Reading List' ?>">
+                            <i class="bi bi-bookmark-fill text-danger" style="font-size: 1.2rem;"></i>
+                            <span id="savedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center" style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; display: none;">0</span>
+                        </button>
+                    <?php } else { ?>
+                        <button type="button"
+                            class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
+                            data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register"
+                            title="<?= __('bookmark_account_required') ?? 'Create an account to save articles' ?>">
+                            <i class="bi bi-bookmark text-secondary" style="font-size: 1.2rem;"></i>
+                        </button>
+                    <?php } ?>
 
                     <!-- Real-Time Notification Bell Dropdown -->
                     <div class="dropdown position-relative">
