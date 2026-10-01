@@ -192,7 +192,7 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
 
                 <!-- Social Share Buttons -->
                 <div class="mb-4">
-                    <?php include __DIR__ . '/../components/share-buttons.php'; ?>
+                    <?php $isBottomShare = true; include __DIR__ . '/../components/share-buttons.php'; unset($isBottomShare); ?>
                 </div>
 
                 <!-- Verified Primary Citation Card Component -->

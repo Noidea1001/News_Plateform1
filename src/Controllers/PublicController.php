@@ -582,7 +582,18 @@ class PublicController
      */
     public function registerReader(array $postData): void
     {
+        $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') || !empty($postData['ajax']);
+        $redirectTo = !empty($postData['redirect_to']) ? $postData['redirect_to'] : url('index.php');
+        if (!str_starts_with($redirectTo, '/') && !str_starts_with($redirectTo, url(''))) {
+            $redirectTo = url('index.php');
+        }
+
         if (!Auth::verifyCsrfToken($postData['csrf_token'] ?? '')) {
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Security validation failed (Invalid CSRF token).']);
+                exit;
+            }
             header('Location: ' . url('register.php?error=' . urlencode('Security validation failed (Invalid CSRF token).')));
             exit;
         }
@@ -593,17 +604,37 @@ class PublicController
         $confirmPassword = $postData['password_confirm'] ?? '';
 
         if ($password !== $confirmPassword) {
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Passwords do not match.']);
+                exit;
+            }
             header('Location: ' . url('register.php?error=' . urlencode('Passwords do not match.')));
             exit;
         }
 
         $result = Auth::readerRegister($name, $email, $password);
         if (!$result['success']) {
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => $result['message']]);
+                exit;
+            }
             header('Location: ' . url('register.php?error=' . urlencode($result['message'])));
             exit;
         }
 
-        header('Location: ' . url('index.php?msg=' . urlencode('Welcome, ' . $name . '! Your reader account has been created.')));
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'message' => 'Welcome, ' . $name . '! Your reader account has been created.',
+                'redirect' => $redirectTo
+            ]);
+            exit;
+        }
+
+        header('Location: ' . $redirectTo);
         exit;
     }
 
@@ -630,7 +661,18 @@ class PublicController
      */
     public function loginReader(array $postData): void
     {
+        $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') || !empty($postData['ajax']);
+        $redirectTo = !empty($postData['redirect_to']) ? $postData['redirect_to'] : url('index.php');
+        if (!str_starts_with($redirectTo, '/') && !str_starts_with($redirectTo, url(''))) {
+            $redirectTo = url('index.php');
+        }
+
         if (!Auth::verifyCsrfToken($postData['csrf_token'] ?? '')) {
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Security validation failed (Invalid CSRF token).']);
+                exit;
+            }
             header('Location: ' . url('login.php?error=' . urlencode('Security validation failed (Invalid CSRF token).')));
             exit;
         }
@@ -639,18 +681,38 @@ class PublicController
         $password = $postData['password'] ?? '';
 
         if (empty($email) || empty($password)) {
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Email and password are required.']);
+                exit;
+            }
             header('Location: ' . url('login.php?error=' . urlencode('Email and password are required.')));
             exit;
         }
 
         $success = Auth::readerLogin($email, $password);
         if (!$success) {
+            if ($isAjax) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'message' => 'Invalid email or password. Please try again.']);
+                exit;
+            }
             header('Location: ' . url('login.php?error=' . urlencode('Invalid email or password. Please try again.')));
             exit;
         }
 
         $reader = Auth::reader();
-        header('Location: ' . url('index.php?msg=' . urlencode('Welcome back, ' . ($reader['name'] ?? 'Reader') . '!')));
+        if ($isAjax) {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'success' => true,
+                'message' => 'Welcome back, ' . ($reader['name'] ?? 'Reader') . '!',
+                'redirect' => $redirectTo
+            ]);
+            exit;
+        }
+
+        header('Location: ' . $redirectTo);
         exit;
     }
 

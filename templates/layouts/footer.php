@@ -1,14 +1,16 @@
 </main><!-- /main -->
 
-<!-- Subscribe, Quick View & Saved Reading List Modals -->
+<!-- Subscribe, Quick View, Saved Reading List & Reader Auth Modals -->
 <?php
 $subModal = __DIR__ . '/../components/subscribe-modal.php';
 $qvModal = __DIR__ . '/../components/quick-view-modal.php';
 $savedModal = __DIR__ . '/../components/saved-articles-modal.php';
+$authModal = __DIR__ . '/../components/auth-modal.php';
 
 if (file_exists($subModal)) { include $subModal; }
 if (file_exists($qvModal)) { include $qvModal; }
 if (file_exists($savedModal)) { include $savedModal; }
+if (file_exists($authModal)) { include $authModal; }
 ?>
 
 <!-- ── CNA-Style Footer ────────────────────────────────────────────────── -->
