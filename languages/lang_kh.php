@@ -505,5 +505,10 @@ $lang['bookmark_login_prompt_title'] = "បង្កើតគណនីដើម�
 $lang['bookmark_login_prompt_desc'] = "សូមចុះឈ្មោះគណនីអ្នកអានឥតគិតថ្លៃដើម្បីអាចរក្សាទុកអត្ថបទ និងអានពេលក្រោយបានគ្រប់ពេលវេលា។";
 $lang['bookmark_account_required'] = "តម្រូវឱ្យមានគណនីដើម្បីរក្សាទុកអត្ថបទ";
 $lang['clear_saved_warning'] = "អត្ថបទទាំងអស់ក្នុងបញ្ជីរក្សាទុកនឹងត្រូវបានលុបចោលទាំងស្រុង។";
+
+// 25. Notifications Authentication Guard
+$lang['notifications_account_required'] = "តម្រូវឱ្យមានគណនីដើម្បីទទួលបានការជូនដំណឹង";
+$lang['notifications_login_prompt_title'] = "បង្កើតគណនីដើម្បីទទួលបានការជូនដំណឹង";
+$lang['notifications_login_prompt_desc'] = "សូមចុះឈ្មោះគណនីអ្នកអានឥតគិតថ្លៃដើម្បីទទួលបានព័ត៌មានទាន់ហេតុការណ៍ និងការជូនដំណឹងព័ត៌មានថ្មីៗ។";
 return $lang;
 

@@ -505,5 +505,10 @@ $lang['bookmark_login_prompt_title'] = "Create Account to Save Articles";
 $lang['bookmark_login_prompt_desc'] = "Create a free reader account to save stories and access your reading list anytime.";
 $lang['bookmark_account_required'] = "Create an account to save articles";
 $lang['clear_saved_warning'] = "All articles in your saved reading list will be permanently cleared.";
+
+// 25. Notifications Authentication Guard
+$lang['notifications_account_required'] = "Account required to receive news alerts";
+$lang['notifications_login_prompt_title'] = "Create Account to Get News Alerts";
+$lang['notifications_login_prompt_desc'] = "Create a free reader account to receive breaking news alerts and personalized updates.";
 return $lang;
 

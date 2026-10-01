@@ -266,33 +266,42 @@ $currentReader = \App\Core\Auth::reader();
                         </button>
                     <?php } ?>
 
-                    <!-- Real-Time Notification Bell Dropdown -->
-                    <div class="dropdown position-relative">
-                        <button type="button"
-                            class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
-                            id="notifBellBtn" data-bs-toggle="dropdown" aria-expanded="false"
-                            title="<?= __('notifications_title') ?>">
-                            <i class="bi bi-bell-fill text-dark" style="font-size: 1.2rem;"></i>
-                            <span id="notifBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center"
-                                style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; display: none;">0</span>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 mt-2" style="width: 340px; max-height: 420px; overflow-y: auto; border-radius: 6px; z-index: 1080;">
-                            <div class="p-3 border-bottom d-flex align-items-center justify-content-between bg-light">
-                                <span class="fw-bold small text-dark"><i class="bi bi-bell-fill me-1 text-danger"></i> <?= __('notifications_title') ?></span>
-                                <span class="badge bg-danger text-white text-2xs" id="notifCountLabel">0</span>
-                            </div>
-                            <div id="notifList" class="list-group list-group-flush small">
-                                <div class="p-3 text-center text-muted text-xs">
-                                    <span class="spinner-border spinner-border-sm me-1"></span> <?= __('loading') ?? 'Loading...' ?>
+                    <!-- Real-Time Notification Bell Dropdown (Account Required) -->
+                    <?php if ($currentReader || \App\Core\Auth::check()) { ?>
+                        <div class="dropdown position-relative">
+                            <button type="button"
+                                class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
+                                id="notifBellBtn" data-bs-toggle="dropdown" aria-expanded="false"
+                                title="<?= __('notifications_title') ?>">
+                                <i class="bi bi-bell-fill text-dark" style="font-size: 1.2rem;"></i>
+                                <span id="notifBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center"
+                                    style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; display: none;">0</span>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 mt-2" style="width: 340px; max-height: 420px; overflow-y: auto; border-radius: 6px; z-index: 1080;">
+                                <div class="p-3 border-bottom d-flex align-items-center justify-content-between bg-light">
+                                    <span class="fw-bold small text-dark"><i class="bi bi-bell-fill me-1 text-danger"></i> <?= __('notifications_title') ?></span>
+                                    <span class="badge bg-danger text-white text-2xs" id="notifCountLabel">0</span>
+                                </div>
+                                <div id="notifList" class="list-group list-group-flush small">
+                                    <div class="p-3 text-center text-muted text-xs">
+                                        <span class="spinner-border spinner-border-sm me-1"></span> <?= __('loading') ?? 'Loading...' ?>
+                                    </div>
+                                </div>
+                                <div class="p-2 border-top text-center bg-light">
+                                    <a href="<?= url('index.php?breaking=1') ?>" class="text-xs text-danger text-decoration-none fw-semibold">
+                                        <?= __('filter_breaking_only') ?> &rarr;
+                                    </a>
                                 </div>
                             </div>
-                            <div class="p-2 border-top text-center bg-light">
-                                <a href="<?= url('index.php?breaking=1') ?>" class="text-xs text-danger text-decoration-none fw-semibold">
-                                    <?= __('filter_breaking_only') ?> &rarr;
-                                </a>
-                            </div>
                         </div>
-                    </div>
+                    <?php } else { ?>
+                        <button type="button"
+                            class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
+                            data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register"
+                            title="<?= __('notifications_account_required') ?? 'Create an account to get news alerts' ?>">
+                            <i class="bi bi-bell text-secondary" style="font-size: 1.2rem;"></i>
+                        </button>
+                    <?php } ?>
 
                     <!-- Reader Auth Dropdown / Buttons -->
                     <?php if ($currentReader) { ?>
@@ -589,8 +598,10 @@ $currentReader = \App\Core\Auth::reader();
                     .catch(e => console.debug('Notifications poll:', e));
             }
 
+            <?php if ($currentReader || \App\Core\Auth::check()) { ?>
             fetchNotifications();
             setInterval(fetchNotifications, 30000);
+            <?php } ?>
         });
     </script>
 

@@ -566,6 +566,21 @@ class PublicController
         header('Content-Type: application/json; charset=utf-8');
 
         $currentReader = Auth::reader();
+        $isLoggedIn = !empty($currentReader) || Auth::check();
+
+        // Enforce account requirement for real-time news notifications
+        if (!$isLoggedIn) {
+            echo json_encode([
+                'success' => false,
+                'requires_auth' => true,
+                'is_logged_in' => false,
+                'message' => __('notifications_login_prompt_desc'),
+                'count' => 0,
+                'notifications' => []
+            ]);
+            exit;
+        }
+
         $subscribedCatIds = [];
 
         if ($currentReader) {
