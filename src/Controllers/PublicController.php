@@ -296,23 +296,29 @@ class PublicController
             return ['success' => true, 'articles' => []];
         }
 
+        $currentLang = $_GET['lang'] ?? ($_SESSION['lang'] ?? 'kh');
         $term = "%{$q}%";
         $articles = $this->db->fetchAll(
-            "SELECT a.id, a.title, a.slug, a.summary, a.featured_image, a.published_at, c.name as category_name
+            "SELECT a.id, a.title, a.title_kh, a.title_en, a.slug, a.summary, a.summary_kh, a.summary_en, a.featured_image, a.published_at, c.name as category_name
              FROM articles a
              JOIN categories c ON a.category_id = c.id
              WHERE a.status = 'published'
-               AND (a.title LIKE :q1 OR a.summary LIKE :q2 OR c.name LIKE :q3)
+               AND (a.title LIKE :q1 
+                    OR a.summary LIKE :q2 
+                    OR c.name LIKE :q3 
+                    OR (a.title_kh IS NOT NULL AND a.title_kh LIKE :q4)
+                    OR (a.title_en IS NOT NULL AND a.title_en LIKE :q5)
+                    OR (a.summary_kh IS NOT NULL AND a.summary_kh LIKE :q6))
              ORDER BY a.published_at DESC LIMIT 8",
-            ['q1' => $term, 'q2' => $term, 'q3' => $term]
+            ['q1' => $term, 'q2' => $term, 'q3' => $term, 'q4' => $term, 'q5' => $term, 'q6' => $term]
         );
 
         foreach ($articles as &$art) {
-            $art['title'] = article_title($art['title']);
-            $rawSummary = strip_tags(article_summary($art['summary']));
+            $art['title'] = article_title($art, $currentLang);
+            $rawSummary = strip_tags(article_summary($art, $currentLang));
             $art['summary'] = $rawSummary;
-            $art['summary_snippet'] = mb_strimwidth($rawSummary, 0, 95, '...');
-            $art['category_display'] = cat_name($art['category_name']);
+            $art['summary_snippet'] = mb_strimwidth($rawSummary, 0, 75, '...');
+            $art['category_display'] = cat_name($art['category_name'], $currentLang);
             $art['image_url'] = !empty($art['featured_image']) ? image_url($art['featured_image']) : '';
             $art['url'] = url('article.php?slug=' . urlencode($art['slug']));
             $art['time_ago'] = TemplateEngine::timeAgo($art['published_at']);
@@ -570,7 +576,8 @@ class PublicController
             // User has customized subscriptions: prioritize breaking news + articles in their subscribed topics
             $inClause = implode(',', $subscribedCatIds);
             $notifications = $this->db->fetchAll(
-                "SELECT n.*, a.slug as article_slug, a.featured_image, a.category_id, c.name as category_name
+                "SELECT n.*, a.slug as article_slug, a.featured_image, a.category_id, c.name as category_name,
+                        a.title as article_title, a.title_kh, a.title_en, a.summary as article_summary, a.summary_kh, a.summary_en
                  FROM notifications n 
                  LEFT JOIN articles a ON n.article_id = a.id 
                  LEFT JOIN categories c ON a.category_id = c.id
@@ -580,7 +587,8 @@ class PublicController
         } else {
             // General stream: breaking news + latest published
             $notifications = $this->db->fetchAll(
-                "SELECT n.*, a.slug as article_slug, a.featured_image, a.category_id, c.name as category_name
+                "SELECT n.*, a.slug as article_slug, a.featured_image, a.category_id, c.name as category_name,
+                        a.title as article_title, a.title_kh, a.title_en, a.summary as article_summary, a.summary_kh, a.summary_en
                  FROM notifications n 
                  LEFT JOIN articles a ON n.article_id = a.id 
                  LEFT JOIN categories c ON a.category_id = c.id
@@ -588,11 +596,31 @@ class PublicController
             );
         }
 
+        $currentLang = $_GET['lang'] ?? ($_SESSION['lang'] ?? 'kh');
+        $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
+
         foreach ($notifications as &$n) {
+            // Ensure Khmer/English localized title & message
+            if ($isKhmer && !empty($n['title_kh'])) {
+                $n['title'] = km_num($n['title_kh']);
+            } elseif (!$isKhmer && !empty($n['title_en'])) {
+                $n['title'] = $n['title_en'];
+            } else {
+                $n['title'] = article_title($n['title'] ?? '', $currentLang);
+            }
+
+            if ($isKhmer && !empty($n['summary_kh'])) {
+                $n['message'] = $n['summary_kh'];
+            } elseif (!$isKhmer && !empty($n['summary_en'])) {
+                $n['message'] = $n['summary_en'];
+            } else {
+                $n['message'] = article_summary($n['message'] ?? '', $currentLang);
+            }
+
             $n['time_ago'] = TemplateEngine::timeAgo($n['created_at']);
             $n['article_url'] = !empty($n['article_slug']) ? url('article.php?slug=' . urlencode($n['article_slug'])) : url('index.php');
             $n['is_subscribed_topic'] = !empty($n['category_id']) && in_array((int)$n['category_id'], $subscribedCatIds, true);
-            $n['category_display'] = !empty($n['category_name']) ? cat_name($n['category_name']) : '';
+            $n['category_display'] = !empty($n['category_name']) ? cat_name($n['category_name'], $currentLang) : '';
         }
         unset($n);
 

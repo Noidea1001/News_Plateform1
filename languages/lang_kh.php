@@ -458,7 +458,7 @@ $lang['view_all_results'] = "មើលលទ្ធផលទាំងអស់";
 // 21. Reader Topic Subscriptions
 $lang['topic_subscriptions_title'] = "ការជាវព័ត៌មានតាមផ្នែក";
 $lang['topic_subscriptions_desc'] = "ជ្រើសរើសផ្នែកព័ត៌មានដែលអ្នកចង់តាមដាន ដើម្បីទទួលការជូនដំណឹងពេលមានព័ត៌មានថ្មីៗ";
-$lang['subscribe_topic'] = "ជាវព័ត៌មាន";
+$lang['subscribe_topic'] = "ជាវ";
 $lang['subscribed_topic'] = "បានជាវ";
 $lang['subscribed_topic_badge'] = "ប្រធានបទបានជាវ";
 $lang['subscribe_login_prompt'] = "សូមចូលគណនី ឬចុះឈ្មោះជាអ្នកអាន ដើម្បីជាវព័ត៌មានតាមផ្នែកដែលអ្នកចូលចិត្ត";

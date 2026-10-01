@@ -21,37 +21,36 @@ $sidebarCats = $sidebarDb->fetchAll("SELECT id, name, slug FROM categories ORDER
 
 <aside class="d-flex flex-column gap-3.5">
 
-    <!-- Widget 1: Reader Topic Subscriptions & Alert Preferences (Rebuilt from editorial dispatch) -->
+    <!-- Widget 1: Reader Topic Subscriptions (Clean & Space-Saving) -->
     <div class="card border-0 shadow-2xs overflow-hidden" style="border:1px solid #e5e7eb !important; border-radius:4px; background:#fff;">
-        <div class="card-header bg-white py-2.5 px-3 border-bottom d-flex align-items-center justify-content-between"
+        <div class="card-header bg-white py-2 px-3 border-bottom d-flex align-items-center justify-content-between"
              style="border-left:3px solid #c8102e;">
-            <h6 class="mb-0 fw-bold d-flex align-items-center gap-1.5" style="font-size:0.88rem; color:#0f172a;">
-                <i class="bi bi-bell-fill text-danger"></i>
+            <h6 class="mb-0 fw-bold d-flex align-items-center gap-1.5" style="font-size:0.84rem; color:#0f172a;">
+                <i class="bi bi-bell text-danger"></i>
                 <span><?= __('topic_subscriptions_title') ?></span>
             </h6>
             <span class="badge bg-danger bg-opacity-10 text-danger text-3xs px-2 py-0.5 rounded-pill fw-bold" id="sidebarSubCountBadge">
                 <?= count($sidebarSubscribedIds) ?> <?= __('subscribed_topic') ?>
             </span>
         </div>
-        <div class="card-body p-3">
-            <p class="text-muted text-2xs mb-2.5" style="line-height:1.4;">
+        <div class="card-body p-2.5">
+            <p class="text-muted text-3xs mb-2" style="line-height:1.35;">
                 <?= __('topic_subscriptions_desc') ?>
             </p>
-            <div class="d-flex flex-column gap-1.5" id="sidebarTopicList">
+            <div class="d-flex flex-column gap-1" id="sidebarTopicList">
                 <?php foreach ($sidebarCats as $sCat) { 
                     $isSub = in_array((int)$sCat['id'], $sidebarSubscribedIds, true);
                 ?>
-                    <div class="d-flex align-items-center justify-content-between p-2 rounded-2 border bg-light bg-opacity-50 topic-item-row" style="transition:background 0.15s ease;">
-                        <span class="fw-semibold text-xs text-dark d-flex align-items-center gap-1.5 text-truncate pe-1">
-                            <i class="bi bi-bookmark-star text-danger opacity-75"></i>
-                            <span class="text-truncate"><?= e(cat_name($sCat['name'])) ?></span>
+                    <div class="d-flex align-items-center justify-content-between py-1 px-2 rounded-1 topic-item-row" style="background:#f8fafc; border:1px solid #f1f5f9; transition:background 0.12s ease;">
+                        <span class="fw-semibold text-dark text-truncate pe-1" style="font-size:0.78rem;">
+                            <?= e(cat_name($sCat['name'])) ?>
                         </span>
                         <button type="button" 
-                            class="btn btn-sm <?= $isSub ? 'btn-danger text-white' : 'btn-outline-secondary' ?> rounded-pill px-2.5 py-0.5 text-2xs fw-bold flex-shrink-0 topic-sub-btn"
+                            class="btn btn-sm <?= $isSub ? 'btn-danger text-white' : 'btn-outline-secondary' ?> rounded-pill px-2 py-0 text-3xs fw-bold flex-shrink-0 topic-sub-btn"
                             data-cat-id="<?= (int)$sCat['id'] ?>"
                             data-is-sub="<?= $isSub ? '1' : '0' ?>"
                             data-logged-in="<?= $sidebarReader ? '1' : '0' ?>"
-                            style="font-size: 0.72rem;">
+                            style="font-size: 0.68rem; height: 22px; line-height: 20px;">
                             <?= $isSub ? '✓ ' . __('subscribed_topic') : '+ ' . __('subscribe_topic') ?>
                         </button>
                     </div>
@@ -166,11 +165,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.success) {
                     if (data.subscribed) {
                         this.setAttribute('data-is-sub', '1');
-                        this.className = 'btn btn-sm btn-danger text-white rounded-pill px-2.5 py-0.5 text-2xs fw-bold flex-shrink-0 topic-sub-btn';
+                        this.className = 'btn btn-sm btn-danger text-white rounded-pill px-2 py-0 text-3xs fw-bold flex-shrink-0 topic-sub-btn';
                         this.innerHTML = '✓ <?= addslashes(__('subscribed_topic')) ?>';
                     } else {
                         this.setAttribute('data-is-sub', '0');
-                        this.className = 'btn btn-sm btn-outline-secondary rounded-pill px-2.5 py-0.5 text-2xs fw-bold flex-shrink-0 topic-sub-btn';
+                        this.className = 'btn btn-sm btn-outline-secondary rounded-pill px-2 py-0 text-3xs fw-bold flex-shrink-0 topic-sub-btn';
                         this.innerHTML = '+ <?= addslashes(__('subscribe_topic')) ?>';
                     }
                     const countBadge = document.getElementById('sidebarSubCountBadge');

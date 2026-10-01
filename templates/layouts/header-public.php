@@ -198,7 +198,7 @@ $currentReader = \App\Core\Auth::reader();
                     </div>
                     <!-- Live Search Results Dropdown -->
                     <div id="liveSearchDropdown" class="card border-0 shadow-lg position-absolute w-100 mt-1"
-                        style="display:none; top:100%; left:0; z-index:1060; max-height:420px; overflow-y:auto; border-radius:2px;">
+                        style="display:none; top:100%; left:0; z-index:1060; max-height:320px; overflow-y:auto; border-radius:4px;">
                         <div class="list-group list-group-flush" id="liveSearchList"></div>
                     </div>
                 </form>
@@ -306,7 +306,7 @@ $currentReader = \App\Core\Auth::reader();
                 </div>
                 <!-- Mobile Live Search Dropdown -->
                 <div id="mobileLiveSearchDropdown" class="card border-0 shadow-lg position-absolute w-100 mt-1"
-                    style="display:none; top:100%; left:0; z-index:1060; max-height:360px; overflow-y:auto; border-radius:6px;">
+                    style="display:none; top:100%; left:0; z-index:1060; max-height:300px; overflow-y:auto; border-radius:4px;">
                     <div class="list-group list-group-flush" id="mobileLiveSearchList"></div>
                 </div>
             </form>
@@ -354,7 +354,7 @@ $currentReader = \App\Core\Auth::reader();
                     }
 
                     debounceTimer = setTimeout(() => {
-                        fetch('<?= url("search_api.php") ?>?q=' + encodeURIComponent(query))
+                        fetch('<?= url("search_api.php") ?>?q=' + encodeURIComponent(query) + '&lang=<?= $currentLang ?>')
                             .then(res => res.json())
                             .then(data => {
                                 if (data.success && data.articles && data.articles.length > 0) {
@@ -362,21 +362,21 @@ $currentReader = \App\Core\Auth::reader();
                                     data.articles.forEach(art => {
                                         const img = art.image_url || art.featured_image || '';
                                         const imgHtml = img 
-                                            ? `<div style="width:68px;height:52px;flex-shrink:0;border-radius:4px;overflow:hidden;background:#f1f5f9;"><img src="${escapeHtml(img)}" alt="${escapeHtml(art.title)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentNode.style.display='none'"></div>`
-                                            : `<div style="width:68px;height:52px;flex-shrink:0;border-radius:4px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#94a3b8;"><i class="bi bi-newspaper fs-5"></i></div>`;
+                                            ? `<div style="width:48px;height:36px;flex-shrink:0;border-radius:3px;overflow:hidden;background:#f1f5f9;"><img src="${escapeHtml(img)}" alt="${escapeHtml(art.title)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentNode.style.display='none'"></div>`
+                                            : `<div style="width:48px;height:36px;flex-shrink:0;border-radius:3px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#94a3b8;"><i class="bi bi-newspaper" style="font-size:0.85rem;"></i></div>`;
                                         
-                                        const timeHtml = art.time_ago ? `<span class="text-muted text-3xs"><i class="bi bi-clock me-1"></i>${escapeHtml(art.time_ago)}</span>` : '';
-                                        const snippetHtml = art.summary_snippet ? `<div class="text-muted text-2xs mt-0.5" style="line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;">${escapeHtml(art.summary_snippet)}</div>` : '';
+                                        const timeHtml = art.time_ago ? `<span class="text-muted text-3xs ms-auto flex-shrink-0"><i class="bi bi-clock me-0.5"></i>${escapeHtml(art.time_ago)}</span>` : '';
+                                        const snippetHtml = art.summary_snippet ? `<div class="text-muted text-3xs mt-0.5" style="line-height:1.25;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;">${escapeHtml(art.summary_snippet)}</div>` : '';
 
                                         html += `
-                                            <a href="${art.url}" class="list-group-item list-group-item-action p-2.5 d-flex gap-2.5 align-items-center border-bottom text-decoration-none live-search-item">
+                                            <a href="${art.url}" class="list-group-item list-group-item-action py-1.5 px-2.5 d-flex gap-2 align-items-center border-bottom text-decoration-none live-search-item">
                                                 ${imgHtml}
                                                 <div class="min-w-0 flex-grow-1">
                                                     <div class="d-flex align-items-center justify-content-between gap-1 mb-0.5">
-                                                        <span class="badge bg-danger bg-opacity-10 text-danger text-3xs px-1.5 py-0.5 rounded-1 fw-bold text-uppercase">${escapeHtml(art.category_display || '')}</span>
+                                                        <span class="badge bg-danger bg-opacity-10 text-danger text-3xs px-1.5 py-0.2 rounded-1 fw-bold text-uppercase">${escapeHtml(art.category_display || '')}</span>
                                                         ${timeHtml}
                                                     </div>
-                                                    <div style="font-size:0.84rem;font-weight:700;color:#0f172a;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                                    <div style="font-size:0.8rem;font-weight:600;color:#0f172a;line-height:1.25;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;">
                                                         ${escapeHtml(art.title)}
                                                     </div>
                                                     ${snippetHtml}
@@ -385,7 +385,7 @@ $currentReader = \App\Core\Auth::reader();
                                         `;
                                     });
                                     html += `
-                                        <div class="p-2 border-top bg-light text-center">
+                                        <div class="py-1.5 px-2 border-top bg-light text-center">
                                             <a href="<?= url('index.php') ?>?q=${encodeURIComponent(query)}" class="text-xs text-danger text-decoration-none fw-bold">
                                                 <?= __('view_all_results') ?? 'View all results' ?> &rarr;
                                             </a>
@@ -444,7 +444,7 @@ $currentReader = \App\Core\Auth::reader();
             }
 
             function fetchNotifications() {
-                fetch('<?= url("api/v1/notifications.php") ?>')
+                fetch('<?= url("api/v1/notifications.php") ?>?lang=<?= $currentLang ?>')
                     .then(res => res.json())
                     .then(data => {
                         if (data && data.success && Array.isArray(data.notifications)) {
@@ -475,7 +475,7 @@ $currentReader = \App\Core\Auth::reader();
                                         const catLabel = n.category_display ? `<span class="badge bg-light text-secondary text-3xs px-1.5 py-0.5 rounded-1">${escapeHtml(n.category_display)}</span>` : '';
 
                                         return `
-                                        <a href="${n.article_url}" class="list-group-item list-group-item-action p-2.5 border-bottom">
+                                        <a href="${n.article_url}" class="list-group-item list-group-item-action py-2 px-2.5 border-bottom">
                                             <div class="d-flex align-items-start gap-2">
                                                 <div class="mt-0.5 flex-shrink-0">
                                                     ${isBreaking 
