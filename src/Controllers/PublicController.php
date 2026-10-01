@@ -67,29 +67,8 @@ class PublicController
         // Search query filter
         $searchQuery = trim($_GET['q'] ?? '');
         if ($searchQuery !== '') {
-            $whereSql .= " AND (a.title LIKE :s1 
-                         OR a.summary LIKE :s2 
-                         OR a.content LIKE :s3 
-                         OR a.slug LIKE :s4
-                         OR c.name LIKE :s5
-                         OR (a.title_kh IS NOT NULL AND a.title_kh LIKE :s6)
-                         OR (a.title_en IS NOT NULL AND a.title_en LIKE :s7)
-                         OR (a.summary_kh IS NOT NULL AND a.summary_kh LIKE :s8)
-                         OR (a.summary_en IS NOT NULL AND a.summary_en LIKE :s9)
-                         OR (a.content_kh IS NOT NULL AND a.content_kh LIKE :s10)
-                         OR (a.content_en IS NOT NULL AND a.content_en LIKE :s11))";
-            $searchTerm = "%{$searchQuery}%";
-            $params['s1'] = $searchTerm;
-            $params['s2'] = $searchTerm;
-            $params['s3'] = $searchTerm;
-            $params['s4'] = $searchTerm;
-            $params['s5'] = $searchTerm;
-            $params['s6'] = $searchTerm;
-            $params['s7'] = $searchTerm;
-            $params['s8'] = $searchTerm;
-            $params['s9'] = $searchTerm;
-            $params['s10'] = $searchTerm;
-            $params['s11'] = $searchTerm;
+            $whereSql .= " AND CONCAT_WS(' ', a.title, a.title_kh, a.title_en, a.summary, a.summary_kh, a.summary_en, a.content, a.content_kh, a.content_en, a.slug, c.name) LIKE :search_term";
+            $params['search_term'] = "%{$searchQuery}%";
         }
 
         // 4. Pagination Calculation
@@ -321,31 +300,9 @@ class PublicController
              FROM articles a
              JOIN categories c ON a.category_id = c.id
              WHERE a.status = 'published'
-               AND (a.title LIKE :q1 
-                    OR a.summary LIKE :q2 
-                    OR a.content LIKE :q3
-                    OR a.slug LIKE :q4
-                    OR c.name LIKE :q5 
-                    OR (a.title_kh IS NOT NULL AND a.title_kh LIKE :q6)
-                    OR (a.title_en IS NOT NULL AND a.title_en LIKE :q7)
-                    OR (a.summary_kh IS NOT NULL AND a.summary_kh LIKE :q8)
-                    OR (a.summary_en IS NOT NULL AND a.summary_en LIKE :q9)
-                    OR (a.content_kh IS NOT NULL AND a.content_kh LIKE :q10)
-                    OR (a.content_en IS NOT NULL AND a.content_en LIKE :q11))
+               AND CONCAT_WS(' ', a.title, a.title_kh, a.title_en, a.summary, a.summary_kh, a.summary_en, a.content, a.content_kh, a.content_en, a.slug, c.name) LIKE :term
              ORDER BY a.published_at DESC LIMIT 20",
-            [
-                'q1' => $term,
-                'q2' => $term,
-                'q3' => $term,
-                'q4' => $term,
-                'q5' => $term,
-                'q6' => $term,
-                'q7' => $term,
-                'q8' => $term,
-                'q9' => $term,
-                'q10' => $term,
-                'q11' => $term
-            ]
+            ['term' => $term]
         );
 
         foreach ($articles as &$art) {
@@ -520,13 +477,8 @@ class PublicController
         }
 
         if ($searchQuery !== '') {
-            $where[] = "(a.title LIKE :s1 OR a.summary LIKE :s2 OR a.content LIKE :s3 OR a.title_kh LIKE :s4 OR a.title_en LIKE :s5)";
-            $term = "%{$searchQuery}%";
-            $params['s1'] = $term;
-            $params['s2'] = $term;
-            $params['s3'] = $term;
-            $params['s4'] = $term;
-            $params['s5'] = $term;
+            $where[] = "CONCAT_WS(' ', a.title, a.title_kh, a.title_en, a.summary, a.summary_kh, a.summary_en, a.content, a.content_kh, a.content_en, a.slug, c.name) LIKE :s_term";
+            $params['s_term'] = "%{$searchQuery}%";
         }
 
         $whereSql = "WHERE " . implode(" AND ", $where);
