@@ -83,6 +83,11 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                         <?= __('total_readers', ['count' => number_format((int) $article['views_count'])]) ?></span>
                 </div>
 
+                <!-- Top Action Bar: Bookmark, Fast News & Social Shares -->
+                <div class="mb-4">
+                    <?php include __DIR__ . '/../components/share-buttons.php'; ?>
+                </div>
+
                 <!-- Featured Cover Image -->
                 <?php if (!empty($article['featured_image'])) { ?>
                     <div class="mb-5 rounded-4 overflow-hidden shadow-sm">

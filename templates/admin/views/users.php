@@ -50,6 +50,9 @@
                                 <option value="editor"><?= __('editor') ?></option>
                                 <option value="admin"><?= __('administrator') ?></option>
                             </select>
+                            <div id="adminProtectedNotice" class="text-danger text-2xs mt-1 d-none">
+                                <i class="bi bi-shield-lock-fill me-1"></i> Administrator role is protected and cannot be modified or downgraded.
+                            </div>
                         </div>
 
                         <div class="mb-3">
@@ -132,11 +135,26 @@
                                     <td class="fw-bold text-dark"><?= number_format((int) $u['article_count']) ?>
                                         <?= __('posts') ?></td>
                                     <td class="text-end">
-                                        <button class="btn btn-sm btn-outline-primary px-2 py-0.5"
-                                            style="font-size:0.75rem;"
-                                            onclick="editUser(<?= htmlspecialchars(json_encode($u), ENT_QUOTES, 'UTF-8') ?>)">
-                                            <?= __('edit') ?>
-                                        </button>
+                                        <div class="btn-group btn-group-sm">
+                                            <button class="btn btn-outline-primary px-2 py-0.5"
+                                                style="font-size:0.75rem;"
+                                                onclick="editUser(<?= htmlspecialchars(json_encode($u), ENT_QUOTES, 'UTF-8') ?>)">
+                                                <i class="bi bi-pencil-square me-1"></i><?= __('edit') ?>
+                                            </button>
+                                            <?php if ($u['role'] === 'admin') { ?>
+                                                <button type="button" class="btn btn-outline-secondary px-2 py-0.5 opacity-50"
+                                                    style="font-size:0.75rem;" disabled title="Administrator accounts are protected and cannot be deleted">
+                                                    <i class="bi bi-shield-lock-fill text-danger me-1"></i>Protected
+                                                </button>
+                                            <?php } else { ?>
+                                                <a href="#" class="btn btn-outline-danger px-2 py-0.5"
+                                                    style="font-size:0.75rem;"
+                                                    onclick="confirmDeleteCard('<?= url('admin/actions/delete-user.php?id=' . $u['id'] . '&csrf_token=' . e($csrfToken)) ?>', <?= htmlspecialchars(json_encode($u['username']), ENT_QUOTES, 'UTF-8') ?>); return false;"
+                                                    title="<?= __('delete') ?>">
+                                                    <i class="bi bi-trash3 me-1"></i><?= __('delete') ?>
+                                                </a>
+                                            <?php } ?>
+                                        </div>
                                     </td>
                                 </tr>
                             <?php } ?>
@@ -153,19 +171,45 @@
         document.getElementById('userId').value = u.id;
         document.getElementById('userName').value = u.username;
         document.getElementById('userEmail').value = u.email;
-        document.getElementById('userRole').value = u.role;
+        
+        const roleSelect = document.getElementById('userRole');
+        const protectedNotice = document.getElementById('adminProtectedNotice');
+        const activeSwitch = document.getElementById('userActive');
+        
+        roleSelect.value = u.role;
+        if (u.role === 'admin') {
+            roleSelect.setAttribute('disabled', 'disabled');
+            if (protectedNotice) protectedNotice.classList.remove('d-none');
+            activeSwitch.setAttribute('disabled', 'disabled');
+        } else {
+            roleSelect.removeAttribute('disabled');
+            if (protectedNotice) protectedNotice.classList.add('d-none');
+            activeSwitch.removeAttribute('disabled');
+        }
+
         document.getElementById('userBio').value = u.bio || '';
-        document.getElementById('userActive').checked = (parseInt(u.is_active) === 1);
+        activeSwitch.checked = (parseInt(u.is_active) === 1);
         document.getElementById('pwHelp').innerText = '<?= addslashes(__('blank_keep_pw')) ?>';
     }
+
     function resetUserForm() {
         document.getElementById('userId').value = '';
         document.getElementById('userName').value = '';
         document.getElementById('userEmail').value = '';
         document.getElementById('userPassword').value = '';
-        document.getElementById('userRole').value = 'reporter';
+        
+        const roleSelect = document.getElementById('userRole');
+        roleSelect.removeAttribute('disabled');
+        roleSelect.value = 'reporter';
+        
+        const protectedNotice = document.getElementById('adminProtectedNotice');
+        if (protectedNotice) protectedNotice.classList.add('d-none');
+        
+        const activeSwitch = document.getElementById('userActive');
+        activeSwitch.removeAttribute('disabled');
+        activeSwitch.checked = true;
+
         document.getElementById('userBio').value = '';
-        document.getElementById('userActive').checked = true;
         document.getElementById('pwHelp').innerText = '<?= addslashes(__('req_new_user')) ?>';
     }
 

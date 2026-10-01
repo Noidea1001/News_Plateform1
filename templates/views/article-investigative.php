@@ -70,6 +70,11 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
         <div class="row justify-content-center">
             <div class="col-lg-9 col-xl-8">
 
+                <!-- Top Action Bar: Bookmark, Fast News & Social Shares -->
+                <div class="mb-4">
+                    <?php include __DIR__ . '/../components/share-buttons.php'; ?>
+                </div>
+
                 <!-- Featured High-Res Cover Image -->
                 <?php if (!empty($article['featured_image'])) { ?>
                     <div class="mb-5 rounded-4 overflow-hidden shadow-lg">

@@ -163,29 +163,38 @@ $currentLang = $_SESSION['lang'] ?? 'en';
                             <span><?= __('draft_new_article') ?></span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link py-0 px-3 d-flex align-items-center <?= str_contains($_SERVER['PHP_SELF'], 'archive') ? 'active' : '' ?>"
+                            style="height:56px;" href="<?= url('admin/archive.php') ?>">
+                            <i class="bi bi-archive-fill text-danger me-1.5"></i>
+                            <span><?= __('nav_archive') ?></span>
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link py-0 px-3 d-flex align-items-center dropdown-toggle <?= (str_contains($_SERVER['PHP_SELF'], 'categories') || str_contains($_SERVER['PHP_SELF'], 'users') || str_contains($_SERVER['PHP_SELF'], 'subscribers')) ? 'active' : '' ?>"
                             style="height:56px;" href="#" id="adminMgmtDropdown" role="button" data-bs-toggle="dropdown"
                             aria-expanded="false">
                             <span><?= __('management') ?></span>
                         </a>
-                        <ul class="dropdown-menu" aria-labelledby="adminMgmtDropdown">
+                        <ul class="dropdown-menu shadow-sm border-0" aria-labelledby="adminMgmtDropdown">
                             <li>
                                 <a class="dropdown-item <?= str_contains($_SERVER['PHP_SELF'], 'categories') ? 'active' : '' ?>"
                                     href="<?= url('admin/categories.php') ?>">
-                                    <?= __('categories') ?>
+                                    <i class="bi bi-tags me-1.5 text-secondary"></i> <?= __('categories') ?>
                                 </a>
                             </li>
-                            <li>
-                                <a class="dropdown-item <?= str_contains($_SERVER['PHP_SELF'], 'users') ? 'active' : '' ?>"
-                                    href="<?= url('admin/users.php') ?>">
-                                    <?= __('staff_users') ?>
-                                </a>
-                            </li>
+                            <?php if (\App\Core\Auth::hasRole('admin')) { ?>
+                                <li>
+                                    <a class="dropdown-item <?= str_contains($_SERVER['PHP_SELF'], 'users') ? 'active' : '' ?>"
+                                        href="<?= url('admin/users.php') ?>">
+                                        <i class="bi bi-people me-1.5 text-danger"></i> <?= __('staff_users') ?>
+                                    </a>
+                                </li>
+                            <?php } ?>
                             <li>
                                 <a class="dropdown-item <?= str_contains($_SERVER['PHP_SELF'], 'subscribers') ? 'active' : '' ?>"
                                     href="<?= url('admin/subscribers.php') ?>">
-                                    <?= __('subscribers') ?>
+                                    <i class="bi bi-envelope-paper me-1.5 text-secondary"></i> <?= __('subscribers') ?>
                                 </a>
                             </li>
                         </ul>

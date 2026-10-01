@@ -62,7 +62,7 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
         ?>
 
         <!-- Author & Published Metadata Bar -->
-        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 p-3 bg-white border mb-4" style="border-radius:2px;">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 p-3 bg-white border mb-3" style="border-radius:2px;">
             <!-- Author Info -->
             <div class="d-flex align-items-center gap-3">
                 <div class="bg-danger text-white d-flex align-items-center justify-content-center fw-bold fs-5 flex-shrink-0"
@@ -86,6 +86,11 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- Top Action Bar: Bookmark, Fast News & Social Shares -->
+        <div class="mb-4">
+            <?php include __DIR__ . '/../components/share-buttons.php'; ?>
         </div>
 
         <!-- Main 2-Column Grid Layout -->

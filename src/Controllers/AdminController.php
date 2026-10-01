@@ -705,6 +705,18 @@ class AdminController
         }
 
         if ($id) {
+            $existingUser = $this->db->fetch("SELECT * FROM users WHERE id = :id", ['id' => $id]);
+            if (!$existingUser) {
+                header('Location: ' . url('admin/users.php?error=' . urlencode('Staff user not found.')));
+                exit;
+            }
+
+            // Security Rule: Administrator accounts and roles are strictly protected. Cannot demote or change role.
+            if ($existingUser['role'] === 'admin') {
+                $role = 'admin';
+                $isActive = 1; // Cannot deactivate an administrator account
+            }
+
             if (!empty($password) && strlen($password) < 8) {
                 header('Location: ' . url('admin/users.php?error=' . urlencode('Password must be at least 8 characters long.')));
                 exit;
@@ -737,6 +749,179 @@ class AdminController
 
         header('Location: ' . url('admin/users.php?msg=' . urlencode($msg)));
         exit;
+    }
+
+    /**
+     * Delete Staff User Action
+     */
+    public function deleteUser(int $id, string $csrfToken): void
+    {
+        $currentUser = Auth::requireAuth(['admin']);
+
+        if (!Auth::verifyCsrfToken($csrfToken)) {
+            header('Location: ' . url('admin/users.php?error=' . urlencode('Security validation failed (Invalid CSRF).')));
+            exit;
+        }
+
+        if ($id <= 0) {
+            header('Location: ' . url('admin/users.php?error=' . urlencode('Invalid staff user ID.')));
+            exit;
+        }
+
+        $targetUser = $this->db->fetch("SELECT * FROM users WHERE id = :id", ['id' => $id]);
+        if (!$targetUser) {
+            header('Location: ' . url('admin/users.php?error=' . urlencode('Staff user not found.')));
+            exit;
+        }
+
+        // STRICT PROTECTION: Admin cannot be deleted!
+        if ($targetUser['role'] === 'admin') {
+            header('Location: ' . url('admin/users.php?error=' . urlencode('Security Protection: Administrator accounts cannot be deleted.')));
+            exit;
+        }
+
+        // Prevent deleting self
+        if ((int)$targetUser['id'] === (int)$currentUser['id']) {
+            header('Location: ' . url('admin/users.php?error=' . urlencode('Security Protection: You cannot delete your own account.')));
+            exit;
+        }
+
+        // Reassign authored articles to current admin so articles are preserved
+        $articleCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM articles WHERE author_id = :id", ['id' => $id]);
+        if ($articleCount > 0) {
+            $this->db->execute("UPDATE articles SET author_id = :admin_id WHERE author_id = :old_id", [
+                'admin_id' => $currentUser['id'],
+                'old_id' => $id
+            ]);
+        }
+
+        $this->db->execute("DELETE FROM users WHERE id = :id", ['id' => $id]);
+        header('Location: ' . url('admin/users.php?msg=' . urlencode('Staff user account successfully deleted.')));
+        exit;
+    }
+
+    /**
+     * Admin News Archive ("បណ្ណសារព័ត៌មាន") Management View
+     */
+    public function archive(): void
+    {
+        $currentUser = Auth::requireAuth(['admin', 'editor', 'reporter']);
+
+        $categories = $this->db->fetchAll("SELECT * FROM categories ORDER BY name ASC");
+        $yearsRaw = $this->db->fetchAll(
+            "SELECT DISTINCT YEAR(published_at) as yr 
+             FROM articles 
+             WHERE status = 'published' AND published_at IS NOT NULL 
+             ORDER BY yr DESC"
+        );
+        $years = array_filter(array_map(fn($r) => (int)$r['yr'], $yearsRaw));
+        if (empty($years)) {
+            $years = [(int)date('Y')];
+        }
+
+        $categoryId = !empty($_GET['category']) ? (int)$_GET['category'] : 0;
+        $year = !empty($_GET['year']) ? (int)$_GET['year'] : 0;
+        $month = !empty($_GET['month']) ? (int)$_GET['month'] : 0;
+        $blueprint = trim($_GET['blueprint'] ?? '');
+        $status = trim($_GET['status'] ?? '');
+        $isBreaking = isset($_GET['breaking']) && $_GET['breaking'] === '1' ? 1 : null;
+        $searchQuery = trim($_GET['q'] ?? '');
+        $sort = trim($_GET['sort'] ?? 'newest');
+        $currentPage = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 15;
+
+        $where = ["1=1"];
+        $params = [];
+
+        if ($categoryId > 0) {
+            $where[] = "a.category_id = :cat_id";
+            $params['cat_id'] = $categoryId;
+        }
+
+        if ($year > 0) {
+            $where[] = "YEAR(a.published_at) = :yr";
+            $params['yr'] = $year;
+        }
+
+        if ($month >= 1 && $month <= 12) {
+            $where[] = "MONTH(a.published_at) = :mo";
+            $params['mo'] = $month;
+        }
+
+        if (in_array($blueprint, ['standard', 'investigative', 'opinion'], true)) {
+            $where[] = "a.template_type = :tpl";
+            $params['tpl'] = $blueprint;
+        }
+
+        if (in_array($status, ['published', 'draft', 'archived'], true)) {
+            $where[] = "a.status = :st";
+            $params['st'] = $status;
+        }
+
+        if ($isBreaking === 1) {
+            $where[] = "a.is_breaking = 1";
+        }
+
+        if ($searchQuery !== '') {
+            $where[] = "(a.title LIKE :s1 OR a.summary LIKE :s2 OR a.content LIKE :s3 OR a.title_kh LIKE :s4 OR a.title_en LIKE :s5)";
+            $term = "%{$searchQuery}%";
+            $params['s1'] = $term;
+            $params['s2'] = $term;
+            $params['s3'] = $term;
+            $params['s4'] = $term;
+            $params['s5'] = $term;
+        }
+
+        $whereSql = "WHERE " . implode(" AND ", $where);
+
+        $orderBy = match ($sort) {
+            'oldest' => "a.published_at ASC",
+            'views' => "a.views_count DESC, a.published_at DESC",
+            'alpha' => "a.title ASC",
+            default => "a.published_at DESC, a.created_at DESC",
+        };
+
+        $totalCount = (int)$this->db->fetchColumn(
+            "SELECT COUNT(*) FROM articles a {$whereSql}",
+            $params
+        );
+        $totalPages = max(1, (int)ceil($totalCount / $perPage));
+        if ($currentPage > $totalPages) {
+            $currentPage = $totalPages;
+        }
+        $offset = ($currentPage - 1) * $perPage;
+
+        $articles = $this->db->fetchAll(
+            "SELECT a.*, c.name as category_name, c.slug as category_slug, u.username as author_name 
+             FROM articles a 
+             JOIN categories c ON a.category_id = c.id 
+             JOIN users u ON a.author_id = u.id 
+             {$whereSql} 
+             ORDER BY {$orderBy} LIMIT {$perPage} OFFSET {$offset}",
+            $params
+        );
+
+        $this->templateEngine->renderPage('admin/views/archive.php', [
+            'pageTitle' => __('archive_page_title') . ' | CMS Control Panel',
+            'currentUser' => $currentUser,
+            'categories' => $categories,
+            'years' => $years,
+            'articles' => $articles,
+            'totalCount' => $totalCount,
+            'currentPage' => $currentPage,
+            'totalPages' => $totalPages,
+            'filters' => [
+                'category' => $categoryId,
+                'year' => $year,
+                'month' => $month,
+                'blueprint' => $blueprint,
+                'status' => $status,
+                'breaking' => $isBreaking,
+                'q' => $searchQuery,
+                'sort' => $sort,
+            ],
+            'csrfToken' => Auth::generateCsrfToken(),
+        ], 'admin');
     }
 
     /**
