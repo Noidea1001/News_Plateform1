@@ -241,7 +241,7 @@ img {
 }
 
 /* ==========================================================================
-   5. BADGES & LABELS — CNA EDITORIAL STYLE
+   5. BADGES & LABELS ΓÇö CNA EDITORIAL STYLE
    ========================================================================== */
 
 /* CNA-style: small ALL-CAPS red category label */
@@ -326,7 +326,7 @@ img {
 }
 
 /* ==========================================================================
-   6. CNA SECTION HEADER — Red left-border accent style
+   6. CNA SECTION HEADER ΓÇö Red left-border accent style
    ========================================================================== */
 .cna-section-header {
     display: flex;
@@ -393,7 +393,7 @@ img {
 }
 
 /* ==========================================================================
-   7. TOP UTILITY HEADER — CNA thin top bar (navy)
+   7. TOP UTILITY HEADER ΓÇö CNA thin top bar (navy)
    ========================================================================== */
 .top-utility-header {
     background-color: #0f172a !important;
@@ -443,7 +443,7 @@ img {
 }
 
 /* ==========================================================================
-   8. MAIN NAVBAR — CNA white bar with bottom red line on active
+   8. MAIN NAVBAR ΓÇö CNA white bar with bottom red line on active
    ========================================================================== */
 .bg-brand-navy {
     background-color: var(--cna-navy) !important;
@@ -485,7 +485,7 @@ img {
     color: var(--cna-white) !important;
 }
 
-/* Brand Logo — CNA style (red square badge + name) */
+/* Brand Logo ΓÇö CNA style (red square badge + name) */
 .brand-logo-badge {
     background: var(--cna-red);
     color: var(--cna-white);
@@ -509,7 +509,7 @@ img {
     letter-spacing: -0.025em;
 }
 
-/* Navbar search — CNA inline search style */
+/* Navbar search ΓÇö CNA inline search style */
 .navbar-search-form .form-control {
     font-size: 0.875rem;
     border-radius: 2px;
@@ -525,7 +525,7 @@ img {
 }
 
 /* ==========================================================================
-   9. CATEGORY TOOLBAR — CNA horizontal nav with red underline active
+   9. CATEGORY TOOLBAR ΓÇö CNA horizontal nav with red underline active
    ========================================================================== */
 .nav-category-toolbar {
     background-color: var(--cna-white);
@@ -646,7 +646,7 @@ img {
 }
 
 /* ==========================================================================
-   11. FOOTER — CNA dark navy footer
+   11. FOOTER ΓÇö CNA dark navy footer
    ========================================================================== */
 footer.bg-brand-navy {
     background-color: var(--cna-navy) !important;
@@ -700,7 +700,7 @@ footer.bg-brand-navy a:hover {
 }
 
 /* ==========================================================================
-   12. HOMEPAGE — NO HERO GRADIENT, CNA STYLE
+   12. HOMEPAGE ΓÇö NO HERO GRADIENT, CNA STYLE
    ========================================================================== */
 .homepage-wrapper {
     background-color: var(--cna-bg);
@@ -763,7 +763,7 @@ footer.bg-brand-navy a:hover {
     }
 }
 
-/* CNA-style search bar — flat, sharp */
+/* CNA-style search bar ΓÇö flat, sharp */
 .hero-search-bar {
     display: flex;
     align-items: center;
@@ -853,11 +853,11 @@ footer.bg-brand-navy a:hover {
 }
 
 /* ==========================================================================
-   13. LEAD FEATURED ARTICLE — CNA "Big Hero" Style
+   13. LEAD FEATURED ARTICLE ΓÇö CNA "Big Hero" Style
        Full image with dark gradient overlay, text on top of image
    ========================================================================== */
 /* ==========================================================================
-   13. LEAD FEATURED ARTICLE — CNA "Big Hero" Style
+   13. LEAD FEATURED ARTICLE ΓÇö CNA "Big Hero" Style
    ========================================================================== */
 .lead-article-card {
     background: var(--cna-white);
@@ -1055,7 +1055,7 @@ footer.bg-brand-navy a:hover {
 }
 
 /* ==========================================================================
-   14. CNA SECONDARY TOP STORIES — list style with dividers
+   14. CNA SECONDARY TOP STORIES ΓÇö list style with dividers
    ========================================================================== */
 .cna-secondary-list {
     display: flex;
@@ -1138,7 +1138,7 @@ footer.bg-brand-navy a:hover {
 }
 
 /* ==========================================================================
-   15. ARTICLE FEED GRID — CNA card style
+   15. ARTICLE FEED GRID ΓÇö CNA card style
    ========================================================================== */
 .article-feed-grid {
     display: grid;
@@ -1159,7 +1159,7 @@ footer.bg-brand-navy a:hover {
     }
 }
 
-/* Feed Card — CNA style: image top, text below, separated by thin borders */
+/* Feed Card ΓÇö CNA style: image top, text below, separated by thin borders */
 .feed-card {
     background: var(--cna-white);
     border: none;
@@ -1336,7 +1336,7 @@ footer.bg-brand-navy a:hover {
 }
 
 /* ==========================================================================
-   16. PAGINATION — CNA style
+   16. PAGINATION ΓÇö CNA style
    ========================================================================== */
 .pagination .page-link {
     font-family: var(--font-sans);
@@ -1524,7 +1524,7 @@ footer.bg-brand-navy a:hover {
 }
 
 /* ==========================================================================
-   19. ADMIN PANEL — CNA-inspired clean professional styles
+   19. ADMIN PANEL ΓÇö CNA-inspired clean professional styles
    ========================================================================== */
 .admin-navbar {
     background-color: var(--cna-white);
@@ -1686,7 +1686,7 @@ footer.bg-brand-navy a:hover {
 }
 
 /* ==========================================================================
-   21. RESPONSIVE — MOBILE & TABLET OPTIMIZATIONS
+   21. RESPONSIVE ΓÇö MOBILE & TABLET OPTIMIZATIONS
    ========================================================================== */
 @media (max-width: 575px) {
 
@@ -1891,7 +1891,7 @@ footer.bg-brand-navy a:hover {
 }
 
 /* ==========================================================================
-   22. CNA FEED ROW — Vertical News List (Latest Stream)
+   22. CNA FEED ROW ΓÇö Vertical News List (Latest Stream)
    ========================================================================== */
 
 /* Container */
@@ -1901,7 +1901,7 @@ footer.bg-brand-navy a:hover {
     overflow: hidden;
 }
 
-/* ── Each row is an <a> tag (full-row clickable) ── */
+/* ΓöÇΓöÇ Each row is an <a> tag (full-row clickable) ΓöÇΓöÇ */
 .cna-feed-row {
     display: flex;
     align-items: flex-start;
@@ -1926,7 +1926,7 @@ footer.bg-brand-navy a:hover {
     border-left-color: #c8102e;
 }
 
-/* ── Number badge — UNIFORM red for ALL items (Main Feed & Sidebar) ── */
+/* ΓöÇΓöÇ Number badge ΓÇö UNIFORM red for ALL items (Main Feed & Sidebar) ΓöÇΓöÇ */
 .cna-feed-num,
 .trending-rank-num {
     flex-shrink: 0;
@@ -1954,7 +1954,7 @@ footer.bg-brand-navy a:hover {
     transform: scale(1.08);
 }
 
-/* ── Thumbnail ── */
+/* ΓöÇΓöÇ Thumbnail ΓöÇΓöÇ */
 .cna-feed-thumb {
     flex-shrink: 0;
     width: 112px;
@@ -1991,13 +1991,13 @@ footer.bg-brand-navy a:hover {
     justify-content: center;
 }
 
-/* ── Body (text content) ── */
+/* ΓöÇΓöÇ Body (text content) ΓöÇΓöÇ */
 .cna-feed-body {
     flex: 1;
     min-width: 0;
 }
 
-/* Meta row: category · time */
+/* Meta row: category ┬╖ time */
 .cna-feed-meta {
     display: flex;
     align-items: center;
@@ -2089,7 +2089,7 @@ footer.bg-brand-navy a:hover {
     color: #9ca3af;
 }
 
-/* "Read more →" — only appears on hover of the row */
+/* "Read more ΓåÆ" ΓÇö only appears on hover of the row */
 .cna-feed-read {
     font-size: 0.72rem;
     font-weight: 700;
@@ -2109,7 +2109,7 @@ footer.bg-brand-navy a:hover {
 }
 
 /* ==========================================================================
-   23. CNA PAGINATION — ← Previous / 1 / 2 / 3 / Next →
+   23. CNA PAGINATION ΓÇö ΓåÉ Previous / 1 / 2 / 3 / Next ΓåÆ
    ========================================================================== */
 .pagination {
     --bs-pagination-border-radius: 2px;
@@ -2242,7 +2242,7 @@ footer.bg-brand-navy a:hover {
 }
 
 /* ==========================================================================
-   23. CNA PAGINATION — Previous / 1 / 2 / 3 / Next style
+   23. CNA PAGINATION ΓÇö Previous / 1 / 2 / 3 / Next style
    ========================================================================== */
 
 /* Override Bootstrap defaults with CNA sharp style */
@@ -2302,7 +2302,7 @@ footer.bg-brand-navy a:hover {
 }
 
 /* ==========================================================================
-   24. CMS ADMIN PANEL — Clean Professional Style & Max-Height Lists
+   24. CMS ADMIN PANEL ΓÇö Clean Professional Style & Max-Height Lists
    ========================================================================== */
 
 /* Max-Height Table Scroll Container */
@@ -2565,7 +2565,7 @@ input[type="text"]::-webkit-search-cancel-button {
 
 /* ==========================================================================
    ARTICLE READER & MS WORD-STYLE MEDIA TEXT WRAPPING
-   Optimal reading width: 680–720px ≈ 65–75 characters per line (ideal)
+   Optimal reading width: 680ΓÇô720px Γëê 65ΓÇô75 characters per line (ideal)
    ========================================================================== */
 .article-body {
     font-size: 1.125rem;
@@ -2575,7 +2575,7 @@ input[type="text"]::-webkit-search-cancel-button {
     color: var(--text-primary);
     transition: font-size 0.2s ease;
     max-width: 720px;
-    /* ← comfortable reading column width */
+    /* ΓåÉ comfortable reading column width */
     margin-left: auto;
     margin-right: auto;
     word-spacing: 0.03em;
@@ -3378,4 +3378,136 @@ input[type="text"]::-webkit-search-cancel-button {
     border: 1px solid #fecdd3 !important;
     border-radius: 8px;
     padding: 1.5rem;
+}
+
+/* ==========================================================================
+   31. LIVE SEARCH DROPDOWN - Clean Khmer & English Display
+   ========================================================================== */
+
+/* Dropdown wrapper card */
+.live-search-dropdown-menu {
+    border-radius: 6px !important;
+    overflow: hidden !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 8px 24px rgba(15,23,42,0.12) !important;
+    z-index: 1050 !important;
+    background: #fff !important;
+    max-height: 440px !important;
+}
+
+/* Scrollable list - cap height */
+.live-search-scroll-container {
+    overflow-y: auto !important;
+    max-height: 320px !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+.live-search-scroll-container::-webkit-scrollbar { width: 4px; }
+.live-search-scroll-container::-webkit-scrollbar-track { background: #f8fafc; }
+.live-search-scroll-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 2px; }
+
+/* Each result row */
+.live-search-item.list-group-item {
+    padding: 0.45rem 0.65rem !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    border-radius: 0 !important;
+    transition: background 0.1s ease;
+    align-items: flex-start !important;
+}
+.live-search-item.list-group-item:last-child { border-bottom: none !important; }
+.live-search-item.list-group-item:hover,
+.live-search-item.list-group-item:focus { background-color: #fef2f2 !important; }
+
+/* Thumbnail - fixed 48x38, never grows */
+.ls-thumb {
+    width: 48px !important;
+    min-width: 48px !important;
+    max-width: 48px !important;
+    height: 38px !important;
+    min-height: 38px !important;
+    max-height: 38px !important;
+    flex-shrink: 0 !important;
+    border-radius: 4px !important;
+    overflow: hidden !important;
+    background: #f1f5f9;
+    align-self: flex-start !important;
+}
+.ls-thumb img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+}
+
+/* Article title - Khmer-aware line-height, 2-line clamp */
+.ls-title {
+    font-size: 0.78rem !important;
+    font-weight: 600 !important;
+    color: #0f172a !important;
+    line-height: 1.35 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    font-family: 'Kantumruy Pro', 'Noto Sans Khmer', 'Plus Jakarta Sans', sans-serif !important;
+}
+
+/* Snippet - 1-line clamp */
+.ls-snippet {
+    font-size: 0.69rem !important;
+    color: #64748b !important;
+    line-height: 1.4 !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 1 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    margin-top: 2px !important;
+    font-family: 'Kantumruy Pro', 'Noto Sans Khmer', 'Plus Jakarta Sans', sans-serif !important;
+}
+
+/* Time-ago chip */
+.ls-time {
+    font-size: 0.65rem !important;
+    color: #94a3b8 !important;
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    font-family: 'Kantumruy Pro', 'Noto Sans Khmer', 'Inter', sans-serif !important;
+    line-height: 1.5 !important;
+}
+
+/* Category badge - no uppercase for Khmer */
+.ls-cat.badge {
+    font-size: 0.6rem !important;
+    font-weight: 700 !important;
+    line-height: 1.3 !important;
+    padding: 2px 5px !important;
+    border-radius: 3px !important;
+    text-transform: none !important;
+    letter-spacing: 0 !important;
+    font-family: 'Kantumruy Pro', 'Noto Sans Khmer', 'Plus Jakarta Sans', sans-serif !important;
+}
+
+/* Header bar */
+#liveSearchHeader,
+#mobileLiveSearchHeader {
+    font-size: 0.67rem !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
+    background: #f8fafc !important;
+    padding: 4px 10px !important;
+    line-height: 1.4 !important;
+    font-family: 'Kantumruy Pro', 'Noto Sans Khmer', 'Inter', sans-serif !important;
+}
+
+/* Footer bar */
+#liveSearchFooter,
+#mobileLiveSearchFooter {
+    font-size: 0.72rem !important;
+    background: #fff !important;
+    padding: 6px 10px !important;
+    text-align: center !important;
+    font-family: 'Kantumruy Pro', 'Noto Sans Khmer', 'Inter', sans-serif !important;
 }

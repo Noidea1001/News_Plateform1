@@ -1,16 +1,14 @@
 </main><!-- /main -->
 
-<!-- Subscribe, Quick View, Saved Reading List & Reader Auth Modals -->
+<!-- Quick View, Saved Reading List & Reader Auth Modals -->
 <?php
-$subModal = __DIR__ . '/../components/subscribe-modal.php';
-$qvModal = __DIR__ . '/../components/quick-view-modal.php';
+$qvModal    = __DIR__ . '/../components/quick-view-modal.php';
 $savedModal = __DIR__ . '/../components/saved-articles-modal.php';
-$authModal = __DIR__ . '/../components/auth-modal.php';
+$authModal  = __DIR__ . '/../components/auth-modal.php';
 
-if (file_exists($subModal)) { include $subModal; }
-if (file_exists($qvModal)) { include $qvModal; }
+if (file_exists($qvModal))    { include $qvModal; }
 if (file_exists($savedModal)) { include $savedModal; }
-if (file_exists($authModal)) { include $authModal; }
+if (file_exists($authModal))  { include $authModal; }
 ?>
 
 <!-- ── CNA-Style Footer ────────────────────────────────────────────────── -->
@@ -67,23 +65,32 @@ if (file_exists($authModal)) { include $authModal; }
                 </ul>
             </div>
 
-            <!-- Newsletter CTA -->
+            <!-- Create Account CTA (replaces old email newsletter) -->
             <div class="col-lg-4 col-md-12">
                 <div style="border-left:3px solid #c8102e; padding-left:0.75rem; margin-bottom:1.25rem;">
                     <h6 style="color:#fff; font-size:0.78rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; margin:0;">
-                        <?= __('feed_sub_title') ?>
+                        <?= __('notifications_account_required') ?>
                     </h6>
                 </div>
                 <p style="font-size:0.875rem; color:rgba(255,255,255,0.55); line-height:1.75; margin-bottom:1.25rem;">
-                    <?= __('sub_desc_footer') ?>
+                    <?= __('notifications_login_prompt_desc') ?>
                 </p>
+                <?php if (!\App\Core\Auth::readerCheck()) { ?>
                 <button type="button"
                         class="btn btn-danger w-100 d-flex align-items-center justify-content-center gap-2 fw-bold"
                         style="font-size:0.85rem; border-radius:2px; text-transform:uppercase; letter-spacing:0.05em; padding:0.65rem 1rem;"
-                        data-bs-toggle="modal" data-bs-target="#subscribeModal">
-                    <i class="bi bi-envelope-check-fill"></i>
-                    <?= __('register_sub_shortcut') ?>
+                        data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register">
+                    <i class="bi bi-person-plus-fill"></i>
+                    <?= __('create_account') ?>
                 </button>
+                <?php } else { ?>
+                <a href="<?= url('settings.php') ?>"
+                   class="btn btn-outline-light w-100 d-flex align-items-center justify-content-center gap-2 fw-bold"
+                   style="font-size:0.85rem; border-radius:2px; padding:0.65rem 1rem;">
+                    <i class="bi bi-gear-fill"></i>
+                    <?= __('settings_page_title') ?>
+                </a>
+                <?php } ?>
             </div>
         </div>
 

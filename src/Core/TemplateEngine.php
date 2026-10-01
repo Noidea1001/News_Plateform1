@@ -30,8 +30,12 @@ class TemplateEngine
 
     /**
      * Human-friendly time ago formatter (supports Khmer & English)
+     *
+     * @param string|null $datetime  MySQL datetime string
+     * @param string|null $lang      Optional language override ('kh'|'km'|'en').
+     *                               Falls back to $_SESSION['lang'] when null.
      */
-    public static function timeAgo(?string $datetime): string
+    public static function timeAgo(?string $datetime, ?string $lang = null): string
     {
         if (!$datetime) {
             return '';
@@ -41,7 +45,7 @@ class TemplateEngine
             return '';
         }
 
-        $currentLang = $_SESSION['lang'] ?? 'en';
+        $currentLang = $lang ?? ($_SESSION['lang'] ?? 'en');
         $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
         $diff = time() - $timestamp;
 

@@ -203,11 +203,18 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                     <p class="small text-secondary mb-3 max-width-600 mx-auto">
                         <?= e($article['author_bio'] ?? 'Writes regularly on technology policy, ethics, and cultural shifts.') ?>
                     </p>
-                    <button type="button" class="btn btn-outline-danger btn-sm px-4 rounded-pill fw-bold"
-                        data-bs-toggle="modal" data-bs-target="#subscribeModal">
-                        <i class="bi bi-bell-fill me-1"></i>
-                        <?= str_replace(':name', e($article['author_name']), __('subscribe_columnist_feed')) ?>
-                    </button>
+                    <?php if (!\App\Core\Auth::readerCheck()) { ?>
+                        <button type="button" class="btn btn-outline-danger btn-sm px-4 rounded-pill fw-bold"
+                            data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register">
+                            <i class="bi bi-bell-fill me-1"></i>
+                            <?= str_replace(':name', e($article['author_name']), __('subscribe_columnist_feed')) ?>
+                        </button>
+                    <?php } else { ?>
+                        <a href="<?= url('settings.php#tab-topics') ?>" class="btn btn-outline-danger btn-sm px-4 rounded-pill fw-bold">
+                            <i class="bi bi-bell-fill me-1"></i>
+                            <?= str_replace(':name', e($article['author_name']), __('subscribe_columnist_feed')) ?>
+                        </a>
+                    <?php } ?>
                 </div>
 
                 <!-- Related Opinion Columns -->

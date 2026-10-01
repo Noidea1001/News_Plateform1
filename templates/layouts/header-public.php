@@ -440,24 +440,26 @@ $currentReader = \App\Core\Auth::reader();
                                     let html = '';
                                     data.articles.forEach(art => {
                                         const img = art.image_url || art.featured_image || '';
-                                        const imgHtml = img 
-                                            ? `<div style="width:48px;height:36px;flex-shrink:0;border-radius:3px;overflow:hidden;background:#f1f5f9;"><img src="${escapeHtml(img)}" alt="${escapeHtml(art.title)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentNode.style.display='none'"></div>`
-                                            : `<div style="width:48px;height:36px;flex-shrink:0;border-radius:3px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#94a3b8;"><i class="bi bi-newspaper" style="font-size:0.85rem;"></i></div>`;
-                                        
-                                        const timeHtml = art.time_ago ? `<span class="text-muted text-3xs ms-auto flex-shrink-0"><i class="bi bi-clock me-0.5"></i>${escapeHtml(art.time_ago)}</span>` : '';
-                                        const snippetHtml = art.summary_snippet ? `<div class="text-muted text-3xs mt-0.5" style="line-height:1.25;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;">${escapeHtml(art.summary_snippet)}</div>` : '';
+                                        const imgHtml = img
+                                            ? `<div class="ls-thumb"><img src="${escapeHtml(img)}" alt="${escapeHtml(art.title)}" onerror="this.parentNode.style.display='none'"></div>`
+                                            : `<div class="ls-thumb d-flex align-items-center justify-content-center text-muted"><i class="bi bi-newspaper" style="font-size:0.85rem;"></i></div>`;
+
+                                        const timeHtml = art.time_ago
+                                            ? `<span class="ls-time"><i class="bi bi-clock me-1" style="font-size:0.6rem;vertical-align:middle;"></i>${escapeHtml(art.time_ago)}</span>`
+                                            : '';
+                                        const snippetHtml = art.summary_snippet
+                                            ? `<div class="ls-snippet">${escapeHtml(art.summary_snippet)}</div>`
+                                            : '';
 
                                         html += `
-                                            <a href="${art.url}" class="list-group-item list-group-item-action py-1.5 px-2.5 d-flex gap-2 align-items-center border-bottom text-decoration-none live-search-item">
+                                            <a href="${art.url}" class="list-group-item list-group-item-action text-decoration-none live-search-item d-flex gap-2">
                                                 ${imgHtml}
                                                 <div class="min-w-0 flex-grow-1">
-                                                    <div class="d-flex align-items-center justify-content-between gap-1 mb-0.5">
-                                                        <span class="badge bg-danger bg-opacity-10 text-danger text-3xs px-1.5 py-0.2 rounded-1 fw-bold text-uppercase">${escapeHtml(art.category_display || '')}</span>
+                                                    <div class="d-flex align-items-center justify-content-between gap-1 mb-1">
+                                                        <span class="ls-cat badge bg-danger bg-opacity-10 text-danger">${escapeHtml(art.category_display || '')}</span>
                                                         ${timeHtml}
                                                     </div>
-                                                    <div style="font-size:0.8rem;font-weight:600;color:#0f172a;line-height:1.25;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;">
-                                                        ${escapeHtml(art.title)}
-                                                    </div>
+                                                    <div class="ls-title">${escapeHtml(art.title)}</div>
                                                     ${snippetHtml}
                                                 </div>
                                             </a>

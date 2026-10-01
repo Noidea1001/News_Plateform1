@@ -321,7 +321,7 @@ class PublicController
             $art['category_display'] = cat_name($art['category_name'], $currentLang);
             $art['image_url'] = !empty($art['featured_image']) ? image_url($art['featured_image']) : '';
             $art['url'] = url('article.php?slug=' . urlencode($art['slug']));
-            $art['time_ago'] = TemplateEngine::timeAgo($art['published_at']);
+            $art['time_ago'] = TemplateEngine::timeAgo($art['published_at'], $currentLang);
         }
         unset($art);
 

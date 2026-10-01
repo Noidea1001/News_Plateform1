@@ -193,11 +193,18 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                         <?= __('support_desc') ?>
                     </p>
                     <div class="d-flex justify-content-center">
-                        <button type="button"
-                            class="btn btn-danger px-4 py-2 rounded-pill fw-bold d-inline-flex align-items-center gap-2"
-                            data-bs-toggle="modal" data-bs-target="#subscribeModal">
-                            <i class="bi bi-bell-fill"></i> <?= __('get_feed_cta') ?>
-                        </button>
+                        <?php if (!\App\Core\Auth::readerCheck()) { ?>
+                            <button type="button"
+                                class="btn btn-danger px-4 py-2 rounded-pill fw-bold d-inline-flex align-items-center gap-2"
+                                data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register">
+                                <i class="bi bi-person-plus-fill"></i> <?= __('create_account') ?>
+                            </button>
+                        <?php } else { ?>
+                            <a href="<?= url('settings.php#tab-topics') ?>"
+                                class="btn btn-danger px-4 py-2 rounded-pill fw-bold d-inline-flex align-items-center gap-2">
+                                <i class="bi bi-bell-fill"></i> <?= __('settings_tab_topics') ?>
+                            </a>
+                        <?php } ?>
                     </div>
                 </div>
 
