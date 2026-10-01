@@ -72,16 +72,6 @@
                         </div>
                     </form>
 
-                    <!-- CMS Staff Portal notice -->
-                    <div class="border-top pt-3 mt-4 text-center">
-                        <span class="text-3xs text-muted">
-                            <?= __('cms_staff_link_prompt') ?> 
-                            <a href="<?= url('admin/login.php') ?>" class="text-secondary fw-semibold text-decoration-underline ms-1">
-                                <?= __('cms_staff_login_link') ?>
-                            </a>
-                        </span>
-                    </div>
-
                 </div>
 
                 <div class="text-center mt-3">

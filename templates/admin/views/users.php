@@ -7,6 +7,28 @@
 
 <div class="container-fluid px-4 py-4">
 
+    <!-- Page Header & Action Bar -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-1 text-xs">
+                    <li class="breadcrumb-item"><a href="<?= url('admin/dashboard.php') ?>" class="text-decoration-none text-muted"><?= __('admin_portal') ?></a></li>
+                    <li class="breadcrumb-item active text-dark fw-semibold" aria-current="page"><?= __('admin_nav_staff') ?></li>
+                </ol>
+            </nav>
+            <h3 class="fw-bold text-dark mb-0 d-flex align-items-center gap-2">
+                <span><?= __('staff_account_mgmt') ?></span>
+                <span class="badge bg-danger rounded-pill fs-6"><?= km_num(count($usersList)) ?></span>
+            </h3>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <a href="<?= url('admin/readers.php') ?>" class="btn btn-outline-secondary btn-sm rounded-2 d-inline-flex align-items-center gap-1.5 fw-semibold">
+                <i class="bi bi-people text-primary"></i>
+                <span><?= __('admin_nav_readers') ?></span>
+            </a>
+        </div>
+    </div>
+
     <div class="row g-4">
         <!-- Add / Edit Staff Form -->
         <div class="col-lg-4">

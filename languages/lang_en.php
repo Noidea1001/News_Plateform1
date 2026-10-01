@@ -421,5 +421,19 @@ $lang['summary_en_label'] = "Summary Lead (English)";
 $lang['content_kh_label'] = "Article Body Content (Khmer ភាសាខ្មែរ)";
 $lang['content_en_label'] = "Article Body Content (English)";
 
+// 19. Separate Staff & Reader Management
+$lang['admin_nav_staff'] = "Staff Users";
+$lang['admin_nav_readers'] = "Reader Users";
+$lang['readers_mgmt_title'] = "Reader User Management";
+$lang['readers_mgmt_desc'] = "Manage verified public readers registered on the platform and track community activity";
+$lang['total_registered_readers'] = "Total Readers";
+$lang['search_readers_placeholder'] = "Search readers by name or email...";
+$lang['reader_comments_count'] = "Comments";
+$lang['registered_at'] = "Registered Date";
+$lang['delete_reader'] = "Delete Reader";
+$lang['delete_reader_confirm'] = "Are you sure you want to delete this reader account? This action cannot be undone.";
+$lang['no_readers_found'] = "No registered readers match your search.";
+$lang['reader_deleted_success'] = "Reader account successfully deleted.";
+
 return $lang;
 

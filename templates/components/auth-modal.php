@@ -148,16 +148,6 @@ $currentRequestUri = $_SERVER['REQUEST_URI'] ?? url('index.php');
                 </div>
             </div>
 
-            <!-- Footer: Subtle Staff Access -->
-            <div class="modal-footer bg-light py-2 px-4 justify-content-center border-top">
-                <span class="text-3xs text-muted">
-                    <?= __('cms_staff_link_prompt') ?>
-                    <a href="<?= url('admin/login.php') ?>" class="text-secondary fw-semibold text-decoration-underline ms-1">
-                        <?= __('cms_staff_login_link') ?>
-                    </a>
-                </span>
-            </div>
-
         </div>
     </div>
 </div>

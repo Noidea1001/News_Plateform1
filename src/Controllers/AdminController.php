@@ -88,6 +88,9 @@ class AdminController
              ORDER BY s.subscribed_at DESC LIMIT 6"
         );
 
+        $totalStaff = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users");
+        $totalReaders = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM readers");
+
         $this->templateEngine->renderPage('admin/views/dashboard.php', [
             'pageTitle' => 'CMS Dashboard | Editorial Control Panel',
             'currentUser' => $user,
@@ -98,6 +101,8 @@ class AdminController
             'totalViews' => $totalViews,
             'totalComments' => $totalComments,
             'avgViewsPerStory' => $avgViewsPerStory,
+            'totalStaff' => $totalStaff,
+            'totalReaders' => $totalReaders,
             'categoryStats' => $categoryStats,
             'standardCount' => $standardCount,
             'investigativeCount' => $investigativeCount,
@@ -797,6 +802,77 @@ class AdminController
 
         $this->db->execute("DELETE FROM users WHERE id = :id", ['id' => $id]);
         header('Location: ' . url('admin/users.php?msg=' . urlencode('Staff user account successfully deleted.')));
+        exit;
+    }
+
+    /**
+     * Reader Users Management View (Separate from Staff)
+     */
+    public function readers(): void
+    {
+        $currentUser = Auth::requireAuth(['admin']);
+        $searchQuery = trim($_GET['q'] ?? '');
+
+        if (!empty($searchQuery)) {
+            $term = '%' . $searchQuery . '%';
+            $readersList = $this->db->fetchAll(
+                "SELECT r.*, COUNT(c.id) as comment_count 
+                 FROM readers r 
+                 LEFT JOIN comments c ON c.user_email = r.email 
+                 WHERE r.name LIKE :q1 OR r.email LIKE :q2 
+                 GROUP BY r.id 
+                 ORDER BY r.created_at DESC",
+                ['q1' => $term, 'q2' => $term]
+            );
+        } else {
+            $readersList = $this->db->fetchAll(
+                "SELECT r.*, COUNT(c.id) as comment_count 
+                 FROM readers r 
+                 LEFT JOIN comments c ON c.user_email = r.email 
+                 GROUP BY r.id 
+                 ORDER BY r.created_at DESC"
+            );
+        }
+
+        $totalReaders = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM readers");
+
+        $this->templateEngine->renderPage('admin/views/readers.php', [
+            'pageTitle' => __('readers_mgmt_title') . ' | CMS Control Panel',
+            'currentUser' => $currentUser,
+            'readersList' => $readersList,
+            'totalReaders' => $totalReaders,
+            'searchQuery' => $searchQuery,
+            'csrfToken' => Auth::generateCsrfToken(),
+            'msg' => $_GET['msg'] ?? null,
+            'error' => $_GET['error'] ?? null,
+        ], 'admin');
+    }
+
+    /**
+     * Delete Reader User Action
+     */
+    public function deleteReader(int $id, string $csrfToken): void
+    {
+        Auth::requireAuth(['admin']);
+
+        if (!Auth::verifyCsrfToken($csrfToken)) {
+            header('Location: ' . url('admin/readers.php?error=' . urlencode('Security validation failed (Invalid CSRF).')));
+            exit;
+        }
+
+        if ($id <= 0) {
+            header('Location: ' . url('admin/readers.php?error=' . urlencode('Invalid reader ID.')));
+            exit;
+        }
+
+        $targetReader = $this->db->fetch("SELECT * FROM readers WHERE id = :id", ['id' => $id]);
+        if (!$targetReader) {
+            header('Location: ' . url('admin/readers.php?error=' . urlencode('Reader account not found.')));
+            exit;
+        }
+
+        $this->db->execute("DELETE FROM readers WHERE id = :id", ['id' => $id]);
+        header('Location: ' . url('admin/readers.php?msg=' . urlencode(__('reader_deleted_success'))));
         exit;
     }
 

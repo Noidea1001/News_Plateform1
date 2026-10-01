@@ -58,6 +58,16 @@ foreach ($categoryStats ?? [] as $cStat) {
             </p>
         </div>
         <div class="d-flex flex-wrap align-items-center gap-2">
+            <?php if (\App\Core\Auth::hasRole('admin')) { ?>
+                <a href="<?= url('admin/users.php') ?>" class="btn btn-outline-secondary px-3 py-2 fw-semibold rounded-3 text-nowrap d-inline-flex align-items-center gap-1.5 shadow-sm text-xs">
+                    <i class="bi bi-person-badge text-danger"></i>
+                    <span><?= __('admin_nav_staff') ?> (<?= km_num($totalStaff ?? 0) ?>)</span>
+                </a>
+                <a href="<?= url('admin/readers.php') ?>" class="btn btn-outline-secondary px-3 py-2 fw-semibold rounded-3 text-nowrap d-inline-flex align-items-center gap-1.5 shadow-sm text-xs">
+                    <i class="bi bi-people text-primary"></i>
+                    <span><?= __('admin_nav_readers') ?> (<?= km_num($totalReaders ?? 0) ?>)</span>
+                </a>
+            <?php } ?>
             <a href="<?= url('public/index.php') ?>" target="_blank"
                 class="btn btn-outline-dark px-3 py-2 fw-semibold rounded-3 text-nowrap d-inline-flex align-items-center shadow-sm text-xs">
                 <span><?= __('live_public_site') ?> &rarr;</span>

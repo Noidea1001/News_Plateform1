@@ -421,5 +421,19 @@ $lang['summary_en_label'] = "សេចក្តីសង្ខេប (English)";
 $lang['content_kh_label'] = "ខ្លឹមសារអត្ថបទពេញលេញ (ភាសាខ្មែរ)";
 $lang['content_en_label'] = "ខ្លឹមសារអត្ថបទពេញលេញ (English)";
 
+// 19. Separate Staff & Reader Management
+$lang['admin_nav_staff'] = "គណនីបុគ្គលិក";
+$lang['admin_nav_readers'] = "គណនីអ្នកអាន";
+$lang['readers_mgmt_title'] = "ការគ្រប់គ្រងគណនីអ្នកអាន";
+$lang['readers_mgmt_desc'] = "គ្រប់គ្រងអ្នកអានដែលបានចុះឈ្មោះក្នុងប្រព័ន្ធ និងតាមដានសកម្មភាព";
+$lang['total_registered_readers'] = "អ្នកអានសរុប";
+$lang['search_readers_placeholder'] = "ស្វែងរកតាមឈ្មោះ ឬអ៊ីមែលអ្នកអាន...";
+$lang['reader_comments_count'] = "មតិយោបល់";
+$lang['registered_at'] = "កាលបរិច្ឆេទចុះឈ្មោះ";
+$lang['delete_reader'] = "លុបអ្នកអាន";
+$lang['delete_reader_confirm'] = "តើអ្នកប្រាកដជាចង់លុបគណនីអ្នកអាននេះមែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។";
+$lang['no_readers_found'] = "មិនមានគណនីអ្នកអានត្រូវនឹងការស្វែងរកឡើយ។";
+$lang['reader_deleted_success'] = "គណនីអ្នកអានត្រូវបានលុបដោយជោគជ័យ។";
+
 return $lang;
 

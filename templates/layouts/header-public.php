@@ -449,8 +449,20 @@ $currentReader = \App\Core\Auth::reader();
         </div>
     </div>
 
-    <!-- ── Breaking News Ticker ───────────────────────────────────────────── -->
-    <?php if (!empty($breakingNews)) { ?>
+    <!-- ── Breaking News Ticker (CNA Live Stream) ────────────────────────── -->
+    <?php
+    if (!isset($breakingNews)) {
+        $headerDb = \App\Core\Database::getInstance();
+        $breakingNews = $headerDb->fetchAll(
+            "SELECT a.id, a.title, a.slug, c.name as category_name 
+             FROM articles a 
+             JOIN categories c ON a.category_id = c.id 
+             WHERE a.status = 'published' AND a.is_breaking = 1 
+             ORDER BY a.published_at DESC LIMIT 5"
+        );
+    }
+    if (!empty($breakingNews)) {
+    ?>
         <div class="breaking-ticker-bar py-2">
             <div class="container-fluid px-3 px-md-4 d-flex align-items-center gap-3">
                 <span class="breaking-badge badge text-uppercase flex-shrink-0">
