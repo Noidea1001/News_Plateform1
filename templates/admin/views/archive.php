@@ -202,8 +202,11 @@ $khMonths = [
                                 <td>
                                     <div class="d-flex align-items-center gap-2.5">
                                         <?php if (!empty($art['featured_image'])) { ?>
-                                            <img src="<?= e(str_starts_with($art['featured_image'], 'http') ? $art['featured_image'] : url($art['featured_image'])) ?>"
-                                                alt="" class="rounded object-fit-cover flex-shrink-0" style="width: 44px; height: 44px;">
+                                            <div class="flex-shrink-0 rounded overflow-hidden"
+                                                 style="width:56px; max-height:42px; height:42px; background:#f1f5f9;">
+                                                <img src="<?= e(str_starts_with($art['featured_image'], 'http') ? $art['featured_image'] : url($art['featured_image'])) ?>"
+                                                     alt="" style="width:100%; height:100%; object-fit:cover; display:block;">
+                                            </div>
                                         <?php } ?>
                                         <div class="overflow-hidden">
                                             <div class="fw-bold text-dark text-truncate" style="max-width: 380px;">

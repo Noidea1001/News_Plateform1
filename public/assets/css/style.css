@@ -402,15 +402,16 @@ img {
     font-family: var(--font-sans);
     border-bottom: none;
     position: relative;
-    z-index: 1035;
+    z-index: 1055;
+    overflow: visible;
 }
 
 .top-utility-header .dropdown-menu {
     background-color: var(--cna-white) !important;
     border: 1px solid var(--border-color) !important;
-    border-radius: 2px !important;
-    box-shadow: var(--shadow-hover) !important;
-    z-index: 1050 !important;
+    border-radius: 4px !important;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.13) !important;
+    z-index: 1060 !important;
     padding: 0.3rem 0;
     min-width: 150px;
 }
