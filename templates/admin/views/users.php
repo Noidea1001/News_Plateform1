@@ -29,6 +29,23 @@
         </div>
     </div>
 
+    <!-- Alert Feedback -->
+    <?php if (!empty($msg)) { ?>
+        <div class="alert alert-success alert-dismissible fade show py-2.5 px-3 rounded-2 small d-flex align-items-center gap-2 mb-4" role="alert">
+            <i class="bi bi-check-circle-fill text-success fs-5"></i>
+            <div><?= e($msg) ?></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php } ?>
+
+    <?php if (!empty($error)) { ?>
+        <div class="alert alert-danger alert-dismissible fade show py-2.5 px-3 rounded-2 small d-flex align-items-center gap-2 mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
+            <div><?= e($error) ?></div>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    <?php } ?>
+
     <div class="row g-4">
         <!-- Add / Edit Staff Form -->
         <div class="col-lg-4">

@@ -7,6 +7,10 @@
 
 namespace App\Controllers;
 
+require_once __DIR__ . '/../Core/Database.php';
+require_once __DIR__ . '/../Core/Auth.php';
+require_once __DIR__ . '/../Core/TemplateEngine.php';
+
 use App\Core\Auth;
 use App\Core\Database;
 use App\Core\TemplateEngine;
@@ -707,6 +711,8 @@ class AdminController
             'pageTitle' => 'Staff User Management | CMS Control Panel',
             'currentUser' => $user,
             'usersList' => $usersList,
+            'msg' => $_GET['msg'] ?? null,
+            'error' => $_GET['error'] ?? null,
             'csrfToken' => Auth::generateCsrfToken(),
         ], 'admin');
     }
@@ -735,51 +741,79 @@ class AdminController
             exit;
         }
 
-        if ($id) {
-            $existingUser = $this->db->fetch("SELECT * FROM users WHERE id = :id", ['id' => $id]);
-            if (!$existingUser) {
-                header('Location: ' . url('admin/users.php?error=' . urlencode('Staff user not found.')));
-                exit;
-            }
-
-            // Security Rule: Administrator accounts and roles are strictly protected. Cannot demote or change role.
-            if ($existingUser['role'] === 'admin') {
-                $role = 'admin';
-                $isActive = 1; // Cannot deactivate an administrator account
-            }
-
-            if (!empty($password) && strlen($password) < 8) {
-                header('Location: ' . url('admin/users.php?error=' . urlencode('Password must be at least 8 characters long.')));
-                exit;
-            }
-            $params = ['username' => $username, 'email' => $email, 'role' => $role, 'bio' => $bio, 'active' => $isActive, 'id' => $id];
-            $sql = "UPDATE users SET username = :username, email = :email, role = :role, bio = :bio, is_active = :active";
-            if (!empty($password)) {
-                $sql .= ", password_hash = :hash";
-                $params['hash'] = password_hash($password, PASSWORD_BCRYPT);
-            }
-            $sql .= " WHERE id = :id";
-            $this->db->execute($sql, $params);
-            $msg = 'Staff account successfully updated.';
-        } else {
-            if (empty($password)) {
-                header('Location: ' . url('admin/users.php?error=' . urlencode('Password is required for new staff accounts.')));
-                exit;
-            }
-            if (strlen($password) < 8) {
-                header('Location: ' . url('admin/users.php?error=' . urlencode('Password must be at least 8 characters long.')));
-                exit;
-            }
-            $hash = password_hash($password, PASSWORD_BCRYPT);
-            $this->db->execute(
-                "INSERT INTO users (username, email, password_hash, role, bio, is_active, created_at) VALUES (:username, :email, :hash, :role, :bio, :active, NOW())",
-                ['username' => $username, 'email' => $email, 'hash' => $hash, 'role' => $role, 'bio' => $bio, 'active' => $isActive]
-            );
-            $msg = 'New staff user account created.';
+        // Validate unique username
+        $dupUserSql = "SELECT id FROM users WHERE username = :u" . ($id ? " AND id != :id" : "");
+        $dupUserParams = ['u' => $username];
+        if ($id) $dupUserParams['id'] = $id;
+        $dupUser = $this->db->fetch($dupUserSql, $dupUserParams);
+        if ($dupUser) {
+            header('Location: ' . url('admin/users.php?error=' . urlencode("Username '{$username}' is already taken. Please choose another username.")));
+            exit;
         }
 
-        header('Location: ' . url('admin/users.php?msg=' . urlencode($msg)));
-        exit;
+        // Validate unique email
+        $dupEmailSql = "SELECT id FROM users WHERE email = :e" . ($id ? " AND id != :id" : "");
+        $dupEmailParams = ['e' => $email];
+        if ($id) $dupEmailParams['id'] = $id;
+        $dupEmail = $this->db->fetch($dupEmailSql, $dupEmailParams);
+        if ($dupEmail) {
+            header('Location: ' . url('admin/users.php?error=' . urlencode("Email address '{$email}' is already registered. Please choose another email.")));
+            exit;
+        }
+
+        try {
+            if ($id) {
+                $existingUser = $this->db->fetch("SELECT * FROM users WHERE id = :id", ['id' => $id]);
+                if (!$existingUser) {
+                    header('Location: ' . url('admin/users.php?error=' . urlencode('Staff user not found.')));
+                    exit;
+                }
+
+                // Security Rule: Administrator accounts and roles are strictly protected. Cannot demote or change role.
+                if ($existingUser['role'] === 'admin') {
+                    $role = 'admin';
+                    $isActive = 1; // Cannot deactivate an administrator account
+                }
+
+                if (!empty($password) && strlen($password) < 8) {
+                    header('Location: ' . url('admin/users.php?error=' . urlencode('Password must be at least 8 characters long.')));
+                    exit;
+                }
+                $params = ['username' => $username, 'email' => $email, 'role' => $role, 'bio' => $bio, 'active' => $isActive, 'id' => $id];
+                $sql = "UPDATE users SET username = :username, email = :email, role = :role, bio = :bio, is_active = :active";
+                if (!empty($password)) {
+                    $sql .= ", password_hash = :hash";
+                    $params['hash'] = password_hash($password, PASSWORD_BCRYPT);
+                }
+                $sql .= " WHERE id = :id";
+                $this->db->execute($sql, $params);
+                $msg = 'Staff account successfully updated.';
+            } else {
+                if (empty($password)) {
+                    header('Location: ' . url('admin/users.php?error=' . urlencode('Password is required for new staff accounts.')));
+                    exit;
+                }
+                if (strlen($password) < 8) {
+                    header('Location: ' . url('admin/users.php?error=' . urlencode('Password must be at least 8 characters long.')));
+                    exit;
+                }
+                $hash = password_hash($password, PASSWORD_BCRYPT);
+                $this->db->execute(
+                    "INSERT INTO users (username, email, password_hash, role, bio, is_active, created_at) VALUES (:username, :email, :hash, :role, :bio, :active, NOW())",
+                    ['username' => $username, 'email' => $email, 'hash' => $hash, 'role' => $role, 'bio' => $bio, 'active' => $isActive]
+                );
+                $msg = 'New staff user account created.';
+            }
+
+            header('Location: ' . url('admin/users.php?msg=' . urlencode($msg)));
+            exit;
+        } catch (\Throwable $e) {
+            $errorMsg = str_contains($e->getMessage(), 'Duplicate entry')
+                ? "A user with this username or email already exists."
+                : "Database error saving staff account: " . $e->getMessage();
+            header('Location: ' . url('admin/users.php?error=' . urlencode($errorMsg)));
+            exit;
+        }
     }
 
     /**
