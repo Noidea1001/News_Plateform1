@@ -92,7 +92,7 @@ $lang['total_articles'] = "Total Articles";
 $lang['published_live'] = "Published Live";
 $lang['drafts_pending'] = "Drafts Pending";
 $lang['active_subscribers'] = "Active Subscribers";
-$lang['publication_repository'] = "Publication Repository";
+$lang['publication_repository'] = "Articles Directory";
 $lang['publication_repository_sub'] = "Manage published stories, edit content, or switch template blueprints";
 $lang['article_title'] = "Article Title";
 $lang['category'] = "Category";
@@ -464,6 +464,10 @@ $lang['subscribed_topic_badge'] = "Subscribed Topic";
 $lang['subscribe_login_prompt'] = "Please sign in or create a free reader account to customize your topic subscriptions";
 $lang['my_topic_subscriptions'] = "My Subscriptions";
 $lang['no_topic_subs_yet'] = "You have not subscribed to any topics yet. Click below to customize your feed!";
+
+// 22. Search Fallbacks
+$lang['no_articles_found_for'] = "No articles found matching";
+$lang['showing_latest_recommendations'] = "Here are the latest published stories for you to explore";
 
 return $lang;
 

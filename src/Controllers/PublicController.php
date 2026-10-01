@@ -98,6 +98,19 @@ class PublicController
             $params
         );
 
+        $noSearchResults = false;
+        if ($searchQuery !== '' && $totalCount === 0) {
+            $noSearchResults = true;
+            $articles = $this->db->fetchAll(
+                "SELECT a.*, c.name as category_name, c.slug as category_slug, u.username as author_name, u.role as author_role 
+                 FROM articles a 
+                 JOIN categories c ON a.category_id = c.id 
+                 JOIN users u ON a.author_id = u.id 
+                 WHERE a.status = 'published' 
+                 ORDER BY a.published_at DESC LIMIT {$perPage}"
+            );
+        }
+
         // Attach reading time estimation
         foreach ($articles as &$art) {
             $text = strip_tags(($art['summary'] ?? '') . ' ' . ($art['content'] ?? ''));
@@ -127,6 +140,7 @@ class PublicController
             'trendingArticles' => $trendingArticles,
             'activeCategoryId' => $activeCategoryId,
             'searchQuery' => $searchQuery,
+            'noSearchResults' => $noSearchResults,
             'currentPage' => $currentPage,
             'totalPages' => $totalPages,
             'totalCount' => $totalCount,

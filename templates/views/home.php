@@ -20,21 +20,43 @@
     <div class="container homepage-body py-3 py-md-4">
 
         <?php if (!empty($searchQuery)) { ?>
-            <!-- Active Global Search Status Banner -->
-            <div class="d-flex align-items-center justify-content-between p-3 mb-4 bg-white border rounded-2 shadow-2xs">
-                <div class="d-flex align-items-center gap-2">
-                    <span class="badge bg-danger p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
-                        <i class="bi bi-search text-white" style="font-size: 0.85rem;"></i>
-                    </span>
-                    <div>
-                        <div class="text-muted text-2xs text-uppercase fw-bold"><?= __('search_results_for') ?? 'Search Results' ?></div>
-                        <div class="fw-bold text-dark fs-6">"<?= e($searchQuery) ?>"</div>
+            <?php if (!empty($noSearchResults)) { ?>
+                <!-- Search Result Mismatch Fallback Banner (Real-World Standard) -->
+                <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 p-3 mb-4 bg-white border border-danger-subtle rounded-2 shadow-2xs">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="badge bg-danger-subtle text-danger p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;">
+                            <i class="bi bi-search" style="font-size: 0.95rem;"></i>
+                        </span>
+                        <div>
+                            <div class="fw-bold text-dark fs-6">
+                                <?= __('no_articles_found_for') ?> <span class="text-danger">"<?= e($searchQuery) ?>"</span>
+                            </div>
+                            <div class="text-muted text-xs mt-0.5">
+                                <i class="bi bi-compass me-1 text-danger"></i><?= __('showing_latest_recommendations') ?>
+                            </div>
+                        </div>
                     </div>
+                    <a href="<?= url('index.php') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1 text-xs d-flex align-items-center gap-1.5 shadow-2xs">
+                        <i class="bi bi-x-circle text-danger"></i> <?= __('clear_search') ?? 'Clear' ?>
+                    </a>
                 </div>
-                <a href="<?= url('index.php') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1 text-xs d-flex align-items-center gap-1.5 shadow-2xs">
-                    <i class="bi bi-x-circle text-danger"></i> <?= __('clear_search') ?? 'Clear' ?>
-                </a>
-            </div>
+            <?php } else { ?>
+                <!-- Active Global Search Status Banner -->
+                <div class="d-flex align-items-center justify-content-between p-3 mb-4 bg-white border rounded-2 shadow-2xs">
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="badge bg-danger p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                            <i class="bi bi-search text-white" style="font-size: 0.85rem;"></i>
+                        </span>
+                        <div>
+                            <div class="text-muted text-2xs text-uppercase fw-bold"><?= __('search_results_for') ?? 'Search Results' ?></div>
+                            <div class="fw-bold text-dark fs-6">"<?= e($searchQuery) ?>"</div>
+                        </div>
+                    </div>
+                    <a href="<?= url('index.php') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1 text-xs d-flex align-items-center gap-1.5 shadow-2xs">
+                        <i class="bi bi-x-circle text-danger"></i> <?= __('clear_search') ?? 'Clear' ?>
+                    </a>
+                </div>
+            <?php } ?>
         <?php } ?>
 
         <?php if (empty($articles)) { ?>
@@ -251,7 +273,7 @@
                             <h3><?= __('latest_stream') ?></h3>
                         </div>
                         <span class="feed-count-badge">
-                            <?= __('showing_reports', ['count' => $totalCount]) ?>
+                            <?= __('showing_reports', ['count' => !empty($noSearchResults) ? count($feedArticles) : $totalCount]) ?>
                         </span>
                     </div>
 
@@ -349,7 +371,7 @@
                     </div><!-- /.cna-news-list -->
 
                     <!-- ── CNA-Style Pagination ── -->
-                    <?php if (isset($totalPages) && $totalPages > 1) { ?>
+                    <?php if (empty($noSearchResults) && isset($totalPages) && $totalPages > 1) { ?>
                         <nav aria-label="<?= __('page_navigation') ?? 'Page navigation' ?>" class="mt-4 mb-2">
                             <ul class="pagination justify-content-center" style="gap:0.25rem;">
 

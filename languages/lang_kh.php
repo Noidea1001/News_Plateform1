@@ -92,7 +92,7 @@ $lang['total_articles'] = "អត្ថបទសរុប";
 $lang['published_live'] = "ផ្សាយផ្ទាល់";
 $lang['drafts_pending'] = "សេចក្តីព្រាង";
 $lang['active_subscribers'] = "អ្នកជាវសកម្ម";
-$lang['publication_repository'] = "បណ្ណសារព័ត៌មាន";
+$lang['publication_repository'] = "បញ្ជីអត្ថបទព័ត៌មាន";
 $lang['publication_repository_sub'] = "គ្រប់គ្រងអត្ថបទដែលបានផ្សព្វផ្សាយ កែប្រែមាតិកា ឬផ្លាស់ប្តូរពុម្ពគំរូប្លង់";
 $lang['article_title'] = "ចំណងជើងអត្ថបទ";
 $lang['category'] = "ជំពូក/ប្រធានបទ";
@@ -464,6 +464,10 @@ $lang['subscribed_topic_badge'] = "ប្រធានបទបានជាវ";
 $lang['subscribe_login_prompt'] = "សូមចូលគណនី ឬចុះឈ្មោះជាអ្នកអាន ដើម្បីជាវព័ត៌មានតាមផ្នែកដែលអ្នកចូលចិត្ត";
 $lang['my_topic_subscriptions'] = "ប្រធានបទដែលខ្ញុំបានជាវ";
 $lang['no_topic_subs_yet'] = "អ្នកមិនទាន់បានជាវផ្នែកព័ត៌មានណាមួយនៅឡើយទេ។ ចុចប៊ូតុងខាងក្រោមដើម្បីជ្រើសរើស!";
+
+// 22. Search Fallbacks
+$lang['no_articles_found_for'] = "មិនមានអត្ថបទត្រូវនឹងការស្វែងរក";
+$lang['showing_latest_recommendations'] = "ខាងក្រោមនេះជាបណ្តុំព័ត៌មានចុងក្រោយដែលបានផ្សាយសម្រាប់លោកអ្នក";
 
 return $lang;
 

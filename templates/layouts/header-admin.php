@@ -163,6 +163,12 @@ $currentLang = $_SESSION['lang'] ?? 'en';
                             <span><?= __('draft_new_article') ?></span>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link py-0 px-3 d-flex align-items-center <?= str_contains($_SERVER['PHP_SELF'], 'archive') ? 'active' : '' ?>"
+                            style="height:56px;" href="<?= url('admin/archive.php') ?>">
+                            <span><?= __('nav_archive') ?></span>
+                        </a>
+                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link py-0 px-3 d-flex align-items-center dropdown-toggle <?= (str_contains($_SERVER['PHP_SELF'], 'categories') || str_contains($_SERVER['PHP_SELF'], 'users') || str_contains($_SERVER['PHP_SELF'], 'readers') || str_contains($_SERVER['PHP_SELF'], 'subscribers')) ? 'active' : '' ?>"
                             style="height:56px;" href="#" id="adminMgmtDropdown" role="button" data-bs-toggle="dropdown"
