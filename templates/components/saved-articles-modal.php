@@ -24,10 +24,34 @@ $isReaderLoggedIn = \App\Core\Auth::readerCheck() || \App\Core\Auth::check();
                 </div>
             </div>
 
-            <div class="p-3 border-top bg-light mt-auto text-end">
-                <button type="button" id="clearSavedArticlesBtn" class="btn btn-outline-danger btn-sm fw-bold w-100" style="border-radius: 2px; display: none;">
-                    <i class="bi bi-trash3 me-1"></i> <?= __('clear_all_saved') ?? 'Clear Saved Reading List' ?>
-                </button>
+            <div class="p-3 border-top bg-light mt-auto">
+                <!-- Default Bar: Clear Button -->
+                <div id="clearSavedButtonBar" class="text-end">
+                    <button type="button" id="clearSavedArticlesBtn" class="btn btn-outline-danger btn-sm fw-bold w-100 py-1.5" style="border-radius: 4px; display: none;">
+                        <i class="bi bi-trash3 me-1"></i> <?= __('clear_all_saved') ?? 'Clear Saved Reading List' ?>
+                    </button>
+                </div>
+
+                <!-- Alert Confirmation Card -->
+                <div id="clearSavedConfirmCard" class="card border-0 shadow-sm p-3 rounded-3 text-center d-none" style="background:#ffffff; border:1px solid #fecdd3 !important;">
+                    <div class="mx-auto rounded-circle bg-danger bg-opacity-10 d-flex align-items-center justify-content-center mb-2" style="width:40px; height:40px;">
+                        <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
+                    </div>
+                    <h6 class="fw-bold text-dark text-xs mb-1">
+                        <?= __('confirm_clear_saved') ?>
+                    </h6>
+                    <p class="text-muted text-3xs mb-3">
+                        <?= __('clear_saved_warning') ?>
+                    </p>
+                    <div class="d-flex gap-2 justify-content-center">
+                        <button type="button" id="cancelClearSavedBtn" class="btn btn-light btn-sm py-1 px-3 text-xs fw-semibold border" style="border-radius:4px;">
+                            <?= __('btn_cancel_delete') ?>
+                        </button>
+                        <button type="button" id="executeClearSavedBtn" class="btn btn-danger btn-sm py-1 px-3 text-xs fw-bold shadow-2xs" style="border-radius:4px;">
+                            <i class="bi bi-trash3 me-1"></i><?= __('btn_confirm_delete') ?>
+                        </button>
+                    </div>
+                </div>
             </div>
         <?php } else { ?>
             <div class="p-4 text-center my-auto">

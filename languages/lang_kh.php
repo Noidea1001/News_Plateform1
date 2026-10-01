@@ -504,5 +504,6 @@ $lang['settings_delete_confirm_js'] = "តើអ្នកប្រាកដជ�
 $lang['bookmark_login_prompt_title'] = "បង្កើតគណនីដើម្បីរក្សាទុកអត្ថបទ";
 $lang['bookmark_login_prompt_desc'] = "សូមចុះឈ្មោះគណនីអ្នកអានឥតគិតថ្លៃដើម្បីអាចរក្សាទុកអត្ថបទ និងអានពេលក្រោយបានគ្រប់ពេលវេលា។";
 $lang['bookmark_account_required'] = "តម្រូវឱ្យមានគណនីដើម្បីរក្សាទុកអត្ថបទ";
+$lang['clear_saved_warning'] = "អត្ថបទទាំងអស់ក្នុងបញ្ជីរក្សាទុកនឹងត្រូវបានលុបចោលទាំងស្រុង។";
 return $lang;
 

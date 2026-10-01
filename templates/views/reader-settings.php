@@ -230,15 +230,15 @@ $memberSince   = !empty($reader['created_at'])
 
                                     <!-- Live Preview Box -->
                                     <div class="p-3 bg-light rounded-2 border d-flex align-items-center gap-3">
-                                        <div class="flex-shrink-0" style="width:48px; height:48px;">
+                                        <div class="flex-shrink-0 position-relative" style="width:52px; height:52px;">
                                             <img id="avatarLivePreviewImg"
-                                                 src="<?= !empty($avatarUrl) ? e($avatarUrl) : 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="%23d90429"><rect width="48" height="48" rx="24"/></svg>' ?>"
+                                                 src="<?= !empty($avatarUrl) ? e($avatarUrl) : '' ?>"
                                                  alt="Live Preview"
-                                                 class="rounded-circle border"
-                                                 style="width:48px; height:48px; object-fit:cover; display:<?= !empty($avatarUrl) ? 'block' : 'none' ?>;">
+                                                 class="rounded-circle border border-2 border-danger <?= empty($avatarUrl) ? 'd-none' : '' ?>"
+                                                 style="width:52px; height:52px; object-fit:cover;">
                                             <div id="avatarLivePreviewFallback"
-                                                 class="rounded-circle bg-danger text-white fw-bold d-flex align-items-center justify-content-center"
-                                                 style="width:48px; height:48px; font-size:1.25rem; display:<?= empty($avatarUrl) ? 'flex' : 'none' ?>;">
+                                                 class="rounded-circle bg-danger text-white fw-bold align-items-center justify-content-center <?= !empty($avatarUrl) ? 'd-none' : 'd-flex' ?>"
+                                                 style="width:52px; height:52px; font-size:1.35rem;">
                                                 <?= e($avatarInitial) ?>
                                             </div>
                                         </div>
@@ -365,10 +365,10 @@ $memberSince   = !empty($reader['created_at'])
                                     $catName = cat_name($cat['name']);
                                 ?>
                                     <div class="col-sm-6 col-lg-4">
-                                        <div class="p-3 rounded-2 border d-flex align-items-center justify-content-between gap-2 topic-card <?= $subbed ? 'border-danger bg-danger bg-opacity-5' : 'bg-white' ?>"
+                                        <div class="topic-card p-3 d-flex align-items-center justify-content-between gap-2 <?= $subbed ? 'is-subscribed' : '' ?>"
                                              id="cat-card-<?= $catId ?>">
                                             <div class="overflow-hidden">
-                                                <div class="fw-semibold text-dark text-xs text-truncate"><?= e($catName) ?></div>
+                                                <div class="topic-title fw-semibold text-xs text-truncate"><?= e($catName) ?></div>
                                                 <div class="text-3xs text-muted">
                                                     <?= $subbed ? __('subscribed_topic') : __('subscribe_topic') ?>
                                                 </div>
@@ -401,7 +401,7 @@ $memberSince   = !empty($reader['created_at'])
                                 <p class="text-muted text-xs mb-0"><?= __('settings_delete_warning') ?></p>
                             </div>
 
-                            <div class="card border-danger border-opacity-25 rounded-3 p-4 bg-danger bg-opacity-5">
+                            <div class="danger-zone-box">
                                 <div class="d-flex align-items-start gap-3 mb-3">
                                     <div class="p-2 bg-danger bg-opacity-10 text-danger rounded-circle flex-shrink-0">
                                         <i class="bi bi-trash3-fill fs-5"></i>
@@ -449,24 +449,27 @@ const liveImg = document.getElementById('avatarLivePreviewImg');
 const liveFallback = document.getElementById('avatarLivePreviewFallback');
 const liveStatus = document.getElementById('avatarPreviewStatus');
 
-if (avatarInput) {
+if (avatarInput && liveImg && liveFallback) {
     avatarInput.addEventListener('input', function () {
         const url = this.value.trim();
         if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
             liveImg.src = url;
             liveImg.onload = function () {
-                liveImg.style.display = 'block';
-                liveFallback.style.display = 'none';
-                if (liveStatus) liveStatus.textContent = 'Custom image valid';
+                liveImg.classList.remove('d-none');
+                liveFallback.classList.add('d-none');
+                liveFallback.classList.remove('d-flex');
+                if (liveStatus) liveStatus.textContent = 'Custom image loaded';
             };
             liveImg.onerror = function () {
-                liveImg.style.display = 'none';
-                liveFallback.style.display = 'flex';
+                liveImg.classList.add('d-none');
+                liveFallback.classList.remove('d-none');
+                liveFallback.classList.add('d-flex');
                 if (liveStatus) liveStatus.textContent = 'Image failed to load';
             };
         } else {
-            liveImg.style.display = 'none';
-            liveFallback.style.display = 'flex';
+            liveImg.classList.add('d-none');
+            liveFallback.classList.remove('d-none');
+            liveFallback.classList.add('d-flex');
             if (liveStatus) liveStatus.textContent = 'Default initials avatar';
         }
     });
@@ -512,16 +515,14 @@ document.querySelectorAll('.topic-toggle-btn').forEach(btn => {
                     if (icon) icon.className = 'bi bi-check2 me-0.5';
                     if (labelSpan) labelSpan.textContent = '<?= addslashes(__('subscribed_topic')) ?>';
                     if (cardEl) {
-                        cardEl.classList.add('border-danger', 'bg-danger', 'bg-opacity-5');
-                        cardEl.classList.remove('bg-white');
+                        cardEl.classList.add('is-subscribed');
                     }
                 } else {
                     this.className = 'btn btn-sm rounded-pill topic-toggle-btn flex-shrink-0 btn-outline-secondary';
                     if (icon) icon.className = 'bi bi-plus-lg me-0.5';
                     if (labelSpan) labelSpan.textContent = '<?= addslashes(__('subscribe_topic')) ?>';
                     if (cardEl) {
-                        cardEl.classList.remove('border-danger', 'bg-danger', 'bg-opacity-5');
-                        cardEl.classList.add('bg-white');
+                        cardEl.classList.remove('is-subscribed');
                     }
                 }
 

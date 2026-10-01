@@ -273,6 +273,12 @@ document.addEventListener('DOMContentLoaded', function () {
         if (clearBtn) {
             clearBtn.style.display = list.length > 0 ? 'block' : 'none';
         }
+        const confirmCard = document.getElementById('clearSavedConfirmCard');
+        const clearBar = document.getElementById('clearSavedButtonBar');
+        if (list.length === 0) {
+            if (confirmCard) confirmCard.classList.add('d-none');
+            if (clearBar) clearBar.classList.remove('d-none');
+        }
     }
 
     function syncBookmarkButtonsState() {
@@ -394,13 +400,32 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // Attach clear all saved articles handler
+    // Attach clear all saved articles handler (Alert Card UI)
     const clearBtn = document.getElementById('clearSavedArticlesBtn');
-    if (clearBtn) {
+    const clearBar = document.getElementById('clearSavedButtonBar');
+    const confirmCard = document.getElementById('clearSavedConfirmCard');
+    const cancelBtn = document.getElementById('cancelClearSavedBtn');
+    const execBtn = document.getElementById('executeClearSavedBtn');
+
+    if (clearBtn && confirmCard) {
         clearBtn.addEventListener('click', function () {
-            if (confirm('<?= __('confirm_clear_saved') ?? 'Are you sure you want to clear all saved articles?' ?>')) {
-                saveArticlesList([]);
-            }
+            if (clearBar) clearBar.classList.add('d-none');
+            confirmCard.classList.remove('d-none');
+        });
+    }
+
+    if (cancelBtn && confirmCard) {
+        cancelBtn.addEventListener('click', function () {
+            confirmCard.classList.add('d-none');
+            if (clearBar) clearBar.classList.remove('d-none');
+        });
+    }
+
+    if (execBtn && confirmCard) {
+        execBtn.addEventListener('click', function () {
+            saveArticlesList([]);
+            confirmCard.classList.add('d-none');
+            if (clearBar) clearBar.classList.remove('d-none');
         });
     }
 

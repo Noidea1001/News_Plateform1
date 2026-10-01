@@ -504,5 +504,6 @@ $lang['settings_delete_confirm_js'] = "Are you sure you want to permanently dele
 $lang['bookmark_login_prompt_title'] = "Create Account to Save Articles";
 $lang['bookmark_login_prompt_desc'] = "Create a free reader account to save stories and access your reading list anytime.";
 $lang['bookmark_account_required'] = "Create an account to save articles";
+$lang['clear_saved_warning'] = "All articles in your saved reading list will be permanently cleared.";
 return $lang;
 

@@ -402,12 +402,13 @@ img {
     font-weight: 600;
     font-family: var(--font-sans);
     border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    min-height: 30px;
+    height: 32px;
+    min-height: 32px;
     position: relative;
     top: 0;
     margin: 0 !important;
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
     z-index: 1055;
     overflow: visible;
 }
@@ -3348,4 +3349,33 @@ input[type="text"]::-webkit-search-cancel-button {
     border: 1px solid #e2e8f0;
     border-radius: 6px;
     padding: 0.65rem 1.1rem;
+}
+
+.topic-card {
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.15s ease;
+}
+
+.topic-card:hover {
+    border-color: #cbd5e1;
+    background-color: #f8fafc;
+}
+
+.topic-card.is-subscribed {
+    background-color: #fff1f2 !important;
+    border-color: #fca5a5 !important;
+}
+
+.topic-card.is-subscribed .topic-title {
+    color: #991b1b !important;
+    font-weight: 700 !important;
+}
+
+.danger-zone-box {
+    background-color: #fff1f2 !important;
+    border: 1px solid #fecdd3 !important;
+    border-radius: 8px;
+    padding: 1.5rem;
 }
