@@ -185,11 +185,6 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                     <?= \App\Core\Sanitizer::parseArticleMedia(article_content($article['content']), $article['gallery_images'] ?? null, $article['featured_image'] ?? null, $article['video_embed_url'] ?? null) ?>
                 </div>
 
-                <!-- Social Share Buttons -->
-                <div class="mb-4">
-                    <?php $isBottomShare = true; include __DIR__ . '/../components/share-buttons.php'; unset($isBottomShare); ?>
-                </div>
-
                 <!-- Primary Citation Source Box -->
                 <?php
                 $referenceUrl = $article['reference_url'] ?? null;
