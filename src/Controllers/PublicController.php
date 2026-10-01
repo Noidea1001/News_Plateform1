@@ -309,7 +309,7 @@ class PublicController
                     OR (a.title_kh IS NOT NULL AND a.title_kh LIKE :q4)
                     OR (a.title_en IS NOT NULL AND a.title_en LIKE :q5)
                     OR (a.summary_kh IS NOT NULL AND a.summary_kh LIKE :q6))
-             ORDER BY a.published_at DESC LIMIT 8",
+             ORDER BY a.published_at DESC LIMIT 20",
             ['q1' => $term, 'q2' => $term, 'q3' => $term, 'q4' => $term, 'q5' => $term, 'q6' => $term]
         );
 

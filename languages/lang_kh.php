@@ -468,6 +468,8 @@ $lang['no_topic_subs_yet'] = "អ្នកមិនទាន់បានជា�
 // 22. Search Fallbacks
 $lang['no_articles_found_for'] = "មិនមានអត្ថបទត្រូវនឹងការស្វែងរក";
 $lang['showing_latest_recommendations'] = "ខាងក្រោមនេះជាបណ្តុំព័ត៌មានចុងក្រោយដែលបានផ្សាយសម្រាប់លោកអ្នក";
+$lang['articles_count_label'] = "អត្ថបទ";
+$lang['scroll_for_more'] = "រំកិលមើលបន្ថែម";
 
 return $lang;
 

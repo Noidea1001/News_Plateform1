@@ -468,6 +468,8 @@ $lang['no_topic_subs_yet'] = "You have not subscribed to any topics yet. Click b
 // 22. Search Fallbacks
 $lang['no_articles_found_for'] = "No articles found matching";
 $lang['showing_latest_recommendations'] = "Here are the latest published stories for you to explore";
+$lang['articles_count_label'] = "Articles";
+$lang['scroll_for_more'] = "Scroll for more";
 
 return $lang;
 

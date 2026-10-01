@@ -70,14 +70,58 @@ $currentReader = \App\Core\Auth::reader();
             position: relative;
             z-index: 5 !important;
         }
+        .live-search-dropdown-menu {
+            border-radius: 6px !important;
+            border: 1px solid #e2e8f0 !important;
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16) !important;
+            background: #ffffff !important;
+            z-index: 1060 !important;
+            display: none;
+            flex-direction: column;
+            overflow: hidden !important;
+        }
         #liveSearchDropdown {
             width: 440px !important;
             max-width: 92vw !important;
-            max-height: min(360px, 68vh) !important;
+        }
+        #mobileLiveSearchDropdown {
+            width: 100% !important;
+            left: 0 !important;
+            right: 0 !important;
+        }
+        #mobileSearchCollapse.show {
+            overflow: visible !important;
+        }
+        #mobileSearchForm {
+            position: relative;
+            overflow: visible !important;
+        }
+        .live-search-scroll-container {
+            max-height: 340px;
             overflow-y: auto !important;
-            border-radius: 6px !important;
-            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16) !important;
-            z-index: 1060 !important;
+            -webkit-overflow-scrolling: touch !important;
+            overscroll-behavior-y: contain !important;
+            touch-action: pan-y !important;
+            scrollbar-width: thin;
+            scrollbar-color: #cbd5e1 #f8fafc;
+        }
+        @media (max-width: 991.98px) {
+            .live-search-scroll-container {
+                max-height: min(280px, 50vh) !important;
+            }
+        }
+        .live-search-scroll-container::-webkit-scrollbar {
+            width: 6px;
+        }
+        .live-search-scroll-container::-webkit-scrollbar-track {
+            background: #f8fafc;
+        }
+        .live-search-scroll-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .live-search-scroll-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
         .live-search-item {
             transition: background 0.12s ease;
@@ -197,9 +241,11 @@ $currentReader = \App\Core\Auth::reader();
                         </span>
                     </div>
                     <!-- Live Search Results Dropdown -->
-                    <div id="liveSearchDropdown" class="card border-0 shadow-lg position-absolute w-100 mt-1"
-                        style="display:none; top:100%; left:0; z-index:1060; max-height:320px; overflow-y:auto; border-radius:4px;">
-                        <div class="list-group list-group-flush" id="liveSearchList"></div>
+                    <div id="liveSearchDropdown" class="card border-0 shadow-lg position-absolute mt-1 live-search-dropdown-menu"
+                        style="top:100%; left:0;">
+                        <div id="liveSearchHeader" class="py-1 px-2.5 bg-light border-bottom d-flex align-items-center justify-content-between text-muted text-3xs fw-bold" style="background:#f8fafc !important; display:none;"></div>
+                        <div class="list-group list-group-flush live-search-scroll-container" id="liveSearchList"></div>
+                        <div id="liveSearchFooter" class="py-1.5 px-2 border-top bg-white text-center" style="background:#ffffff !important; display:none;"></div>
                     </div>
                 </form>
 
@@ -305,9 +351,11 @@ $currentReader = \App\Core\Auth::reader();
                     </button>
                 </div>
                 <!-- Mobile Live Search Dropdown -->
-                <div id="mobileLiveSearchDropdown" class="card border-0 shadow-lg position-absolute w-100 mt-1"
-                    style="display:none; top:100%; left:0; z-index:1060; max-height:300px; overflow-y:auto; border-radius:4px;">
-                    <div class="list-group list-group-flush" id="mobileLiveSearchList"></div>
+                <div id="mobileLiveSearchDropdown" class="card border-0 shadow-lg position-absolute w-100 mt-1 live-search-dropdown-menu"
+                    style="top:100%; left:0;">
+                    <div id="mobileLiveSearchHeader" class="py-1 px-2.5 bg-light border-bottom d-flex align-items-center justify-content-between text-muted text-3xs fw-bold" style="background:#f8fafc !important; display:none;"></div>
+                    <div class="list-group list-group-flush live-search-scroll-container" id="mobileLiveSearchList"></div>
+                    <div id="mobileLiveSearchFooter" class="py-1.5 px-2 border-top bg-white text-center" style="background:#ffffff !important; display:none;"></div>
                 </div>
             </form>
         </div>
@@ -315,11 +363,13 @@ $currentReader = \App\Core\Auth::reader();
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            function setupLiveSearch(inputId, clearId, dropdownId, listId) {
+            function setupLiveSearch(inputId, clearId, dropdownId, listId, headerId, footerId) {
                 const searchInput = document.getElementById(inputId);
                 const clearBtn = document.getElementById(clearId);
                 const dropdown = document.getElementById(dropdownId);
                 const searchList = document.getElementById(listId);
+                const header = document.getElementById(headerId);
+                const footer = document.getElementById(footerId);
                 let debounceTimer = null;
 
                 if (!searchInput) return;
@@ -333,12 +383,18 @@ $currentReader = \App\Core\Auth::reader();
                     }
                 }
 
+                function closeDropdown() {
+                    if (dropdown) dropdown.style.display = 'none';
+                    if (header) header.style.display = 'none';
+                    if (footer) footer.style.display = 'none';
+                }
+
                 if (clearBtn) {
                     clearBtn.addEventListener('click', function () {
                         searchInput.value = '';
                         updateClearBtn();
                         searchInput.dispatchEvent(new Event('input'));
-                        if (dropdown) dropdown.style.display = 'none';
+                        closeDropdown();
                     });
                 }
 
@@ -349,7 +405,7 @@ $currentReader = \App\Core\Auth::reader();
                     // Real-time AJAX search preview dropdown
                     clearTimeout(debounceTimer);
                     if (query.length < 2) {
-                        if (dropdown) dropdown.style.display = 'none';
+                        closeDropdown();
                         return;
                     }
 
@@ -358,6 +414,21 @@ $currentReader = \App\Core\Auth::reader();
                             .then(res => res.json())
                             .then(data => {
                                 if (data.success && data.articles && data.articles.length > 0) {
+                                    const isKhmer = '<?= $currentLang ?>' === 'kh' || '<?= $currentLang ?>' === 'km';
+                                    const khmerDigits = ['០', '១', '២', '៣', '៤', '៥', '៦', '៧', '៨', '៩'];
+                                    const countFormatted = isKhmer 
+                                        ? String(data.articles.length).replace(/[0-9]/g, d => khmerDigits[d]) 
+                                        : String(data.articles.length);
+                                    const countText = countFormatted + ' ' + '<?= addslashes(__('articles_count_label')) ?>';
+
+                                    if (header) {
+                                        header.innerHTML = `
+                                            <span class="d-flex align-items-center gap-1.5"><i class="bi bi-file-earmark-text text-danger"></i>${countText}</span>
+                                            <span class="text-secondary d-flex align-items-center gap-1"><i class="bi bi-arrow-down-up" style="font-size:0.7rem;"></i><?= addslashes(__('scroll_for_more')) ?></span>
+                                        `;
+                                        header.style.display = 'flex';
+                                    }
+
                                     let html = '';
                                     data.articles.forEach(art => {
                                         const img = art.image_url || art.featured_image || '';
@@ -384,29 +455,37 @@ $currentReader = \App\Core\Auth::reader();
                                             </a>
                                         `;
                                     });
-                                    html += `
-                                        <div class="py-1.5 px-2 border-top bg-light text-center">
-                                            <a href="<?= url('index.php') ?>?q=${encodeURIComponent(query)}" class="text-xs text-danger text-decoration-none fw-bold">
-                                                <?= __('view_all_results') ?? 'View all results' ?> &rarr;
-                                            </a>
-                                        </div>
-                                    `;
+
                                     searchList.innerHTML = html;
-                                    dropdown.style.display = 'block';
+
+                                    if (footer) {
+                                        footer.innerHTML = `
+                                            <a href="<?= url('index.php') ?>?q=${encodeURIComponent(query)}" class="text-xs text-danger text-decoration-none fw-bold d-inline-flex align-items-center gap-1">
+                                                <span><?= addslashes(__('view_all_results')) ?></span>
+                                                <i class="bi bi-arrow-right"></i>
+                                            </a>
+                                        `;
+                                        footer.style.display = 'block';
+                                    }
+
+                                    dropdown.style.display = 'flex';
+                                    searchList.scrollTop = 0;
                                 } else {
+                                    if (header) header.style.display = 'none';
+                                    if (footer) footer.style.display = 'none';
                                     searchList.innerHTML = '<div class="p-3 text-center text-muted small"><i class="bi bi-search me-1"></i> <?= addslashes(__('no_articles_found')) ?></div>';
-                                    dropdown.style.display = 'block';
+                                    dropdown.style.display = 'flex';
                                 }
                             })
                             .catch(() => {
-                                if (dropdown) dropdown.style.display = 'none';
+                                closeDropdown();
                             });
                     }, 150);
                 });
 
                 document.addEventListener('click', function (e) {
                     if (dropdown && searchInput && !searchInput.contains(e.target) && !dropdown.contains(e.target)) {
-                        dropdown.style.display = 'none';
+                        closeDropdown();
                     }
                 });
             }
@@ -417,8 +496,8 @@ $currentReader = \App\Core\Auth::reader();
             }
 
             // Initialize real-time search on Navbar & Mobile search bars
-            setupLiveSearch('publicSearchInput', 'publicSearchClear', 'liveSearchDropdown', 'liveSearchList');
-            setupLiveSearch('mobileSearchInput', 'mobileSearchClear', 'mobileLiveSearchDropdown', 'mobileLiveSearchList');
+            setupLiveSearch('publicSearchInput', 'publicSearchClear', 'liveSearchDropdown', 'liveSearchList', 'liveSearchHeader', 'liveSearchFooter');
+            setupLiveSearch('mobileSearchInput', 'mobileSearchClear', 'mobileLiveSearchDropdown', 'mobileLiveSearchList', 'mobileLiveSearchHeader', 'mobileLiveSearchFooter');
 
             const mobileCollapse = document.getElementById('mobileSearchCollapse');
             const mainNav = document.getElementById('mainNavbar');
