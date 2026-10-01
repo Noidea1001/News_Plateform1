@@ -446,6 +446,7 @@ img {
     background-color: var(--cna-white);
     border-bottom: 1px solid var(--border-color);
     box-shadow: none;
+    z-index: 1035 !important;
 }
 
 .navbar-main .dropdown-menu {
@@ -575,7 +576,7 @@ img {
     border-bottom: none;
     font-size: 0.82rem;
     position: relative;
-    z-index: 1030;
+    z-index: 5;
     overflow: hidden;
 }
 

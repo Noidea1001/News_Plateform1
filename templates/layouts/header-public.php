@@ -59,6 +59,17 @@ $currentReader = \App\Core\Auth::reader();
             color: #c8102e !important;
             transform: scale(1.1);
         }
+        .navbar-main {
+            z-index: 1035 !important;
+        }
+        .nav-category-toolbar {
+            position: relative;
+            z-index: 8;
+        }
+        .breaking-ticker-bar {
+            position: relative;
+            z-index: 5 !important;
+        }
         #liveSearchDropdown {
             width: 440px !important;
             max-width: 92vw !important;
@@ -66,6 +77,7 @@ $currentReader = \App\Core\Auth::reader();
             overflow-y: auto !important;
             border-radius: 6px !important;
             box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16) !important;
+            z-index: 1060 !important;
         }
         .live-search-item {
             transition: background 0.12s ease;
