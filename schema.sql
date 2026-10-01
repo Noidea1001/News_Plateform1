@@ -147,7 +147,8 @@ INSERT IGNORE INTO `categories` (`id`, `name`, `slug`, `description`) VALUES
 (1, 'បច្ចេកវិទ្យា & AI (Technology & AI)', 'technology-ai', 'បច្ចេកវិទ្យាបញ្ញាសិប្បនិម្មិត និងការអភិវឌ្ឍប្រព័ន្ធសូហ្វវែរ។ (Artificial intelligence technology and software development.)'),
 (2, 'នយោបាយសកល (Global Politics)', 'global-politics', 'ការវិភាគគោលនយោបាយអន្តរជាតិ និងការទូត។ (International policy analysis and diplomacy.)'),
 (3, 'បរិស្ថាន & វិទ្យាសាស្ត្រ (Climate & Science)', 'climate-science', 'ការស្រាវជ្រាវវិទ្យាសាស្ត្រ និងថាមពលកកើតឡើងវិញ។ (Scientific research and renewable energy.)'),
-(4, 'សេដ្ឋកិច្ច & ទីផ្សារ (Economy & Markets)', 'economy-markets', 'ទីផ្សារហិរញ្ញវត្ថុ និងសេដ្ឋកិច្ចពិភពលោក។ (Financial markets and global economy.)');
+(4, 'សេដ្ឋកិច្ច & ទីផ្សារ (Economy & Markets)', 'economy-markets', 'ទីផ្សារហិរញ្ញវត្ថុ និងសេដ្ឋកិច្ចពិភពលោក។ (Financial markets and global economy.)'),
+(7, 'កីឡា & ព័ត៌មានអន្តរជាតិ (Sports & World News)', 'sports-world', 'ព័ត៌មានកីឡាអន្តរជាតិ ការប្រកួតបាល់ទាត់ និងព្រឹត្តិការណ៍កីឡាពិភពលោក។ (World sports news, football championships, and global sporting events.)');
 
 INSERT IGNORE INTO `articles` 
 (`id`, `title`, `slug`, `summary`, `content`, `featured_image`, `video_embed_url`, `reference_url`, `reference_source_name`, `category_id`, `author_id`, `template_type`, `is_breaking`, `status`, `views_count`, `published_at`) 
@@ -177,4 +178,13 @@ VALUES
 NULL,
 'https://plato.stanford.edu',
 'វចនានុក្រមទស្សនវិជ្ជារបស់សាកលវិទ្យាល័យ Stanford',
-2, 2, 'opinion', 0, 'published', 950, NOW());
+2, 2, 'opinion', 0, 'published', 950, NOW()),
+
+(13, 'គ្រាប់បាល់ដ៏អស្ចារ្យនៅចុងម៉ោងរបស់ Cristiano Ronaldo ជួយក្រុមទទួលបានជ័យជម្នះ', 'cristiano-ronaldo-late-stunning-goal-secures-victory',
+'ព័ត៌មានកីឡាអន្តរជាតិ៖ Cristiano Ronaldo បានស៊ុតបញ្ចូលទីគ្រាប់បាល់ឈ្នះនៅចុងម៉ោង យ៉ាងអស្ចារ្យក្នុងការប្រកួតបាល់ទាត់អន្តរជាតិ។ (World sports news: Cristiano Ronaldo scored a dramatic late winning goal in international football match.)',
+'ក្នុងការប្រកួតបាល់ទាត់ដ៏រំភើបអស្ចារ្យ កីឡាករបាល់ទាត់ឆ្នើមពិភពលោក Cristiano Ronaldo បានស៊ុតបញ្ចូលទីគ្រាប់បាល់ឈ្នះនៅនាទីចុងក្រោយ នៃកការប្រកួតដើម្បីជួយក្រុមទទួលបានជ័យជម្នះ ៣-២ យ៉ាងរំភើប។\n--- \nIn a thrilling international football championship match, global football superstar Cristiano Ronaldo scored a spectacular late winning goal in the final minutes to secure a thrilling 3-2 victory.',
+'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&q=80',
+NULL,
+'https://www.fifa.com',
+'សហព័ន្ធបាល់ទាត់ពិភពលោក (FIFA)',
+7, 1, 'standard', 1, 'published', 8450, NOW());

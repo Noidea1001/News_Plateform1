@@ -32,7 +32,7 @@ class PublicController
     {
         // 0. Auto-seed real Khmer news articles if database count is under 10
         try {
-            $totalArticlesCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM articles");
+            $totalArticlesCount = (int) $this->db->fetchColumn("SELECT COUNT(*) FROM articles");
             if ($totalArticlesCount < 10 && file_exists(__DIR__ . '/../../seed_news.php')) {
                 ob_start();
                 @include __DIR__ . '/../../seed_news.php';
@@ -55,8 +55,8 @@ class PublicController
         $categories = $this->db->fetchAll("SELECT * FROM categories ORDER BY name ASC");
 
         // 3. Category Filter
-        $activeCategoryId = isset($_GET['category']) ? (int)$_GET['category'] : null;
-        
+        $activeCategoryId = isset($_GET['category']) ? (int) $_GET['category'] : null;
+
         $whereSql = "WHERE a.status = 'published'";
         $params = [];
         if ($activeCategoryId) {
@@ -67,21 +67,39 @@ class PublicController
         // Search query filter
         $searchQuery = trim($_GET['q'] ?? '');
         if ($searchQuery !== '') {
-            $whereSql .= " AND (a.title LIKE :s1 OR a.summary LIKE :s2 OR a.content LIKE :s3)";
+            $whereSql .= " AND (a.title LIKE :s1 
+                         OR a.summary LIKE :s2 
+                         OR a.content LIKE :s3 
+                         OR a.slug LIKE :s4
+                         OR c.name LIKE :s5
+                         OR (a.title_kh IS NOT NULL AND a.title_kh LIKE :s6)
+                         OR (a.title_en IS NOT NULL AND a.title_en LIKE :s7)
+                         OR (a.summary_kh IS NOT NULL AND a.summary_kh LIKE :s8)
+                         OR (a.summary_en IS NOT NULL AND a.summary_en LIKE :s9)
+                         OR (a.content_kh IS NOT NULL AND a.content_kh LIKE :s10)
+                         OR (a.content_en IS NOT NULL AND a.content_en LIKE :s11))";
             $searchTerm = "%{$searchQuery}%";
             $params['s1'] = $searchTerm;
             $params['s2'] = $searchTerm;
             $params['s3'] = $searchTerm;
+            $params['s4'] = $searchTerm;
+            $params['s5'] = $searchTerm;
+            $params['s6'] = $searchTerm;
+            $params['s7'] = $searchTerm;
+            $params['s8'] = $searchTerm;
+            $params['s9'] = $searchTerm;
+            $params['s10'] = $searchTerm;
+            $params['s11'] = $searchTerm;
         }
 
         // 4. Pagination Calculation
-        $currentPage = max(1, (int)($_GET['page'] ?? 1));
+        $currentPage = max(1, (int) ($_GET['page'] ?? 1));
         $perPage = 10;
-        $totalCount = (int)$this->db->fetchColumn(
+        $totalCount = (int) $this->db->fetchColumn(
             "SELECT COUNT(*) FROM articles a JOIN categories c ON a.category_id = c.id {$whereSql}",
             $params
         );
-        $totalPages = max(1, (int)ceil($totalCount / $perPage));
+        $totalPages = max(1, (int) ceil($totalCount / $perPage));
         if ($currentPage > $totalPages) {
             $currentPage = $totalPages;
         }
@@ -116,7 +134,7 @@ class PublicController
             $text = strip_tags(($art['summary'] ?? '') . ' ' . ($art['content'] ?? ''));
             $words = preg_split('/\s+/u', trim($text));
             $wordCount = count(array_filter($words));
-            $mins = max(1, (int)ceil($wordCount / 180));
+            $mins = max(1, (int) ceil($wordCount / 180));
             $art['reading_time_mins'] = $mins;
             $art['reading_time'] = __('min_read', ['min' => $mins]);
         }
@@ -182,7 +200,7 @@ class PublicController
         $text = strip_tags(($article['summary'] ?? '') . ' ' . ($article['content'] ?? ''));
         $words = preg_split('/\s+/u', trim($text));
         $wordCount = count(array_filter($words));
-        $mins = max(1, (int)ceil($wordCount / 180));
+        $mins = max(1, (int) ceil($wordCount / 180));
         $article['reading_time_mins'] = $mins;
         $article['reading_time'] = __('min_read', ['min' => $mins]);
 
@@ -236,7 +254,7 @@ class PublicController
     public function subscribe(array $postData): array
     {
         $email = trim($postData['email'] ?? '');
-        $categoryId = !empty($postData['category_preference']) ? (int)$postData['category_preference'] : null;
+        $categoryId = !empty($postData['category_preference']) ? (int) $postData['category_preference'] : null;
 
         if (empty($email) || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return [
@@ -248,7 +266,7 @@ class PublicController
         try {
             // Check if already subscribed
             $existing = $this->db->fetch("SELECT id, status FROM subscribers WHERE email = :email", ['email' => $email]);
-            
+
             if ($existing) {
                 if ($existing['status'] === 'active') {
                     return [
@@ -305,12 +323,29 @@ class PublicController
              WHERE a.status = 'published'
                AND (a.title LIKE :q1 
                     OR a.summary LIKE :q2 
-                    OR c.name LIKE :q3 
-                    OR (a.title_kh IS NOT NULL AND a.title_kh LIKE :q4)
-                    OR (a.title_en IS NOT NULL AND a.title_en LIKE :q5)
-                    OR (a.summary_kh IS NOT NULL AND a.summary_kh LIKE :q6))
+                    OR a.content LIKE :q3
+                    OR a.slug LIKE :q4
+                    OR c.name LIKE :q5 
+                    OR (a.title_kh IS NOT NULL AND a.title_kh LIKE :q6)
+                    OR (a.title_en IS NOT NULL AND a.title_en LIKE :q7)
+                    OR (a.summary_kh IS NOT NULL AND a.summary_kh LIKE :q8)
+                    OR (a.summary_en IS NOT NULL AND a.summary_en LIKE :q9)
+                    OR (a.content_kh IS NOT NULL AND a.content_kh LIKE :q10)
+                    OR (a.content_en IS NOT NULL AND a.content_en LIKE :q11))
              ORDER BY a.published_at DESC LIMIT 20",
-            ['q1' => $term, 'q2' => $term, 'q3' => $term, 'q4' => $term, 'q5' => $term, 'q6' => $term]
+            [
+                'q1' => $term,
+                'q2' => $term,
+                'q3' => $term,
+                'q4' => $term,
+                'q5' => $term,
+                'q6' => $term,
+                'q7' => $term,
+                'q8' => $term,
+                'q9' => $term,
+                'q10' => $term,
+                'q11' => $term
+            ]
         );
 
         foreach ($articles as &$art) {
@@ -345,8 +380,8 @@ class PublicController
             ];
         }
 
-        $articleId = (int)($postData['article_id'] ?? 0);
-        $parentId = !empty($postData['parent_id']) ? (int)$postData['parent_id'] : null;
+        $articleId = (int) ($postData['article_id'] ?? 0);
+        $parentId = !empty($postData['parent_id']) ? (int) $postData['parent_id'] : null;
         $userName = $reader ? $reader['name'] : ($staff['username'] ?? 'Staff');
         $userEmail = $reader ? $reader['email'] : ($staff['email'] ?? 'staff@platform.local');
         $content = trim($postData['content'] ?? '');
@@ -357,7 +392,7 @@ class PublicController
         }
 
         // Verify article exists
-        $articleExists = (bool)$this->db->fetchColumn("SELECT id FROM articles WHERE id = :id AND status = 'published'", ['id' => $articleId]);
+        $articleExists = (bool) $this->db->fetchColumn("SELECT id FROM articles WHERE id = :id AND status = 'published'", ['id' => $articleId]);
         if (!$articleExists) {
             return ['success' => false, 'message' => 'Article not found.'];
         }
@@ -368,8 +403,8 @@ class PublicController
 
         // Parent comment verification if reply
         if ($parentId !== null) {
-            $parentExists = (bool)$this->db->fetchColumn(
-                "SELECT id FROM comments WHERE id = :pid AND article_id = :aid", 
+            $parentExists = (bool) $this->db->fetchColumn(
+                "SELECT id FROM comments WHERE id = :pid AND article_id = :aid",
                 ['pid' => $parentId, 'aid' => $articleId]
             );
             if (!$parentExists) {
@@ -390,7 +425,7 @@ class PublicController
             ]
         );
 
-        $newId = (int)$this->db->lastInsertId();
+        $newId = (int) $this->db->lastInsertId();
         $newComment = $this->db->fetch("SELECT * FROM comments WHERE id = :id", ['id' => $newId]);
         if ($newComment) {
             $newComment['time_ago'] = TemplateEngine::timeAgo($newComment['created_at']);
@@ -418,7 +453,7 @@ class PublicController
         }
 
         $this->db->execute("UPDATE comments SET likes_count = likes_count + 1 WHERE id = :id", ['id' => $commentId]);
-        $newLikes = (int)$comment['likes_count'] + 1;
+        $newLikes = (int) $comment['likes_count'] + 1;
 
         return [
             'success' => true,
@@ -433,27 +468,27 @@ class PublicController
     {
         // 1. Fetch available filter options
         $categories = $this->db->fetchAll("SELECT * FROM categories ORDER BY name ASC");
-        
+
         $yearsRaw = $this->db->fetchAll(
             "SELECT DISTINCT YEAR(published_at) as yr 
              FROM articles 
              WHERE status = 'published' AND published_at IS NOT NULL 
              ORDER BY yr DESC"
         );
-        $years = array_filter(array_map(fn($r) => (int)$r['yr'], $yearsRaw));
+        $years = array_filter(array_map(fn($r) => (int) $r['yr'], $yearsRaw));
         if (empty($years)) {
-            $years = [(int)date('Y')];
+            $years = [(int) date('Y')];
         }
 
         // 2. Parse active filter parameters
-        $categoryId = !empty($_GET['category']) ? (int)$_GET['category'] : 0;
-        $year = !empty($_GET['year']) ? (int)$_GET['year'] : 0;
-        $month = !empty($_GET['month']) ? (int)$_GET['month'] : 0;
+        $categoryId = !empty($_GET['category']) ? (int) $_GET['category'] : 0;
+        $year = !empty($_GET['year']) ? (int) $_GET['year'] : 0;
+        $month = !empty($_GET['month']) ? (int) $_GET['month'] : 0;
         $blueprint = trim($_GET['blueprint'] ?? '');
         $isBreaking = isset($_GET['breaking']) && $_GET['breaking'] === '1' ? 1 : null;
         $searchQuery = trim($_GET['q'] ?? '');
         $sort = trim($_GET['sort'] ?? 'newest');
-        $currentPage = max(1, (int)($_GET['page'] ?? 1));
+        $currentPage = max(1, (int) ($_GET['page'] ?? 1));
         $perPage = 12;
 
         // 3. Dynamic SQL Query Construction
@@ -505,11 +540,11 @@ class PublicController
         };
 
         // 4. Pagination & Count
-        $totalCount = (int)$this->db->fetchColumn(
+        $totalCount = (int) $this->db->fetchColumn(
             "SELECT COUNT(*) FROM articles a {$whereSql}",
             $params
         );
-        $totalPages = max(1, (int)ceil($totalCount / $perPage));
+        $totalPages = max(1, (int) ceil($totalCount / $perPage));
         if ($currentPage > $totalPages) {
             $currentPage = $totalPages;
         }
@@ -529,7 +564,7 @@ class PublicController
         // Attach reading time estimation and time ago
         foreach ($articles as &$art) {
             $words = str_word_count(strip_tags($art['content'] ?? ''));
-            $art['reading_time'] = max(1, (int)ceil($words / 200));
+            $art['reading_time'] = max(1, (int) ceil($words / 200));
             $art['time_ago'] = TemplateEngine::timeAgo($art['published_at'] ?? $art['created_at']);
         }
         unset($art);
@@ -586,9 +621,9 @@ class PublicController
         if ($currentReader) {
             $subs = $this->db->fetchAll(
                 "SELECT category_id FROM reader_subscriptions WHERE reader_id = :rid",
-                ['rid' => (int)$currentReader['id']]
+                ['rid' => (int) $currentReader['id']]
             );
-            $subscribedCatIds = array_map(fn($s) => (int)$s['category_id'], $subs);
+            $subscribedCatIds = array_map(fn($s) => (int) $s['category_id'], $subs);
         }
 
         if (!empty($subscribedCatIds)) {
@@ -638,7 +673,7 @@ class PublicController
 
             $n['time_ago'] = TemplateEngine::timeAgo($n['created_at']);
             $n['article_url'] = !empty($n['article_slug']) ? url('article.php?slug=' . urlencode($n['article_slug'])) : url('index.php');
-            $n['is_subscribed_topic'] = !empty($n['category_id']) && in_array((int)$n['category_id'], $subscribedCatIds, true);
+            $n['is_subscribed_topic'] = !empty($n['category_id']) && in_array((int) $n['category_id'], $subscribedCatIds, true);
             $n['category_display'] = !empty($n['category_name']) ? cat_name($n['category_name'], $currentLang) : '';
         }
         unset($n);
@@ -678,9 +713,9 @@ class PublicController
         if ($method === 'GET') {
             $subs = $this->db->fetchAll(
                 "SELECT category_id FROM reader_subscriptions WHERE reader_id = :rid",
-                ['rid' => (int)$currentReader['id']]
+                ['rid' => (int) $currentReader['id']]
             );
-            $catIds = array_map(fn($s) => (int)$s['category_id'], $subs);
+            $catIds = array_map(fn($s) => (int) $s['category_id'], $subs);
 
             echo json_encode([
                 'success' => true,
@@ -693,7 +728,7 @@ class PublicController
         if ($method === 'POST') {
             $rawInput = file_get_contents('php://input');
             $input = json_decode($rawInput, true) ?: $_POST;
-            $catId = (int)($input['category_id'] ?? 0);
+            $catId = (int) ($input['category_id'] ?? 0);
 
             if ($catId <= 0) {
                 echo json_encode(['success' => false, 'message' => 'Invalid category ID']);
@@ -710,14 +745,14 @@ class PublicController
             // Check existing subscription
             $existing = $this->db->fetch(
                 "SELECT id FROM reader_subscriptions WHERE reader_id = :rid AND category_id = :cid",
-                ['rid' => (int)$currentReader['id'], 'cid' => $catId]
+                ['rid' => (int) $currentReader['id'], 'cid' => $catId]
             );
 
             if ($existing) {
                 // Unsubscribe
                 $this->db->execute(
                     "DELETE FROM reader_subscriptions WHERE reader_id = :rid AND category_id = :cid",
-                    ['rid' => (int)$currentReader['id'], 'cid' => $catId]
+                    ['rid' => (int) $currentReader['id'], 'cid' => $catId]
                 );
                 $isSubscribed = false;
                 $msg = 'Unsubscribed from ' . cat_name($category['name']);
@@ -725,15 +760,15 @@ class PublicController
                 // Subscribe
                 $this->db->execute(
                     "INSERT INTO reader_subscriptions (reader_id, category_id, created_at) VALUES (:rid, :cid, NOW())",
-                    ['rid' => (int)$currentReader['id'], 'cid' => $catId]
+                    ['rid' => (int) $currentReader['id'], 'cid' => $catId]
                 );
                 $isSubscribed = true;
                 $msg = 'Subscribed to ' . cat_name($category['name']);
             }
 
-            $count = (int)$this->db->fetchColumn(
+            $count = (int) $this->db->fetchColumn(
                 "SELECT COUNT(*) FROM reader_subscriptions WHERE reader_id = :rid",
-                ['rid' => (int)$currentReader['id']]
+                ['rid' => (int) $currentReader['id']]
             );
 
             echo json_encode([
@@ -941,12 +976,12 @@ class PublicController
              WHERE rs.reader_id = :rid",
             ['rid' => $reader['id']]
         );
-        $subscribedCatIds = array_map(fn($s) => (int)$s['category_id'], $subs);
+        $subscribedCatIds = array_map(fn($s) => (int) $s['category_id'], $subs);
 
         $categories = $this->db->fetchAll("SELECT * FROM categories ORDER BY name ASC");
 
         // Comment count
-        $commentCount = (int)$this->db->fetchColumn(
+        $commentCount = (int) $this->db->fetchColumn(
             "SELECT COUNT(*) FROM comments WHERE user_email = :email",
             ['email' => $readerRow['email']]
         );
@@ -979,14 +1014,14 @@ class PublicController
             exit;
         }
 
-        $reader    = Auth::reader();
-        $readerId  = (int)$reader['id'];
-        $action    = trim($postData['action'] ?? 'profile');
+        $reader = Auth::reader();
+        $readerId = (int) $reader['id'];
+        $action = trim($postData['action'] ?? 'profile');
 
         // ── Profile (name, email, avatar) ──────────────────────────────────
         if ($action === 'profile') {
-            $name      = trim($postData['name'] ?? '');
-            $email     = strtolower(trim($postData['email'] ?? ''));
+            $name = trim($postData['name'] ?? '');
+            $email = strtolower(trim($postData['email'] ?? ''));
             $avatarUrl = trim($postData['avatar_url'] ?? '');
 
             if (mb_strlen($name) < 2 || mb_strlen($name) > 80) {
@@ -1014,8 +1049,8 @@ class PublicController
             );
 
             // Refresh session values
-            $_SESSION['reader_name']   = $cleanName;
-            $_SESSION['reader_email']  = $email;
+            $_SESSION['reader_name'] = $cleanName;
+            $_SESSION['reader_email'] = $email;
             $_SESSION['reader_avatar'] = $avatarUrl ?: null;
 
             header('Location: ' . url('settings.php?success=' . urlencode('Profile updated successfully.')));
@@ -1025,7 +1060,7 @@ class PublicController
         // ── Password Change ──────────────────────────────────────────────
         if ($action === 'password') {
             $currentPw = $postData['current_password'] ?? '';
-            $newPw     = $postData['new_password'] ?? '';
+            $newPw = $postData['new_password'] ?? '';
             $confirmPw = $postData['confirm_password'] ?? '';
 
             if (empty($currentPw) || empty($newPw) || empty($confirmPw)) {

@@ -24,7 +24,8 @@ try {
         ['id' => 3, 'name' => 'បរិស្ថាន & វិទ្យាសាស្ត្រ (Climate & Science)', 'slug' => 'climate-science', 'description' => 'ការស្រាវជ្រាវវិទ្យាសាស្ត្រ ថាមពលកកើតឡើងវិញ និងកសិកម្មបៃតង។ (Scientific research, renewable energy, and green agriculture.)'],
         ['id' => 4, 'name' => 'សេដ្ឋកិច្ច & ទីផ្សារ (Economy & Markets)', 'slug' => 'economy-markets', 'description' => 'ទីផ្សារហិរញ្ញវត្ថុ ពាណិជ្ជកម្មអន្តរជាតិ និងសេដ្ឋកិច្ចជាតិ។ (Financial markets, international trade, and national economy.)'],
         ['id' => 5, 'name' => 'ហេដ្ឋារចនាសម្ព័ន្ធ & ដឹកជញ្ជូន (Infrastructure)', 'slug' => 'infrastructure-logistics', 'description' => 'គម្រោងផ្លូវល្បឿនលឿន កំពង់ផែ និងប្រព័ន្ធដឹកជញ្ជូន។ (Expressway projects, deep ports, and logistics transport.)'],
-        ['id' => 6, 'name' => 'អប់រំ & សុខាភិបាល (Education & Health)', 'slug' => 'education-health', 'description' => 'ការអភិវឌ្ឍជំនាញ STEM សុខាភិបាលសាធារណៈ និងសមាសភាពសង្គម។ (STEM skills development, public healthcare, and social welfare.)']
+        ['id' => 6, 'name' => 'អប់រំ & សុខាភិបាល (Education & Health)', 'slug' => 'education-health', 'description' => 'ការអភិវឌ្ឍជំនាញ STEM សុខាភិបាលសាធារណៈ និងសមាសភាពសង្គម។ (STEM skills development, public healthcare, and social welfare.)'],
+        ['id' => 7, 'name' => 'កីឡា & ព័ត៌មានអន្តរជាតិ (Sports & World News)', 'slug' => 'sports-world', 'description' => 'ព័ត៌មានកីឡាអន្តរជាតិ ការប្រកួតបាល់ទាត់ និងព្រឹត្តិការណ៍កីឡាពិភពលោក។ (World sports news, football championships, and global sporting events.)']
     ];
 
     foreach ($categoriesData as $cat) {
@@ -302,6 +303,26 @@ try {
             'status' => 'published',
             'views_count' => 1430,
             'published_at' => date('Y-m-d H:i:s', strtotime('-7 days'))
+        ],
+        [
+            'id' => 13,
+            'title' => 'គ្រាប់បាល់ដ៏អស្ចារ្យនៅចុងម៉ោងរបស់ Cristiano Ronaldo ជួយក្រុមទទួលបានជ័យជម្នះ',
+            'slug' => 'cristiano-ronaldo-late-stunning-goal-secures-victory',
+            'summary' => 'ព័ត៌មានកីឡាអន្តរជាតិ៖ Cristiano Ronaldo បានស៊ុតបញ្ចូលទីគ្រាប់បាល់ឈ្នះនៅចុងម៉ោង យ៉ាងអស្ចារ្យក្នុងការប្រកួតបាល់ទាត់អន្តរជាតិ។ (World sports news: Cristiano Ronaldo scored a dramatic late winning goal in international football match.)',
+            'content' => '<p>ក្នុងការប្រកួតបាល់ទាត់ដ៏រំភើបអស្ចារ្យ កីឡាករបាល់ទាត់ឆ្នើមពិភពលោក Cristiano Ronaldo បានស៊ុតបញ្ចូលទីគ្រាប់បាល់ឈ្នះនៅនាទីចុងក្រោយ នៃកការប្រកួតដើម្បីជួយក្រុមទទួលបានជ័យជម្នះ ៣-២ យ៉ាងរំភើប។</p><p>អ្នកគាំទ្របាល់ទាត់រាប់លាននាក់នៅជុំវិញពិភពលោកបានកោតសរសើរចំពោះទម្រង់លេង និងសមត្ថភាពស៊ុតបញ្ចូលទីយ៉ាងល្អឥតខ្ចោះរបស់ Ronaldo។</p>---<p>In a thrilling international football championship match, global football superstar Cristiano Ronaldo scored a spectacular late winning goal in the final minutes to secure a thrilling 3-2 victory.</p><p>Millions of football fans worldwide praised Ronaldo for his extraordinary form and relentless goalscoring capability.</p>',
+            'featured_image' => 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?auto=format&fit=crop&w=1200&q=80',
+            'video_embed_url' => null,
+            'audio_embed_url' => null,
+            'gallery_images' => null,
+            'reference_url' => 'https://www.fifa.com',
+            'reference_source_name' => 'សហព័ន្ធបាល់ទាត់ពិភពលោក (FIFA)',
+            'category_id' => 7,
+            'author_id' => 1,
+            'template_type' => 'standard',
+            'is_breaking' => 1,
+            'status' => 'published',
+            'views_count' => 8450,
+            'published_at' => date('Y-m-d H:i:s', strtotime('-30 minutes'))
         ]
     ];
 
