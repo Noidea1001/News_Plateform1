@@ -202,6 +202,20 @@ class Database
                 INDEX `idx_notif_created` (`created_at`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
+            // Ensure reader_subscriptions table exists
+            $this->pdo->exec("CREATE TABLE IF NOT EXISTS `reader_subscriptions` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `reader_id` INT NOT NULL,
+                `category_id` INT NOT NULL,
+                `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (`reader_id`) REFERENCES `readers`(`id`) ON DELETE CASCADE,
+                FOREIGN KEY (`category_id`) REFERENCES `categories`(`id`) ON DELETE CASCADE,
+                UNIQUE KEY `uk_reader_category` (`reader_id`, `category_id`),
+                INDEX `idx_reader_sub_reader` (`reader_id`),
+                INDEX `idx_reader_sub_category` (`category_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+
             // Seed initial notifications if empty
             $notifCount = (int)$this->fetchColumn("SELECT COUNT(*) FROM notifications");
             if ($notifCount === 0) {

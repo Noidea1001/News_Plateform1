@@ -3450,6 +3450,7 @@ input[type="text"]::-webkit-search-cancel-button {
     line-height: 1.35 !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 2 !important;
+    line-clamp: 2 !important;
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
     font-family: 'Kantumruy Pro', 'Noto Sans Khmer', 'Plus Jakarta Sans', sans-serif !important;
@@ -3462,6 +3463,7 @@ input[type="text"]::-webkit-search-cancel-button {
     line-height: 1.4 !important;
     display: -webkit-box !important;
     -webkit-line-clamp: 1 !important;
+    line-clamp: 1 !important;
     -webkit-box-orient: vertical !important;
     overflow: hidden !important;
     margin-top: 2px !important;

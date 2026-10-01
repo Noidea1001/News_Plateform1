@@ -17,8 +17,11 @@ try {
     $controller = new PublicController();
     $controller->home();
 } catch (Throwable $e) {
-    http_response_code(500);
+    if (!headers_sent()) {
+        http_response_code(500);
+    }
     echo "<h1>500 Internal Server Error</h1>";
     echo "<p>" . htmlspecialchars($e->getMessage(), ENT_QUOTES, 'UTF-8') . "</p>";
 }
+
 ?>
