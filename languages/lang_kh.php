@@ -352,5 +352,52 @@ $lang['category_analytics'] = "ការបែងចែកអ្នកអាន�
 $lang['category_analytics_sub'] = "ចំនួនទស្សនា និងទំហំអត្ថបទសរុបតាមប្រធានបទ";
 $lang['avg_views_per_story'] = "ការទស្សនាជាមធ្យម / អត្ថបទ";
 
+// 16. News Archive & Historical Records (បណ្ណសារព័ត៌មាន)
+$lang['nav_archive'] = "បណ្ណសារព័ត៌មាន";
+$lang['archive_title'] = "បណ្ណសារព័ត៌មាន និងឯកសារប្រវត្តិសាស្ត្រ";
+$lang['archive_tagline'] = "ស្វែងរក ចម្រាញ់ និងពិនិត្យមើលរបាយការណ៍ព័ត៌មានដែលបានផ្ទៀងផ្ទាត់";
+$lang['filter_year'] = "ឆ្នាំ";
+$lang['filter_month'] = "ខែ";
+$lang['all_years'] = "គ្រប់ឆ្នាំទាំងអស់";
+$lang['all_months'] = "គ្រប់ខែទាំងអស់";
+$lang['filter_topic'] = "ប្រធានបទ";
+$lang['all_topics'] = "គ្រប់ប្រធានបទ";
+$lang['filter_format'] = "ទម្រង់អត្ថបទ";
+$lang['all_formats'] = "គ្រប់ទម្រង់";
+$lang['sort_by'] = "តម្រៀបតាម";
+$lang['sort_newest'] = "ថ្មីបំផុត";
+$lang['sort_oldest'] = "ចាស់បំផុត";
+$lang['sort_popular'] = "អានច្រើនបំផុត";
+$lang['breaking_only'] = "តែព័ត៌មានបន្ទាន់";
+$lang['reset_filters'] = "កំណត់ឡើងវិញ";
+$lang['archived_articles_found'] = "រកឃើញ :count របាយការណ៍ក្នុងបណ្ណសារ";
+$lang['no_archive_match'] = "មិនមានអត្ថបទត្រូវគ្នានឹងតម្រងដែលបានជ្រើសរើសឡើយ។";
+
+// 17. Reader Authentication & Notifications
+$lang['reader_signin'] = "ចូលប្រើ";
+$lang['reader_register'] = "ចុះឈ្មោះ";
+$lang['reader_account'] = "គណនីអ្នកអាន";
+$lang['reader_signout'] = "ចាកចេញ";
+$lang['reader_profile'] = "ព័ត៌មានអ្នកអាន";
+$lang['notifications_title'] = "ការជូនដំណឹងព័ត៌មានថ្មីៗ";
+$lang['mark_all_read'] = "សម្គាល់ថាបានអានទាំងអស់";
+$lang['no_notifications'] = "មិនទាន់មានការជូនដំណឹងនៅឡើយទេ។";
+$lang['breaking_alert'] = "ដំណឹងបន្ទាន់";
+$lang['published_alert'] = "អត្ថបទថ្មីបានផ្សាយ";
+$lang['create_account_title'] = "បង្កើតគណនីអ្នកអានឥតគិតថ្លៃ";
+$lang['create_account_desc'] = "រក្សាទុកអត្ថបទដែលអ្នកចូលចិត្ត និងទទួលការជូនដំណឹងព័ត៌មានទាន់ហេតុការណ៍។";
+$lang['have_account'] = "មានគណនីរួចហើយ?";
+$lang['need_account'] = "មិនទាន់មានគណនីនៅឡើយ?";
+$lang['login_reader_title'] = "ចូលប្រើប្រព័ន្ធអ្នកអាន";
+$lang['login_reader_desc'] = "ចូលទៅកាន់ការជូនដំណឹងផ្ទាល់ខ្លួន និងបញ្ជីអានដែលបានរក្សាទុក។";
+
+// 18. Admin 2-Field Bilingual Inputs
+$lang['title_kh_label'] = "ចំណងជើងអត្ថបទ (ភាសាខ្មែរ)";
+$lang['title_en_label'] = "ចំណងជើងអត្ថបទ (English)";
+$lang['summary_kh_label'] = "សេចក្តីសង្ខេប (ភាសាខ្មែរ)";
+$lang['summary_en_label'] = "សេចក្តីសង្ខេប (English)";
+$lang['content_kh_label'] = "ខ្លឹមសារអត្ថបទពេញលេញ (ភាសាខ្មែរ)";
+$lang['content_en_label'] = "ខ្លឹមសារអត្ថបទពេញលេញ (English)";
+
 return $lang;
 

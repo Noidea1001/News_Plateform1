@@ -42,10 +42,16 @@ CREATE TABLE IF NOT EXISTS `subscribers` (
 CREATE TABLE IF NOT EXISTS `articles` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `title` VARCHAR(255) NOT NULL,
+  `title_kh` VARCHAR(255) NULL,
+  `title_en` VARCHAR(255) NULL,
   `slug` VARCHAR(255) NOT NULL UNIQUE,
   `summary` TEXT NOT NULL,
+  `summary_kh` TEXT NULL,
+  `summary_en` TEXT NULL,
   `content` LONGTEXT NOT NULL,
-  `featured_image` VARCHAR(255) NULL,
+  `content_kh` LONGTEXT NULL,
+  `content_en` LONGTEXT NULL,
+  `featured_image` VARCHAR(500) NULL,
   `video_embed_url` VARCHAR(255) NULL,
   `audio_embed_url` VARCHAR(500) NULL,
   `gallery_images` TEXT NULL,
@@ -92,6 +98,29 @@ CREATE TABLE IF NOT EXISTS `comments` (
   INDEX `idx_comments_article` (`article_id`),
   INDEX `idx_comments_parent` (`parent_id`),
   INDEX `idx_comments_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 7. Readers Table (Public Reader Registration & Authentication)
+CREATE TABLE IF NOT EXISTS `readers` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `name` VARCHAR(100) NOT NULL,
+  `email` VARCHAR(120) NOT NULL UNIQUE,
+  `password_hash` VARCHAR(255) NOT NULL,
+  `avatar_url` VARCHAR(255) NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX `idx_readers_email` (`email`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- 8. Notifications Table (Real-Time Breaking & News Alerts for Readers)
+CREATE TABLE IF NOT EXISTS `notifications` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `article_id` INT NOT NULL,
+  `title` VARCHAR(255) NOT NULL,
+  `message` TEXT NOT NULL,
+  `type` ENUM('breaking', 'published', 'system') NOT NULL DEFAULT 'published',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`article_id`) REFERENCES `articles`(`id`) ON DELETE CASCADE,
+  INDEX `idx_notif_created` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Initial Seed Data

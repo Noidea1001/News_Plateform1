@@ -118,6 +118,47 @@ class Database
                 if (!in_array('has_drop_cap', $existingColumns, true)) {
                     $this->pdo->exec("ALTER TABLE articles ADD COLUMN `has_drop_cap` TINYINT(1) NOT NULL DEFAULT 0");
                 }
+                if (!in_array('title_kh', $existingColumns, true)) {
+                    $this->pdo->exec("ALTER TABLE articles ADD COLUMN `title_kh` VARCHAR(255) NULL AFTER `title`");
+                }
+                if (!in_array('title_en', $existingColumns, true)) {
+                    $this->pdo->exec("ALTER TABLE articles ADD COLUMN `title_en` VARCHAR(255) NULL AFTER `title_kh`");
+                }
+                if (!in_array('summary_kh', $existingColumns, true)) {
+                    $this->pdo->exec("ALTER TABLE articles ADD COLUMN `summary_kh` TEXT NULL AFTER `summary`");
+                }
+                if (!in_array('summary_en', $existingColumns, true)) {
+                    $this->pdo->exec("ALTER TABLE articles ADD COLUMN `summary_en` TEXT NULL AFTER `summary_kh`");
+                }
+                if (!in_array('content_kh', $existingColumns, true)) {
+                    $this->pdo->exec("ALTER TABLE articles ADD COLUMN `content_kh` LONGTEXT NULL AFTER `content`");
+                }
+                if (!in_array('content_en', $existingColumns, true)) {
+                    $this->pdo->exec("ALTER TABLE articles ADD COLUMN `content_en` LONGTEXT NULL AFTER `content_kh`");
+                }
+
+                // Sync existing articles into dedicated title_kh / title_en columns if empty
+                $unsynced = $this->fetchAll("SELECT id, title, summary, content FROM articles WHERE title_kh IS NULL OR title_en IS NULL");
+                foreach ($unsynced as $uArt) {
+                    $tKh = function_exists('article_title') ? article_title($uArt['title'], 'kh') : $uArt['title'];
+                    $tEn = function_exists('article_title') ? article_title($uArt['title'], 'en') : $uArt['title'];
+                    $sKh = function_exists('article_summary') ? article_summary($uArt['summary'], 'kh') : $uArt['summary'];
+                    $sEn = function_exists('article_summary') ? article_summary($uArt['summary'], 'en') : $uArt['summary'];
+                    $cKh = function_exists('parse_dual_lang') ? parse_dual_lang($uArt['content'], 'kh') : $uArt['content'];
+                    $cEn = function_exists('parse_dual_lang') ? parse_dual_lang($uArt['content'], 'en') : $uArt['content'];
+                    $this->execute(
+                        "UPDATE articles SET title_kh = :tkh, title_en = :ten, summary_kh = :skh, summary_en = :sen, content_kh = :ckh, content_en = :cen WHERE id = :id",
+                        [
+                            'tkh' => $tKh,
+                            'ten' => $tEn,
+                            'skh' => $sKh,
+                            'sen' => $sEn,
+                            'ckh' => $cKh,
+                            'cen' => $cEn,
+                            'id' => $uArt['id']
+                        ]
+                    );
+                }
             }
 
             // Ensure comments table exists
@@ -137,6 +178,47 @@ class Database
                 INDEX `idx_comments_parent` (`parent_id`),
                 INDEX `idx_comments_status` (`status`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+            // Ensure readers (public users) table exists
+            $this->pdo->exec("CREATE TABLE IF NOT EXISTS `readers` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `name` VARCHAR(100) NOT NULL,
+                `email` VARCHAR(120) NOT NULL UNIQUE,
+                `password_hash` VARCHAR(255) NOT NULL,
+                `avatar_url` VARCHAR(255) NULL,
+                `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                INDEX `idx_readers_email` (`email`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+            // Ensure notifications table exists
+            $this->pdo->exec("CREATE TABLE IF NOT EXISTS `notifications` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `article_id` INT NOT NULL,
+                `title` VARCHAR(255) NOT NULL,
+                `message` TEXT NOT NULL,
+                `type` ENUM('breaking', 'published', 'system') NOT NULL DEFAULT 'published',
+                `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (`article_id`) REFERENCES `articles`(`id`) ON DELETE CASCADE,
+                INDEX `idx_notif_created` (`created_at`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+            // Seed initial notifications if empty
+            $notifCount = (int)$this->fetchColumn("SELECT COUNT(*) FROM notifications");
+            if ($notifCount === 0) {
+                $recentNews = $this->fetchAll("SELECT id, title, summary, is_breaking FROM articles WHERE status = 'published' ORDER BY published_at DESC LIMIT 3");
+                foreach ($recentNews as $rNews) {
+                    $notifType = ((int)$rNews['is_breaking'] === 1) ? 'breaking' : 'published';
+                    $this->execute(
+                        "INSERT INTO notifications (article_id, title, message, type, created_at) VALUES (:aid, :title, :msg, :type, NOW())",
+                        [
+                            'aid' => (int)$rNews['id'],
+                            'title' => $rNews['title'],
+                            'msg' => mb_strimwidth(strip_tags($rNews['summary']), 0, 120, '...'),
+                            'type' => $notifType
+                        ]
+                    );
+                }
+            }
 
             // Seed sample reader comments if table is empty
             $commentCount = (int)$this->fetchColumn("SELECT COUNT(*) FROM comments");

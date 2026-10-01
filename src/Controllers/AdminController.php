@@ -167,10 +167,48 @@ class AdminController
         }
 
         $id = !empty($postData['id']) ? (int)$postData['id'] : null;
+        
+        // Bilingual 2-Field Processing: Khmer & English
+        $titleKh = trim($postData['title_kh'] ?? '');
+        $titleEn = trim($postData['title_en'] ?? '');
         $title = trim($postData['title'] ?? '');
-        $providedSlug = trim($postData['slug'] ?? '');
+        if (empty($title)) {
+            $title = $titleKh !== '' ? $titleKh : $titleEn;
+        }
+        if ($titleKh === '') {
+            $titleKh = $title;
+        }
+        if ($titleEn === '') {
+            $titleEn = $title;
+        }
+
+        $summaryKh = trim($postData['summary_kh'] ?? '');
+        $summaryEn = trim($postData['summary_en'] ?? '');
         $summary = trim($postData['summary'] ?? '');
+        if (empty($summary)) {
+            $summary = $summaryKh !== '' ? $summaryKh : $summaryEn;
+        }
+        if ($summaryKh === '') {
+            $summaryKh = $summary;
+        }
+        if ($summaryEn === '') {
+            $summaryEn = $summary;
+        }
+
+        $contentKh = trim($postData['content_kh'] ?? '');
+        $contentEn = trim($postData['content_en'] ?? '');
         $content = trim($postData['content'] ?? '');
+        if (empty($content)) {
+            $content = $contentKh !== '' ? $contentKh : $contentEn;
+        }
+        if ($contentKh === '') {
+            $contentKh = $content;
+        }
+        if ($contentEn === '') {
+            $contentEn = $content;
+        }
+
+        $providedSlug = trim($postData['slug'] ?? '');
         $categoryId = (int)($postData['category_id'] ?? 0);
         $authorId = !empty($postData['author_id']) ? (int)$postData['author_id'] : $user['id'];
         $templateType = in_array($postData['template_type'] ?? '', ['standard', 'investigative', 'opinion'], true)
@@ -196,8 +234,8 @@ class AdminController
             exit;
         }
 
-        // Slug generation & sanitization
-        $slugBase = !empty($providedSlug) ? $providedSlug : $title;
+        // Slug generation & sanitization (prefer English title for clean ASCII URL slug)
+        $slugBase = !empty($providedSlug) ? $providedSlug : ($titleEn ?: $title);
         $slug = $this->generateUniqueSlug($slugBase, $id);
 
         // Featured Image Upload Processing
@@ -261,9 +299,15 @@ class AdminController
             // Update
             $sql = "UPDATE articles SET 
                         title = :title,
+                        title_kh = :title_kh,
+                        title_en = :title_en,
                         slug = :slug,
                         summary = :summary,
+                        summary_kh = :summary_kh,
+                        summary_en = :summary_en,
                         content = :content,
+                        content_kh = :content_kh,
+                        content_en = :content_en,
                         featured_image = :featured_image,
                         video_embed_url = :video_embed_url,
                         audio_embed_url = :audio_embed_url,
@@ -281,9 +325,15 @@ class AdminController
 
             $this->db->execute($sql, [
                 'title' => $title,
+                'title_kh' => $titleKh,
+                'title_en' => $titleEn,
                 'slug' => $slug,
                 'summary' => $summary,
+                'summary_kh' => $summaryKh,
+                'summary_en' => $summaryEn,
                 'content' => $content,
+                'content_kh' => $contentKh,
+                'content_en' => $contentEn,
                 'featured_image' => $featuredImage,
                 'video_embed_url' => $videoEmbedUrl ?: null,
                 'audio_embed_url' => $audioEmbedUrl ?: null,
@@ -300,21 +350,32 @@ class AdminController
                 'id' => $id
             ]);
 
+            // Real-time reader notification if published
+            if ($status === 'published') {
+                $this->dispatchArticleNotification($id, $titleKh, $titleEn, $title, $summaryKh, $summaryEn, $content, (bool)$isBreaking);
+            }
+
             $msg = ($status === 'draft') ? 'Article draft successfully updated!' : 'Article successfully updated!';
             header("Location: " . url("admin/dashboard.php?msg=" . urlencode($msg)));
             exit;
         } else {
             // Create
             $sql = "INSERT INTO articles 
-                    (title, slug, summary, content, featured_image, video_embed_url, audio_embed_url, gallery_images, reference_url, reference_source_name, category_id, author_id, template_type, is_breaking, has_drop_cap, status, published_at, created_at)
+                    (title, title_kh, title_en, slug, summary, summary_kh, summary_en, content, content_kh, content_en, featured_image, video_embed_url, audio_embed_url, gallery_images, reference_url, reference_source_name, category_id, author_id, template_type, is_breaking, has_drop_cap, status, published_at, created_at)
                     VALUES
-                    (:title, :slug, :summary, :content, :featured_image, :video_embed_url, :audio_embed_url, :gallery_images, :reference_url, :reference_source_name, :category_id, :author_id, :template_type, :is_breaking, :has_drop_cap, :status, :published_at, NOW())";
+                    (:title, :title_kh, :title_en, :slug, :summary, :summary_kh, :summary_en, :content, :content_kh, :content_en, :featured_image, :video_embed_url, :audio_embed_url, :gallery_images, :reference_url, :reference_source_name, :category_id, :author_id, :template_type, :is_breaking, :has_drop_cap, :status, :published_at, NOW())";
 
             $this->db->execute($sql, [
                 'title' => $title,
+                'title_kh' => $titleKh,
+                'title_en' => $titleEn,
                 'slug' => $slug,
                 'summary' => $summary,
+                'summary_kh' => $summaryKh,
+                'summary_en' => $summaryEn,
                 'content' => $content,
+                'content_kh' => $contentKh,
+                'content_en' => $contentEn,
                 'featured_image' => $featuredImage,
                 'video_embed_url' => $videoEmbedUrl ?: null,
                 'audio_embed_url' => $audioEmbedUrl ?: null,
@@ -329,6 +390,13 @@ class AdminController
                 'status' => $status,
                 'published_at' => $publishedAt,
             ]);
+
+            $newArticleId = (int)$this->db->lastInsertId();
+
+            // Real-time reader notification if published
+            if ($status === 'published' && $newArticleId > 0) {
+                $this->dispatchArticleNotification($newArticleId, $titleKh, $titleEn, $title, $summaryKh, $summaryEn, $content, (bool)$isBreaking);
+            }
 
             $msg = ($status === 'draft') ? 'New article draft successfully saved!' : 'New article post successfully created!';
             header("Location: " . url("admin/dashboard.php?msg=" . urlencode($msg)));
@@ -754,6 +822,39 @@ class AdminController
 
         echo json_encode(['url' => $uploaded]);
         exit;
+    }
+
+    /**
+     * Helper to dispatch real-time reader notifications upon article publication
+     */
+    private function dispatchArticleNotification(int $articleId, string $titleKh, string $titleEn, string $title, string $summaryKh, string $summaryEn, string $content, bool $isBreaking): void
+    {
+        try {
+            $notifTitle = !empty($titleKh) && !empty($titleEn) && $titleKh !== $titleEn
+                ? "{$titleKh} | {$titleEn}"
+                : ($titleKh ?: ($titleEn ?: $title));
+            $notifMsg = !empty($summaryKh) 
+                ? $summaryKh 
+                : (!empty($summaryEn) ? $summaryEn : mb_substr(strip_tags($content), 0, 150));
+            $notifType = $isBreaking ? 'breaking' : 'news';
+
+            if ($articleId > 0) {
+                $existingNotif = $this->db->fetch("SELECT id FROM notifications WHERE article_id = :aid", ['aid' => $articleId]);
+                if (!$existingNotif) {
+                    $this->db->execute(
+                        "INSERT INTO notifications (article_id, title, message, type, created_at) VALUES (:aid, :title, :message, :type, NOW())",
+                        [
+                            'aid' => $articleId,
+                            'title' => mb_substr($notifTitle, 0, 250),
+                            'message' => mb_substr($notifMsg, 0, 250),
+                            'type' => $notifType
+                        ]
+                    );
+                }
+            }
+        } catch (\Throwable $ne) {
+            error_log("Failed to dispatch notification for article {$articleId}: " . $ne->getMessage());
+        }
     }
 }
 

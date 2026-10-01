@@ -352,5 +352,52 @@ $lang['category_analytics'] = "Category Readership Distribution";
 $lang['category_analytics_sub'] = "Total views and article volume grouped by editorial topic";
 $lang['avg_views_per_story'] = "Avg Views / Story";
 
+// 16. News Archive & Historical Records (បណ្ណសារព័ត៌មាន)
+$lang['nav_archive'] = "News Archive";
+$lang['archive_title'] = "Editorial News Archive";
+$lang['archive_tagline'] = "Search, filter, and explore verified historical news dispatches";
+$lang['filter_year'] = "Year";
+$lang['filter_month'] = "Month";
+$lang['all_years'] = "All Years";
+$lang['all_months'] = "All Months";
+$lang['filter_topic'] = "Topic";
+$lang['all_topics'] = "All Topics";
+$lang['filter_format'] = "Blueprint Format";
+$lang['all_formats'] = "All Formats";
+$lang['sort_by'] = "Sort By";
+$lang['sort_newest'] = "Newest First";
+$lang['sort_oldest'] = "Oldest First";
+$lang['sort_popular'] = "Most Read";
+$lang['breaking_only'] = "Breaking Only";
+$lang['reset_filters'] = "Reset Filters";
+$lang['archived_articles_found'] = "Found :count archived dispatches";
+$lang['no_archive_match'] = "No archived articles match your chosen filters.";
+
+// 17. Reader Authentication & Notifications
+$lang['reader_signin'] = "Sign In";
+$lang['reader_register'] = "Register";
+$lang['reader_account'] = "Reader Account";
+$lang['reader_signout'] = "Sign Out";
+$lang['reader_profile'] = "Reader Profile";
+$lang['notifications_title'] = "News Alerts & Notifications";
+$lang['mark_all_read'] = "Mark all as read";
+$lang['no_notifications'] = "No news alerts at this time.";
+$lang['breaking_alert'] = "Breaking Alert";
+$lang['published_alert'] = "New Story Published";
+$lang['create_account_title'] = "Create Free Reader Account";
+$lang['create_account_desc'] = "Save your favorite dispatches and get instant news alerts.";
+$lang['have_account'] = "Already have an account?";
+$lang['need_account'] = "Don't have an account yet?";
+$lang['login_reader_title'] = "Reader Sign In";
+$lang['login_reader_desc'] = "Access your personalized news alerts and saved reading list.";
+
+// 18. Admin 2-Field Bilingual Inputs
+$lang['title_kh_label'] = "Article Title (Khmer ភាសាខ្មែរ)";
+$lang['title_en_label'] = "Article Title (English)";
+$lang['summary_kh_label'] = "Summary Lead (Khmer ភាសាខ្មែរ)";
+$lang['summary_en_label'] = "Summary Lead (English)";
+$lang['content_kh_label'] = "Article Body Content (Khmer ភាសាខ្មែរ)";
+$lang['content_en_label'] = "Article Body Content (English)";
+
 return $lang;
 

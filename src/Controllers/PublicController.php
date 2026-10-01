@@ -9,6 +9,7 @@ namespace App\Controllers;
 
 use App\Core\Database;
 use App\Core\TemplateEngine;
+use App\Core\Auth;
 use Exception;
 
 require_once __DIR__ . '/../Core/helpers.php';
@@ -396,6 +397,271 @@ class PublicController
             'success' => true,
             'likes_count' => $newLikes
         ];
+    }
+
+    /**
+     * News Archive Page ("បណ្ណសារព័ត៌មាន") View with Multi-Filtering
+     */
+    public function archive(): void
+    {
+        // 1. Fetch available filter options
+        $categories = $this->db->fetchAll("SELECT * FROM categories ORDER BY name ASC");
+        
+        $yearsRaw = $this->db->fetchAll(
+            "SELECT DISTINCT YEAR(published_at) as yr 
+             FROM articles 
+             WHERE status = 'published' AND published_at IS NOT NULL 
+             ORDER BY yr DESC"
+        );
+        $years = array_filter(array_map(fn($r) => (int)$r['yr'], $yearsRaw));
+        if (empty($years)) {
+            $years = [(int)date('Y')];
+        }
+
+        // 2. Parse active filter parameters
+        $categoryId = !empty($_GET['category']) ? (int)$_GET['category'] : 0;
+        $year = !empty($_GET['year']) ? (int)$_GET['year'] : 0;
+        $month = !empty($_GET['month']) ? (int)$_GET['month'] : 0;
+        $blueprint = trim($_GET['blueprint'] ?? '');
+        $isBreaking = isset($_GET['breaking']) && $_GET['breaking'] === '1' ? 1 : null;
+        $searchQuery = trim($_GET['q'] ?? '');
+        $sort = trim($_GET['sort'] ?? 'newest');
+        $currentPage = max(1, (int)($_GET['page'] ?? 1));
+        $perPage = 12;
+
+        // 3. Dynamic SQL Query Construction
+        $where = ["a.status = 'published'"];
+        $params = [];
+
+        if ($categoryId > 0) {
+            $where[] = "a.category_id = :cat_id";
+            $params['cat_id'] = $categoryId;
+        }
+
+        if ($year > 0) {
+            $where[] = "YEAR(a.published_at) = :yr";
+            $params['yr'] = $year;
+        }
+
+        if ($month >= 1 && $month <= 12) {
+            $where[] = "MONTH(a.published_at) = :mo";
+            $params['mo'] = $month;
+        }
+
+        if (in_array($blueprint, ['standard', 'investigative', 'opinion'], true)) {
+            $where[] = "a.template_type = :tpl";
+            $params['tpl'] = $blueprint;
+        }
+
+        if ($isBreaking === 1) {
+            $where[] = "a.is_breaking = 1";
+        }
+
+        if ($searchQuery !== '') {
+            $where[] = "(a.title LIKE :s1 OR a.summary LIKE :s2 OR a.content LIKE :s3 OR a.title_kh LIKE :s4 OR a.title_en LIKE :s5)";
+            $term = "%{$searchQuery}%";
+            $params['s1'] = $term;
+            $params['s2'] = $term;
+            $params['s3'] = $term;
+            $params['s4'] = $term;
+            $params['s5'] = $term;
+        }
+
+        $whereSql = "WHERE " . implode(" AND ", $where);
+
+        // Sorting
+        $orderBy = match ($sort) {
+            'oldest' => "a.published_at ASC",
+            'views' => "a.views_count DESC, a.published_at DESC",
+            'alpha' => "a.title ASC",
+            default => "a.published_at DESC",
+        };
+
+        // 4. Pagination & Count
+        $totalCount = (int)$this->db->fetchColumn(
+            "SELECT COUNT(*) FROM articles a {$whereSql}",
+            $params
+        );
+        $totalPages = max(1, (int)ceil($totalCount / $perPage));
+        if ($currentPage > $totalPages) {
+            $currentPage = $totalPages;
+        }
+        $offset = ($currentPage - 1) * $perPage;
+
+        // 5. Fetch Paginated Records
+        $articles = $this->db->fetchAll(
+            "SELECT a.*, c.name as category_name, c.slug as category_slug, u.username as author_name, u.role as author_role 
+             FROM articles a 
+             JOIN categories c ON a.category_id = c.id 
+             JOIN users u ON a.author_id = u.id 
+             {$whereSql} 
+             ORDER BY {$orderBy} LIMIT {$perPage} OFFSET {$offset}",
+            $params
+        );
+
+        // Attach reading time estimation and time ago
+        foreach ($articles as &$art) {
+            $words = str_word_count(strip_tags($art['content'] ?? ''));
+            $art['reading_time'] = max(1, (int)ceil($words / 200));
+            $art['time_ago'] = TemplateEngine::timeAgo($art['published_at'] ?? $art['created_at']);
+        }
+        unset($art);
+
+        $this->templateEngine->renderPage('views/archive.php', [
+            'pageTitle' => __('archive_page_title') . ' | ' . __('app_name'),
+            'categories' => $categories,
+            'years' => $years,
+            'articles' => $articles,
+            'totalCount' => $totalCount,
+            'currentPage' => $currentPage,
+            'totalPages' => $totalPages,
+            'filters' => [
+                'category' => $categoryId,
+                'year' => $year,
+                'month' => $month,
+                'blueprint' => $blueprint,
+                'breaking' => $isBreaking,
+                'q' => $searchQuery,
+                'sort' => $sort,
+            ],
+            'csrfToken' => Auth::generateCsrfToken(),
+        ], 'public');
+    }
+
+    /**
+     * Reader Notifications JSON API (for real-time bell dropdown)
+     */
+    public function notificationsApi(): void
+    {
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        header('Content-Type: application/json; charset=utf-8');
+
+        $notifications = $this->db->fetchAll(
+            "SELECT n.*, a.slug as article_slug, a.featured_image 
+             FROM notifications n 
+             LEFT JOIN articles a ON n.article_id = a.id 
+             ORDER BY n.created_at DESC LIMIT 15"
+        );
+
+        foreach ($notifications as &$n) {
+            $n['time_ago'] = TemplateEngine::timeAgo($n['created_at']);
+            $n['article_url'] = !empty($n['article_slug']) ? url('article.php?slug=' . urlencode($n['article_slug'])) : url('archive.php');
+        }
+        unset($n);
+
+        echo json_encode([
+            'success' => true,
+            'count' => count($notifications),
+            'notifications' => $notifications
+        ]);
+        exit;
+    }
+
+    /**
+     * Public Reader Registration Page View
+     */
+    public function showRegister(): void
+    {
+        if (Auth::readerCheck()) {
+            header('Location: ' . url('index.php'));
+            exit;
+        }
+
+        $this->templateEngine->renderPage('views/reader-register.php', [
+            'pageTitle' => __('create_account') . ' | ' . __('app_name'),
+            'csrfToken' => Auth::generateCsrfToken(),
+            'error' => $_GET['error'] ?? null,
+            'msg' => $_GET['msg'] ?? null,
+        ], 'public');
+    }
+
+    /**
+     * Public Reader Registration POST Action
+     */
+    public function registerReader(array $postData): void
+    {
+        if (!Auth::verifyCsrfToken($postData['csrf_token'] ?? '')) {
+            header('Location: ' . url('register.php?error=' . urlencode('Security validation failed (Invalid CSRF token).')));
+            exit;
+        }
+
+        $name = trim($postData['name'] ?? '');
+        $email = trim($postData['email'] ?? '');
+        $password = $postData['password'] ?? '';
+        $confirmPassword = $postData['password_confirm'] ?? '';
+
+        if ($password !== $confirmPassword) {
+            header('Location: ' . url('register.php?error=' . urlencode('Passwords do not match.')));
+            exit;
+        }
+
+        $result = Auth::readerRegister($name, $email, $password);
+        if (!$result['success']) {
+            header('Location: ' . url('register.php?error=' . urlencode($result['message'])));
+            exit;
+        }
+
+        header('Location: ' . url('index.php?msg=' . urlencode('Welcome, ' . $name . '! Your reader account has been created.')));
+        exit;
+    }
+
+    /**
+     * Public Reader Login Page View
+     */
+    public function showLogin(): void
+    {
+        if (Auth::readerCheck()) {
+            header('Location: ' . url('index.php'));
+            exit;
+        }
+
+        $this->templateEngine->renderPage('views/reader-login.php', [
+            'pageTitle' => __('sign_in') . ' | ' . __('app_name'),
+            'csrfToken' => Auth::generateCsrfToken(),
+            'error' => $_GET['error'] ?? null,
+            'msg' => $_GET['msg'] ?? null,
+        ], 'public');
+    }
+
+    /**
+     * Public Reader Login POST Action
+     */
+    public function loginReader(array $postData): void
+    {
+        if (!Auth::verifyCsrfToken($postData['csrf_token'] ?? '')) {
+            header('Location: ' . url('login.php?error=' . urlencode('Security validation failed (Invalid CSRF token).')));
+            exit;
+        }
+
+        $email = trim($postData['email'] ?? '');
+        $password = $postData['password'] ?? '';
+
+        if (empty($email) || empty($password)) {
+            header('Location: ' . url('login.php?error=' . urlencode('Email and password are required.')));
+            exit;
+        }
+
+        $success = Auth::readerLogin($email, $password);
+        if (!$success) {
+            header('Location: ' . url('login.php?error=' . urlencode('Invalid email or password. Please try again.')));
+            exit;
+        }
+
+        $reader = Auth::reader();
+        header('Location: ' . url('index.php?msg=' . urlencode('Welcome back, ' . ($reader['name'] ?? 'Reader') . '!')));
+        exit;
+    }
+
+    /**
+     * Public Reader Logout Action
+     */
+    public function logoutReader(): void
+    {
+        Auth::readerLogout();
+        header('Location: ' . url('index.php?msg=' . urlencode('You have been logged out successfully.')));
+        exit;
     }
 }
 ?>

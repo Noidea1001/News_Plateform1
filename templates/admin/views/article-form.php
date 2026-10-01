@@ -51,21 +51,41 @@ $formAction = url('admin/actions/save-article.php');
 
                 <div class="card border-0 shadow-sm p-4 mb-4">
 
-                    <!-- Article Title -->
-                    <div class="mb-3">
-                        <div class="d-flex align-items-center justify-content-between mb-1">
-                            <label for="title" class="form-label fw-bold text-dark mb-0"><?= __('article_title') ?> <span
-                                     class="text-danger">*</span></label>
+                    <!-- Article Title: 2 Separate Fields (KH & EN) -->
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="form-label fw-bold text-dark mb-0"><?= __('article_title') ?> <span class="text-danger">*</span></span>
                             <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-2xs fw-bold px-2 py-0.5">
                                 <?= __('dual_language_support_badge') ?>
                             </span>
                         </div>
-                        <input type="text" class="form-control form-control-lg" id="title" name="title"
-                            value="<?= e($article['title'] ?? '') ?>" placeholder="<?= e(__('title_placeholder')) ?>"
-                            required>
-                        <div class="text-muted text-xs mt-1">
-                            <?= __('manual_translation_hint_title') ?>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="title_kh" class="form-label small fw-bold text-dark mb-1 d-flex align-items-center gap-1.5">
+                                    <span class="badge bg-danger text-white text-2xs px-1.5 py-0.5 rounded">KH</span>
+                                    <span><?= __('article_title_kh') ?> <span class="text-danger">*</span></span>
+                                </label>
+                                <input type="text" class="form-control form-control-lg fs-6" id="title_kh" name="title_kh"
+                                    value="<?= e($article['title_kh'] ?? $article['title'] ?? '') ?>" placeholder="<?= e(__('title_kh_placeholder')) ?>"
+                                    required>
+                                <div class="text-muted text-2xs mt-1">
+                                    ឧទាហរណ៍៖ កម្ពុជាសម្រេចបានសមិទ្ធផលថ្មីក្នុងវិស័យបច្ចេកវិទ្យា
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="title_en" class="form-label small fw-bold text-dark mb-1 d-flex align-items-center gap-1.5">
+                                    <span class="badge bg-primary text-white text-2xs px-1.5 py-0.5 rounded">EN</span>
+                                    <span><?= __('article_title_en') ?> <span class="text-danger">*</span></span>
+                                </label>
+                                <input type="text" class="form-control form-control-lg fs-6" id="title_en" name="title_en"
+                                    value="<?= e($article['title_en'] ?? $article['title'] ?? '') ?>" placeholder="<?= e(__('title_en_placeholder')) ?>">
+                                <div class="text-muted text-2xs mt-1">
+                                    e.g. Cambodia achieves historic milestones in national technology sector
+                                </div>
+                            </div>
                         </div>
+                        <!-- Hidden composite title for backwards compatibility -->
+                        <input type="hidden" id="title" name="title" value="<?= e($article['title'] ?? '') ?>">
                     </div>
 
                     <div class="mb-4">
@@ -81,18 +101,36 @@ $formAction = url('admin/actions/save-article.php');
                         </div>
                     </div>
 
+                    <!-- Article Summary: 2 Separate Fields (KH & EN) -->
                     <div class="mb-4">
-                        <div class="d-flex align-items-center justify-content-between mb-1">
-                            <label for="summary" class="form-label fw-bold text-dark mb-0"><?= __('summary_label') ?></label>
+                        <div class="d-flex align-items-center justify-content-between mb-2">
+                            <span class="form-label fw-bold text-dark mb-0"><?= __('summary_label') ?></span>
                             <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-2xs fw-bold px-2 py-0.5">
                                 <?= __('dual_language_support_badge') ?>
                             </span>
                         </div>
-                        <textarea class="form-control" id="summary" name="summary" rows="3"
-                            placeholder="<?= __('summary_placeholder') ?>"><?= e($article['summary'] ?? '') ?></textarea>
-                        <div class="text-muted text-xs mt-1">
-                            <?= __('manual_translation_hint_summary') ?>
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="summary_kh" class="form-label small fw-bold text-dark mb-1 d-flex align-items-center gap-1.5">
+                                    <span class="badge bg-danger text-white text-2xs px-1.5 py-0.5 rounded">KH</span>
+                                    <span><?= __('summary_kh_label') ?></span>
+                                </label>
+                                <textarea class="form-control" id="summary_kh" name="summary_kh" rows="3"
+                                    placeholder="<?= e(__('summary_kh_placeholder')) ?>"><?= e($article['summary_kh'] ?? $article['summary'] ?? '') ?></textarea>
+                                <div class="text-muted text-2xs mt-1">សេចក្ដីសង្ខេបខ្លីសម្រាប់ទំព័រដើម និងការស្វែងរក</div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="summary_en" class="form-label small fw-bold text-dark mb-1 d-flex align-items-center gap-1.5">
+                                    <span class="badge bg-primary text-white text-2xs px-1.5 py-0.5 rounded">EN</span>
+                                    <span><?= __('summary_en_label') ?></span>
+                                </label>
+                                <textarea class="form-control" id="summary_en" name="summary_en" rows="3"
+                                    placeholder="<?= e(__('summary_en_placeholder')) ?>"><?= e($article['summary_en'] ?? $article['summary'] ?? '') ?></textarea>
+                                <div class="text-muted text-2xs mt-1">Short executive teaser for home feeds and metadata</div>
+                            </div>
                         </div>
+                        <!-- Hidden composite summary for backwards compatibility -->
+                        <textarea class="d-none" id="summary" name="summary"><?= e($article['summary'] ?? '') ?></textarea>
                     </div>
 
                     <!-- Content Media Reference Helper Panel (Images & Videos) -->
@@ -190,20 +228,26 @@ $formAction = url('admin/actions/save-article.php');
                         </div>
                     </div>
 
-                    <!-- Main Content Body (Quill WYSIWYG Integration) -->
+                    <!-- Main Content Body (Bilingual Dual Quill WYSIWYG Integration) -->
                     <div class="mb-3">
                         <div class="d-flex flex-wrap justify-content-between align-items-center mb-2 gap-2">
-                            <label class="form-label fw-bold text-dark mb-0 d-flex align-items-center gap-2">
-                                <span><?= __('article_body_label') ?> <span
-                                        class="text-danger">*</span></span>
-                                <span
-                                    class="badge bg-light text-secondary border fw-normal"><?= __('rich_editor_badge') ?></span>
-                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-2xs fw-bold px-2 py-0.5">
-                                    <?= __('dual_language_badge') ?>
-                                </span>
-                            </label>
+                            <div class="d-flex align-items-center gap-2">
+                                <label class="form-label fw-bold text-dark mb-0"><?= __('article_body_label') ?> <span class="text-danger">*</span></label>
+                                <ul class="nav nav-pills bg-light p-1 rounded-3 border" id="editorLangTabs" role="tablist" style="font-size: 0.85rem;">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active py-1 px-3 fw-bold rounded-2 text-danger" id="tab-kh-btn" data-bs-toggle="pill" data-bs-target="#tab-editor-kh" type="button" role="tab">
+                                            🇰🇭 <?= __('content_kh_label') ?>
+                                        </button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link py-1 px-3 fw-bold rounded-2 text-primary" id="tab-en-btn" data-bs-toggle="pill" data-bs-target="#tab-editor-en" type="button" role="tab">
+                                            🇬🇧 <?= __('content_en_label') ?>
+                                        </button>
+                                    </li>
+                                </ul>
+                            </div>
 
-                            <!-- Manual Drop-Cap Toggle Switch (No bg, no border) -->
+                            <!-- Manual Drop-Cap Toggle Switch -->
                             <div class="form-check form-switch m-0 p-0 d-inline-flex align-items-center">
                                 <input class="form-check-input ms-0 me-2 cursor-pointer" type="checkbox"
                                     id="has_drop_cap" name="has_drop_cap" value="1"
@@ -215,14 +259,36 @@ $formAction = url('admin/actions/save-article.php');
                             </div>
                         </div>
 
-                        <!-- Quill Editor Container -->
-                        <div id="quillEditor" class="bg-white rounded-bottom"
-                            style="min-height: 280px; font-size: 1.05rem;">
-                            <?= $article['content'] ?? '' ?>
+                        <!-- Tab Panes for KH and EN Editors -->
+                        <div class="tab-content" id="editorLangTabsContent">
+                            <!-- Khmer Editor Pane -->
+                            <div class="tab-pane fade show active" id="tab-editor-kh" role="tabpanel">
+                                <div class="bg-light px-3 py-1.5 border border-bottom-0 rounded-top text-xs fw-semibold text-danger d-flex align-items-center justify-content-between">
+                                    <span><i class="bi bi-translate me-1"></i> អត្ថបទភាសាខ្មែរ (Khmer Article Content)</span>
+                                    <span class="badge bg-danger text-white text-2xs">Primary</span>
+                                </div>
+                                <div id="quillEditorKh" class="bg-white rounded-bottom" style="min-height: 280px; font-size: 1.05rem;">
+                                    <?= $article['content_kh'] ?? $article['content'] ?? '' ?>
+                                </div>
+                                <textarea class="d-none" id="content_kh" name="content_kh"><?= e($article['content_kh'] ?? $article['content'] ?? '') ?></textarea>
+                            </div>
+
+                            <!-- English Editor Pane -->
+                            <div class="tab-pane fade" id="tab-editor-en" role="tabpanel">
+                                <div class="bg-light px-3 py-1.5 border border-bottom-0 rounded-top text-xs fw-semibold text-primary d-flex align-items-center justify-content-between">
+                                    <span><i class="bi bi-translate me-1"></i> English Body Content (English Article Content)</span>
+                                    <span class="badge bg-primary text-white text-2xs">English Edition</span>
+                                </div>
+                                <div id="quillEditorEn" class="bg-white rounded-bottom" style="min-height: 280px; font-size: 1.05rem;">
+                                    <?= $article['content_en'] ?? $article['content'] ?? '' ?>
+                                </div>
+                                <textarea class="d-none" id="content_en" name="content_en"><?= e($article['content_en'] ?? $article['content'] ?? '') ?></textarea>
+                            </div>
                         </div>
-                        <!-- Hidden Form Textarea Syncing with Quill -->
+
+                        <!-- Hidden Form Textarea Syncing with Quill for backwards compatibility -->
                         <textarea class="d-none" id="content" name="content"><?= e($article['content'] ?? '') ?></textarea>
-                        <div class="text-muted text-xs mt-1">
+                        <div class="text-muted text-xs mt-2">
                             <?= __('manual_translation_hint_content') ?>
                         </div>
                     </div>
@@ -471,12 +537,41 @@ $formAction = url('admin/actions/save-article.php');
 
 </div>
 
-<!-- Real-Time JavaScript Slug Generator -->
+<!-- Real-Time JavaScript Slug Generator & Bilingual Quill Setup -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const titleInput = document.getElementById('title');
+        const titleKhInput = document.getElementById('title_kh');
+        const titleEnInput = document.getElementById('title_en');
+        const compositeTitleInput = document.getElementById('title');
+        const summaryKhInput = document.getElementById('summary_kh');
+        const summaryEnInput = document.getElementById('summary_en');
+        const compositeSummaryInput = document.getElementById('summary');
+        const contentKhInput = document.getElementById('content_kh');
+        const contentEnInput = document.getElementById('content_en');
+        const compositeContentInput = document.getElementById('content');
         const slugInput = document.getElementById('slug');
         const autoBtn = document.getElementById('btnAutoSlug');
+
+        function syncTitles() {
+            const kh = titleKhInput ? titleKhInput.value.trim() : '';
+            const en = titleEnInput ? titleEnInput.value.trim() : '';
+            if (compositeTitleInput) {
+                compositeTitleInput.value = kh || en;
+            }
+        }
+
+        function syncSummaries() {
+            const kh = summaryKhInput ? summaryKhInput.value.trim() : '';
+            const en = summaryEnInput ? summaryEnInput.value.trim() : '';
+            if (compositeSummaryInput) {
+                compositeSummaryInput.value = kh || en;
+            }
+        }
+
+        if (titleKhInput) titleKhInput.addEventListener('input', syncTitles);
+        if (titleEnInput) titleEnInput.addEventListener('input', syncTitles);
+        if (summaryKhInput) summaryKhInput.addEventListener('input', syncSummaries);
+        if (summaryEnInput) summaryEnInput.addEventListener('input', syncSummaries);
 
         function slugify(text) {
             return text.toString().toLowerCase().trim()
@@ -487,23 +582,30 @@ $formAction = url('admin/actions/save-article.php');
                 .replace(/-+$/, '');            // Trim - from end of text
         }
 
-        if (titleInput && slugInput) {
-            titleInput.addEventListener('input', function () {
+        if (titleEnInput && slugInput) {
+            titleEnInput.addEventListener('input', function () {
                 if (!slugInput.dataset.userEdited) {
-                    slugInput.value = slugify(titleInput.value);
+                    const slug = slugify(titleEnInput.value);
+                    if (slug) slugInput.value = slug;
                 }
             });
+        }
 
+        if (slugInput) {
             slugInput.addEventListener('input', function () {
                 slugInput.dataset.userEdited = "true";
             });
+        }
 
-            if (autoBtn) {
-                autoBtn.addEventListener('click', function () {
-                    slugInput.value = slugify(titleInput.value);
-                    delete slugInput.dataset.userEdited;
-                });
-            }
+        if (autoBtn && slugInput) {
+            autoBtn.addEventListener('click', function () {
+                const en = titleEnInput ? titleEnInput.value.trim() : '';
+                const kh = titleKhInput ? titleKhInput.value.trim() : '';
+                const source = en || kh;
+                const slug = slugify(source);
+                slugInput.value = slug || ('article-' + Date.now());
+                delete slugInput.dataset.userEdited;
+            });
         }
 
         // Dynamic Visual Blueprint Card Picker
@@ -520,11 +622,26 @@ $formAction = url('admin/actions/save-article.php');
             });
         });
 
-        // Initialize Quill Rich Text Editor
-        if (document.getElementById('quillEditor')) {
-            const quill = new Quill('#quillEditor', {
+        function formatVideoUrl(url) {
+            url = url.trim();
+            const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_\-]+)/i);
+            if (ytMatch) {
+                return 'https://www.youtube.com/embed/' + ytMatch[1];
+            }
+            const vmMatch = url.match(/vimeo\.com\/(?:video\/)?([0-9]+)/i);
+            if (vmMatch) {
+                return 'https://player.vimeo.com/video/' + vmMatch[1];
+            }
+            return url;
+        }
+
+        function createQuillInstance(containerId, placeholderText) {
+            const el = document.getElementById(containerId);
+            if (!el) return null;
+
+            return new Quill('#' + containerId, {
                 theme: 'snow',
-                placeholder: '<?= addslashes(__('quill_placeholder')) ?>',
+                placeholder: placeholderText,
                 modules: {
                     toolbar: {
                         container: [
@@ -538,140 +655,171 @@ $formAction = url('admin/actions/save-article.php');
                         ],
                         handlers: {
                             image: function () {
-                                selectLocalImage(quill);
+                                selectLocalImage(window.activeQuill || this.quill);
                             },
                             video: function () {
+                                const targetQuill = window.activeQuill || this.quill;
                                 const url = prompt('<?= addslashes(__('js_video_prompt')) ?>');
-
-                                if (url) {
+                                if (url && targetQuill) {
                                     const embedUrl = formatVideoUrl(url);
-                                    const range = quill.getSelection(true);
-                                    const idx = (range && range.index !== undefined) ? range.index : quill.getLength();
-                                    quill.insertEmbed(idx, 'video', embedUrl);
-                                    quill.setSelection(idx + 1);
+                                    const range = targetQuill.getSelection(true);
+                                    const idx = (range && range.index !== undefined) ? range.index : targetQuill.getLength();
+                                    targetQuill.insertEmbed(idx, 'video', embedUrl);
+                                    targetQuill.setSelection(idx + 1);
                                 }
                             }
                         }
                     }
                 }
             });
+        }
 
-            window.quill = quill;
+        function selectLocalImage(quillInstance) {
+            if (!quillInstance) return;
+            const input = document.createElement('input');
+            input.setAttribute('type', 'file');
+            input.setAttribute('accept', 'image/jpeg,image/png,image/webp');
+            input.click();
 
-            function formatVideoUrl(url) {
-                url = url.trim();
-                const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_\-]+)/i);
-                if (ytMatch) {
-                    return 'https://www.youtube.com/embed/' + ytMatch[1];
-                }
-                const vmMatch = url.match(/vimeo\.com\/(?:video\/)?([0-9]+)/i);
-                if (vmMatch) {
-                    return 'https://player.vimeo.com/video/' + vmMatch[1];
-                }
-                return url;
-            }
+            input.onchange = function () {
+                const file = input.files[0];
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('image', file);
 
-            function selectLocalImage(quillInstance) {
-                const input = document.createElement('input');
-                input.setAttribute('type', 'file');
-                input.setAttribute('accept', 'image/jpeg,image/png,image/webp');
-                input.click();
+                    const range = quillInstance.getSelection(true);
 
-                input.onchange = function () {
-                    const file = input.files[0];
-                    if (file) {
-                        const formData = new FormData();
-                        formData.append('image', file);
-
-                        const range = quillInstance.getSelection(true);
-
-                        fetch('<?= url("admin/actions/upload-image.php") ?>', {
-                            method: 'POST',
-                            body: formData
+                    fetch('<?= url("admin/actions/upload-image.php") ?>', {
+                        method: 'POST',
+                        body: formData
+                    })
+                        .then(response => response.text())
+                        .then(text => {
+                            let data;
+                            try {
+                                data = JSON.parse(text);
+                            } catch (e) {
+                                throw new Error('Server error response: ' + text.replace(/<[^>]*>?/gm, '').trim().substring(0, 200));
+                            }
+                            if (data.url) {
+                                const idx = (range && range.index !== undefined) ? range.index : quillInstance.getLength();
+                                quillInstance.insertEmbed(idx, 'image', data.url);
+                                quillInstance.setSelection(idx + 1);
+                            } else {
+                                alert(data.error || 'Failed to upload image.');
+                            }
                         })
-                            .then(response => response.text())
-                            .then(text => {
-                                let data;
-                                try {
-                                    data = JSON.parse(text);
-                                } catch (e) {
-                                    throw new Error('Server error response: ' + text.replace(/<[^>]*>?/gm, '').trim().substring(0, 200));
-                                }
-                                if (data.url) {
-                                    const idx = (range && range.index !== undefined) ? range.index : quillInstance.getLength();
-                                    quillInstance.insertEmbed(idx, 'image', data.url);
-                                    quillInstance.setSelection(idx + 1);
-                                } else {
-                                    alert(data.error || 'Failed to upload image.');
-                                }
-                            })
-                            .catch(err => {
-                                alert('Upload failed: ' + err.message);
-                            });
-                    }
-                };
-            }
+                        .catch(err => {
+                            alert('Upload failed: ' + err.message);
+                        });
+                }
+            };
+        }
 
-            // Media Tag Quick Insert Handler (Images & Videos)
-            document.querySelectorAll('.insert-tag-btn, .insert-img-btn').forEach(btn => {
-                btn.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    const tag = this.getAttribute('data-tag');
-                    if (window.quill) {
-                        const range = window.quill.getSelection(true);
-                        const idx = (range && range.index !== undefined) ? range.index : window.quill.getLength();
-                        window.quill.insertText(idx, '\n' + tag + '\n');
-                        window.quill.setSelection(idx + tag.length + 2);
-                    }
-                });
+        const quillKh = createQuillInstance('quillEditorKh', 'សរសេរខ្លឹមសារអត្ថបទនៅទីនេះជាភាសាខ្មែរ (Khmer Body)...');
+        const quillEn = createQuillInstance('quillEditorEn', 'Write English article content here (English Body)...');
+
+        window.quillKh = quillKh;
+        window.quillEn = quillEn;
+        window.activeQuill = quillKh || quillEn;
+
+        // Tab Switching activeQuill
+        const tabKhBtn = document.getElementById('tab-kh-btn');
+        const tabEnBtn = document.getElementById('tab-en-btn');
+        if (tabKhBtn && quillKh) {
+            tabKhBtn.addEventListener('shown.bs.tab', function () {
+                window.activeQuill = quillKh;
             });
+        }
+        if (tabEnBtn && quillEn) {
+            tabEnBtn.addEventListener('shown.bs.tab', function () {
+                window.activeQuill = quillEn;
+            });
+        }
 
-
-            // Live sync Quill changes to hidden content textarea
-            quill.on('text-change', function () {
-                const contentInput = document.getElementById('content');
-                if (contentInput) {
-                    contentInput.value = quill.root.innerHTML;
+        // Quick Insert Media Tags Handler into activeQuill
+        document.querySelectorAll('.insert-tag-btn, .insert-img-btn').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const tag = this.getAttribute('data-tag');
+                const q = window.activeQuill || quillKh || quillEn;
+                if (q) {
+                    const range = q.getSelection(true);
+                    const idx = (range && range.index !== undefined) ? range.index : q.getLength();
+                    q.insertText(idx, '\n' + tag + '\n');
+                    q.setSelection(idx + tag.length + 2);
                 }
             });
+        });
 
-            // Initial sync
-            const contentInput = document.getElementById('content');
-            if (contentInput && quill.root.innerHTML) {
-                contentInput.value = quill.root.innerHTML;
+        function syncQuillContent() {
+            if (quillKh && contentKhInput) {
+                contentKhInput.value = quillKh.root.innerHTML;
             }
+            if (quillEn && contentEnInput) {
+                contentEnInput.value = quillEn.root.innerHTML;
+            }
+            if (compositeContentInput) {
+                const khHtml = quillKh ? quillKh.root.innerHTML : '';
+                const enHtml = quillEn ? quillEn.root.innerHTML : '';
+                const khText = quillKh ? quillKh.getText().trim() : '';
+                compositeContentInput.value = khText.length > 0 ? khHtml : enHtml;
+            }
+        }
 
-            const articleForm = document.getElementById('articleForm');
-            if (articleForm) {
-                articleForm.addEventListener('submit', function (e) {
-                    if (contentInput) {
-                        contentInput.value = quill.root.innerHTML;
-                    }
-                    const titleVal = document.getElementById('title') ? document.getElementById('title').value.trim() : '';
-                    const catVal = document.getElementById('category_id') ? document.getElementById('category_id').value : '';
-                    const quillText = quill.getText().trim();
-                    const hasMedia = quill.root.querySelector('img, video, iframe') !== null;
-                    
-                    if (!titleVal || !catVal || (!quillText && !hasMedia)) {
-                        e.preventDefault();
-                        if (typeof window.showAdminToast === 'function') {
-                            window.showAdminToast('Title, category, and article body content are required.', 'error');
-                        } else {
-                            alert('Title, category, and article body content are required.');
-                        }
-                        return false;
-                    }
-                });
+        if (quillKh) {
+            quillKh.on('text-change', syncQuillContent);
+            if (contentKhInput && quillKh.root.innerHTML) {
+                contentKhInput.value = quillKh.root.innerHTML;
             }
+        }
 
-            const btnSaveSubmit = document.getElementById('btnSaveArticleSubmit');
-            if (btnSaveSubmit && articleForm) {
-                btnSaveSubmit.addEventListener('click', function() {
-                    if (contentInput) {
-                        contentInput.value = quill.root.innerHTML;
-                    }
-                });
+        if (quillEn) {
+            quillEn.on('text-change', syncQuillContent);
+            if (contentEnInput && quillEn.root.innerHTML) {
+                contentEnInput.value = quillEn.root.innerHTML;
             }
+        }
+        syncQuillContent();
+
+        const articleForm = document.getElementById('articleForm');
+        if (articleForm) {
+            articleForm.addEventListener('submit', function (e) {
+                syncTitles();
+                syncSummaries();
+                syncQuillContent();
+
+                const titleKh = titleKhInput ? titleKhInput.value.trim() : '';
+                const titleEn = titleEnInput ? titleEnInput.value.trim() : '';
+                const catVal = document.getElementById('category_id') ? document.getElementById('category_id').value : '';
+                
+                const khText = quillKh ? quillKh.getText().trim() : '';
+                const enText = quillEn ? quillEn.getText().trim() : '';
+                const khMedia = quillKh && quillKh.root.querySelector('img, video, iframe') !== null;
+                const enMedia = quillEn && quillEn.root.querySelector('img, video, iframe') !== null;
+                
+                const hasTitle = titleKh || titleEn;
+                const hasContent = khText || enText || khMedia || enMedia;
+
+                if (!hasTitle || !catVal || !hasContent) {
+                    e.preventDefault();
+                    if (typeof window.showAdminToast === 'function') {
+                        window.showAdminToast('Title, category, and article body content are required.', 'error');
+                    } else {
+                        alert('Title, category, and article body content are required.');
+                    }
+                    return false;
+                }
+            });
+        }
+
+        const btnSaveSubmit = document.getElementById('btnSaveArticleSubmit');
+        if (btnSaveSubmit && articleForm) {
+            btnSaveSubmit.addEventListener('click', function() {
+                syncTitles();
+                syncSummaries();
+                syncQuillContent();
+            });
         }
     });
 </script>

@@ -175,6 +175,113 @@ class Auth
     }
 
     /**
+     * Check if public reader is logged in
+     */
+    public static function readerCheck(): bool
+    {
+        self::startSession();
+        return !empty($_SESSION['reader_id']);
+    }
+
+    /**
+     * Get currently logged-in reader
+     */
+    public static function reader(): ?array
+    {
+        self::startSession();
+        if (!self::readerCheck()) {
+            return null;
+        }
+
+        return [
+            'id' => (int)$_SESSION['reader_id'],
+            'name' => $_SESSION['reader_name'] ?? 'Reader',
+            'email' => $_SESSION['reader_email'] ?? '',
+            'avatar_url' => $_SESSION['reader_avatar'] ?? null,
+        ];
+    }
+
+    /**
+     * Public Reader Login
+     */
+    public static function readerLogin(string $email, string $password): bool
+    {
+        self::startSession();
+        $db = Database::getInstance();
+        $reader = $db->fetch("SELECT * FROM readers WHERE email = :email LIMIT 1", ['email' => strtolower(trim($email))]);
+        if (!$reader || !password_verify($password, $reader['password_hash'])) {
+            return false;
+        }
+
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_regenerate_id(true);
+        }
+        $_SESSION['reader_id'] = (int)$reader['id'];
+        $_SESSION['reader_name'] = $reader['name'];
+        $_SESSION['reader_email'] = $reader['email'];
+        $_SESSION['reader_avatar'] = $reader['avatar_url'] ?? null;
+        return true;
+    }
+
+    /**
+     * Public Reader Registration
+     */
+    public static function readerRegister(string $name, string $email, string $password): array
+    {
+        self::startSession();
+        $db = Database::getInstance();
+        $name = trim($name);
+        $email = strtolower(trim($email));
+
+        if (mb_strlen($name) < 2 || mb_strlen($name) > 80) {
+            return ['success' => false, 'message' => 'Please enter a valid name (2-80 characters).'];
+        }
+
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return ['success' => false, 'message' => 'Please provide a valid email address.'];
+        }
+
+        if (strlen($password) < 6) {
+            return ['success' => false, 'message' => 'Password must be at least 6 characters.'];
+        }
+
+        $existing = $db->fetch("SELECT id FROM readers WHERE email = :email", ['email' => $email]);
+        if ($existing) {
+            return ['success' => false, 'message' => 'This email is already registered. Please log in instead.'];
+        }
+
+        $passwordHash = password_hash($password, PASSWORD_BCRYPT, ['cost' => 12]);
+        $db->execute(
+            "INSERT INTO readers (name, email, password_hash, created_at) VALUES (:name, :email, :hash, NOW())",
+            [
+                'name' => htmlspecialchars($name, ENT_QUOTES, 'UTF-8'),
+                'email' => $email,
+                'hash' => $passwordHash,
+            ]
+        );
+
+        $readerId = (int)$db->lastInsertId();
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            session_regenerate_id(true);
+        }
+        $_SESSION['reader_id'] = $readerId;
+        $_SESSION['reader_name'] = $name;
+        $_SESSION['reader_email'] = $email;
+        $_SESSION['reader_avatar'] = null;
+
+        return ['success' => true, 'message' => 'Registration successful!'];
+    }
+
+    /**
+     * Public Reader Logout
+     */
+    public static function readerLogout(): void
+    {
+        self::startSession();
+        unset($_SESSION['reader_id'], $_SESSION['reader_name'], $_SESSION['reader_email'], $_SESSION['reader_avatar']);
+    }
+
+    /**
      * Enforce RBAC Authentication Guard
      */
     public static function requireAuth(array $allowedRoles = []): array

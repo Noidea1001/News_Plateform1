@@ -298,16 +298,28 @@ if (!function_exists('lang_url')) {
 if (!function_exists('article_title')) {
     /**
      * Dynamic Article Title Language Translation Resolver
-     * Translates article titles between Khmer and English based on current session language.
-     * Supports manual dual-language format: "Khmer Title (English Title)" or "English Title (Khmer Title)"
+     * Accepts either string or article array.
      */
-    function article_title(?string $title, ?string $targetLang = null): string
+    function article_title($title, ?string $targetLang = null): string
     {
-        if (empty($title))
-            return '';
-
         $currentLang = $targetLang ?? ($_SESSION['lang'] ?? 'en');
-        $str = trim($title);
+        $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
+
+        if (is_array($title)) {
+            if ($isKhmer && !empty($title['title_kh'])) {
+                return km_num($title['title_kh']);
+            }
+            if (!$isKhmer && !empty($title['title_en'])) {
+                return $title['title_en'];
+            }
+            $str = trim((string)($title['title'] ?? ''));
+        } else {
+            $str = trim((string)$title);
+        }
+
+        if (empty($str)) {
+            return '';
+        }
 
         // 1. Check parenthetical dual-language pattern "Part1 (Part2)"
         if (preg_match('/^([^()]+)\s*\(([^()]+)\)$/u', $str, $matches)) {
@@ -317,7 +329,7 @@ if (!function_exists('article_title')) {
             $isPart1Khmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $part1);
             $isPart2Khmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $part2);
 
-            if ($currentLang === 'kh' || $currentLang === 'km') {
+            if ($isKhmer) {
                 if ($isPart1Khmer) return km_num($part1);
                 if ($isPart2Khmer) return km_num($part2);
             } else {
@@ -334,7 +346,7 @@ if (!function_exists('article_title')) {
 
         $hasKhmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $str);
 
-        if ($currentLang === 'kh' || $currentLang === 'km') {
+        if ($isKhmer) {
             if ($hasKhmer) {
                 return km_num($str);
             }
@@ -436,9 +448,24 @@ if (!function_exists('article_summary')) {
     /**
      * Dynamic Article Summary Language Translation Resolver
      */
-    function article_summary(?string $summary, ?string $targetLang = null): string
+    function article_summary($summary, ?string $targetLang = null): string
     {
-        return parse_dual_lang($summary, $targetLang);
+        $currentLang = $targetLang ?? ($_SESSION['lang'] ?? 'en');
+        $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
+
+        if (is_array($summary)) {
+            if ($isKhmer && !empty($summary['summary_kh'])) {
+                return km_num($summary['summary_kh']);
+            }
+            if (!$isKhmer && !empty($summary['summary_en'])) {
+                return $summary['summary_en'];
+            }
+            $str = (string)($summary['summary'] ?? '');
+        } else {
+            $str = (string)$summary;
+        }
+
+        return parse_dual_lang($str, $targetLang);
     }
 }
 
@@ -446,9 +473,24 @@ if (!function_exists('article_content')) {
     /**
      * Dynamic Article Content Language Translation Resolver
      */
-    function article_content(?string $content, ?string $targetLang = null): string
+    function article_content($content, ?string $targetLang = null): string
     {
-        return parse_dual_lang($content, $targetLang);
+        $currentLang = $targetLang ?? ($_SESSION['lang'] ?? 'en');
+        $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
+
+        if (is_array($content)) {
+            if ($isKhmer && !empty($content['content_kh'])) {
+                return km_num($content['content_kh']);
+            }
+            if (!$isKhmer && !empty($content['content_en'])) {
+                return $content['content_en'];
+            }
+            $str = (string)($content['content'] ?? '');
+        } else {
+            $str = (string)$content;
+        }
+
+        return parse_dual_lang($str, $targetLang);
     }
 }
 

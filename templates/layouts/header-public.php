@@ -6,6 +6,7 @@
 require_once __DIR__ . '/../../src/Core/helpers.php';
 require_once __DIR__ . '/../../languages/common.php';
 $currentLang = $_SESSION['lang'] ?? 'en';
+$currentReader = \App\Core\Auth::reader();
 ?>
 <!DOCTYPE html>
 <html lang="<?= e($currentLang) ?>">
@@ -142,24 +143,87 @@ $currentLang = $_SESSION['lang'] ?? 'en';
                     </div>
                 </form>
 
-                <!-- Subscribe & Saved Reading List CTAs -->
-                <div class="d-flex align-items-center gap-3 ms-lg-auto pe-1">
+                <!-- Reader Controls, Notifications & CTAs -->
+                <div class="d-flex align-items-center gap-2 ms-lg-auto pe-1">
+                    
+                    <!-- Saved Reading List Offcanvas Trigger -->
                     <button type="button"
-                        class="btn btn-outline-secondary btn-sm p-1.5 d-flex align-items-center justify-content-center position-relative border-0 bg-transparent text-muted me-2"
+                        class="btn btn-outline-secondary btn-sm p-1.5 d-flex align-items-center justify-content-center position-relative border-0 bg-transparent text-muted"
                         style="width: 36px; height: 36px; border-radius: 2px;"
                         data-bs-toggle="offcanvas" data-bs-target="#savedArticlesModal"
                         title="<?= __('saved_reading_list') ?? 'Saved Reading List' ?>">
-                        <i class="bi bi-bookmark-fill text-danger" style="font-size: 1.2rem;"></i>
-                        <span id="savedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center" style="top:-2px; right:-6px; font-size: 0.6rem; width: 18px; height: 18px; display: none;">0</span>
+                        <i class="bi bi-bookmark-fill text-danger" style="font-size: 1.15rem;"></i>
+                        <span id="savedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center" style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; display: none;">0</span>
                     </button>
 
-                    <button type="button"
-                        class="btn btn-danger btn-sm px-3 py-2 d-flex align-items-center gap-2 fw-bold"
-                        style="font-size:0.8rem; border-radius:2px; text-transform:uppercase; letter-spacing:0.04em;"
-                        data-bs-toggle="modal" data-bs-target="#subscribeModal">
-                        <i class="bi bi-bell-fill" style="font-size:0.75rem;"></i>
-                        <span class="d-none d-sm-inline"><?= __('get_feed_cta') ?></span>
-                    </button>
+                    <!-- Real-Time Notification Bell Dropdown -->
+                    <div class="dropdown position-relative">
+                        <button type="button"
+                            class="btn btn-outline-secondary btn-sm p-1.5 d-flex align-items-center justify-content-center position-relative border-0 bg-transparent text-muted"
+                            id="notifBellBtn" data-bs-toggle="dropdown" aria-expanded="false"
+                            style="width: 36px; height: 36px; border-radius: 2px;"
+                            title="<?= __('notifications_title') ?>">
+                            <i class="bi bi-bell-fill text-dark" style="font-size: 1.15rem;"></i>
+                            <span id="notifBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center"
+                                style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; display: none;">0</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 mt-2" style="width: 340px; max-height: 420px; overflow-y: auto; border-radius: 6px; z-index: 1080;">
+                            <div class="p-3 border-bottom d-flex align-items-center justify-content-between bg-light">
+                                <span class="fw-bold small text-dark"><i class="bi bi-bell-fill me-1 text-danger"></i> <?= __('notifications_title') ?></span>
+                                <span class="badge bg-danger text-white text-2xs" id="notifCountLabel">0</span>
+                            </div>
+                            <div id="notifList" class="list-group list-group-flush small">
+                                <div class="p-3 text-center text-muted text-xs">
+                                    <span class="spinner-border spinner-border-sm me-1"></span> <?= __('loading') ?? 'Loading...' ?>
+                                </div>
+                            </div>
+                            <div class="p-2 border-top text-center bg-light">
+                                <a href="<?= url('archive.php?breaking=1') ?>" class="text-xs text-danger text-decoration-none fw-semibold">
+                                    <?= __('filter_breaking_only') ?> &rarr;
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reader Auth Dropdown / Buttons -->
+                    <?php if ($currentReader) { ?>
+                        <div class="dropdown ms-1">
+                            <button class="btn btn-outline-danger btn-sm px-2.5 py-1.5 d-flex align-items-center gap-1.5 rounded-2 dropdown-toggle text-nowrap"
+                                type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.78rem;">
+                                <i class="bi bi-person-circle text-danger"></i>
+                                <span class="fw-bold"><?= e($currentReader['name']) ?></span>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" style="min-width: 200px;">
+                                <li class="px-3 py-2 border-bottom">
+                                    <div class="fw-bold small text-dark"><?= e($currentReader['name']) ?></div>
+                                    <div class="text-muted text-2xs"><?= e($currentReader['email']) ?></div>
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-3xs mt-1">
+                                        <?= __('verified_reader_badge') ?>
+                                    </span>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item small py-2" href="<?= url('archive.php') ?>">
+                                        <i class="bi bi-archive me-1.5 text-danger"></i> <?= __('nav_archive') ?>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item small py-2 text-danger" href="<?= url('logout.php') ?>">
+                                        <i class="bi bi-box-arrow-right me-1.5"></i> <?= __('sign_out') ?>
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    <?php } else { ?>
+                        <div class="d-flex align-items-center gap-1.5 ms-1">
+                            <a href="<?= url('login.php') ?>" class="btn btn-outline-secondary btn-sm px-2.5 py-1.5 fw-semibold text-xs rounded-2 text-dark text-nowrap">
+                                <i class="bi bi-box-arrow-in-right me-1"></i><?= __('sign_in') ?>
+                            </a>
+                            <a href="<?= url('register.php') ?>" class="btn btn-danger btn-sm px-2.5 py-1.5 fw-semibold text-xs rounded-2 shadow-2xs text-nowrap d-none d-sm-inline-block">
+                                <?= __('create_account') ?>
+                            </a>
+                        </div>
+                    <?php } ?>
+
                 </div>
             </div>
         </div>
@@ -301,6 +365,58 @@ $currentLang = $_SESSION['lang'] ?? 'en';
             // Initialize real-time search on both Navbar and Hero Search bars
             setupLiveSearch('publicSearchInput', 'publicSearchClear', 'liveSearchDropdown', 'liveSearchList');
             setupLiveSearch('heroSearchInput', 'heroSearchClear', 'heroLiveSearchDropdown', 'heroLiveSearchList');
+
+            // Real-Time Notification Poller
+            function escapeHtml(str) {
+                if (!str) return '';
+                return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            }
+
+            function fetchNotifications() {
+                fetch('<?= url("api/v1/notifications.php") ?>')
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.success && Array.isArray(data.notifications)) {
+                            const badge = document.getElementById('notifBadge');
+                            const countLabel = document.getElementById('notifCountLabel');
+                            const list = document.getElementById('notifList');
+                            
+                            const count = data.count || data.notifications.length;
+                            if (badge) {
+                                badge.textContent = count > 99 ? '99+' : count;
+                                badge.style.display = count > 0 ? 'flex' : 'none';
+                            }
+                            if (countLabel) countLabel.textContent = count;
+                            
+                            if (list) {
+                                if (data.notifications.length === 0) {
+                                    list.innerHTML = '<div class="p-3 text-center text-muted text-xs"><?= addslashes(__('no_notifications')) ?></div>';
+                                } else {
+                                    list.innerHTML = data.notifications.map(n => `
+                                        <a href="${n.article_url}" class="list-group-item list-group-item-action p-2.5 border-bottom">
+                                            <div class="d-flex align-items-start gap-2">
+                                                <div class="mt-0.5">
+                                                    ${n.type === 'breaking' 
+                                                        ? '<span class="badge bg-danger rounded-circle p-1"><i class="bi bi-lightning-fill text-white"></i></span>' 
+                                                        : '<span class="badge bg-primary bg-opacity-10 text-primary rounded-circle p-1"><i class="bi bi-newspaper"></i></span>'}
+                                                </div>
+                                                <div class="flex-grow-1 overflow-hidden">
+                                                    <div class="fw-bold text-dark text-xs text-truncate">${escapeHtml(n.title)}</div>
+                                                    <div class="text-muted text-2xs text-truncate">${escapeHtml(n.message || '')}</div>
+                                                    <div class="text-2xs text-secondary mt-1"><i class="bi bi-clock me-1"></i>${escapeHtml(n.time_ago || '')}</div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    `).join('');
+                                }
+                            }
+                        }
+                    })
+                    .catch(e => console.debug('Notifications poll:', e));
+            }
+
+            fetchNotifications();
+            setInterval(fetchNotifications, 30000);
         });
     </script>
 
@@ -309,8 +425,13 @@ $currentLang = $_SESSION['lang'] ?? 'en';
         <div class="container-fluid px-3 px-md-4">
             <div class="nav-category-scroll">
                 <a href="<?= url('index.php') ?>"
-                    class="nav-category-link <?= empty($activeCategoryId) ? 'active' : '' ?>">
+                    class="nav-category-link <?= empty($activeCategoryId) && basename($_SERVER['PHP_SELF']) !== 'archive.php' ? 'active' : '' ?>">
                     <?= __('all_stories') ?>
+                </a>
+                <!-- News Archive ("បណ្ណសារព័ត៌មាន") -->
+                <a href="<?= url('archive.php') ?>"
+                    class="nav-category-link fw-bold text-danger <?= basename($_SERVER['PHP_SELF']) === 'archive.php' ? 'active' : '' ?>">
+                    <i class="bi bi-archive-fill me-1"></i><?= __('nav_archive') ?>
                 </a>
                 <?php
                 $catNavDb = \App\Core\Database::getInstance();
