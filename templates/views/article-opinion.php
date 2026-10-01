@@ -84,7 +84,7 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                 </div>
 
                 <!-- Top Action Bar: Bookmark, Fast News & Social Shares -->
-                <div class="mb-4">
+                <div class="mb-2">
                     <?php include __DIR__ . '/../components/share-buttons.php'; ?>
                 </div>
 
