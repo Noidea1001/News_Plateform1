@@ -65,7 +65,7 @@ $isBottom = $isBottomShare ?? false;
                 </a>
             </div>
 
-            <!-- Right: Bookmark & Social Share Buttons -->
+            <!-- Right: Bookmark & Copy Link Buttons -->
             <div class="d-flex align-items-center gap-1.5 gap-sm-2 flex-wrap justify-content-end ms-auto">
                 
                 <!-- 1. Bookmark / Save Button -->
@@ -77,30 +77,7 @@ $isBottom = $isBottomShare ?? false;
                     </button>
                 <?php } ?>
 
-                <!-- 2. Telegram Share -->
-                <a href="https://t.me/share/url?url=<?= urlencode($currentUrl) ?>&text=<?= urlencode($shareTitle) ?>" target="_blank" rel="noopener"
-                    class="btn btn-sm text-white rounded-pill px-2.5 px-sm-3 py-1.5 d-inline-flex align-items-center gap-1.5 shadow-2xs fw-semibold"
-                    style="background-color: #0088cc; font-size:0.8rem;" title="Share on Telegram">
-                    <i class="bi bi-telegram fs-6"></i>
-                    <span class="d-none d-md-inline">Telegram</span>
-                </a>
-
-                <!-- 3. Facebook Share -->
-                <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($currentUrl) ?>" target="_blank" rel="noopener"
-                    class="btn btn-sm text-white rounded-pill px-2.5 px-sm-3 py-1.5 d-inline-flex align-items-center gap-1.5 shadow-2xs fw-semibold"
-                    style="background-color: #1877f2; font-size:0.8rem;" title="Share on Facebook">
-                    <i class="bi bi-facebook fs-6"></i>
-                    <span class="d-none d-md-inline">Facebook</span>
-                </a>
-
-                <!-- 4. X / Twitter Share -->
-                <a href="https://twitter.com/intent/tweet?url=<?= urlencode($currentUrl) ?>&text=<?= urlencode($shareTitle) ?>" target="_blank" rel="noopener"
-                    class="btn btn-sm btn-dark rounded-pill px-2.5 py-1.5 d-inline-flex align-items-center gap-1 shadow-2xs"
-                    style="font-size:0.8rem;" title="Share on X">
-                    <i class="bi bi-twitter-x"></i>
-                </a>
-
-                <!-- 5. Copy Link Button -->
+                <!-- 2. Copy Link Button -->
                 <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2.5 px-sm-3 py-1.5 d-inline-flex align-items-center gap-1 shadow-2xs copy-link-btn"
                     onclick="copyArticleLink(this)" title="<?= __('copy_link') ?>" style="font-size:0.8rem;">
                     <i class="bi bi-link-45deg fs-6"></i>
