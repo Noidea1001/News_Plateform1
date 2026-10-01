@@ -313,12 +313,8 @@ $currentReader = \App\Core\Auth::reader();
                             </ul>
                         </div>
                     <?php } else { ?>
-                        <div class="d-flex align-items-center gap-1.5 ms-1">
-                            <button type="button" class="btn btn-outline-secondary btn-sm px-2.5 py-1.5 fw-semibold text-xs rounded-2 text-dark text-nowrap"
-                                data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="login">
-                                <?= __('sign_in') ?>
-                            </button>
-                            <button type="button" class="btn btn-danger btn-sm px-2.5 py-1.5 fw-semibold text-xs rounded-2 shadow-2xs text-nowrap d-none d-sm-inline-block"
+                        <div class="d-flex align-items-center ms-1">
+                            <button type="button" class="btn btn-danger btn-sm px-2.5 py-1.5 fw-semibold text-xs rounded-2 shadow-2xs text-nowrap"
                                 data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register">
                                 <?= __('create_account') ?>
                             </button>

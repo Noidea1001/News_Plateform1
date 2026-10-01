@@ -140,14 +140,11 @@ $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
                             <div class="text-muted text-3xs"><?= __('comment_login_prompt_desc') ?></div>
                         </div>
                     </div>
-                    <div class="d-flex align-items-center gap-1.5 flex-shrink-0 mt-1 mt-sm-0">
-                        <button type="button" class="btn btn-outline-secondary btn-sm px-2.5 py-1 text-3xs fw-bold rounded-pill text-dark"
-                            data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="login">
-                            <i class="bi bi-box-arrow-in-right me-1"></i><?= __('sign_in') ?>
-                        </button>
-                        <button type="button" class="btn btn-danger btn-sm px-2.5 py-1 text-3xs fw-bold rounded-pill shadow-2xs"
+                    <div class="d-flex align-items-center flex-shrink-0 mt-1 mt-sm-0">
+                        <button type="button" class="btn btn-danger btn-sm px-3 py-1.5 text-xs fw-bold rounded-pill shadow-2xs d-inline-flex align-items-center gap-1.5"
                             data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register">
-                            <i class="bi bi-person-plus me-1"></i><?= __('create_account') ?>
+                            <i class="bi bi-person-plus"></i>
+                            <span><?= __('create_account') ?></span>
                         </button>
                     </div>
                 </div>
