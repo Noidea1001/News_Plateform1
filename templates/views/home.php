@@ -15,83 +15,27 @@
 <div class="homepage-wrapper">
 
     <!-- ======================================================
-         HERO SEARCH SECTION
-    ====================================================== -->
-    <div class="hero-search-section">
-        <div class="container">
-            <div class="hero-search-inner">
-
-                <?php if (!empty($searchQuery)) { ?>
-                    <!-- Active Search State -->
-                    <div class="d-inline-flex align-items-center gap-2 mb-3 px-3 py-1"
-                        style="background:rgba(255,255,255,0.10); border:1px solid rgba(255,255,255,0.2); font-size:0.82rem; color:rgba(255,255,255,0.85); border-radius:2px;">
-                        <i class="bi bi-search" style="color:#c8102e;"></i>
-                        <span><?= __('search_results_for') ?? 'Results for' ?>:
-                            <strong>"<?= e($searchQuery) ?>"</strong></span>
-                        <a href="<?= url('index.php') ?>" class="ms-2 text-decoration-none fw-bold" style="color:#fca5a5;">
-                            <i class="bi bi-x-circle"></i> <?= __('clear_search') ?? 'Clear' ?>
-                        </a>
-                    </div>
-                <?php } else { ?>
-                    <!-- Default hero headline -->
-                    <div class="hero-eyebrow">
-                        <span class="live-dot me-1"></span>
-                        <?= __('latest_stream') ?>
-                    </div>
-                    <h2 class="hero-title"><?= __('site_tagline') ?></h2>
-                <?php } ?>
-
-                <!-- Search Bar with Real-Time Live Search & Dropdown -->
-                <form class="hero-search-form position-relative" action="<?= url('index.php') ?>" method="GET"
-                    role="search" id="heroSearchForm">
-                    <div class="hero-search-bar">
-                        <span class="search-icon-left">
-                            <i class="bi bi-search"></i>
-                        </span>
-                        <input type="text" name="q" id="heroSearchInput" class="hero-search-input"
-                            placeholder="<?= __('search_placeholder') ?>" value="<?= e($_GET['q'] ?? '') ?>"
-                            autocomplete="off" aria-label="<?= __('search_placeholder') ?>">
-                        <span id="heroSearchClear"
-                            class="bootstrap-search-clear text-muted p-2 me-1 <?= empty($_GET['q']) ? 'd-none' : '' ?>"
-                            title="<?= __('clear_search') ?>">
-                            <i class="bi bi-x-circle-fill" style="font-size:1rem; color:#9ca3af;"></i>
-                        </span>
-                        <button type="submit" class="hero-search-btn">
-                            <i class="bi bi-search"></i>
-                            <span class="d-none d-sm-inline"><?= __('search_btn') ?? 'Search' ?></span>
-                        </button>
-                    </div>
-
-                    <!-- Live Search Preview Dropdown -->
-                    <div id="heroLiveSearchDropdown"
-                        class="card border-0 shadow-lg position-absolute w-100 mt-1 text-start"
-                        style="display:none; top:100%; left:0; z-index:1060; max-height:420px; overflow-y:auto; border-radius:2px;">
-                        <div class="list-group list-group-flush" id="heroLiveSearchList"></div>
-                    </div>
-
-                    <!-- Quick Topic Chips -->
-                    <?php if (empty($searchQuery)) { ?>
-                        <div class="search-topic-chips">
-                            <?php
-                            $chipDb = \App\Core\Database::getInstance();
-                            $chipCats = $chipDb->fetchAll("SELECT * FROM categories LIMIT 5");
-                            foreach ($chipCats as $chip) { ?>
-                                <a href="<?= url('index.php?category=' . $chip['id']) ?>" class="topic-chip">
-                                    <?= e(cat_name($chip['name'])) ?>
-                                </a>
-                            <?php } ?>
-                        </div>
-                    <?php } ?>
-                </form>
-
-            </div>
-        </div>
-    </div>
-
-    <!-- ======================================================
          MAIN BODY
     ====================================================== -->
-    <div class="container homepage-body py-4">
+    <div class="container homepage-body py-3 py-md-4">
+
+        <?php if (!empty($searchQuery)) { ?>
+            <!-- Active Global Search Status Banner -->
+            <div class="d-flex align-items-center justify-content-between p-3 mb-4 bg-white border rounded-2 shadow-2xs">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-danger p-2 rounded-circle d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                        <i class="bi bi-search text-white" style="font-size: 0.85rem;"></i>
+                    </span>
+                    <div>
+                        <div class="text-muted text-2xs text-uppercase fw-bold"><?= __('search_results_for') ?? 'Search Results' ?></div>
+                        <div class="fw-bold text-dark fs-6">"<?= e($searchQuery) ?>"</div>
+                    </div>
+                </div>
+                <a href="<?= url('index.php') ?>" class="btn btn-outline-secondary btn-sm rounded-pill px-3 py-1 text-xs d-flex align-items-center gap-1.5 shadow-2xs">
+                    <i class="bi bi-x-circle text-danger"></i> <?= __('clear_search') ?? 'Clear' ?>
+                </a>
+            </div>
+        <?php } ?>
 
         <?php if (empty($articles)) { ?>
             <!-- Empty / No Results State -->

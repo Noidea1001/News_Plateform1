@@ -203,7 +203,7 @@ $lang['photos'] = "រូបថត";
 $lang['published_date'] = "ផ្សាយនៅថ្ងៃទី :date";
 $lang['min_read'] = "រយៈពេលអាន :min នាទី";
 $lang['related_coverage'] = "អត្ថបទព័ត៌មានពាក់ព័ន្ធ";
-$lang['share_story'] = "ចែករំលែកអត្ថបទ:";
+$lang['share_story'] = "ចែករំលែកអត្ថបទ";
 $lang['copy_link'] = "ចម្លងតំណ";
 $lang['copied'] = "បានចម្លង!";
 $lang['documentary_briefing'] = "របាយការណ៍វីដេអូឯកសារ";
@@ -434,6 +434,26 @@ $lang['delete_reader'] = "លុបអ្នកអាន";
 $lang['delete_reader_confirm'] = "តើអ្នកប្រាកដជាចង់លុបគណនីអ្នកអាននេះមែនទេ? សកម្មភាពនេះមិនអាចត្រឡប់វិញបានទេ។";
 $lang['no_readers_found'] = "មិនមានគណនីអ្នកអានត្រូវនឹងការស្វែងរកឡើយ។";
 $lang['reader_deleted_success'] = "គណនីអ្នកអានត្រូវបានលុបដោយជោគជ័យ។";
+
+// 20. Archive & Search Dropdown
+$lang['archive_page_title'] = "បណ្ណសារព័ត៌មាន";
+$lang['archive_subtitle'] = "រុករកអត្ថបទព័ត៌មានពីអតីតកាល តាមប្រភេទ ឆ្នាំ និងទម្រង់";
+$lang['archive_articles_count'] = "អត្ថបទព័ត៌មាន";
+$lang['filter_category_all'] = "គ្រប់ប្រភេទព័ត៌មាន";
+$lang['filter_year_all'] = "គ្រប់ឆ្នាំ";
+$lang['filter_month_all'] = "គ្រប់ខែ";
+$lang['filter_blueprint'] = "ទម្រង់អត្ថបទ";
+$lang['filter_blueprint_all'] = "គ្រប់ទម្រង់ទាំងអស់";
+$lang['blueprint_standard'] = "ព័ត៌មានទូទៅ (Standard)";
+$lang['blueprint_investigative'] = "ស៊ើបអង្កេត (Investigative)";
+$lang['blueprint_opinion'] = "វិចារណកថា (Opinion)";
+$lang['filter_sort_label'] = "តម្រៀបតាម";
+$lang['filter_sort_newest'] = "ថ្មីបំផុត";
+$lang['filter_sort_oldest'] = "ចាស់បំផុត";
+$lang['filter_sort_views'] = "មានអ្នកមើលច្រើន";
+$lang['filter_sort_alpha'] = "អក្សរក្រម (A-Z)";
+$lang['nav_home'] = "ទំព័រដើម";
+$lang['view_all_results'] = "មើលលទ្ធផលទាំងអស់";
 
 return $lang;
 

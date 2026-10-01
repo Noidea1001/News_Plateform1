@@ -36,6 +36,42 @@ $currentReader = \App\Core\Auth::reader();
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="<?= url('assets/icons/icon-192.svg') ?>">
+
+    <style>
+        .header-clean-icon-btn {
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            outline: none !important;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 4px;
+            color: #334155 !important;
+            transition: transform 0.15s ease, opacity 0.15s ease;
+        }
+        .header-clean-icon-btn:hover,
+        .header-clean-icon-btn:focus,
+        .header-clean-icon-btn:active {
+            background: transparent !important;
+            box-shadow: none !important;
+            outline: none !important;
+            color: #c8102e !important;
+            transform: scale(1.1);
+        }
+        #liveSearchDropdown {
+            width: 440px !important;
+            max-width: 92vw !important;
+            border-radius: 6px !important;
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16) !important;
+        }
+        .live-search-item {
+            transition: background 0.12s ease;
+        }
+        .live-search-item:hover {
+            background: #f8fafc !important;
+        }
+    </style>
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -148,22 +184,20 @@ $currentReader = \App\Core\Auth::reader();
                     
                     <!-- Saved Reading List Offcanvas Trigger -->
                     <button type="button"
-                        class="btn btn-outline-secondary btn-sm p-1.5 d-flex align-items-center justify-content-center position-relative border-0 bg-transparent text-muted"
-                        style="width: 36px; height: 36px; border-radius: 2px;"
+                        class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
                         data-bs-toggle="offcanvas" data-bs-target="#savedArticlesModal"
                         title="<?= __('saved_reading_list') ?? 'Saved Reading List' ?>">
-                        <i class="bi bi-bookmark-fill text-danger" style="font-size: 1.15rem;"></i>
+                        <i class="bi bi-bookmark-fill text-danger" style="font-size: 1.2rem;"></i>
                         <span id="savedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center" style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; display: none;">0</span>
                     </button>
 
                     <!-- Real-Time Notification Bell Dropdown -->
                     <div class="dropdown position-relative">
                         <button type="button"
-                            class="btn btn-outline-secondary btn-sm p-1.5 d-flex align-items-center justify-content-center position-relative border-0 bg-transparent text-muted"
+                            class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
                             id="notifBellBtn" data-bs-toggle="dropdown" aria-expanded="false"
-                            style="width: 36px; height: 36px; border-radius: 2px;"
                             title="<?= __('notifications_title') ?>">
-                            <i class="bi bi-bell-fill text-dark" style="font-size: 1.15rem;"></i>
+                            <i class="bi bi-bell-fill text-dark" style="font-size: 1.2rem;"></i>
                             <span id="notifBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center"
                                 style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; display: none;">0</span>
                         </button>
@@ -178,7 +212,7 @@ $currentReader = \App\Core\Auth::reader();
                                 </div>
                             </div>
                             <div class="p-2 border-top text-center bg-light">
-                                <a href="<?= url('archive.php?breaking=1') ?>" class="text-xs text-danger text-decoration-none fw-semibold">
+                                <a href="<?= url('index.php?breaking=1') ?>" class="text-xs text-danger text-decoration-none fw-semibold">
                                     <?= __('filter_breaking_only') ?> &rarr;
                                 </a>
                             </div>
@@ -200,11 +234,6 @@ $currentReader = \App\Core\Auth::reader();
                                     <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-3xs mt-1">
                                         <?= __('verified_reader_badge') ?>
                                     </span>
-                                </li>
-                                <li>
-                                    <a class="dropdown-item small py-2" href="<?= url('archive.php') ?>">
-                                        <i class="bi bi-archive me-1.5 text-danger"></i> <?= __('nav_archive') ?>
-                                    </a>
                                 </li>
                                 <li>
                                     <a class="dropdown-item small py-2 text-danger" href="<?= url('logout.php') ?>">
@@ -334,20 +363,41 @@ $currentReader = \App\Core\Auth::reader();
                                 if (data.success && data.articles && data.articles.length > 0) {
                                     let html = '';
                                     data.articles.forEach(art => {
+                                        const img = art.image_url || art.featured_image || '';
+                                        const imgHtml = img 
+                                            ? `<div style="width:68px;height:52px;flex-shrink:0;border-radius:4px;overflow:hidden;background:#f1f5f9;"><img src="${escapeHtml(img)}" alt="${escapeHtml(art.title)}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentNode.style.display='none'"></div>`
+                                            : `<div style="width:68px;height:52px;flex-shrink:0;border-radius:4px;background:#f3f4f6;display:flex;align-items:center;justify-content:center;color:#94a3b8;"><i class="bi bi-newspaper fs-5"></i></div>`;
+                                        
+                                        const timeHtml = art.time_ago ? `<span class="text-muted text-3xs"><i class="bi bi-clock me-1"></i>${escapeHtml(art.time_ago)}</span>` : '';
+                                        const snippetHtml = art.summary_snippet ? `<div class="text-muted text-2xs mt-0.5" style="line-height:1.3;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;overflow:hidden;">${escapeHtml(art.summary_snippet)}</div>` : '';
+
                                         html += `
-                                    <a href="${art.url}" class="list-group-item list-group-item-action p-2.5 d-flex gap-2.5 align-items-start border-bottom text-decoration-none">
-                                        ${art.featured_image ? `<img src="${art.featured_image}" style="width:52px;height:38px;object-fit:cover;border-radius:2px;flex-shrink:0;">` : ''}
-                                        <div class="min-w-0 flex-grow-1">
-                                            <div style="font-size:0.62rem;font-weight:700;color:#c8102e;text-transform:uppercase;letter-spacing:0.04em;">${art.category_display}</div>
-                                            <div style="font-size:0.83rem;font-weight:700;color:#0f172a;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">${art.title}</div>
-                                        </div>
-                                    </a>
-                                `;
+                                            <a href="${art.url}" class="list-group-item list-group-item-action p-2.5 d-flex gap-2.5 align-items-center border-bottom text-decoration-none live-search-item">
+                                                ${imgHtml}
+                                                <div class="min-w-0 flex-grow-1">
+                                                    <div class="d-flex align-items-center justify-content-between gap-1 mb-0.5">
+                                                        <span class="badge bg-danger bg-opacity-10 text-danger text-3xs px-1.5 py-0.5 rounded-1 fw-bold text-uppercase">${escapeHtml(art.category_display || '')}</span>
+                                                        ${timeHtml}
+                                                    </div>
+                                                    <div style="font-size:0.84rem;font-weight:700;color:#0f172a;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;">
+                                                        ${escapeHtml(art.title)}
+                                                    </div>
+                                                    ${snippetHtml}
+                                                </div>
+                                            </a>
+                                        `;
                                     });
+                                    html += `
+                                        <div class="p-2 border-top bg-light text-center">
+                                            <a href="<?= url('index.php') ?>?q=${encodeURIComponent(query)}" class="text-xs text-danger text-decoration-none fw-bold">
+                                                <?= __('view_all_results') ?? 'View all results' ?> &rarr;
+                                            </a>
+                                        </div>
+                                    `;
                                     searchList.innerHTML = html;
                                     dropdown.style.display = 'block';
                                 } else {
-                                    searchList.innerHTML = '<div class="p-3 text-center text-muted small"><?= __('no_articles_found') ?></div>';
+                                    searchList.innerHTML = '<div class="p-3 text-center text-muted small"><i class="bi bi-search me-1"></i> <?= addslashes(__('no_articles_found')) ?></div>';
                                     dropdown.style.display = 'block';
                                 }
                             })
@@ -364,15 +414,13 @@ $currentReader = \App\Core\Auth::reader();
                 });
             }
 
-            // Initialize real-time search on both Navbar and Hero Search bars
-            setupLiveSearch('publicSearchInput', 'publicSearchClear', 'liveSearchDropdown', 'liveSearchList');
-            setupLiveSearch('heroSearchInput', 'heroSearchClear', 'heroLiveSearchDropdown', 'heroLiveSearchList');
-
-            // Real-Time Notification Poller
             function escapeHtml(str) {
                 if (!str) return '';
                 return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
             }
+
+            // Initialize real-time search on Navbar search bar
+            setupLiveSearch('publicSearchInput', 'publicSearchClear', 'liveSearchDropdown', 'liveSearchList');
 
             function fetchNotifications() {
                 fetch('<?= url("api/v1/notifications.php") ?>')
@@ -427,13 +475,8 @@ $currentReader = \App\Core\Auth::reader();
         <div class="container-fluid px-3 px-md-4">
             <div class="nav-category-scroll">
                 <a href="<?= url('index.php') ?>"
-                    class="nav-category-link <?= empty($activeCategoryId) && basename($_SERVER['PHP_SELF']) !== 'archive.php' ? 'active' : '' ?>">
+                    class="nav-category-link <?= empty($activeCategoryId) ? 'active' : '' ?>">
                     <?= __('all_stories') ?>
-                </a>
-                <!-- News Archive ("បណ្ណសារព័ត៌មាន") -->
-                <a href="<?= url('archive.php') ?>"
-                    class="nav-category-link fw-bold text-danger <?= basename($_SERVER['PHP_SELF']) === 'archive.php' ? 'active' : '' ?>">
-                    <i class="bi bi-archive-fill me-1"></i><?= __('nav_archive') ?>
                 </a>
                 <?php
                 $catNavDb = \App\Core\Database::getInstance();

@@ -18,7 +18,7 @@ $isBottom = $isBottomShare ?? false;
     <!-- ── Bottom Share Bar (Compact, No Duplicate Live/Bookmark) ───────── -->
     <div class="editorial-bottom-share p-2.5 p-sm-3 bg-light rounded-2 border my-3 d-flex align-items-center justify-content-between gap-2 flex-wrap shadow-2xs">
         <span class="fw-bold small text-dark d-flex align-items-center gap-1.5">
-            <i class="bi bi-share text-danger"></i> <?= __('share_story') ?? 'Share Story' ?>:
+            <i class="bi bi-share text-danger"></i> <?= rtrim(__('share_story') ?? 'Share Story', ':') ?>:
         </span>
         <div class="d-flex align-items-center gap-1.5 ms-auto flex-wrap">
             <!-- Telegram Share -->

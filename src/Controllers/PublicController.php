@@ -295,8 +295,11 @@ class PublicController
 
         foreach ($articles as &$art) {
             $art['title'] = article_title($art['title']);
-            $art['summary'] = article_summary($art['summary']);
+            $rawSummary = strip_tags(article_summary($art['summary']));
+            $art['summary'] = $rawSummary;
+            $art['summary_snippet'] = mb_strimwidth($rawSummary, 0, 95, '...');
             $art['category_display'] = cat_name($art['category_name']);
+            $art['image_url'] = !empty($art['featured_image']) ? image_url($art['featured_image']) : '';
             $art['url'] = url('article.php?slug=' . urlencode($art['slug']));
             $art['time_ago'] = TemplateEngine::timeAgo($art['published_at']);
         }

@@ -224,10 +224,13 @@ if (!function_exists('url')) {
 
         // Detect base folder (e.g. /News-platform-1 or /News-platform-submission)
         $base = '';
-        if (str_contains($dir, '/public')) {
-            $base = substr($dir, 0, strpos($dir, '/public'));
-        } elseif (str_contains($dir, '/admin')) {
-            $base = substr($dir, 0, strpos($dir, '/admin'));
+        $dirNorm = '/' . ltrim($dir, '/');
+        if (str_contains($dirNorm, '/public')) {
+            $base = substr($dirNorm, 0, strpos($dirNorm, '/public'));
+        } elseif (str_contains($dirNorm, '/admin')) {
+            $base = substr($dirNorm, 0, strpos($dirNorm, '/admin'));
+        } elseif (str_contains($dirNorm, '/api')) {
+            $base = substr($dirNorm, 0, strpos($dirNorm, '/api'));
         } else {
             $base = ($dir === '/' || $dir === '\\') ? '' : $dir;
         }

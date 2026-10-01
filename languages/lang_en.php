@@ -203,7 +203,7 @@ $lang['photos'] = "Photos";
 $lang['published_date'] = "Published :date";
 $lang['min_read'] = ":min min read";
 $lang['related_coverage'] = "Related Coverage";
-$lang['share_story'] = "Share Story:";
+$lang['share_story'] = "Share Story";
 $lang['copy_link'] = "Copy Link";
 $lang['copied'] = "Copied!";
 $lang['documentary_briefing'] = "Documentary Briefing";
@@ -434,6 +434,26 @@ $lang['delete_reader'] = "Delete Reader";
 $lang['delete_reader_confirm'] = "Are you sure you want to delete this reader account? This action cannot be undone.";
 $lang['no_readers_found'] = "No registered readers match your search.";
 $lang['reader_deleted_success'] = "Reader account successfully deleted.";
+
+// 20. Archive & Search Dropdown
+$lang['archive_page_title'] = "News Archive";
+$lang['archive_subtitle'] = "Explore past published stories filtered by category, timeline and format";
+$lang['archive_articles_count'] = "Articles";
+$lang['filter_category_all'] = "All Categories";
+$lang['filter_year_all'] = "All Years";
+$lang['filter_month_all'] = "All Months";
+$lang['filter_blueprint'] = "Article Format";
+$lang['filter_blueprint_all'] = "All Formats";
+$lang['blueprint_standard'] = "Standard Report";
+$lang['blueprint_investigative'] = "Investigative";
+$lang['blueprint_opinion'] = "Opinion";
+$lang['filter_sort_label'] = "Sort By";
+$lang['filter_sort_newest'] = "Newest First";
+$lang['filter_sort_oldest'] = "Oldest First";
+$lang['filter_sort_views'] = "Most Viewed";
+$lang['filter_sort_alpha'] = "Alphabetical (A-Z)";
+$lang['nav_home'] = "Home";
+$lang['view_all_results'] = "View all results";
 
 return $lang;
 
