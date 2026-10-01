@@ -162,11 +162,21 @@ $currentReader = \App\Core\Auth::reader();
             <div class="d-none d-lg-block mx-3" style="width:1px; height:32px; background:#e5e7eb; flex-shrink:0;">
             </div>
 
-            <!-- Mobile Toggler -->
-            <button class="navbar-toggler border-0 shadow-none p-1 ms-auto me-2" type="button" data-bs-toggle="collapse"
-                data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <!-- Mobile Controls (Search Button + Hamburger Toggler) -->
+            <div class="d-flex align-items-center gap-1.5 ms-auto me-1 d-lg-none">
+                <!-- Mobile Search Toggle Button -->
+                <button class="header-clean-icon-btn d-flex align-items-center justify-content-center p-0"
+                    type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearchCollapse"
+                    aria-expanded="false" aria-controls="mobileSearchCollapse" title="<?= __('search') ?>">
+                    <i class="bi bi-search text-dark" style="font-size: 1.15rem;"></i>
+                </button>
+
+                <!-- Mobile Hamburger Toggler -->
+                <button class="navbar-toggler border-0 shadow-none p-1" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" title="Menu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
 
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <!-- Inline Search — CNA style with Real-Time Live Filter & Dropdown -->
@@ -274,6 +284,35 @@ $currentReader = \App\Core\Auth::reader();
         </div>
     </nav>
 
+    <!-- ── Mobile Collapsible Search Bar (Smooth Dropdown) ────────────────── -->
+    <div class="collapse d-lg-none bg-white border-bottom shadow-sm" id="mobileSearchCollapse" style="position:relative; z-index:1034;">
+        <div class="container-fluid px-3 py-2">
+            <form action="<?= url('index.php') ?>" method="GET" class="position-relative" id="mobileSearchForm">
+                <div class="input-group input-group-sm align-items-center" style="background:#f3f4f6; border:1px solid #e5e7eb; border-radius:4px; padding-right:4px;">
+                    <span class="input-group-text border-0 bg-transparent pe-1 ps-2.5">
+                        <i class="bi bi-search text-muted" style="font-size:0.85rem;"></i>
+                    </span>
+                    <input class="form-control border-0 bg-transparent shadow-none text-xs pe-1"
+                        id="mobileSearchInput" type="text" name="q" autocomplete="off"
+                        placeholder="<?= __('search_placeholder') ?>" value="<?= e($_GET['q'] ?? '') ?>">
+                    <span id="mobileSearchClear"
+                        class="bootstrap-search-clear text-muted p-1 <?= empty($_GET['q']) ? 'd-none' : '' ?>"
+                        title="<?= __('clear_search') ?>">
+                        <i class="bi bi-x-circle-fill" style="font-size:0.85rem; color:#9ca3af;"></i>
+                    </span>
+                    <button type="submit" class="btn btn-danger btn-sm rounded-pill px-2.5 py-1 text-2xs fw-bold ms-1">
+                        <?= __('search') ?>
+                    </button>
+                </div>
+                <!-- Mobile Live Search Dropdown -->
+                <div id="mobileLiveSearchDropdown" class="card border-0 shadow-lg position-absolute w-100 mt-1"
+                    style="display:none; top:100%; left:0; z-index:1060; max-height:360px; overflow-y:auto; border-radius:6px;">
+                    <div class="list-group list-group-flush" id="mobileLiveSearchList"></div>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             function setupLiveSearch(inputId, clearId, dropdownId, listId) {
@@ -377,8 +416,32 @@ $currentReader = \App\Core\Auth::reader();
                 return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
             }
 
-            // Initialize real-time search on Navbar search bar
+            // Initialize real-time search on Navbar & Mobile search bars
             setupLiveSearch('publicSearchInput', 'publicSearchClear', 'liveSearchDropdown', 'liveSearchList');
+            setupLiveSearch('mobileSearchInput', 'mobileSearchClear', 'mobileLiveSearchDropdown', 'mobileLiveSearchList');
+
+            const mobileCollapse = document.getElementById('mobileSearchCollapse');
+            const mainNav = document.getElementById('mainNavbar');
+            if (mobileCollapse) {
+                mobileCollapse.addEventListener('shown.bs.collapse', function () {
+                    const input = document.getElementById('mobileSearchInput');
+                    if (input) input.focus();
+                });
+            }
+            if (mainNav && mobileCollapse) {
+                mainNav.addEventListener('show.bs.collapse', function () {
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
+                        const bsCollapse = bootstrap.Collapse.getInstance(mobileCollapse);
+                        if (bsCollapse) bsCollapse.hide();
+                    }
+                });
+                mobileCollapse.addEventListener('show.bs.collapse', function () {
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Collapse) {
+                        const bsMain = bootstrap.Collapse.getInstance(mainNav);
+                        if (bsMain) bsMain.hide();
+                    }
+                });
+            }
 
             function fetchNotifications() {
                 fetch('<?= url("api/v1/notifications.php") ?>')

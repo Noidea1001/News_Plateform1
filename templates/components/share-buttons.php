@@ -1,9 +1,9 @@
 <?php
 /**
- * Modern Clean Editorial Action & Social Share Strip
+ * Modern Clean Editorial Action & Dropdown Share Strip
  * news-platform / templates / components / share-buttons.php
  *
- * Minimalist, seamless toolbar styled like top-tier digital news publications.
+ * Minimalist, seamless toolbar with Bookmark and a single Share dropdown menu.
  */
 
 $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
@@ -13,8 +13,8 @@ $currentUrl = ($isHttps ? "https://" : "http://") . $host . $uri;
 $shareTitle = article_title($article['title'] ?? 'NewsPlatform Story');
 ?>
 
-<!-- ── Modern Clean Editorial Action & Social Share Strip ────── -->
-<div class="editorial-actions-bar py-2 my-2 border-top border-bottom d-flex align-items-center justify-content-between gap-3 flex-wrap" style="background: transparent;">
+<!-- ── Modern Clean Editorial Action & Dropdown Share Strip ────── -->
+<div class="editorial-actions-bar py-2 my-2 border-top border-bottom d-flex align-items-center justify-content-between gap-2 flex-wrap" style="background: transparent;">
     
     <!-- Left: Fast News Archive Link -->
     <div class="d-flex align-items-center gap-2">
@@ -25,46 +25,81 @@ $shareTitle = article_title($article['title'] ?? 'NewsPlatform Story');
         </a>
     </div>
 
-    <!-- Right: Bookmark & Minimal Social Share Icons -->
+    <!-- Right: Bookmark & Clean Share Dropdown -->
     <div class="d-flex align-items-center gap-2 ms-auto">
         
-        <!-- Bookmark / Save Button -->
+        <!-- 1. Bookmark / Save Button -->
         <?php if (isset($article) && isset($artData)) { ?>
-            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-2.5 py-1 bookmark-toggle-btn d-inline-flex align-items-center gap-1.5 shadow-none text-xs fw-semibold"
+            <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 bookmark-toggle-btn d-inline-flex align-items-center gap-1.5 shadow-none text-xs fw-semibold"
                 data-id="<?= (int)$article['id'] ?>" data-article='<?= $artData ?>' title="<?= __('save_for_later') ?? 'Save' ?>" style="height:32px;">
                 <i class="bi bi-bookmark text-danger"></i>
                 <span class="bookmark-label"><?= __('save_for_later') ?? 'Save' ?></span>
             </button>
         <?php } ?>
 
-        <span class="vr mx-0.5 text-secondary opacity-25" style="height: 18px;"></span>
-
-        <!-- Minimal Circular Social Icons -->
-        <div class="d-inline-flex align-items-center gap-1.5">
-            <!-- Telegram Share -->
-            <a href="https://t.me/share/url?url=<?= urlencode($currentUrl) ?>&text=<?= urlencode($shareTitle) ?>" target="_blank" rel="noopener"
-                class="btn-social-icon social-icon-tg" title="Share on Telegram">
-                <i class="bi bi-telegram"></i>
-            </a>
-
-            <!-- Facebook Share -->
-            <a href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($currentUrl) ?>" target="_blank" rel="noopener"
-                class="btn-social-icon social-icon-fb" title="Share on Facebook">
-                <i class="bi bi-facebook"></i>
-            </a>
-
-            <!-- X / Twitter Share -->
-            <a href="https://twitter.com/intent/tweet?url=<?= urlencode($currentUrl) ?>&text=<?= urlencode($shareTitle) ?>" target="_blank" rel="noopener"
-                class="btn-social-icon social-icon-x" title="Share on X">
-                <i class="bi bi-twitter-x"></i>
-            </a>
-
-            <!-- Copy Link Button -->
-            <button type="button" class="btn-social-icon copy-link-btn"
-                onclick="copyArticleLink(this)" title="<?= __('copy_link') ?>">
-                <i class="bi bi-link-45deg"></i>
+        <!-- 2. Clean Share Dropdown Button -->
+        <div class="dropdown position-relative">
+            <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 d-inline-flex align-items-center gap-1.5 text-xs fw-semibold dropdown-toggle shadow-none"
+                type="button" id="articleShareDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" style="height:32px;">
+                <i class="bi bi-share text-danger"></i>
+                <span><?= __('share_story') ?? 'Share' ?></span>
             </button>
+            
+            <!-- Share Options Dropdown Menu -->
+            <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 py-2 mt-1" aria-labelledby="articleShareDropdownBtn" style="border-radius: 8px; min-width: 200px; z-index: 1050;">
+                <li><h6 class="dropdown-header text-2xs text-uppercase fw-bold text-muted"><?= __('share_story') ?? 'Share Story' ?></h6></li>
+                
+                <!-- Telegram -->
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2.5 py-2 text-xs fw-semibold"
+                        href="https://t.me/share/url?url=<?= urlencode($currentUrl) ?>&text=<?= urlencode($shareTitle) ?>"
+                        target="_blank" rel="noopener">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0" style="width:26px; height:26px; background:#0088cc;">
+                            <i class="bi bi-telegram" style="font-size:0.8rem;"></i>
+                        </span>
+                        <span>Telegram</span>
+                    </a>
+                </li>
+
+                <!-- Facebook -->
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2.5 py-2 text-xs fw-semibold"
+                        href="https://www.facebook.com/sharer/sharer.php?u=<?= urlencode($currentUrl) ?>"
+                        target="_blank" rel="noopener">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white flex-shrink-0" style="width:26px; height:26px; background:#1877f2;">
+                            <i class="bi bi-facebook" style="font-size:0.8rem;"></i>
+                        </span>
+                        <span>Facebook</span>
+                    </a>
+                </li>
+
+                <!-- X / Twitter -->
+                <li>
+                    <a class="dropdown-item d-flex align-items-center gap-2.5 py-2 text-xs fw-semibold"
+                        href="https://twitter.com/intent/tweet?url=<?= urlencode($currentUrl) ?>&text=<?= urlencode($shareTitle) ?>"
+                        target="_blank" rel="noopener">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle text-white bg-dark flex-shrink-0" style="width:26px; height:26px;">
+                            <i class="bi bi-twitter-x" style="font-size:0.75rem;"></i>
+                        </span>
+                        <span>X (Twitter)</span>
+                    </a>
+                </li>
+
+                <li><hr class="dropdown-divider my-1"></li>
+
+                <!-- Copy Link Button -->
+                <li>
+                    <button type="button" class="dropdown-item d-flex align-items-center gap-2.5 py-2 text-xs fw-semibold w-100 bg-transparent border-0 text-start"
+                        onclick="copyArticleLinkDropdown(this)">
+                        <span class="d-inline-flex align-items-center justify-content-center rounded-circle bg-light text-secondary border flex-shrink-0 copy-icon-box" style="width:26px; height:26px;">
+                            <i class="bi bi-link-45deg" style="font-size:0.85rem;"></i>
+                        </span>
+                        <span class="copy-text-label"><?= __('copy_link') ?? 'Copy Link' ?></span>
+                    </button>
+                </li>
+            </ul>
         </div>
+
     </div>
 </div>
 
@@ -72,64 +107,29 @@ $shareTitle = article_title($article['title'] ?? 'NewsPlatform Story');
 .editorial-actions-bar {
     border-color: #e5e7eb !important;
 }
-.btn-social-icon {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    color: #475569;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    font-size: 0.85rem;
-    text-decoration: none !important;
-    transition: all 0.15s ease;
+.editorial-actions-bar .dropdown-item {
+    transition: background 0.12s ease, color 0.12s ease;
 }
-.btn-social-icon:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 6px rgba(0,0,0,0.06);
-}
-.social-icon-tg:hover {
-    color: #0088cc !important;
-    background: #e0f2fe !important;
-    border-color: #7dd3fc !important;
-}
-.social-icon-fb:hover {
-    color: #1877f2 !important;
-    background: #dbeafe !important;
-    border-color: #93c5fd !important;
-}
-.social-icon-x:hover {
-    color: #0f172a !important;
-    background: #f1f5f9 !important;
-    border-color: #94a3b8 !important;
-}
-.copy-link-btn:hover {
-    color: #c8102e !important;
-    background: #fef2f2 !important;
-    border-color: #fca5a5 !important;
+.editorial-actions-bar .dropdown-item:hover {
+    background-color: #f8fafc;
+    color: #c8102e;
 }
 </style>
 
 <script>
-if (typeof window.copyArticleLink !== 'function') {
-    window.copyArticleLink = function(btn) {
-        const urlToCopy = window.location.href;
-        navigator.clipboard.writeText(urlToCopy).then(function() {
-            const icon = btn.querySelector('i');
-            if (icon) {
-                const prevClass = icon.className;
-                icon.className = 'bi bi-check2 text-success';
-                btn.style.borderColor = '#22c55e';
-                setTimeout(function() {
-                    icon.className = prevClass;
-                    btn.style.borderColor = '';
-                }, 2000);
-            }
-        }).catch(function() {
-            prompt('Copy URL:', urlToCopy);
-        });
-    };
+function copyArticleLinkDropdown(btn) {
+    const urlToCopy = window.location.href;
+    navigator.clipboard.writeText(urlToCopy).then(function() {
+        const label = btn.querySelector('.copy-text-label');
+        const iconBox = btn.querySelector('.copy-icon-box');
+        if (label) label.textContent = '<?= addslashes(__('copied') ?? 'Copied!') ?>';
+        if (iconBox) iconBox.innerHTML = '<i class="bi bi-check2 text-success" style="font-size:0.85rem;"></i>';
+        setTimeout(function() {
+            if (label) label.textContent = '<?= addslashes(__('copy_link') ?? 'Copy Link') ?>';
+            if (iconBox) iconBox.innerHTML = '<i class="bi bi-link-45deg" style="font-size:0.85rem;"></i>';
+        }, 2000);
+    }).catch(function() {
+        prompt('Copy URL:', urlToCopy);
+    });
 }
 </script>
