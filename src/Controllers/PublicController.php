@@ -902,5 +902,161 @@ class PublicController
         header('Location: ' . url('index.php?msg=' . urlencode('You have been logged out successfully.')));
         exit;
     }
+
+    /**
+     * Reader Settings Page View
+     */
+    public function showReaderSettings(): void
+    {
+        Auth::startSession();
+        if (!Auth::readerCheck()) {
+            header('Location: ' . url('login.php?redirect_to=' . urlencode(url('settings.php'))));
+            exit;
+        }
+
+        $reader = Auth::reader();
+        // Fetch full reader row for avatar_url
+        $readerRow = $this->db->fetch("SELECT * FROM readers WHERE id = :id", ['id' => $reader['id']]);
+
+        // Fetch subscribed category IDs + names
+        $subs = $this->db->fetchAll(
+            "SELECT rs.category_id, c.name as category_name
+             FROM reader_subscriptions rs
+             JOIN categories c ON rs.category_id = c.id
+             WHERE rs.reader_id = :rid",
+            ['rid' => $reader['id']]
+        );
+        $subscribedCatIds = array_map(fn($s) => (int)$s['category_id'], $subs);
+
+        $categories = $this->db->fetchAll("SELECT * FROM categories ORDER BY name ASC");
+
+        // Comment count
+        $commentCount = (int)$this->db->fetchColumn(
+            "SELECT COUNT(*) FROM comments WHERE user_email = :email",
+            ['email' => $readerRow['email']]
+        );
+
+        $this->templateEngine->renderPage('views/reader-settings.php', [
+            'pageTitle' => __('settings_page_title') . ' | ' . __('app_name'),
+            'csrfToken' => Auth::generateCsrfToken(),
+            'reader' => $readerRow,
+            'categories' => $categories,
+            'subscribedCatIds' => $subscribedCatIds,
+            'commentCount' => $commentCount,
+            'success' => $_GET['success'] ?? null,
+            'error' => $_GET['error'] ?? null,
+        ], 'public');
+    }
+
+    /**
+     * Reader Profile Update POST Action
+     */
+    public function updateReaderProfile(array $postData): void
+    {
+        Auth::startSession();
+        if (!Auth::readerCheck()) {
+            header('Location: ' . url('login.php'));
+            exit;
+        }
+
+        if (!Auth::verifyCsrfToken($postData['csrf_token'] ?? '')) {
+            header('Location: ' . url('settings.php?error=' . urlencode('Security validation failed.')));
+            exit;
+        }
+
+        $reader    = Auth::reader();
+        $readerId  = (int)$reader['id'];
+        $action    = trim($postData['action'] ?? 'profile');
+
+        // ── Profile (name, email, avatar) ──────────────────────────────────
+        if ($action === 'profile') {
+            $name      = trim($postData['name'] ?? '');
+            $email     = strtolower(trim($postData['email'] ?? ''));
+            $avatarUrl = trim($postData['avatar_url'] ?? '');
+
+            if (mb_strlen($name) < 2 || mb_strlen($name) > 80) {
+                header('Location: ' . url('settings.php?error=' . urlencode('Name must be 2–80 characters.')));
+                exit;
+            }
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                header('Location: ' . url('settings.php?error=' . urlencode('Please enter a valid email address.')));
+                exit;
+            }
+
+            $existing = $this->db->fetch(
+                "SELECT id FROM readers WHERE email = :email AND id != :id LIMIT 1",
+                ['email' => $email, 'id' => $readerId]
+            );
+            if ($existing) {
+                header('Location: ' . url('settings.php?error=' . urlencode('That email is already used by another account.')));
+                exit;
+            }
+
+            $cleanName = htmlspecialchars($name, ENT_QUOTES, 'UTF-8');
+            $this->db->execute(
+                "UPDATE readers SET name = :name, email = :email, avatar_url = :avatar WHERE id = :id",
+                ['name' => $cleanName, 'email' => $email, 'avatar' => $avatarUrl ?: null, 'id' => $readerId]
+            );
+
+            // Refresh session values
+            $_SESSION['reader_name']   = $cleanName;
+            $_SESSION['reader_email']  = $email;
+            $_SESSION['reader_avatar'] = $avatarUrl ?: null;
+
+            header('Location: ' . url('settings.php?success=' . urlencode('Profile updated successfully.')));
+            exit;
+        }
+
+        // ── Password Change ──────────────────────────────────────────────
+        if ($action === 'password') {
+            $currentPw = $postData['current_password'] ?? '';
+            $newPw     = $postData['new_password'] ?? '';
+            $confirmPw = $postData['confirm_password'] ?? '';
+
+            if (empty($currentPw) || empty($newPw) || empty($confirmPw)) {
+                header('Location: ' . url('settings.php?error=' . urlencode('All password fields are required.') . '#tab-password'));
+                exit;
+            }
+            if ($newPw !== $confirmPw) {
+                header('Location: ' . url('settings.php?error=' . urlencode('New passwords do not match.') . '#tab-password'));
+                exit;
+            }
+            if (strlen($newPw) < 6) {
+                header('Location: ' . url('settings.php?error=' . urlencode('New password must be at least 6 characters.') . '#tab-password'));
+                exit;
+            }
+
+            $row = $this->db->fetch("SELECT password_hash FROM readers WHERE id = :id", ['id' => $readerId]);
+            if (!$row || !password_verify($currentPw, $row['password_hash'])) {
+                header('Location: ' . url('settings.php?error=' . urlencode('Current password is incorrect.') . '#tab-password'));
+                exit;
+            }
+
+            $hash = password_hash($newPw, PASSWORD_BCRYPT, ['cost' => 12]);
+            $this->db->execute("UPDATE readers SET password_hash = :hash WHERE id = :id", ['hash' => $hash, 'id' => $readerId]);
+
+            header('Location: ' . url('settings.php?success=' . urlencode('Password changed successfully.')));
+            exit;
+        }
+
+        // ── Delete Account ───────────────────────────────────────────────
+        if ($action === 'delete_account') {
+            $confirmText = trim($postData['confirm_delete'] ?? '');
+            if (strtolower($confirmText) !== 'delete') {
+                header('Location: ' . url('settings.php?error=' . urlencode('Type "delete" to confirm account deletion.')));
+                exit;
+            }
+            $readerEmail = $reader['email'];
+            $this->db->execute("DELETE FROM reader_subscriptions WHERE reader_id = :id", ['id' => $readerId]);
+            $this->db->execute("DELETE FROM comments WHERE user_email = :email", ['email' => $readerEmail]);
+            $this->db->execute("DELETE FROM readers WHERE id = :id", ['id' => $readerId]);
+            Auth::readerLogout();
+            header('Location: ' . url('index.php?msg=' . urlencode('Your account has been permanently deleted.')));
+            exit;
+        }
+
+        header('Location: ' . url('settings.php'));
+        exit;
+    }
 }
 ?>

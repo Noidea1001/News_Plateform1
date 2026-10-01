@@ -305,6 +305,11 @@ $currentReader = \App\Core\Auth::reader();
                                         <?= __('verified_reader_badge') ?>
                                     </span>
                                 </li>
+                            <li>
+                                    <a class="dropdown-item small py-2" href="<?= url('settings.php') ?>">
+                                        <i class="bi bi-gear-fill me-1.5 text-muted"></i> <?= __('settings_page_title') ?>
+                                    </a>
+                                </li>
                                 <li>
                                     <a class="dropdown-item small py-2 text-danger" href="<?= url('logout.php') ?>">
                                         <i class="bi bi-box-arrow-right me-1.5"></i> <?= __('sign_out') ?>

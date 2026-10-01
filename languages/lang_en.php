@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * ============================================================================
  * English Language Dictionary
@@ -476,5 +476,28 @@ $lang['showing_latest_recommendations'] = "Here are the latest published stories
 $lang['articles_count_label'] = "Articles";
 $lang['scroll_for_more'] = "Scroll for more";
 
+
+// 23. Reader Settings Page
+$lang['settings_page_title'] = "Account Settings";
+$lang['settings_tab_profile'] = "Profile";
+$lang['settings_tab_password'] = "Password";
+$lang['settings_tab_topics'] = "Topics";
+$lang['settings_tab_danger'] = "Delete Account";
+$lang['settings_member_since'] = "Member since";
+$lang['settings_comments'] = "Comments";
+$lang['settings_topics_sub'] = "Topics subscribed";
+$lang['settings_avatar_url'] = "Profile Photo URL";
+$lang['settings_optional'] = "optional";
+$lang['settings_avatar_hint'] = "Paste a public image URL or leave blank";
+$lang['settings_save_profile'] = "Save Changes";
+$lang['settings_current_password'] = "Current Password";
+$lang['settings_new_password'] = "New Password";
+$lang['settings_change_password'] = "Change Password";
+$lang['settings_delete_account'] = "Delete Account";
+$lang['settings_delete_warning'] = "The following actions are permanent and cannot be undone.";
+$lang['settings_delete_desc'] = "Deleting your account will permanently remove your profile, comments, and all topic subscriptions.";
+$lang['settings_type_delete'] = "Type delete to confirm";
+$lang['settings_delete_btn'] = "Delete My Account";
+$lang['settings_delete_confirm_js'] = "Are you sure you want to permanently delete your account? This cannot be undone!";
 return $lang;
 

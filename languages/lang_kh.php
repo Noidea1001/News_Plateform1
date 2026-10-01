@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 /**
  * ============================================================================
  * Khmer Language Dictionary (ភាសាខ្មែរ)
@@ -476,5 +476,28 @@ $lang['showing_latest_recommendations'] = "ខាងក្រោមនេះជ�
 $lang['articles_count_label'] = "អត្ថបទ";
 $lang['scroll_for_more'] = "រំកិលមើលបន្ថែម";
 
+
+// 23. Reader Settings Page
+$lang['settings_page_title'] = "ការកំណត់គណនី";
+$lang['settings_tab_profile'] = "ព័ត៌មានផ្ទាល់ខ្លួន";
+$lang['settings_tab_password'] = "ពាក្យសម្ងាត់";
+$lang['settings_tab_topics'] = "ប្រធានបទជាវ";
+$lang['settings_tab_danger'] = "លុបគណនី";
+$lang['settings_member_since'] = "ចូលជាសមាជិកនៅ";
+$lang['settings_comments'] = "មតិយោបល់";
+$lang['settings_topics_sub'] = "ប្រធានបទបានជាវ";
+$lang['settings_avatar_url'] = "URL រូបភាពប្រូហ្វាល់";
+$lang['settings_optional'] = "មិនជំរុញ";
+$lang['settings_avatar_hint'] = "ដាក់ URL រូបភាពពីអ៊ីនធឺណិត ឬទុកទំនេរ";
+$lang['settings_save_profile'] = "រក្សាទុកការផ្លាស់ប្ដូរ";
+$lang['settings_current_password'] = "ពាក្យសម្ងាត់បច្ចុប្បន្ន";
+$lang['settings_new_password'] = "ពាក្យសម្ងាត់ថ្មី";
+$lang['settings_change_password'] = "ផ្លាស់ប្ដូរពាក្យសម្ងាត់";
+$lang['settings_delete_account'] = "លុបគណនី";
+$lang['settings_delete_warning'] = "ការផ្លាស់ប្ដូរខាងក្រោមនេះមិនអាចត្រឡប់វិញបានទេ។";
+$lang['settings_delete_desc'] = "នៅពេលលុបគណនី ទិន្នន័យ មតិ និងការជាវប្រធានបទរបស់អ្នកនឹងត្រូវបានលុបចោលទាំងស្រុង។";
+$lang['settings_type_delete'] = "វាយ delete ដើម្បីបញ្ជាក់";
+$lang['settings_delete_btn'] = "លុបគណនីរបស់ខ្ញុំ";
+$lang['settings_delete_confirm_js'] = "តើអ្នកប្រាកដជាចង់លុបគណនីនេះមែនទេ?";
 return $lang;
 
