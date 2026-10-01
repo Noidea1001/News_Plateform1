@@ -317,5 +317,40 @@ $lang['Security validation failed (CSRF token mismatch). Please refresh and try 
 $lang['Too many failed login attempts. Please try again in 15 minutes.'] = "Too many failed login attempts. Please try again in 15 minutes.";
 $lang['Access Denied: Insufficient editorial privileges.'] = "Access Denied: Insufficient editorial privileges.";
 
+// 12. Reader Community & Comments
+$lang['comments_title'] = "Reader Discussion";
+$lang['comments_count'] = ":count Comments";
+$lang['leave_comment'] = "Join the Discussion";
+$lang['reply'] = "Reply";
+$lang['cancel_reply'] = "Cancel Reply";
+$lang['name_placeholder'] = "Your name";
+$lang['email_placeholder'] = "Your email address (never published)";
+$lang['comment_placeholder'] = "Share your thoughts, analysis, or respectful feedback...";
+$lang['post_comment'] = "Submit Comment";
+$lang['no_comments_yet'] = "No comments yet. Be the first to join the conversation!";
+$lang['like'] = "Like";
+$lang['liked'] = "Liked";
+$lang['comment_success'] = "Your comment has been posted successfully!";
+$lang['comment_error'] = "Unable to post comment. Please provide valid name, email, and comment text.";
+$lang['total_comments'] = "Reader Comments";
+
+// 13. PWA & Offline Support
+$lang['pwa_install'] = "Install App";
+$lang['pwa_install_desc'] = "Install NewsPlatform on your device for lightning-fast offline reading.";
+$lang['offline_title'] = "You are currently offline";
+$lang['offline_desc'] = "No internet connection detected. You can continue reading all articles previously saved to your device.";
+$lang['view_saved_articles'] = "Open Saved Reading List";
+$lang['retry_connection'] = "Retry Connection";
+
+// 14. RESTful API & Developers
+$lang['api_documentation'] = "RESTful API";
+$lang['api_docs_title'] = "Decoupled NewsPlatform REST API v1";
+$lang['api_docs_desc'] = "Standardized JSON endpoints for mobile apps, external syndication, and headless frontends.";
+
+// 15. Analytics Dashboard
+$lang['category_analytics'] = "Category Readership Distribution";
+$lang['category_analytics_sub'] = "Total views and article volume grouped by editorial topic";
+$lang['avg_views_per_story'] = "Avg Views / Story";
+
 return $lang;
 

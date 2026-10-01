@@ -53,13 +53,25 @@ class AdminController
         $publishedCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM articles WHERE status = 'published'");
         $draftCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM articles WHERE status = 'draft'");
         $totalSubscribers = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM subscribers WHERE status = 'active'");
+        $totalViews = (int)$this->db->fetchColumn("SELECT COALESCE(SUM(views_count), 0) FROM articles");
+        $totalComments = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM comments");
+        $avgViewsPerStory = $publishedCount > 0 ? (int)round($totalViews / $publishedCount) : 0;
 
         // 2. Template Blueprint Breakdown Metrics
         $standardCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM articles WHERE template_type = 'standard'");
         $investigativeCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM articles WHERE template_type = 'investigative'");
         $opinionCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM articles WHERE template_type = 'opinion'");
 
-        // 3. Editorial Posts List
+        // 3. Category Readership Distribution Analytics
+        $categoryStats = $this->db->fetchAll(
+            "SELECT c.id, c.name, COUNT(a.id) as article_count, COALESCE(SUM(a.views_count), 0) as total_views 
+             FROM categories c 
+             LEFT JOIN articles a ON a.category_id = c.id 
+             GROUP BY c.id, c.name 
+             ORDER BY total_views DESC"
+        );
+
+        // 4. Editorial Posts List
         $articles = $this->db->fetchAll(
             "SELECT a.*, c.name as category_name, u.username as author_name 
              FROM articles a 
@@ -68,7 +80,7 @@ class AdminController
              ORDER BY a.created_at DESC"
         );
 
-        // 4. Recent Feed Subscribers
+        // 5. Recent Feed Subscribers
         $recentSubscribers = $this->db->fetchAll(
             "SELECT s.*, c.name as category_name 
              FROM subscribers s 
@@ -83,6 +95,10 @@ class AdminController
             'publishedCount' => $publishedCount,
             'draftCount' => $draftCount,
             'totalSubscribers' => $totalSubscribers,
+            'totalViews' => $totalViews,
+            'totalComments' => $totalComments,
+            'avgViewsPerStory' => $avgViewsPerStory,
+            'categoryStats' => $categoryStats,
             'standardCount' => $standardCount,
             'investigativeCount' => $investigativeCount,
             'opinionCount' => $opinionCount,

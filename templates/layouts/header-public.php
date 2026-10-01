@@ -28,6 +28,13 @@ $currentLang = $_SESSION['lang'] ?? 'en';
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
+
+    <!-- Progressive Web App (PWA) Manifest & Meta -->
+    <link rel="manifest" href="<?= url('manifest.json') ?>">
+    <meta name="theme-color" content="#c8102e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="<?= url('assets/icons/icon-192.svg') ?>">
 </head>
 
 <body class="d-flex flex-column min-vh-100">
@@ -44,8 +51,16 @@ $currentLang = $_SESSION['lang'] ?? 'en';
                     <span class="d-none d-md-inline" style="color:rgba(255,255,255,0.45);"><?= __('cda_badge') ?></span>
                 </div>
 
-                <!-- Right: Language -->
-                <div class="d-flex align-items-center gap-2">
+                <!-- Right: PWA Install & Language -->
+                <div class="d-flex align-items-center gap-2.5">
+                    <button type="button" id="pwaInstallBtn"
+                        class="btn btn-outline-light btn-sm py-0 px-2 d-none align-items-center gap-1"
+                        style="font-size:0.7rem; border-radius:2px; border-color:rgba(255,255,255,0.3); opacity:0.85;"
+                        title="<?= __('pwa_install') ?>">
+                        <i class="bi bi-download" style="font-size:0.68rem;"></i>
+                        <span class="d-none d-sm-inline"><?= __('pwa_install') ?></span>
+                    </button>
+
                     <div class="dropdown">
                         <button class="btn btn-link text-white p-0 text-decoration-none dropdown-toggle"
                             style="font-size:0.72rem; font-weight:600; opacity:0.75;" type="button"

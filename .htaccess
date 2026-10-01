@@ -17,6 +17,11 @@ Options -Indexes +FollowSymLinks
     # Asset Fallback Routing (Maps /assets/... to /public/assets/...)
     RewriteRule ^assets/(.*)$ public/assets/$1 [L,QSA]
 
+    # Clean REST API Routing
+    RewriteRule ^api/v1/articles/?$ public/api/v1/articles.php [L,QSA]
+    RewriteRule ^api/v1/categories/?$ public/api/v1/categories.php [L,QSA]
+    RewriteRule ^api/v1/comments/?$ public/api/v1/comments.php [L,QSA]
+
     # Prevent direct browsing of protected internal folders
     RewriteRule ^(config|src|templates|languages)/(.*)$ - [F,L]
 </IfModule>

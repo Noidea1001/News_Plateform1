@@ -98,6 +98,22 @@ if (file_exists($savedModal)) { include $savedModal; }
                        onmouseout="this.style.color='rgba(255,255,255,0.40)'">
                         <?= __('cda_badge') ?>
                     </a>
+                    <span>&bull;</span>
+                    <a href="<?= url('api/v1/articles.php') ?>" target="_blank"
+                       class="text-decoration-none"
+                       style="color:rgba(255,255,255,0.40);"
+                       onmouseover="this.style.color='rgba(255,255,255,0.80)'"
+                       onmouseout="this.style.color='rgba(255,255,255,0.40)'">
+                        <i class="bi bi-code-slash me-1"></i><?= __('api_documentation') ?>
+                    </a>
+                    <span>&bull;</span>
+                    <a href="<?= url('admin/login.php') ?>"
+                       class="text-decoration-none"
+                       style="color:rgba(255,255,255,0.40);"
+                       onmouseover="this.style.color='rgba(255,255,255,0.80)'"
+                       onmouseout="this.style.color='rgba(255,255,255,0.40)'">
+                        <i class="bi bi-shield-lock me-1"></i><?= __('cma_link') ?>
+                    </a>
                 </div>
             </div>
         </div>
@@ -457,6 +473,45 @@ document.addEventListener('DOMContentLoaded', function () {
     updateSavedCountBadge();
     renderSavedArticlesList();
     syncBookmarkButtonsState();
+
+    // 4. Progressive Web App (PWA) & Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+            navigator.serviceWorker.register('<?= url("sw.js") ?>')
+                .then(function (reg) {
+                    console.log('NewsPlatform PWA Service Worker registered:', reg.scope);
+                })
+                .catch(function (err) {
+                    console.log('PWA Service Worker registration skipped/failed:', err);
+                });
+        });
+    }
+
+    // PWA Install Prompt Handler
+    let deferredPrompt = null;
+    const pwaBtn = document.getElementById('pwaInstallBtn');
+
+    window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (pwaBtn) {
+            pwaBtn.classList.remove('d-none');
+            pwaBtn.classList.add('d-inline-flex');
+        }
+    });
+
+    if (pwaBtn) {
+        pwaBtn.addEventListener('click', async function () {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const choiceResult = await deferredPrompt.userChoice;
+            if (choiceResult && choiceResult.outcome === 'accepted') {
+                pwaBtn.classList.remove('d-inline-flex');
+                pwaBtn.classList.add('d-none');
+            }
+            deferredPrompt = null;
+        });
+    }
 });
 </script>
 </body>

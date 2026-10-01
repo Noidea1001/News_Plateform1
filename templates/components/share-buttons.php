@@ -4,8 +4,10 @@
  * news-platform / templates / components / share-buttons.php
  */
 
-require_once __DIR__ . '/../../src/Core/helpers.php';
-$currentUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+$uri = $_SERVER['REQUEST_URI'] ?? '/';
+$isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on');
+$currentUrl = ($isHttps ? "https://" : "http://") . $host . $uri;
 $shareTitle = article_title($article['title'] ?? 'NewsPlatform Story');
 ?>
 

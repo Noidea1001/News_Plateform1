@@ -1,7 +1,17 @@
-# NewsPlatform CMS - Public Folder Asset Caching Configuration
+# NewsPlatform CMS - Public Folder Asset Caching & API Routing Configuration
 
 <IfModule mod_headers.c>
     <FilesMatch "\.(css|js|png|jpg|jpeg|gif|webp|svg|ico|ttf|woff|woff2)$">
         Header set Cache-Control "max-age=2592000, public"
     </FilesMatch>
+</IfModule>
+
+# Enable Rewrite Engine for Clean API URLs
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^api/v1/articles/?$ api/v1/articles.php [L,QSA]
+    RewriteRule ^api/v1/categories/?$ api/v1/categories.php [L,QSA]
+    RewriteRule ^api/v1/comments/?$ api/v1/comments.php [L,QSA]
 </IfModule>

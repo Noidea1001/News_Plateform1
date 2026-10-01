@@ -182,6 +182,9 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                 include __DIR__ . '/../components/citation-box.php';
                 ?>
 
+                <!-- Reader Community & Discussion Section -->
+                <?php include __DIR__ . '/../components/comments-section.php'; ?>
+
 
                 <!-- Reader Feed Callout Footer -->
                 <div class="card bg-brand-navy text-white my-5 border-0 shadow-lg p-4 rounded-4 text-center">

@@ -198,6 +198,12 @@ class PublicController
 
         $categories = $this->db->fetchAll("SELECT * FROM categories ORDER BY name ASC");
 
+        // Fetch reader comments
+        $comments = $this->db->fetchAll(
+            "SELECT * FROM comments WHERE article_id = :art_id AND status = 'approved' ORDER BY created_at ASC",
+            ['art_id' => $article['id']]
+        );
+
         // Route automatically through assigned template_type blueprint
         $this->templateEngine->renderArticleView($article['template_type'], [
             'pageTitle' => e($article['title']) . ' | NewsPlatform',
@@ -205,6 +211,7 @@ class PublicController
             'relatedArticles' => $relatedArticles,
             'trendingArticles' => $trendingArticles,
             'categories' => $categories,
+            'comments' => $comments,
         ]);
     }
 
@@ -295,6 +302,100 @@ class PublicController
         unset($art);
 
         return ['success' => true, 'articles' => $articles];
+    }
+
+    /**
+     * Add Reader Comment
+     */
+    public function addComment(array $postData): array
+    {
+        $articleId = (int)($postData['article_id'] ?? 0);
+        $parentId = !empty($postData['parent_id']) ? (int)$postData['parent_id'] : null;
+        $userName = trim($postData['user_name'] ?? '');
+        $userEmail = trim($postData['user_email'] ?? '');
+        $content = trim($postData['content'] ?? '');
+
+        // Validation
+        if ($articleId <= 0) {
+            return ['success' => false, 'message' => __('comment_error')];
+        }
+
+        // Verify article exists
+        $articleExists = (bool)$this->db->fetchColumn("SELECT id FROM articles WHERE id = :id AND status = 'published'", ['id' => $articleId]);
+        if (!$articleExists) {
+            return ['success' => false, 'message' => 'Article not found.'];
+        }
+
+        if (mb_strlen($userName) < 2 || mb_strlen($userName) > 80) {
+            return ['success' => false, 'message' => 'Please provide a valid name (2-80 characters).'];
+        }
+
+        if (!filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
+            return ['success' => false, 'message' => 'Please provide a valid email address.'];
+        }
+
+        if (mb_strlen($content) < 3 || mb_strlen($content) > 3000) {
+            return ['success' => false, 'message' => 'Comment must be between 3 and 3000 characters.'];
+        }
+
+        // Parent comment verification if reply
+        if ($parentId !== null) {
+            $parentExists = (bool)$this->db->fetchColumn(
+                "SELECT id FROM comments WHERE id = :pid AND article_id = :aid", 
+                ['pid' => $parentId, 'aid' => $articleId]
+            );
+            if (!$parentExists) {
+                $parentId = null;
+            }
+        }
+
+        // Insert comment
+        $this->db->execute(
+            "INSERT INTO comments (article_id, parent_id, user_name, user_email, content, likes_count, status, created_at) 
+             VALUES (:aid, :pid, :name, :email, :content, 0, 'approved', NOW())",
+            [
+                'aid' => $articleId,
+                'pid' => $parentId,
+                'name' => htmlspecialchars($userName, ENT_QUOTES, 'UTF-8'),
+                'email' => strtolower($userEmail),
+                'content' => htmlspecialchars($content, ENT_QUOTES, 'UTF-8')
+            ]
+        );
+
+        $newId = (int)$this->db->lastInsertId();
+        $newComment = $this->db->fetch("SELECT * FROM comments WHERE id = :id", ['id' => $newId]);
+        if ($newComment) {
+            $newComment['time_ago'] = TemplateEngine::timeAgo($newComment['created_at']);
+        }
+
+        return [
+            'success' => true,
+            'message' => __('comment_success'),
+            'comment' => $newComment
+        ];
+    }
+
+    /**
+     * Like/Upvote Reader Comment
+     */
+    public function likeComment(int $commentId): array
+    {
+        if ($commentId <= 0) {
+            return ['success' => false, 'message' => 'Invalid comment ID.'];
+        }
+
+        $comment = $this->db->fetch("SELECT id, likes_count FROM comments WHERE id = :id", ['id' => $commentId]);
+        if (!$comment) {
+            return ['success' => false, 'message' => 'Comment not found.'];
+        }
+
+        $this->db->execute("UPDATE comments SET likes_count = likes_count + 1 WHERE id = :id", ['id' => $commentId]);
+        $newLikes = (int)$comment['likes_count'] + 1;
+
+        return [
+            'success' => true,
+            'likes_count' => $newLikes
+        ];
     }
 }
 ?>

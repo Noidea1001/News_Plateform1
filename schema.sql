@@ -76,6 +76,24 @@ CREATE TABLE IF NOT EXISTS `login_attempts` (
   INDEX `idx_login_ip_time` (`ip_address`, `attempted_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 6. Comments Table (Reader Community & Threaded Discussions)
+CREATE TABLE IF NOT EXISTS `comments` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `article_id` INT NOT NULL,
+  `parent_id` INT NULL,
+  `user_name` VARCHAR(100) NOT NULL,
+  `user_email` VARCHAR(150) NOT NULL,
+  `content` TEXT NOT NULL,
+  `likes_count` INT NOT NULL DEFAULT 0,
+  `status` ENUM('approved', 'pending', 'spam') NOT NULL DEFAULT 'approved',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (`article_id`) REFERENCES `articles`(`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`parent_id`) REFERENCES `comments`(`id`) ON DELETE CASCADE,
+  INDEX `idx_comments_article` (`article_id`),
+  INDEX `idx_comments_parent` (`parent_id`),
+  INDEX `idx_comments_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Initial Seed Data
 -- Password for default staff is 'admin123' -> $2y$10$59b3W/B4X0jX54cO/K2wve5v92XN5kS1F8k8j7I2P.P1B5k2W7wGG
 INSERT IGNORE INTO `users` (`id`, `username`, `email`, `password_hash`, `role`, `bio`, `is_active`) VALUES

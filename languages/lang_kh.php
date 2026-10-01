@@ -317,5 +317,40 @@ $lang['Security validation failed (CSRF token mismatch). Please refresh and try 
 $lang['Too many failed login attempts. Please try again in 15 minutes.'] = "ការចូលប្រើប្រព័ន្ធបរាជ័យច្រើនដងពេក។ សូមព្យាយាមម្តងទៀតក្នុងរយៈពេល ១៥ នាទី។";
 $lang['Access Denied: Insufficient editorial privileges.'] = "ការចូលប្រើប្រាស់ត្រូវបានបដិសេធ៖ គ្មានសិទ្ធិគ្រប់គ្រាន់។";
 
+// 12. Reader Community & Comments
+$lang['comments_title'] = "ការពិភាក្សារបស់អ្នកអាន";
+$lang['comments_count'] = "មតិ :count";
+$lang['leave_comment'] = "ចូលរួមការពិភាក្សា";
+$lang['reply'] = "ឆ្លើយតប";
+$lang['cancel_reply'] = "បោះបង់ការឆ្លើយតប";
+$lang['name_placeholder'] = "ឈ្មោះរបស់អ្នក";
+$lang['email_placeholder'] = "អាសយដ្ឋានអ៊ីមែល (នឹងមិនបង្ហាញជាសាធារណៈ)";
+$lang['comment_placeholder'] = "ចែករំលែកទស្សនៈ ការវិភាគ ឬមតិស្ថាបនារបស់អ្នក...";
+$lang['post_comment'] = "ផ្ញើមតិយោបល់";
+$lang['no_comments_yet'] = "មិនទាន់មានមតិយោបល់នៅឡើយទេ។ សូមក្លាយជាអ្នកដំបូងដែលចូលរួមការសន្ទនា!";
+$lang['like'] = "ចូលចិត្ត";
+$lang['liked'] = "បានចូលចិត្ត";
+$lang['comment_success'] = "មតិយោបល់របស់អ្នកត្រូវបានបង្ហោះដោយជោគជ័យ!";
+$lang['comment_error'] = "មិនអាចបង្ហោះមតិបានទេ។ សូមបញ្ចូលឈ្មោះ អ៊ីមែល និងខ្លឹមសារមតិឱ្យបានត្រឹមត្រូវ។";
+$lang['total_comments'] = "មតិអ្នកអាន";
+
+// 13. PWA & Offline Support
+$lang['pwa_install'] = "ដំឡើងកម្មវិធី";
+$lang['pwa_install_desc'] = "ដំឡើង NewsPlatform លើឧបករណ៍របស់អ្នកសម្រាប់អានដោយគ្មានអ៊ីនធឺណិតយ៉ាងរហ័ស។";
+$lang['offline_title'] = "អ្នកកំពុងគ្មានអ៊ីនធឺណិត";
+$lang['offline_desc'] = "មិនមានការតភ្ជាប់អ៊ីនធឺណិតទេ។ អ្នកអាចបន្តអានអត្ថបទទាំងអស់ដែលបានរក្សាទុកលើឧបករណ៍របស់អ្នក។";
+$lang['view_saved_articles'] = "បើកបញ្ជីអានដែលបានរក្សាទុក";
+$lang['retry_connection'] = "ព្យាយាមតភ្ជាប់ឡើងវិញ";
+
+// 14. RESTful API & Developers
+$lang['api_documentation'] = "RESTful API";
+$lang['api_docs_title'] = "NewsPlatform REST API v1";
+$lang['api_docs_desc'] = "ចំណុចប្រទាក់ JSON ស្តង់ដារសម្រាប់កម្មវិធីទូរស័ព្ទ និងប្រព័ន្ធខាងក្រៅ។";
+
+// 15. Analytics Dashboard
+$lang['category_analytics'] = "ការបែងចែកអ្នកអានតាមប្រភេទ";
+$lang['category_analytics_sub'] = "ចំនួនទស្សនា និងទំហំអត្ថបទសរុបតាមប្រធានបទ";
+$lang['avg_views_per_story'] = "ការទស្សនាជាមធ្យម / អត្ថបទ";
+
 return $lang;
 

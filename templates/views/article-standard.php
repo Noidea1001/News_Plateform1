@@ -197,6 +197,9 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                 include __DIR__ . '/../components/citation-box.php';
                 ?>
 
+                <!-- Reader Community & Discussion Section -->
+                <?php include __DIR__ . '/../components/comments-section.php'; ?>
+
                 <!-- Related Articles Grid -->
                 <?php if (!empty($relatedArticles)) { ?>
                     <div class="mt-5 pt-4 border-top">

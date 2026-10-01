@@ -26,6 +26,16 @@ foreach (array_slice($recentArticlesList, -7) as $art) {
     $trendTitles[] = $dateLabel . ': ' . mb_strimwidth(article_title($art['title']), 0, 14, '...');
     $trendViews[] = (int) $art['views_count'];
 }
+
+// 3. Category Readership Analytics
+$catLabels = [];
+$catViews = [];
+$catCounts = [];
+foreach ($categoryStats ?? [] as $cStat) {
+    $catLabels[] = cat_name($cStat['name']);
+    $catViews[] = (int)$cStat['total_views'];
+    $catCounts[] = (int)$cStat['article_count'];
+}
 ?>
 
 <div class="container-fluid px-3 px-md-6 py-4">
@@ -59,55 +69,75 @@ foreach (array_slice($recentArticlesList, -7) as $art) {
         </div>
     </div>
 
-    <!-- 4 High Level Stat Cards -->
+    <!-- 6 High Level Stat Cards -->
     <div class="row g-3 mb-4">
-        <div class="col-6 col-xl-3">
-            <div class="card stat-card-modern border-0 shadow-sm bg-white p-3 p-md-3.5 h-100">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card stat-card-modern border-0 shadow-sm bg-white p-3 h-100">
                 <div>
-                    <span
-                        class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('total_articles') ?></span>
-                    <h3 class="fw-extrabold text-dark mb-0 fs-3"><?= number_format($totalArticles) ?></h3>
-                    <div class="mt-2 text-xs text-muted d-none d-sm-block">
-                        <span class="text-success fw-bold">+12%</span> vs last month
+                    <span class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('total_articles') ?></span>
+                    <h3 class="fw-extrabold text-dark mb-0 fs-4"><?= number_format($totalArticles) ?></h3>
+                    <div class="mt-1 text-xs text-muted">
+                        <span class="text-success fw-bold"><?= $publishedCount ?></span> live
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-6 col-xl-3">
-            <div class="card stat-card-modern border-0 shadow-sm bg-white p-3 p-md-3.5 h-100">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card stat-card-modern border-0 shadow-sm bg-white p-3 h-100">
                 <div>
-                    <span
-                        class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('published_live') ?></span>
-                    <h3 class="fw-extrabold text-success mb-0 fs-3"><?= number_format($publishedCount) ?></h3>
-                    <div class="mt-2 text-xs text-muted d-none d-sm-block">
-                        <span class="pulsing-dot bg-success me-1"></span> CDA Active
+                    <span class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('published_live') ?></span>
+                    <h3 class="fw-extrabold text-success mb-0 fs-4"><?= number_format($publishedCount) ?></h3>
+                    <div class="mt-1 text-xs text-muted">
+                        <span class="pulsing-dot bg-success me-1"></span> <?= $draftCount ?> in queue
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-6 col-xl-3">
-            <div class="card stat-card-modern border-0 shadow-sm bg-white p-3 p-md-3.5 h-100">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card stat-card-modern border-0 shadow-sm bg-white p-3 h-100">
                 <div>
-                    <span
-                        class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('drafts_pending') ?></span>
-                    <h3 class="fw-extrabold text-warning mb-0 fs-3"><?= number_format($draftCount) ?></h3>
-                    <div class="mt-2 text-xs text-muted d-none d-sm-block">
-                        <span class="text-warning fw-semibold">In Queue</span>
+                    <span class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('total_readers') ?></span>
+                    <h3 class="fw-extrabold text-danger mb-0 fs-4"><?= number_format($totalViews ?? 0) ?></h3>
+                    <div class="mt-1 text-xs text-muted">
+                        <i class="bi bi-eye-fill text-danger me-1"></i> Total Views
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-6 col-xl-3">
-            <div class="card stat-card-modern border-0 shadow-sm bg-white p-3 p-md-3.5 h-100">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card stat-card-modern border-0 shadow-sm bg-white p-3 h-100">
                 <div>
-                    <span
-                        class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('active_subscribers') ?></span>
-                    <h3 class="fw-extrabold text-danger mb-0 fs-3"><?= number_format($totalSubscribers) ?></h3>
-                    <div class="mt-2 text-xs text-muted d-none d-sm-block">
-                        <span class="text-danger fw-bold">AJAX Feed</span>
+                    <span class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('avg_views_per_story') ?></span>
+                    <h3 class="fw-extrabold text-primary mb-0 fs-4"><?= number_format($avgViewsPerStory ?? 0) ?></h3>
+                    <div class="mt-1 text-xs text-muted">
+                        <i class="bi bi-graph-up-arrow text-primary me-1"></i> Per Article
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card stat-card-modern border-0 shadow-sm bg-white p-3 h-100">
+                <div>
+                    <span class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('active_subscribers') ?></span>
+                    <h3 class="fw-extrabold text-dark mb-0 fs-4"><?= number_format($totalSubscribers) ?></h3>
+                    <div class="mt-1 text-xs text-muted">
+                        <i class="bi bi-bell-fill text-danger me-1"></i> Direct Feed
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="card stat-card-modern border-0 shadow-sm bg-white p-3 h-100">
+                <div>
+                    <span class="text-muted text-xs text-uppercase fw-bold tracking-wider d-block mb-1"><?= __('total_comments') ?></span>
+                    <h3 class="fw-extrabold text-warning mb-0 fs-4"><?= number_format($totalComments ?? 0) ?></h3>
+                    <div class="mt-1 text-xs text-muted">
+                        <i class="bi bi-chat-quote-fill text-warning me-1"></i> Community
                     </div>
                 </div>
             </div>
@@ -170,6 +200,58 @@ foreach (array_slice($recentArticlesList, -7) as $art) {
             </div>
         </div>
 
+    </div>
+
+    <!-- Category Analytics & Top Stories Leaderboard Row -->
+    <div class="row g-4 mb-4">
+        <!-- Category Readership Chart -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                <div class="chart-card-header d-flex justify-content-between align-items-center rounded-top-4">
+                    <div>
+                        <h5 class="fw-bold mb-0 text-dark editorial-title fs-5"><?= __('category_analytics') ?></h5>
+                        <p class="text-muted text-xs mb-0"><?= __('category_analytics_sub') ?></p>
+                    </div>
+                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 rounded-pill px-2.5 py-1 text-xs">
+                        <i class="bi bi-bar-chart-fill me-1"></i> Topics
+                    </span>
+                </div>
+                <div class="card-body p-3 p-md-4">
+                    <div style="height: 240px; position: relative;">
+                        <canvas id="categoryAnalyticsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Top Stories Leaderboard -->
+        <div class="col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-white">
+                <div class="chart-card-header rounded-top-4">
+                    <h5 class="fw-bold mb-0 text-dark editorial-title fs-5"><?= __('most_read') ?></h5>
+                    <p class="text-muted text-xs mb-0">Highest impact published dispatches</p>
+                </div>
+                <div class="card-body p-3">
+                    <div class="d-flex flex-column gap-2.5">
+                        <?php foreach (array_slice($topArticlesList, 0, 4) as $rank => $tArt): ?>
+                            <div class="d-flex align-items-center gap-2.5 p-2 rounded-3 border bg-light-subtle">
+                                <span class="badge <?= $rank === 0 ? 'bg-danger text-white' : ($rank === 1 ? 'bg-dark text-white' : 'bg-light text-dark border') ?> rounded-circle d-flex align-items-center justify-content-center" style="width:24px; height:24px; font-size:0.72rem; flex-shrink:0;">
+                                    <?= $rank + 1 ?>
+                                </span>
+                                <div class="flex-grow-1 min-w-0">
+                                    <h6 class="mb-0 text-truncate text-xs fw-bold">
+                                        <a href="<?= url('article.php?slug=' . urlencode($tArt['slug'])) ?>" target="_blank" class="text-dark text-decoration-none">
+                                            <?= e(article_title($tArt['title'])) ?>
+                                        </a>
+                                    </h6>
+                                    <span class="text-xs text-muted"><?= number_format((int)$tArt['views_count']) ?> reads &bull; <?= e(cat_name($tArt['category_name'])) ?></span>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Main Content Repository Table Section -->
@@ -527,6 +609,62 @@ foreach (array_slice($recentArticlesList, -7) as $art) {
                 }
             }
         });
+
+        // 2b. Category Readership Analytics Chart
+        const catCanvas = document.getElementById('categoryAnalyticsChart');
+        if (catCanvas) {
+            const catCtx = catCanvas.getContext('2d');
+            const catLabels = <?= json_encode($catLabels, JSON_UNESCAPED_UNICODE) ?>;
+            const catViews = <?= json_encode($catViews) ?>;
+
+            new Chart(catCtx, {
+                type: 'bar',
+                data: {
+                    labels: catLabels,
+                    datasets: [{
+                        label: 'Total Views',
+                        data: catViews,
+                        backgroundColor: [
+                            'rgba(200, 16, 46, 0.85)',
+                            'rgba(15, 23, 42, 0.85)',
+                            'rgba(13, 110, 253, 0.85)',
+                            'rgba(25, 135, 84, 0.85)',
+                            'rgba(255, 193, 7, 0.85)'
+                        ],
+                        borderRadius: 6,
+                        borderSkipped: false
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0f172a',
+                            padding: 10,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return ' ' + context.parsed.x.toLocaleString() + ' views';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: '#f1f5f9' },
+                            ticks: { font: { size: 11 } }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { font: { size: 11, weight: '600' } }
+                        }
+                    }
+                }
+            });
+        }
 
         // 3. Live Client-Side Table Search Engine & Tab Filters
         const searchInput = document.getElementById('tableSearchInput');

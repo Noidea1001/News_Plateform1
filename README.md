@@ -74,7 +74,11 @@ A production-grade, decoupled **Content Management System (CMS)** and **Content 
   - `Opinion`: Columnist avatar header spotlight, styled red-bordered pull quotes, and reader commentary box.
 - 🖼️ **MS Word-Style Media Shortcodes**: Floating media alignment tags (`[image:1:left]`, `[image:1:right]`, `[video:1:full]`) allowing text to wrap naturally around images and videos.
 - 📊 **Reading Progress Bar**: Dynamic top scroll progress bar (`#readingProgressBar`) tracking long-form reading depth in real time.
-- ⚡ **Auto Database Schema Initialization & Seeder**: Self-healing database handler that automatically creates database tables, seeds default categories, users, and 12 sample news stories upon initial load.
+- 💬 **Interactive Reader Community & Threaded Discussions**: Production-grade threaded discussion system with nested parent/child replies, dynamic like counter with instant AJAX feedback, avatar initials generator, and bilingual Khmer/English support across all 3 article layout blueprints.
+- 📱 **Progressive Web App (PWA) & Offline Reading**: Service worker caching strategy, Web App Manifest (`manifest.json`), home-screen install prompt, and dedicated offline fallback screen (`offline.html`) allowing readers to browse saved dispatches without internet access.
+- 📈 **Visual Analytics Dashboard (Chart.js)**: Enhanced CMA dashboard featuring 6 high-level KPI cards, interactive Category Readership Distribution horizontal bar chart, Top Stories leaderboard, and 30-day traffic impressions.
+- 🌐 **Decoupled RESTful Public API v1**: Clean JSON endpoints (`/api/v1/articles`, `/api/v1/categories`, `/api/v1/comments`) with full-text search, pagination, CORS compliance, and single-article detail extraction for mobile or headless frontends.
+- ⚡ **Auto Database Schema Initialization & Seeder**: Self-healing database handler that automatically creates database tables, seeds default categories, users, comments, and sample news stories upon initial load.
 
 ---
 

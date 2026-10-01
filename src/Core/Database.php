@@ -119,6 +119,51 @@ class Database
                     $this->pdo->exec("ALTER TABLE articles ADD COLUMN `has_drop_cap` TINYINT(1) NOT NULL DEFAULT 0");
                 }
             }
+
+            // Ensure comments table exists
+            $this->pdo->exec("CREATE TABLE IF NOT EXISTS `comments` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `article_id` INT NOT NULL,
+                `parent_id` INT NULL,
+                `user_name` VARCHAR(100) NOT NULL,
+                `user_email` VARCHAR(150) NOT NULL,
+                `content` TEXT NOT NULL,
+                `likes_count` INT NOT NULL DEFAULT 0,
+                `status` ENUM('approved', 'pending', 'spam') NOT NULL DEFAULT 'approved',
+                `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (`article_id`) REFERENCES `articles`(`id`) ON DELETE CASCADE,
+                FOREIGN KEY (`parent_id`) REFERENCES `comments`(`id`) ON DELETE CASCADE,
+                INDEX `idx_comments_article` (`article_id`),
+                INDEX `idx_comments_parent` (`parent_id`),
+                INDEX `idx_comments_status` (`status`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
+            // Seed sample reader comments if table is empty
+            $commentCount = (int)$this->fetchColumn("SELECT COUNT(*) FROM comments");
+            if ($commentCount === 0) {
+                $sampleArticle = $this->fetch("SELECT id FROM articles WHERE status = 'published' LIMIT 1");
+                if ($sampleArticle) {
+                    $artId = (int)$sampleArticle['id'];
+                    $this->execute(
+                        "INSERT INTO comments (article_id, parent_id, user_name, user_email, content, likes_count, status, created_at) VALUES 
+                        (:art_id1, NULL, 'Sophal Meas', 'sophal.meas@example.com', 'This in-depth coverage provides critical clarity on the latest regional technological shifts. Excellent journalistic analysis!', 8, 'approved', NOW() - INTERVAL 2 HOUR)",
+                        ['art_id1' => $artId]
+                    );
+                    $firstCommentId = (int)$this->lastInsertId();
+                    $this->execute(
+                        "INSERT INTO comments (article_id, parent_id, user_name, user_email, content, likes_count, status, created_at) VALUES 
+                        (:art_id2, NULL, 'Dara Seng', 'dara.seng@example.com', 'The data points cited regarding automated system resilience match what we observe across distributed infrastructure.', 4, 'approved', NOW() - INTERVAL 1 HOUR)",
+                        ['art_id2' => $artId]
+                    );
+                    if ($firstCommentId) {
+                        $this->execute(
+                            "INSERT INTO comments (article_id, parent_id, user_name, user_email, content, likes_count, status, created_at) VALUES 
+                            (:art_id3, :pid, 'Editorial Desk', 'desk@newsplatform.local', 'Thank you for following our coverage! We will be publishing a follow-up analysis later this week.', 3, 'approved', NOW() - INTERVAL 30 MINUTE)",
+                            ['art_id3' => $artId, 'pid' => $firstCommentId]
+                        );
+                    }
+                }
+            }
         } catch (Throwable $e) {
             error_log("Schema auto-initialization exception: " . $e->getMessage());
         }
