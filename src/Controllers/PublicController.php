@@ -300,7 +300,7 @@ class PublicController
              FROM articles a
              JOIN categories c ON a.category_id = c.id
              WHERE a.status = 'published'
-               AND CONCAT_WS(' ', a.title, a.title_kh, a.title_en, a.summary, a.summary_kh, a.summary_en, a.content, a.content_kh, a.content_en, a.slug, c.name) LIKE :term
+               AND CONCAT_WS(' ', a.title, a.summary, a.content, a.slug, c.name) LIKE :term
              ORDER BY a.published_at DESC LIMIT 20",
             ['term' => $term]
         );

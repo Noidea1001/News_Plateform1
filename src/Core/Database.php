@@ -105,7 +105,8 @@ class Database
             }
 
             // Ensure columns exist on articles table if table was created earlier without them
-            if ($tablesExist) {
+            $articlesCheck = $this->pdo->query("SHOW TABLES LIKE 'articles'");
+            if ($articlesCheck && $articlesCheck->rowCount() > 0) {
                 $columnsQuery = $this->pdo->query("SHOW COLUMNS FROM articles");
                 $existingColumns = $columnsQuery ? $columnsQuery->fetchAll(PDO::FETCH_COLUMN) : [];
 

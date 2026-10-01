@@ -4,6 +4,27 @@
  * news-platform / config / database.php
  */
 
+$getEnvVar = function (string $key, string $default = ''): string {
+    $val = getenv($key);
+    if ($val !== false && $val !== '') {
+        return $val;
+    }
+    if (isset($_SERVER[$key]) && $_SERVER[$key] !== '') {
+        return (string) $_SERVER[$key];
+    }
+    if (isset($_ENV[$key]) && $_ENV[$key] !== '') {
+        return (string) $_ENV[$key];
+    }
+
+    return $default;
+};
+
+$host = $getEnvVar('DB_HOST', '127.0.0.1');
+$port = (int) $getEnvVar('DB_PORT', '3306');
+$dbname = $getEnvVar('DB_NAME', 'news_platform');
+$username = $getEnvVar('DB_USER', 'root');
+$password = $getEnvVar('DB_PASS', '');
+
 $options = [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
@@ -11,18 +32,16 @@ $options = [
     PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8mb4 COLLATE utf8mb4_unicode_ci",
 ];
 
-$host = $_ENV['DB_HOST'] ?? '127.0.0.1';
-
-if (str_contains($host, '.aivencloud.com') || (isset($_ENV['DB_SSL_VERIFY']) && $_ENV['DB_SSL_VERIFY'] === 'false')) {
+if (str_contains($host, '.aivencloud.com') || str_contains($host, 'render.com') || strtolower($getEnvVar('DB_SSL_VERIFY', '')) === 'false') {
     $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = false;
 }
 
 return [
     'host' => $host,
-    'port' => (int)($_ENV['DB_PORT'] ?? 3306),
-    'dbname' => $_ENV['DB_NAME'] ?? 'news_platform',
-    'username' => $_ENV['DB_USER'] ?? 'root',
-    'password' => $_ENV['DB_PASS'] ?? '',
+    'port' => $port,
+    'dbname' => $dbname,
+    'username' => $username,
+    'password' => $password,
     'charset' => 'utf8mb4',
     'options' => $options,
 ];
