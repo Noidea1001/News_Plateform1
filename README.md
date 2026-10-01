@@ -51,6 +51,7 @@ A production-grade, decoupled **Content Management System (CMS)** and **Content 
   - [9. Quick Article Preview Modal](#9-quick-article-preview-modal)
 - [📁 Comprehensive Directory Structure](#-comprehensive-directory-structure)
 - [🗄️ Database Relational Schema](#️-database-relational-schema)
+- [🌟 Recent Platform Enhancements & Reader Account System (v2.5 Upgrade)](#-recent-platform-enhancements--reader-account-system-v25-upgrade)
 - [🚀 Future Enhancements & Roadmap](#-future-enhancements--roadmap-features-to-improve)
 - [❓ Troubleshooting & FAQ](#-troubleshooting--faq)
 
@@ -399,6 +400,52 @@ erdiagram
         datetime attempted_at
     }
 ```
+
+---
+
+## 🌟 Recent Platform Enhancements & Reader Account System (v2.5 Upgrade)
+
+The platform has recently undergone a major architecture and user experience upgrade focused on reader engagement, security, and editorial polish:
+
+### 1. 👤 Reader Authentication & Session Architecture
+* **Dedicated Reader Identity Layer**: An isolated reader authentication system (`Auth::reader()`, `Auth::readerCheck()`, `Auth::readerLogin()`, `Auth::readerLogout()`) operating completely independently from staff and administrative sessions.
+* **Minimalist Public Navbar**: Unauthenticated visitors see only a clean, prominent **"+ បង្កើតគណនី" (Create Account)** button. Once registered and logged in, a personalized dropdown displays the reader's name, verified reader pill, one-click access to **Account Settings**, and secure logout.
+* **Registration with Auto-Login**: Fast, lightweight reader registration flow (`/register.php`) featuring CSRF token protection, password confirmation validation, email uniqueness enforcement, bcrypt password hashing, and immediate automatic login upon submission.
+
+### 2. ⚙️ Full-Format User Settings & Preferences Dashboard (`/settings.php`)
+* **Spacious Responsive Layout**: Replaced cramped floating modals with a spacious, professional desktop dashboard (`1200px` container) with fluid mobile-responsive breakpoints.
+* **Top Account Overview Hero**: Displays user avatar with live status indicator, verified reader badge, user email, and metric chips (Member Since date, total comments posted, and subscribed topics count).
+* **Personal Profile Tab**: Edit full name and email with a **Real-Time Live Avatar URL Previewer** that verifies and previews image links immediately with graceful fallback to the user's initial monogram letter.
+* **Security & Password Tab**: Verification of current password, bcrypt encryption for new passwords, minimum length requirements, and **Eye Visibility Toggle Buttons** for all password inputs.
+* **Topic Subscriptions Tab**: Interactive 3-column topic preference grid with live REST AJAX subscription toggling (`/api/v1/subscription.php`), instant subscriber counter updates, and soft rose card styling.
+* **Danger Zone Tab**: Account deletion workflow requiring exact confirmation phrase (`delete`), cleanly purging reader data, comments, and category subscriptions with graceful session cleanup.
+
+### 3. 🔖 Account-Gated Bookmarks & Custom In-Drawer Alert Card
+* **Account Requirement Guard**: Readers must have an account to save articles for later reading. Clicking the bookmark icon on any feed card, article detail, or quick-view modal prompts unauthenticated visitors to create an account.
+* **Custom Alert Card for Clearing Saved Reading List**: Replaced ugly native browser `confirm()` dialogues with an elegant in-drawer confirmation card (`#clearSavedConfirmCard`) featuring warning icons, Khmer prompt **"តើអ្នកប្រាកដជាចង់សម្អាតបញ្ជីអត្ថបទដែលបានរក្សាទុកទាំងអស់មែនទេ?"**, and Cancel / Clear action buttons.
+
+### 4. 🔔 Account-Gated Real-Time News Alerts ("ការជូនដំណឹងព័ត៌មានថ្មីៗ")
+* **Registered-Only News Feed**: Real-time breaking news and customized topic notification feeds are reserved for registered readers.
+* **Clean Unregistered State**: The notification bell icon is hidden for unregistered visitors, keeping the public navigation bar minimalist and uncluttered.
+* **Smart Polling & API Guard**: Background network polling (`fetchNotifications`) only executes for active reader sessions. The backend endpoint `/api/v1/notifications.php` validates credentials and returns `requires_auth: true` for anonymous requests.
+
+### 5. 💬 Reader-Gated Community Discussions
+* **Account-Required Comments**: Visitors must have a reader account to submit comments (`Auth::readerCheck()`).
+* **Clean Discussion UI**: High-readability comment section styled like Facebook/YouTube with nested reply threads, like reactions, and Khmer typography formatting.
+
+### 6. 🔍 Live Search with Scrollable Dropdown & Mobile Support
+* **Scrollable Live Search**: Dynamic search container with a max-height of `380px` on desktop and custom slim scrollbars preventing viewport overflow when searching broad terms.
+* **Bilingual Instant Matching**: Full-text search across Khmer and English article titles and summaries.
+* **Mobile Search Drawer**: Responsive collapsible search bar on mobile screens with dedicated quick-search trigger buttons.
+
+### 7. 📐 Topbar Flush Fit & Admin Alignment
+* **Exact Height Uniformity**: Unified public top utility bar (`.top-utility-header`) and admin top bar (`.admin-topbar`) to identical dimensions: **`height: 32px; min-height: 32px;`**, background `#0f172a`, and clean edge-to-edge padding (`px-3 px-md-4`).
+* **BOM Encoding Elimination**: Cleaned hidden UTF-8 BOM characters from language dictionary files (`lang_kh.php` and `lang_en.php`) that previously caused an unwanted white gap above the dark topbar.
+* **Z-Index Elevation Stack**: Corrected language dropdown z-index (`z-index: 1060`) preventing menus from clipping beneath sticky navbars.
+
+### 8. 🖼️ Editorial Image Max-Height & Thumbnail Guards
+* **Admin Archive Thumbnails**: Fixed `56×42px` thumbnail wrappers with `object-fit: cover` preventing stretched or oversized preview images.
+* **Public Aspect Protection**: Strict max-height rules on Quick View and feature images across mobile (`220px`), tablet (`280px`), and desktop (`380px`).
 
 ---
 

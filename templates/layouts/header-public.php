@@ -266,7 +266,7 @@ $currentReader = \App\Core\Auth::reader();
                         </button>
                     <?php } ?>
 
-                    <!-- Real-Time Notification Bell Dropdown (Account Required) -->
+                    <!-- Real-Time Notification Bell Dropdown (Only for Registered/Logged-in Users) -->
                     <?php if ($currentReader || \App\Core\Auth::check()) { ?>
                         <div class="dropdown position-relative">
                             <button type="button"
@@ -294,13 +294,6 @@ $currentReader = \App\Core\Auth::reader();
                                 </div>
                             </div>
                         </div>
-                    <?php } else { ?>
-                        <button type="button"
-                            class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
-                            data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register"
-                            title="<?= __('notifications_account_required') ?? 'Create an account to get news alerts' ?>">
-                            <i class="bi bi-bell text-secondary" style="font-size: 1.2rem;"></i>
-                        </button>
                     <?php } ?>
 
                     <!-- Reader Auth Dropdown / Buttons -->
