@@ -333,10 +333,22 @@ class PublicController
      */
     public function addComment(array $postData): array
     {
+        Auth::startSession();
+        $reader = Auth::reader();
+        $staff = Auth::user();
+
+        if (!$reader && !$staff) {
+            return [
+                'success' => false,
+                'require_login' => true,
+                'message' => __('comment_login_required') ?? 'Please sign in or create an account to post a comment.'
+            ];
+        }
+
         $articleId = (int)($postData['article_id'] ?? 0);
         $parentId = !empty($postData['parent_id']) ? (int)$postData['parent_id'] : null;
-        $userName = trim($postData['user_name'] ?? '');
-        $userEmail = trim($postData['user_email'] ?? '');
+        $userName = $reader ? $reader['name'] : ($staff['username'] ?? 'Staff');
+        $userEmail = $reader ? $reader['email'] : ($staff['email'] ?? 'staff@platform.local');
         $content = trim($postData['content'] ?? '');
 
         // Validation
@@ -350,16 +362,8 @@ class PublicController
             return ['success' => false, 'message' => 'Article not found.'];
         }
 
-        if (mb_strlen($userName) < 2 || mb_strlen($userName) > 80) {
-            return ['success' => false, 'message' => 'Please provide a valid name (2-80 characters).'];
-        }
-
-        if (!filter_var($userEmail, FILTER_VALIDATE_EMAIL)) {
-            return ['success' => false, 'message' => 'Please provide a valid email address.'];
-        }
-
-        if (mb_strlen($content) < 3 || mb_strlen($content) > 3000) {
-            return ['success' => false, 'message' => 'Comment must be between 3 and 3000 characters.'];
+        if (mb_strlen($content) < 2 || mb_strlen($content) > 3000) {
+            return ['success' => false, 'message' => __('comment_error')];
         }
 
         // Parent comment verification if reply

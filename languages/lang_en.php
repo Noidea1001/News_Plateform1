@@ -331,8 +331,13 @@ $lang['no_comments_yet'] = "No comments yet. Be the first to join the conversati
 $lang['like'] = "Like";
 $lang['liked'] = "Liked";
 $lang['comment_success'] = "Your comment has been posted successfully!";
-$lang['comment_error'] = "Unable to post comment. Please provide valid name, email, and comment text.";
+$lang['comment_error'] = "Unable to post comment. Please check your comment text.";
 $lang['total_comments'] = "Reader Comments";
+$lang['comment_login_required'] = "Please sign in or create an account to post a comment.";
+$lang['comment_login_prompt_title'] = "Sign in to join the discussion";
+$lang['comment_login_prompt_desc'] = "Please sign in or create a free reader account to share your thoughts and join the conversation.";
+$lang['write_a_comment'] = "Write a comment...";
+$lang['editorial_badge'] = "Editorial";
 
 // 13. PWA & Offline Support
 $lang['pwa_install'] = "Install App";

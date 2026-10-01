@@ -4,13 +4,10 @@
  * news-platform / public / comment.php
  */
 
-header('Content-Type: application/json; charset=UTF-8');
+require_once __DIR__ . '/../src/Core/bootstrap.php';
+\App\Core\Auth::startSession();
 
-require_once __DIR__ . '/../src/Core/helpers.php';
-require_once __DIR__ . '/../src/Core/Database.php';
-require_once __DIR__ . '/../src/Core/TemplateEngine.php';
-require_once __DIR__ . '/../src/Core/Auth.php';
-require_once __DIR__ . '/../src/Controllers/PublicController.php';
+header('Content-Type: application/json; charset=UTF-8');
 
 use App\Controllers\PublicController;
 
