@@ -455,5 +455,15 @@ $lang['filter_sort_alpha'] = "Alphabetical (A-Z)";
 $lang['nav_home'] = "Home";
 $lang['view_all_results'] = "View all results";
 
+// 21. Reader Topic Subscriptions
+$lang['topic_subscriptions_title'] = "Topic Subscriptions";
+$lang['topic_subscriptions_desc'] = "Subscribe to news topics to get instant personalized alerts when new stories are published";
+$lang['subscribe_topic'] = "Subscribe";
+$lang['subscribed_topic'] = "Subscribed";
+$lang['subscribed_topic_badge'] = "Subscribed Topic";
+$lang['subscribe_login_prompt'] = "Please sign in or create a free reader account to customize your topic subscriptions";
+$lang['my_topic_subscriptions'] = "My Subscriptions";
+$lang['no_topic_subs_yet'] = "You have not subscribed to any topics yet. Click below to customize your feed!";
+
 return $lang;
 

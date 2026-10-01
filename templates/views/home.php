@@ -95,11 +95,17 @@
                 ================================================== -->
                 <div class="lead-article-card mb-4">
                     <!-- Image -->
-                    <div class="lead-article-image">
+                    <div class="lead-article-image position-relative overflow-hidden" style="background:#0f172a;">
                         <?php if (!empty($lead['featured_image'])) { ?>
-                            <img src="<?= e(image_url($lead['featured_image'])) ?>" alt="<?= e(article_title($lead['title'])) ?>" loading="eager">
+                            <img src="<?= e(image_url($lead['featured_image'])) ?>" alt="<?= e(article_title($lead['title'])) ?>" loading="eager"
+                                 style="width:100%; height:100%; object-fit:cover;"
+                                 onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.classList.remove('d-none');">
+                            <div class="d-none align-items-center justify-content-center h-100 w-100 fs-1 text-muted"
+                                style="background:#1e293b;">
+                                <i class="bi bi-newspaper"></i>
+                            </div>
                         <?php } else { ?>
-                            <div class="d-flex align-items-center justify-content-center h-100 fs-1 text-muted"
+                            <div class="d-flex align-items-center justify-content-center h-100 w-100 fs-1 text-muted"
                                 style="background:#1e293b;">
                                 <i class="bi bi-newspaper"></i>
                             </div>
@@ -181,13 +187,22 @@
                         ]), ENT_QUOTES, 'UTF-8');
                         ?>
                         <div class="secondary-grid-card">
-                            <div class="secondary-grid-thumb">
+                            <div class="secondary-grid-thumb position-relative overflow-hidden" style="background:#f1f5f9;">
                                 <?php if (!empty($sItem['featured_image'])) { ?>
-                                    <img src="<?= e(image_url($sItem['featured_image'])) ?>" alt="<?= e(article_title($sItem['title'])) ?>" loading="lazy">
+                                    <img src="<?= e(image_url($sItem['featured_image'])) ?>" 
+                                         alt="<?= e(article_title($sItem['title'])) ?>" 
+                                         loading="lazy" 
+                                         style="width:100%; height:100%; object-fit:cover;"
+                                         onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
+                                    <div class="cna-feed-thumb-empty" style="display:none; width:100%; height:100%; align-items:center; justify-content:center; background:#e2e8f0; color:#64748b;">
+                                        <i class="bi bi-newspaper fs-2"></i>
+                                    </div>
                                 <?php } else { ?>
-                                    <div class="cna-feed-thumb-empty">NP</div>
+                                    <div class="cna-feed-thumb-empty d-flex align-items-center justify-content-center w-100 h-100" style="background:#e2e8f0; color:#64748b;">
+                                        <i class="bi bi-newspaper fs-2"></i>
+                                    </div>
                                 <?php } ?>
-                                <span class="lead-badge-pill bg-dark-pill position-absolute" style="top:0.6rem; left:0.6rem;">
+                                <span class="lead-badge-pill bg-dark-pill position-absolute" style="top:0.6rem; left:0.6rem; z-index:3;">
                                     <?= e(cat_name($sItem['category_name'])) ?>
                                 </span>
                             </div>

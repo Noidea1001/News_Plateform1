@@ -62,6 +62,8 @@ $currentReader = \App\Core\Auth::reader();
         #liveSearchDropdown {
             width: 440px !important;
             max-width: 92vw !important;
+            max-height: min(360px, 68vh) !important;
+            overflow-y: auto !important;
             border-radius: 6px !important;
             box-shadow: 0 14px 40px rgba(0, 0, 0, 0.16) !important;
         }
@@ -442,22 +444,40 @@ $currentReader = \App\Core\Auth::reader();
                                 if (data.notifications.length === 0) {
                                     list.innerHTML = '<div class="p-3 text-center text-muted text-xs"><?= addslashes(__('no_notifications')) ?></div>';
                                 } else {
-                                    list.innerHTML = data.notifications.map(n => `
+                                    list.innerHTML = data.notifications.map(n => {
+                                        const isBreaking = n.type === 'breaking';
+                                        const isSubTopic = n.is_subscribed_topic;
+                                        let badgeHtml = '';
+                                        if (isBreaking) {
+                                            badgeHtml = '<span class="badge bg-danger text-white text-3xs px-1.5 py-0.5 rounded-1 fw-bold me-1">HOT</span>';
+                                        } else if (isSubTopic) {
+                                            badgeHtml = '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-3xs px-1.5 py-0.5 rounded-1 fw-bold me-1">✓ <?= addslashes(__('subscribed_topic_badge')) ?></span>';
+                                        }
+                                        const catLabel = n.category_display ? `<span class="badge bg-light text-secondary text-3xs px-1.5 py-0.5 rounded-1">${escapeHtml(n.category_display)}</span>` : '';
+
+                                        return `
                                         <a href="${n.article_url}" class="list-group-item list-group-item-action p-2.5 border-bottom">
                                             <div class="d-flex align-items-start gap-2">
-                                                <div class="mt-0.5">
-                                                    ${n.type === 'breaking' 
-                                                        ? '<span class="badge bg-danger rounded-circle p-1"><i class="bi bi-lightning-fill text-white"></i></span>' 
-                                                        : '<span class="badge bg-primary bg-opacity-10 text-primary rounded-circle p-1"><i class="bi bi-newspaper"></i></span>'}
+                                                <div class="mt-0.5 flex-shrink-0">
+                                                    ${isBreaking 
+                                                        ? '<span class="badge bg-danger rounded-circle p-1 d-inline-flex"><i class="bi bi-lightning-fill text-white" style="font-size:0.75rem;"></i></span>' 
+                                                        : (isSubTopic 
+                                                            ? '<span class="badge bg-danger bg-opacity-15 text-danger rounded-circle p-1 d-inline-flex"><i class="bi bi-bookmark-star-fill text-danger" style="font-size:0.75rem;"></i></span>'
+                                                            : '<span class="badge bg-primary bg-opacity-10 text-primary rounded-circle p-1 d-inline-flex"><i class="bi bi-newspaper" style="font-size:0.75rem;"></i></span>')}
                                                 </div>
-                                                <div class="flex-grow-1 overflow-hidden">
-                                                    <div class="fw-bold text-dark text-xs text-truncate">${escapeHtml(n.title)}</div>
-                                                    <div class="text-muted text-2xs text-truncate">${escapeHtml(n.message || '')}</div>
+                                                <div class="flex-grow-1 overflow-hidden min-w-0">
+                                                    <div class="d-flex align-items-center gap-1 mb-0.5 flex-wrap">
+                                                        ${badgeHtml}
+                                                        ${catLabel}
+                                                    </div>
+                                                    <div class="fw-bold text-dark text-xs text-truncate" style="line-height:1.35;">${escapeHtml(n.title)}</div>
+                                                    <div class="text-muted text-2xs text-truncate mt-0.5">${escapeHtml(n.message || '')}</div>
                                                     <div class="text-2xs text-secondary mt-1"><i class="bi bi-clock me-1"></i>${escapeHtml(n.time_ago || '')}</div>
                                                 </div>
                                             </div>
                                         </a>
-                                    `).join('');
+                                    `;
+                                    }).join('');
                                 }
                             }
                         }

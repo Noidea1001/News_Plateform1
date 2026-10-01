@@ -455,5 +455,15 @@ $lang['filter_sort_alpha'] = "អក្សរក្រម (A-Z)";
 $lang['nav_home'] = "ទំព័រដើម";
 $lang['view_all_results'] = "មើលលទ្ធផលទាំងអស់";
 
+// 21. Reader Topic Subscriptions
+$lang['topic_subscriptions_title'] = "ការជាវព័ត៌មានតាមផ្នែក";
+$lang['topic_subscriptions_desc'] = "ជ្រើសរើសផ្នែកព័ត៌មានដែលអ្នកចង់តាមដាន ដើម្បីទទួលការជូនដំណឹងពេលមានព័ត៌មានថ្មីៗ";
+$lang['subscribe_topic'] = "ជាវព័ត៌មាន";
+$lang['subscribed_topic'] = "បានជាវ";
+$lang['subscribed_topic_badge'] = "ប្រធានបទបានជាវ";
+$lang['subscribe_login_prompt'] = "សូមចូលគណនី ឬចុះឈ្មោះជាអ្នកអាន ដើម្បីជាវព័ត៌មានតាមផ្នែកដែលអ្នកចូលចិត្ត";
+$lang['my_topic_subscriptions'] = "ប្រធានបទដែលខ្ញុំបានជាវ";
+$lang['no_topic_subs_yet'] = "អ្នកមិនទាន់បានជាវផ្នែកព័ត៌មានណាមួយនៅឡើយទេ។ ចុចប៊ូតុងខាងក្រោមដើម្បីជ្រើសរើស!";
+
 return $lang;
 

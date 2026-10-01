@@ -573,7 +573,7 @@ img {
     background-color: var(--cna-navy);
     color: var(--cna-white);
     border-bottom: none;
-    font-size: 0.84rem;
+    font-size: 0.82rem;
     position: relative;
     z-index: 1030;
     overflow: hidden;
@@ -599,6 +599,8 @@ img {
     overflow: hidden;
     white-space: nowrap;
     width: 100%;
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 20px, black calc(100% - 20px), transparent 100%);
 }
 
 .ticker-track {

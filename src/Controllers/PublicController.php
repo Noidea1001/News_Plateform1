@@ -532,7 +532,7 @@ class PublicController
     }
 
     /**
-     * Reader Notifications JSON API (for real-time bell dropdown)
+     * Reader Notifications JSON API (for real-time bell dropdown with topic filtering)
      */
     public function notificationsApi(): void
     {
@@ -541,24 +541,152 @@ class PublicController
         }
         header('Content-Type: application/json; charset=utf-8');
 
-        $notifications = $this->db->fetchAll(
-            "SELECT n.*, a.slug as article_slug, a.featured_image 
-             FROM notifications n 
-             LEFT JOIN articles a ON n.article_id = a.id 
-             ORDER BY n.created_at DESC LIMIT 15"
-        );
+        $currentReader = Auth::reader();
+        $subscribedCatIds = [];
+
+        if ($currentReader) {
+            $subs = $this->db->fetchAll(
+                "SELECT category_id FROM reader_subscriptions WHERE reader_id = :rid",
+                ['rid' => (int)$currentReader['id']]
+            );
+            $subscribedCatIds = array_map(fn($s) => (int)$s['category_id'], $subs);
+        }
+
+        if (!empty($subscribedCatIds)) {
+            // User has customized subscriptions: prioritize breaking news + articles in their subscribed topics
+            $inClause = implode(',', $subscribedCatIds);
+            $notifications = $this->db->fetchAll(
+                "SELECT n.*, a.slug as article_slug, a.featured_image, a.category_id, c.name as category_name
+                 FROM notifications n 
+                 LEFT JOIN articles a ON n.article_id = a.id 
+                 LEFT JOIN categories c ON a.category_id = c.id
+                 WHERE n.type = 'breaking' OR a.category_id IN ($inClause)
+                 ORDER BY n.created_at DESC LIMIT 20"
+            );
+        } else {
+            // General stream: breaking news + latest published
+            $notifications = $this->db->fetchAll(
+                "SELECT n.*, a.slug as article_slug, a.featured_image, a.category_id, c.name as category_name
+                 FROM notifications n 
+                 LEFT JOIN articles a ON n.article_id = a.id 
+                 LEFT JOIN categories c ON a.category_id = c.id
+                 ORDER BY n.created_at DESC LIMIT 15"
+            );
+        }
 
         foreach ($notifications as &$n) {
             $n['time_ago'] = TemplateEngine::timeAgo($n['created_at']);
-            $n['article_url'] = !empty($n['article_slug']) ? url('article.php?slug=' . urlencode($n['article_slug'])) : url('archive.php');
+            $n['article_url'] = !empty($n['article_slug']) ? url('article.php?slug=' . urlencode($n['article_slug'])) : url('index.php');
+            $n['is_subscribed_topic'] = !empty($n['category_id']) && in_array((int)$n['category_id'], $subscribedCatIds, true);
+            $n['category_display'] = !empty($n['category_name']) ? cat_name($n['category_name']) : '';
         }
         unset($n);
 
         echo json_encode([
             'success' => true,
+            'is_logged_in' => !empty($currentReader),
+            'has_subscriptions' => !empty($subscribedCatIds),
             'count' => count($notifications),
             'notifications' => $notifications
         ]);
+        exit;
+    }
+
+    /**
+     * Reader Topic Subscriptions JSON API
+     */
+    public function subscriptionApi(): void
+    {
+        while (ob_get_level()) {
+            ob_end_clean();
+        }
+        header('Content-Type: application/json; charset=utf-8');
+
+        $currentReader = Auth::reader();
+        if (!$currentReader) {
+            echo json_encode([
+                'success' => false,
+                'require_login' => true,
+                'message' => __('subscribe_login_prompt') ?? 'Please sign in or register to customize your news feed'
+            ]);
+            exit;
+        }
+
+        $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+
+        if ($method === 'GET') {
+            $subs = $this->db->fetchAll(
+                "SELECT category_id FROM reader_subscriptions WHERE reader_id = :rid",
+                ['rid' => (int)$currentReader['id']]
+            );
+            $catIds = array_map(fn($s) => (int)$s['category_id'], $subs);
+
+            echo json_encode([
+                'success' => true,
+                'reader' => ['id' => $currentReader['id'], 'name' => $currentReader['name']],
+                'subscriptions' => $catIds
+            ]);
+            exit;
+        }
+
+        if ($method === 'POST') {
+            $rawInput = file_get_contents('php://input');
+            $input = json_decode($rawInput, true) ?: $_POST;
+            $catId = (int)($input['category_id'] ?? 0);
+
+            if ($catId <= 0) {
+                echo json_encode(['success' => false, 'message' => 'Invalid category ID']);
+                exit;
+            }
+
+            // Verify category exists
+            $category = $this->db->fetch("SELECT id, name FROM categories WHERE id = :cid", ['cid' => $catId]);
+            if (!$category) {
+                echo json_encode(['success' => false, 'message' => 'Category not found']);
+                exit;
+            }
+
+            // Check existing subscription
+            $existing = $this->db->fetch(
+                "SELECT id FROM reader_subscriptions WHERE reader_id = :rid AND category_id = :cid",
+                ['rid' => (int)$currentReader['id'], 'cid' => $catId]
+            );
+
+            if ($existing) {
+                // Unsubscribe
+                $this->db->execute(
+                    "DELETE FROM reader_subscriptions WHERE reader_id = :rid AND category_id = :cid",
+                    ['rid' => (int)$currentReader['id'], 'cid' => $catId]
+                );
+                $isSubscribed = false;
+                $msg = 'Unsubscribed from ' . cat_name($category['name']);
+            } else {
+                // Subscribe
+                $this->db->execute(
+                    "INSERT INTO reader_subscriptions (reader_id, category_id, created_at) VALUES (:rid, :cid, NOW())",
+                    ['rid' => (int)$currentReader['id'], 'cid' => $catId]
+                );
+                $isSubscribed = true;
+                $msg = 'Subscribed to ' . cat_name($category['name']);
+            }
+
+            $count = (int)$this->db->fetchColumn(
+                "SELECT COUNT(*) FROM reader_subscriptions WHERE reader_id = :rid",
+                ['rid' => (int)$currentReader['id']]
+            );
+
+            echo json_encode([
+                'success' => true,
+                'subscribed' => $isSubscribed,
+                'category_id' => $catId,
+                'category_name' => cat_name($category['name']),
+                'total_subscriptions' => $count,
+                'message' => $msg
+            ]);
+            exit;
+        }
+
+        echo json_encode(['success' => false, 'message' => 'Method not allowed']);
         exit;
     }
 

@@ -225,25 +225,26 @@ $khMonths = [
                     $tplType = $art['template_type'] ?? 'standard';
                     ?>
                     <div class="col-md-6 col-lg-4">
-                        <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden article-card-hover bg-white transition-all">
-                            <!-- Thumbnail -->
-                            <div class="position-relative overflow-hidden" style="height: 200px;">
-                                <a href="<?= $artUrl ?>">
-                                    <img src="<?= e($imgUrl) ?>" alt="<?= e($artTitle) ?>" class="w-100 h-100 object-fit-cover">
+                        <div class="card h-100 border-0 shadow-sm rounded-3 overflow-hidden article-card-hover bg-white transition-all d-flex flex-column" style="max-height: 430px;">
+                            <!-- Thumbnail with max-height -->
+                            <div class="position-relative overflow-hidden flex-shrink-0" style="height: 175px; max-height: 175px; background: #f1f5f9;">
+                                <a href="<?= $artUrl ?>" class="d-block w-100 h-100">
+                                    <img src="<?= e($imgUrl) ?>" alt="<?= e($artTitle) ?>" class="w-100 h-100 object-fit-cover"
+                                         onerror="this.src='<?= url('assets/images/placeholder.jpg') ?>';">
                                 </a>
-                                <div class="position-absolute top-0 start-0 m-2.5 d-flex flex-column gap-1">
-                                    <span class="badge bg-danger text-white shadow-sm text-2xs px-2 py-1">
+                                <div class="position-absolute top-0 start-0 m-2 d-flex flex-column gap-1" style="z-index: 2;">
+                                    <span class="badge bg-danger text-white shadow-sm text-3xs px-2 py-0.5 rounded-1 fw-bold">
                                         <?= e(category_name($art)) ?>
                                     </span>
                                     <?php if (!empty($art['is_breaking'])) { ?>
-                                        <span class="badge bg-dark text-white shadow-sm text-2xs px-2 py-1">
+                                        <span class="badge bg-dark text-white shadow-sm text-3xs px-2 py-0.5 rounded-1 fw-bold">
                                             <span class="live-dot me-1"></span>BREAKING
                                         </span>
                                     <?php } ?>
                                 </div>
                                 <?php if ($tplType !== 'standard') { ?>
-                                    <div class="position-absolute bottom-0 end-0 m-2">
-                                        <span class="badge bg-white bg-opacity-90 text-dark shadow-2xs text-2xs border">
+                                    <div class="position-absolute bottom-0 end-0 m-2" style="z-index: 2;">
+                                        <span class="badge bg-white bg-opacity-90 text-dark shadow-2xs text-3xs border">
                                             <?= ucfirst($tplType) ?>
                                         </span>
                                     </div>
@@ -251,9 +252,9 @@ $khMonths = [
                             </div>
 
                             <!-- Content -->
-                            <div class="card-body p-3.5 d-flex flex-column justify-content-between">
+                            <div class="card-body p-3 d-flex flex-column justify-content-between flex-grow-1 overflow-hidden">
                                 <div>
-                                    <div class="d-flex align-items-center gap-2 text-muted text-2xs mb-2">
+                                    <div class="d-flex align-items-center gap-2 text-muted text-3xs mb-1.5">
                                         <span><i class="bi bi-clock me-1"></i><?= e($art['time_ago']) ?></span>
                                         <span>&bull;</span>
                                         <span><i class="bi bi-book me-1"></i><?= $art['reading_time'] ?> <?= __('reading_time_min') ?></span>
@@ -263,23 +264,23 @@ $khMonths = [
                                         <?php } ?>
                                     </div>
 
-                                    <h5 class="fw-bold editorial-title mb-2 fs-6 line-clamp-2">
+                                    <h5 class="fw-bold editorial-title mb-1.5 text-dark" style="font-size: 0.95rem; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                                         <a href="<?= $artUrl ?>" class="text-dark text-decoration-none hover-danger">
                                             <?= e($artTitle) ?>
                                         </a>
                                     </h5>
 
-                                    <p class="text-muted small mb-3 line-clamp-3">
+                                    <p class="text-muted text-2xs mb-2" style="line-height: 1.45; display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
                                         <?= e($artSummary) ?>
                                     </p>
                                 </div>
 
                                 <div class="pt-2 border-top d-flex align-items-center justify-content-between mt-auto">
-                                    <div class="d-flex align-items-center gap-1.5 text-2xs text-muted">
+                                    <div class="d-flex align-items-center gap-1.5 text-3xs text-muted">
                                         <i class="bi bi-person-circle"></i>
                                         <span><?= e($art['author_name'] ?? 'Editorial') ?></span>
                                     </div>
-                                    <a href="<?= $artUrl ?>" class="text-danger small fw-bold text-decoration-none">
+                                    <a href="<?= $artUrl ?>" class="text-danger small fw-bold text-decoration-none" style="font-size: 0.78rem;">
                                         <?= __('read_more') ?> &rarr;
                                     </a>
                                 </div>
