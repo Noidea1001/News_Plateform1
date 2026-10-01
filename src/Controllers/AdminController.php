@@ -52,7 +52,12 @@ class AdminController
         $totalArticles = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM articles");
         $publishedCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM articles WHERE status = 'published'");
         $draftCount = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM articles WHERE status = 'draft'");
-        $totalSubscribers = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM subscribers WHERE status = 'active'");
+        $totalSubscribers = (int)$this->db->fetchColumn(
+            "SELECT (
+                (SELECT COUNT(*) FROM reader_subscriptions) + 
+                (SELECT COUNT(*) FROM subscribers WHERE status = 'active')
+            )"
+        );
         $totalViews = (int)$this->db->fetchColumn("SELECT COALESCE(SUM(views_count), 0) FROM articles");
         $totalComments = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM comments");
         $avgViewsPerStory = $publishedCount > 0 ? (int)round($totalViews / $publishedCount) : 0;
@@ -80,12 +85,33 @@ class AdminController
              ORDER BY a.created_at DESC"
         );
 
-        // 5. Recent Feed Subscribers
+        // 5. Recent Feed Subscribers (including reader topic subscriptions)
         $recentSubscribers = $this->db->fetchAll(
-            "SELECT s.*, c.name as category_name 
-             FROM subscribers s 
-             LEFT JOIN categories c ON s.category_preference = c.id 
-             ORDER BY s.subscribed_at DESC LIMIT 6"
+            "(
+                SELECT 
+                    rs.id, 
+                    r.email, 
+                    r.name as reader_name, 
+                    c.name as category_name, 
+                    'active' as status, 
+                    rs.created_at as subscribed_at 
+                 FROM reader_subscriptions rs 
+                 JOIN readers r ON rs.reader_id = r.id 
+                 JOIN categories c ON rs.category_id = c.id 
+             )
+             UNION ALL
+             (
+                SELECT 
+                    s.id, 
+                    s.email, 
+                    NULL as reader_name, 
+                    c.name as category_name, 
+                    s.status, 
+                    s.subscribed_at 
+                 FROM subscribers s 
+                 LEFT JOIN categories c ON s.category_preference = c.id 
+             )
+             ORDER BY subscribed_at DESC LIMIT 6"
         );
 
         $totalStaff = (int)$this->db->fetchColumn("SELECT COUNT(*) FROM users");
@@ -1007,10 +1033,33 @@ class AdminController
     {
         $user = Auth::requireAuth(['admin', 'editor']);
         $subscribers = $this->db->fetchAll(
-            "SELECT s.*, c.name as category_name 
-             FROM subscribers s 
-             LEFT JOIN categories c ON s.category_preference = c.id 
-             ORDER BY s.subscribed_at DESC"
+            "(
+                SELECT 
+                    rs.id, 
+                    r.id as reader_id,
+                    r.email, 
+                    r.name as reader_name, 
+                    c.name as category_name, 
+                    'active' as status, 
+                    rs.created_at as subscribed_at 
+                 FROM reader_subscriptions rs 
+                 JOIN readers r ON rs.reader_id = r.id 
+                 JOIN categories c ON rs.category_id = c.id 
+             )
+             UNION ALL
+             (
+                SELECT 
+                    s.id, 
+                    NULL as reader_id,
+                    s.email, 
+                    NULL as reader_name, 
+                    c.name as category_name, 
+                    s.status, 
+                    s.subscribed_at 
+                 FROM subscribers s 
+                 LEFT JOIN categories c ON s.category_preference = c.id 
+             )
+             ORDER BY subscribed_at DESC"
         );
 
         $this->templateEngine->renderPage('admin/views/subscribers.php', [
@@ -1028,22 +1077,46 @@ class AdminController
     {
         Auth::requireAuth(['admin', 'editor']);
         $subscribers = $this->db->fetchAll(
-            "SELECT s.id, s.email, c.name as category_preference, s.status, s.subscribed_at 
-             FROM subscribers s 
-             LEFT JOIN categories c ON s.category_preference = c.id 
-             ORDER BY s.subscribed_at DESC"
+            "(
+                SELECT 
+                    rs.id, 
+                    r.email, 
+                    r.name as reader_name,
+                    c.name as category_preference, 
+                    'active' as status, 
+                    rs.created_at as subscribed_at 
+                 FROM reader_subscriptions rs 
+                 JOIN readers r ON rs.reader_id = r.id
+                 JOIN categories c ON rs.category_id = c.id 
+             )
+             UNION ALL
+             (
+                SELECT 
+                    s.id, 
+                    s.email, 
+                    NULL as reader_name,
+                    c.name as category_preference, 
+                    s.status, 
+                    s.subscribed_at 
+                 FROM subscribers s 
+                 LEFT JOIN categories c ON s.category_preference = c.id 
+             )
+             ORDER BY subscribed_at DESC"
         );
 
         header('Content-Type: text/csv; charset=utf-8');
         header('Content-Disposition: attachment; filename="feed_subscribers_' . date('Y-m-d') . '.csv"');
 
         $output = fopen('php://output', 'w');
-        fputcsv($output, ['Subscriber ID', 'Email Address', 'Category Preference', 'Status', 'Subscribed At']);
+        // UTF-8 BOM for Excel
+        fputs($output, "\xEF\xBB\xBF");
+        fputcsv($output, ['Subscriber ID', 'Email Address', 'Reader Name', 'Topic Preference', 'Status', 'Subscribed At']);
 
         foreach ($subscribers as $row) {
             fputcsv($output, [
                 $row['id'],
                 $row['email'],
+                $row['reader_name'] ?? 'N/A',
                 $row['category_preference'] ?? 'All Topics',
                 $row['status'],
                 $row['subscribed_at']
