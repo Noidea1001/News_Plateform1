@@ -342,10 +342,23 @@ $lang['editorial_badge'] = "អ្នកនិពន្ធ";
 // 13. PWA & Offline Support
 $lang['pwa_install'] = "ដំឡើងកម្មវិធី";
 $lang['pwa_install_desc'] = "ដំឡើង NewsPlatform លើឧបករណ៍របស់អ្នកសម្រាប់អានដោយគ្មានអ៊ីនធឺណិតយ៉ាងរហ័ស។";
+$lang['pwa_install_modal_title'] = "ដំឡើងកម្មវិធី NewsPlatform";
+$lang['pwa_install_btn_action'] = "ដំឡើងឥឡូវនេះ";
+$lang['pwa_installed'] = "បានដំឡើងរួចរាល់";
+$lang['pwa_ios_instructions'] = "នៅលើ iOS / Safari៖ ចុចប៊ូតុងចែករំលែក (Share) នៅខាងក្រោម រួចជ្រើសរើស 'បន្ថែមទៅអេក្រង់ដើម (Add to Home Screen)'។";
+$lang['pwa_desktop_instructions'] = "នៅលើ Desktop Chrome / Edge៖ ចុចរូបតំណាងដំឡើងក្នុងរបារអាសយដ្ឋាន ឬជ្រើស 'ដំឡើង NewsPlatform' ពីម៉ឺនុយកម្មវិធីរុករក។";
 $lang['offline_title'] = "អ្នកកំពុងគ្មានអ៊ីនធឺណិត";
 $lang['offline_desc'] = "មិនមានការតភ្ជាប់អ៊ីនធឺណិតទេ។ អ្នកអាចបន្តអានអត្ថបទទាំងអស់ដែលបានរក្សាទុកលើឧបករណ៍របស់អ្នក។";
 $lang['view_saved_articles'] = "បើកបញ្ជីអានដែលបានរក្សាទុក";
 $lang['retry_connection'] = "ព្យាយាមតភ្ជាប់ឡើងវិញ";
+
+// Browser Push Alerts (Web Push & VAPID)
+$lang['push_alerts_title'] = "ការជូនដំណឹងរហ័សតាម Browser";
+$lang['push_alerts_subscribe'] = "ទទួលដំណឹងបន្ទាន់";
+$lang['push_alerts_subscribed'] = "បានបើកការជូនដំណឹង";
+$lang['push_alerts_denied'] = "បានបដិសេធក្នុង Browser";
+$lang['push_alerts_enable_prompt'] = "អនុញ្ញាតការជូនដំណឹងតាម Browser ដើម្បីទទួលបានព័ត៌មានបន្ទាន់ទាន់ហេតុការណ៍ភ្លាមៗនៅលើឧបករណ៍របស់អ្នក។";
+$lang['push_alerts_unsubscribed'] = "បានបិទការជូនដំណឹងតាម Browser។";
 
 // 14. RESTful API & Developers
 $lang['api_documentation'] = "RESTful API";

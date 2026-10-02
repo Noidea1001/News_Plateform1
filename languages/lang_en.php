@@ -342,10 +342,23 @@ $lang['editorial_badge'] = "Editorial";
 // 13. PWA & Offline Support
 $lang['pwa_install'] = "Install App";
 $lang['pwa_install_desc'] = "Install NewsPlatform on your device for lightning-fast offline reading.";
+$lang['pwa_install_modal_title'] = "Install NewsPlatform App";
+$lang['pwa_install_btn_action'] = "Install Now";
+$lang['pwa_installed'] = "App Installed";
+$lang['pwa_ios_instructions'] = "On iOS / Safari: Tap the Share button at the bottom of the screen, scroll down and tap 'Add to Home Screen'.";
+$lang['pwa_desktop_instructions'] = "On Desktop Chrome / Edge: Click the install icon in the address bar or choose 'Install NewsPlatform' from the browser menu.";
 $lang['offline_title'] = "You are currently offline";
 $lang['offline_desc'] = "No internet connection detected. You can continue reading all articles previously saved to your device.";
 $lang['view_saved_articles'] = "Open Saved Reading List";
 $lang['retry_connection'] = "Retry Connection";
+
+// Browser Push Alerts (Web Push & VAPID)
+$lang['push_alerts_title'] = "Real-Time Browser Push Alerts";
+$lang['push_alerts_subscribe'] = "Get Breaking Alerts";
+$lang['push_alerts_subscribed'] = "Breaking Alerts Active";
+$lang['push_alerts_denied'] = "Alerts Blocked in Browser";
+$lang['push_alerts_enable_prompt'] = "Enable instant push notifications to get breaking news alerts directly on your device.";
+$lang['push_alerts_unsubscribed'] = "Push notifications turned off.";
 
 // 14. RESTful API & Developers
 $lang['api_documentation'] = "RESTful API";
