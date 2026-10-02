@@ -28,3 +28,6 @@ desktop.ini
 # Dependency Directories
 vendor/
 node_modules/
+
+# Service Worker
+vapid.php

@@ -10,10 +10,12 @@ namespace App\Controllers;
 require_once __DIR__ . '/../Core/Database.php';
 require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/../Core/TemplateEngine.php';
+require_once __DIR__ . '/../Core/WebPush.php';
 
 use App\Core\Auth;
 use App\Core\Database;
 use App\Core\TemplateEngine;
+use App\Core\WebPush;
 use Exception;
 
 class AdminController
@@ -1218,6 +1220,14 @@ class AdminController
                             'type' => $notifType
                         ]
                     );
+                }
+
+                // Web Push API: Send real-time browser notifications to opted-in subscribers for Breaking News
+                if ($isBreaking) {
+                    $art = $this->db->fetch("SELECT slug, title, title_en, title_kh FROM articles WHERE id = :id", ['id' => $articleId]);
+                    $slug = $art['slug'] ?? '';
+                    $pushHeadline = !empty($art['title_en']) ? $art['title_en'] : ($art['title'] ?? $notifTitle);
+                    WebPush::sendBreakingNewsNotification($articleId, $pushHeadline, $notifMsg, $slug);
                 }
             }
         } catch (\Throwable $ne) {
