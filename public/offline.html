@@ -196,7 +196,8 @@
         document.addEventListener('DOMContentLoaded', function () {
             const container = document.getElementById('offlineArticlesContainer');
             try {
-                const saved = JSON.parse(localStorage.getItem('np_saved_articles') || '[]');
+                const savedRaw = localStorage.getItem('np_saved_articles_v1') || localStorage.getItem('np_saved_articles') || '[]';
+                const saved = JSON.parse(savedRaw);
                 if (saved.length === 0) {
                     container.innerHTML = '<p style="font-size:0.88rem; color:var(--text-muted); margin:0;">No saved articles available offline. You can bookmark stories while online to read them anywhere.</p>';
                 } else {

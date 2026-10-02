@@ -4,14 +4,34 @@
     <FilesMatch "\.(css|js|png|jpg|jpeg|gif|webp|svg|ico|ttf|woff|woff2)$">
         Header set Cache-Control "max-age=2592000, public"
     </FilesMatch>
+
+    # Override PWA Service Worker & Manifest caching rules
+    <Files "sw.js">
+        Header set Service-Worker-Allowed "/"
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+    </Files>
+    <FilesMatch "(manifest\.json|\.webmanifest)$">
+        Header set Content-Type "application/manifest+json; charset=utf-8"
+        Header set Cache-Control "no-cache, no-store, must-revalidate"
+    </FilesMatch>
 </IfModule>
 
-# Enable Rewrite Engine for Clean API URLs
+<IfModule mod_mime.c>
+    AddType application/manifest+json .json .webmanifest
+</IfModule>
+
+# Enable Rewrite Engine for Clean API URLs & Dynamic PWA Manifest
 <IfModule mod_rewrite.c>
     RewriteEngine On
+
+    # Dynamic PWA Manifest
+    RewriteRule ^manifest\.json$ manifest.php [L,QSA]
+
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteRule ^api/v1/articles/?$ api/v1/articles.php [L,QSA]
     RewriteRule ^api/v1/categories/?$ api/v1/categories.php [L,QSA]
     RewriteRule ^api/v1/comments/?$ api/v1/comments.php [L,QSA]
+    RewriteRule ^api/v1/subscription/?$ api/v1/subscription.php [L,QSA]
+    RewriteRule ^api/v1/push-subscription/?$ api/v1/push-subscription.php [L,QSA]
 </IfModule>
