@@ -358,6 +358,24 @@ $memberSince   = !empty($reader['created_at'])
                                 </div>
                             </div>
 
+                            <!-- Browser Web Push Alerts Banner -->
+                            <div class="p-3 mb-4 rounded-3 border bg-light d-flex flex-column flex-sm-row align-items-start align-items-sm-center justify-content-between gap-3 shadow-2xs">
+                                <div class="d-flex align-items-start gap-2.5">
+                                    <div class="p-2 rounded-2 bg-danger bg-opacity-10 text-danger flex-shrink-0 mt-0.5">
+                                        <i class="bi bi-bell-fill fs-5"></i>
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold text-dark text-xs mb-0.5"><?= __('push_alerts_title') ?></div>
+                                        <div class="text-muted text-2xs"><?= __('push_alerts_enable_prompt') ?></div>
+                                    </div>
+                                </div>
+                                <button type="button" id="settingsPushToggleBtn"
+                                    class="btn btn-sm btn-outline-danger fw-semibold text-xs px-3 py-1.5 flex-shrink-0 rounded-pill d-inline-flex align-items-center gap-1.5 shadow-2xs">
+                                    <i class="bi bi-bell" id="settingsPushToggleIcon"></i>
+                                    <span id="settingsPushToggleText"><?= __('push_alerts_subscribe') ?></span>
+                                </button>
+                            </div>
+
                             <div class="row g-2.5 mb-3" id="settingsTopicList">
                                 <?php foreach ($categories as $cat) {
                                     $catId   = (int)$cat['id'];
@@ -549,5 +567,102 @@ document.querySelectorAll('.topic-toggle-btn').forEach(btn => {
         const tabBtn = document.querySelector('[data-bs-target="' + hash + '"]');
         if (tabBtn) bootstrap.Tab.getOrCreateInstance(tabBtn).show();
     }
+})();
+
+// ── Settings Browser Web Push Alerts Toggle Handler ───────────────────────
+(function () {
+    const sBtn = document.getElementById('settingsPushToggleBtn');
+    const sIcon = document.getElementById('settingsPushToggleIcon');
+    const sText = document.getElementById('settingsPushToggleText');
+    if (!sBtn) return;
+
+    function urlB64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    }
+
+    async function syncState() {
+        if (!('PushManager' in window) || !('serviceWorker' in navigator) || !('Notification' in window)) {
+            sBtn.disabled = true;
+            sText.textContent = 'Not Supported';
+            return;
+        }
+
+        try {
+            const reg = await navigator.serviceWorker.ready;
+            const sub = await reg.pushManager.getSubscription();
+
+            if (sub) {
+                sBtn.className = 'btn btn-sm btn-danger fw-semibold text-xs px-3 py-1.5 flex-shrink-0 rounded-pill d-inline-flex align-items-center gap-1.5 shadow-2xs';
+                sIcon.className = 'bi bi-bell-fill';
+                sText.textContent = '<?= addslashes(__('push_alerts_subscribed')) ?>';
+            } else if (Notification.permission === 'denied') {
+                sBtn.className = 'btn btn-sm btn-outline-secondary fw-semibold text-xs px-3 py-1.5 flex-shrink-0 rounded-pill d-inline-flex align-items-center gap-1.5 shadow-2xs opacity-50';
+                sIcon.className = 'bi bi-bell-slash';
+                sText.textContent = '<?= addslashes(__('push_alerts_denied')) ?>';
+                sBtn.disabled = true;
+            } else {
+                sBtn.className = 'btn btn-sm btn-outline-danger fw-semibold text-xs px-3 py-1.5 flex-shrink-0 rounded-pill d-inline-flex align-items-center gap-1.5 shadow-2xs';
+                sIcon.className = 'bi bi-bell';
+                sText.textContent = '<?= addslashes(__('push_alerts_subscribe')) ?>';
+                sBtn.disabled = false;
+            }
+        } catch (e) {
+            console.warn(e);
+        }
+    }
+
+    sBtn.addEventListener('click', async function () {
+        this.disabled = true;
+        try {
+            const reg = await navigator.serviceWorker.ready;
+            const sub = await reg.pushManager.getSubscription();
+
+            if (sub) {
+                await sub.unsubscribe();
+                await fetch('<?= url("api/v1/push-subscription.php") ?>', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'unsubscribe', endpoint: sub.endpoint })
+                });
+            } else {
+                const perm = await Notification.requestPermission();
+                if (perm === 'granted') {
+                    const kRes = await fetch('<?= url("api/v1/push-subscription.php") ?>');
+                    const kData = await kRes.json();
+                    if (kData.success && kData.publicKey) {
+                        const newSub = await reg.pushManager.subscribe({
+                            userVisibleOnly: true,
+                            applicationServerKey: urlB64ToUint8Array(kData.publicKey)
+                        });
+                        const subJson = newSub.toJSON();
+                        await fetch('<?= url("api/v1/push-subscription.php") ?>', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                action: 'subscribe',
+                                endpoint: subJson.endpoint,
+                                keys: subJson.keys
+                            })
+                        });
+                    }
+                }
+            }
+            await syncState();
+        } catch (err) {
+            console.error(err);
+            alert('Push notification error: ' + err.message);
+        } finally {
+            this.disabled = false;
+        }
+    });
+
+    syncState();
 })();
 </script>
