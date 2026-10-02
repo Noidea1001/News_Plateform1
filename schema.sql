@@ -136,6 +136,21 @@ CREATE TABLE IF NOT EXISTS `reader_subscriptions` (
   INDEX `idx_reader_sub_category` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 10. Web Push Subscriptions Table (Browser Push Notifications with VAPID)
+CREATE TABLE IF NOT EXISTS `push_subscriptions` (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `endpoint` TEXT NOT NULL,
+  `endpoint_hash` VARCHAR(64) NOT NULL UNIQUE,
+  `p256dh` VARCHAR(255) NOT NULL,
+  `auth` VARCHAR(255) NOT NULL,
+  `reader_id` INT NULL,
+  `user_agent` VARCHAR(255) NULL,
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_notified_at` DATETIME NULL,
+  INDEX `idx_push_sub_reader` (`reader_id`),
+  FOREIGN KEY (`reader_id`) REFERENCES `readers`(`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- Initial Seed Data
 -- Password for default staff is 'admin123' -> $2y$10$59b3W/B4X0jX54cO/K2wve5v92XN5kS1F8k8j7I2P.P1B5k2W7wGG
