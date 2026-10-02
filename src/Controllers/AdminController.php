@@ -1222,13 +1222,11 @@ class AdminController
                     );
                 }
 
-                // Web Push API: Send real-time browser notifications to opted-in subscribers for Breaking News
-                if ($isBreaking) {
-                    $art = $this->db->fetch("SELECT slug, title, title_en, title_kh FROM articles WHERE id = :id", ['id' => $articleId]);
-                    $slug = $art['slug'] ?? '';
-                    $pushHeadline = !empty($art['title_en']) ? $art['title_en'] : ($art['title'] ?? $notifTitle);
-                    WebPush::sendBreakingNewsNotification($articleId, $pushHeadline, $notifMsg, $slug);
-                }
+                // Web Push API: Send real-time browser notifications to opted-in subscribers instantly
+                $art = $this->db->fetch("SELECT slug, title, title_en, title_kh FROM articles WHERE id = :id", ['id' => $articleId]);
+                $slug = $art['slug'] ?? '';
+                $pushHeadline = !empty($art['title_en']) ? $art['title_en'] : ($art['title'] ?? $notifTitle);
+                WebPush::sendBreakingNewsNotification($articleId, $pushHeadline, $notifMsg, $slug);
             }
         } catch (\Throwable $ne) {
             error_log("Failed to dispatch notification for article {$articleId}: " . $ne->getMessage());
