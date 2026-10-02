@@ -341,6 +341,12 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                                 <span class="fw-bold small text-dark"><i class="bi bi-bell-fill me-1 text-danger"></i> <?= __('notifications_title') ?></span>
                                 <span class="badge bg-danger text-white text-2xs" id="mobileNotifCountLabel">0</span>
                             </div>
+                            <div class="p-2 border-bottom bg-light-subtle px-3 text-center">
+                                <button type="button" class="btn btn-sm btn-outline-danger w-100 py-1 fw-bold text-xs d-flex align-items-center justify-content-center gap-1.5 push-toggle-action-btn">
+                                    <i class="bi bi-bell-fill push-toggle-icon"></i>
+                                    <span class="push-toggle-text"><?= __('push_alerts_subscribe') ?></span>
+                                </button>
+                            </div>
                             <div id="mobileNotifList" class="list-group list-group-flush small">
                                 <div class="p-3 text-center text-muted text-xs">
                                     <span class="spinner-border spinner-border-sm me-1"></span> <?= __('loading') ?? 'Loading...' ?>
@@ -425,6 +431,12 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                                 <div class="p-3 border-bottom d-flex align-items-center justify-content-between bg-light">
                                     <span class="fw-bold small text-dark"><i class="bi bi-bell-fill me-1 text-danger"></i> <?= __('notifications_title') ?></span>
                                     <span class="badge bg-danger text-white text-2xs" id="notifCountLabel">0</span>
+                                </div>
+                                <div class="p-2 border-bottom bg-light-subtle px-3 text-center">
+                                    <button type="button" class="btn btn-sm btn-outline-danger w-100 py-1 fw-bold text-xs d-flex align-items-center justify-content-center gap-1.5 push-toggle-action-btn">
+                                        <i class="bi bi-bell-fill push-toggle-icon"></i>
+                                        <span class="push-toggle-text"><?= __('push_alerts_subscribe') ?></span>
+                                    </button>
                                 </div>
                                 <div id="notifList" class="list-group list-group-flush small">
                                     <div class="p-3 text-center text-muted text-xs">

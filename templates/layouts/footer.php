@@ -681,99 +681,109 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function updatePushBtnState(isSubscribed, isDenied = false) {
-        if (!pushBtn) return;
-        if (isDenied) {
-            if (pushIcon) pushIcon.className = 'bi bi-bell-slash text-white opacity-50';
-            if (pushText) pushText.textContent = '<?= addslashes(__('push_alerts_denied')) ?>';
-            pushBtn.disabled = true;
-            pushBtn.style.opacity = '0.6';
-        } else if (isSubscribed) {
-            if (pushIcon) pushIcon.className = 'bi bi-bell-fill text-success';
-            if (pushText) pushText.textContent = '<?= addslashes(__('push_alerts_subscribed')) ?>';
-            pushBtn.disabled = false;
-            pushBtn.classList.add('active');
-            pushBtn.style.background = 'rgba(34, 197, 94, 0.25)';
-            pushBtn.style.borderColor = 'rgba(34, 197, 94, 0.5)';
-        } else {
-            if (pushIcon) pushIcon.className = 'bi bi-bell-fill text-warning';
-            if (pushText) pushText.textContent = '<?= addslashes(__('push_alerts_subscribe')) ?>';
-            pushBtn.disabled = false;
-            pushBtn.classList.remove('active');
-            pushBtn.style.background = 'rgba(255, 255, 255, 0.14)';
-            pushBtn.style.borderColor = 'rgba(255, 255, 255, 0.22)';
-        }
-    }
+        const toggleBtns = document.querySelectorAll('.push-toggle-action-btn, #pushSubscribeBtn');
+        toggleBtns.forEach(btn => {
+            const icon = btn.querySelector('.push-toggle-icon, #pushSubscribeIcon');
+            const text = btn.querySelector('.push-toggle-text, #pushSubscribeText');
 
-    if (pushBtn) {
-        pushBtn.addEventListener('click', async function (e) {
-            e.preventDefault();
-
-            if (!('Notification' in window)) {
-                alert('This browser does not support Web Push notifications.');
-                return;
-            }
-
-            try {
-                const reg = await navigator.serviceWorker.ready;
-                const existingSub = await reg.pushManager.getSubscription();
-
-                if (existingSub) {
-                    // Toggle Off: Unsubscribe
-                    const endpoint = existingSub.endpoint;
-                    await existingSub.unsubscribe();
-                    await fetch('<?= url("api/v1/push-subscription.php") ?>', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'unsubscribe', endpoint: endpoint })
-                    });
-                    updatePushBtnState(false);
-                } else {
-                    // Toggle On: Request permission & subscribe
-                    const permission = await Notification.requestPermission();
-                    if (permission !== 'granted') {
-                        updatePushBtnState(false, true);
-                        return;
-                    }
-
-                    // Fetch VAPID Public Key
-                    const keyRes = await fetch('<?= url("api/v1/push-subscription.php") ?>');
-                    const keyData = await keyRes.json();
-
-                    if (!keyData.success || !keyData.publicKey) {
-                        throw new Error(keyData.error || 'Failed to retrieve VAPID key');
-                    }
-
-                    const sub = await reg.pushManager.subscribe({
-                        userVisibleOnly: true,
-                        applicationServerKey: urlB64ToUint8Array(keyData.publicKey)
-                    });
-
-                    const subJson = sub.toJSON();
-
-                    // Send subscription to backend
-                    const saveRes = await fetch('<?= url("api/v1/push-subscription.php") ?>', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            action: 'subscribe',
-                            endpoint: subJson.endpoint,
-                            keys: subJson.keys
-                        })
-                    });
-
-                    const saveResult = await saveRes.json();
-                    if (saveResult.success) {
-                        updatePushBtnState(true);
-                    } else {
-                        throw new Error(saveResult.error || 'Server rejected subscription');
-                    }
-                }
-            } catch (err) {
-                console.error('[WebPush] Subscription error:', err);
-                alert('Could not enable push alerts: ' + err.message);
+            if (isDenied) {
+                if (icon) icon.className = 'bi bi-bell-slash text-danger opacity-50';
+                if (text) text.textContent = '<?= addslashes(__('push_alerts_denied')) ?>';
+                btn.disabled = true;
+                btn.classList.remove('btn-outline-danger', 'btn-success');
+                btn.classList.add('btn-secondary');
+            } else if (isSubscribed) {
+                if (icon) icon.className = 'bi bi-check-circle-fill text-white';
+                if (text) text.textContent = '✓ <?= addslashes(__('push_alerts_subscribed')) ?>';
+                btn.disabled = false;
+                btn.classList.remove('btn-outline-danger', 'btn-secondary');
+                btn.classList.add('btn-success');
+            } else {
+                if (icon) icon.className = 'bi bi-bell-fill text-danger';
+                if (text) text.textContent = '<?= addslashes(__('push_alerts_subscribe')) ?>';
+                btn.disabled = false;
+                btn.classList.remove('btn-success', 'btn-secondary');
+                btn.classList.add('btn-outline-danger');
             }
         });
     }
+
+    async function handlePushToggleAction(e) {
+        if (e) e.preventDefault();
+
+        if (!('Notification' in window)) {
+            alert('This browser does not support Web Push notifications.');
+            return;
+        }
+
+        try {
+            const reg = await navigator.serviceWorker.ready;
+            const existingSub = await reg.pushManager.getSubscription();
+
+            if (existingSub) {
+                // Toggle Off: Unsubscribe
+                const endpoint = existingSub.endpoint;
+                await existingSub.unsubscribe();
+                await fetch('<?= url("api/v1/push-subscription.php") ?>', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ action: 'unsubscribe', endpoint: endpoint })
+                });
+                updatePushBtnState(false);
+            } else {
+                // Toggle On: Request permission & subscribe
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') {
+                    updatePushBtnState(false, true);
+                    return;
+                }
+
+                // Fetch VAPID Public Key
+                const keyRes = await fetch('<?= url("api/v1/push-subscription.php") ?>');
+                const keyData = await keyRes.json();
+
+                if (!keyData.success || !keyData.publicKey) {
+                    throw new Error(keyData.error || 'Failed to retrieve VAPID key');
+                }
+
+                const sub = await reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: urlB64ToUint8Array(keyData.publicKey)
+                });
+
+                const subJson = sub.toJSON();
+
+                // Send subscription to backend
+                const saveRes = await fetch('<?= url("api/v1/push-subscription.php") ?>', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'subscribe',
+                        endpoint: subJson.endpoint,
+                        keys: subJson.keys
+                    })
+                });
+
+                const saveResult = await saveRes.json();
+                if (saveResult.success) {
+                    updatePushBtnState(true);
+                } else {
+                    throw new Error(saveResult.error || 'Server rejected subscription');
+                }
+            }
+        } catch (err) {
+            console.error('[WebPush] Subscription error:', err);
+            alert('Could not enable push alerts: ' + err.message);
+        }
+    }
+
+    document.addEventListener('click', function(e) {
+        const toggleBtn = e.target.closest('.push-toggle-action-btn, #pushSubscribeBtn');
+        if (toggleBtn) {
+            e.preventDefault();
+            handlePushToggleAction(e);
+        }
+    });
 
     initPushSubscriptionUi();
 });

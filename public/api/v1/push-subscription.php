@@ -72,6 +72,29 @@ try {
 
         $ok = \App\Core\WebPush::subscribe($endpoint, $p256dh, $auth, $readerId, $ua);
 
+        if ($ok) {
+            // Send instant test push notification to confirm connection
+            try {
+                $testPayload = [
+                    'title' => '🚨 Breaking News Alerts Enabled!',
+                    'body' => 'You will now receive real-time breaking news notifications on this device.',
+                    'icon' => url('assets/icons/icon-192.png'),
+                    'badge' => url('assets/icons/icon-192.png'),
+                    'tag' => 'welcome-push-' . time(),
+                    'data' => [
+                        'url' => url('index.php')
+                    ]
+                ];
+                \App\Core\WebPush::sendPush([
+                    'endpoint' => $endpoint,
+                    'p256dh' => $p256dh,
+                    'auth' => $auth
+                ], json_encode($testPayload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES));
+            } catch (\Throwable $te) {
+                error_log('[WebPush] Welcome test push error: ' . $te->getMessage());
+            }
+        }
+
         if (ob_get_length()) ob_end_clean();
         echo json_encode([
             'success' => $ok,
