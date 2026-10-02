@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Mode | NewsPlatform</title>
+    <style>
+        :root {
+            --brand-red: #c8102e;
+            --brand-navy: #0f172a;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --bg-light: #f8fafc;
+            --border-light: #e2e8f0;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-dark);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        header {
+            background-color: var(--brand-navy);
+            color: #ffffff;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 3px solid var(--brand-red);
+        }
+        .brand-badge {
+            background: var(--brand-red);
+            color: #fff;
+            font-weight: 900;
+            padding: 0.35rem 0.65rem;
+            border-radius: 3px;
+            font-size: 1rem;
+            letter-spacing: -0.5px;
+        }
+        .main-container {
+            max-width: 680px;
+            margin: 3rem auto;
+            padding: 2rem;
+            background: #ffffff;
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+        .offline-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(200, 16, 46, 0.1);
+            color: var(--brand-red);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 800;
+            color: var(--brand-navy);
+            margin-bottom: 0.75rem;
+        }
+        p {
+            font-size: 1rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 1.75rem;
+        }
+        .btn-group {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-decoration: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .btn-primary {
+            background: var(--brand-red);
+            color: #fff;
+            border: none;
+        }
+        .btn-primary:hover {
+            background: #a50d24;
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--brand-navy);
+            border: 1px solid var(--border-light);
+        }
+        .btn-outline:hover {
+            background: #f1f5f9;
+        }
+        .saved-box {
+            text-align: left;
+            border-top: 1px solid var(--border-light);
+            padding-top: 1.5rem;
+        }
+        .saved-title {
+            font-size: 0.85rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--brand-red);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .saved-list {
+            list-style: none;
+        }
+        .saved-item {
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .saved-item:last-child {
+            border-bottom: none;
+        }
+        .saved-item a {
+            color: var(--brand-navy);
+            font-weight: 600;
+            text-decoration: none;
+            font-size: 0.95rem;
+        }
+        .saved-item a:hover {
+            color: var(--brand-red);
+        }
+        footer {
+            background-color: var(--brand-navy);
+            color: rgba(255, 255, 255, 0.6);
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div style="display:flex; align-items:center; gap:0.75rem;">
+            <div class="brand-badge">NP</div>
+            <strong style="letter-spacing:0.02em;">NewsPlatform</strong>
+        </div>
+        <span style="font-size:0.75rem; background:rgba(255,255,255,0.15); padding:0.25rem 0.6rem; border-radius:20px;">Offline Mode</span>
+    </header>
+
+    <div class="main-container">
+        <div class="offline-icon">&#9888;</div>
+        <h1>Connection Unavailable</h1>
+        <p>It appears you are currently offline or experiencing network disruptions. NewsPlatform has saved your session so you can continue reading stored dispatches.</p>
+
+        <div class="btn-group">
+            <button class="btn btn-primary" onclick="window.location.reload();">Retry Connection</button>
+            <button class="btn btn-outline" onclick="history.back();">Go Back</button>
+        </div>
+
+        <div class="saved-box" id="offlineSavedBox">
+            <div class="saved-title">&#128278; Saved Reading List (Available Offline)</div>
+            <div id="offlineArticlesContainer">
+                <p style="font-size:0.88rem; color:var(--text-muted); margin:0;">Loading cached bookmarks...</p>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2026 NewsPlatform CMS. Offline Service Worker Active.
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const container = document.getElementById('offlineArticlesContainer');
+            try {
+                const savedRaw = localStorage.getItem('np_saved_articles_v1') || localStorage.getItem('np_saved_articles') || '[]';
+                const saved = JSON.parse(savedRaw);
+                if (saved.length === 0) {
+                    container.innerHTML = '<p style="font-size:0.88rem; color:var(--text-muted); margin:0;">No saved articles available offline. You can bookmark stories while online to read them anywhere.</p>';
+                } else {
+                    let html = '<ul class="saved-list">';
+                    saved.forEach(art => {
+                        html += `
+                            <li class="saved-item">
+                                <a href="${art.url || '#'}">${art.title || 'Untitled Article'}</a>
+                                <span style="font-size:0.75rem; color:var(--text-muted);">${art.reading_time || '3 min'}</span>
+                            </li>
+                        `;
+                    });
+                    html += '</ul>';
+                    container.innerHTML = html;
+                }
+            } catch (err) {
+                container.innerHTML = '<p style="font-size:0.88rem; color:var(--text-muted);">Error accessing saved reading list.</p>';
+            }
+        });
+    </script>
+</body>
+</html>
