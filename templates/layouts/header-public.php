@@ -828,14 +828,42 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                             [list, mobileList].forEach(l => {
                                 if (l) l.innerHTML = notifHtml;
                             });
+
+                            // Trigger OS System Pop-up Banner for new notifications
+                            if (data.notifications && data.notifications.length > 0) {
+                                const latest = data.notifications[0];
+                                const lastSeenId = parseInt(localStorage.getItem('np_last_notif_id') || '0', 10);
+                                if (latest.id > lastSeenId) {
+                                    localStorage.setItem('np_last_notif_id', latest.id);
+                                    if (lastSeenId > 0 && 'Notification' in window && Notification.permission === 'granted') {
+                                        const notifTitle = (latest.type === 'breaking' ? '🚨 BREAKING NEWS: ' : '📰 ') + latest.title;
+                                        if ('serviceWorker' in navigator) {
+                                            navigator.serviceWorker.ready.then(reg => {
+                                                reg.showNotification(notifTitle, {
+                                                    body: latest.message,
+                                                    icon: '<?= url("assets/icons/icon-192.png") ?>',
+                                                    badge: '<?= url("assets/icons/icon-192.png") ?>',
+                                                    tag: 'notif-' + latest.id,
+                                                    requireInteraction: true,
+                                                    data: { url: latest.article_url }
+                                                });
+                                            }).catch(() => {
+                                                try {
+                                                    new Notification(notifTitle, { body: latest.message, icon: '<?= url("assets/icons/icon-192.png") ?>' });
+                                                } catch(e) {}
+                                            });
+                                        }
+                                    }
+                                }
+                            }
                         }
                     })
                     .catch(e => console.debug('Notifications poll:', e));
             }
 
-            <?php if ($currentReader || \App\Core\Auth::check()) { ?>
+            <?php if ($currentUser) { ?>
             fetchNotifications();
-            setInterval(fetchNotifications, 30000);
+            setInterval(fetchNotifications, 10000);
             <?php } ?>
         });
     </script>
