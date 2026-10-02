@@ -7,6 +7,9 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
 require_once __DIR__ . '/../../languages/common.php';
 $currentLang = $_SESSION['lang'] ?? 'en';
 $currentReader = \App\Core\Auth::reader();
+$headerDb = \App\Core\Database::getInstance();
+$catNavList = $headerDb->fetchAll("SELECT * FROM categories ORDER BY name ASC");
+$activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
 ?>
 <!DOCTYPE html>
 <html lang="<?= e($currentLang) ?>">
@@ -30,12 +33,16 @@ $currentReader = \App\Core\Auth::reader();
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
 
-    <!-- Progressive Web App (PWA) Manifest & Meta -->
+    <!-- Progressive Web App (PWA) Manifest & Standard Mobile Meta -->
     <link rel="manifest" href="<?= url('manifest.json') ?>">
     <meta name="theme-color" content="#c8102e">
+    <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="<?= url('assets/icons/icon-192.svg') ?>">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="<?= __('site_title') ?>">
+    <link rel="apple-touch-icon" href="<?= url('assets/icons/apple-touch-icon.png') ?>">
+    <link rel="icon" type="image/png" sizes="192x192" href="<?= url('assets/icons/icon-192.png') ?>">
+    <link rel="icon" type="image/png" sizes="32x32" href="<?= url('assets/icons/icon-192.png') ?>">
 
     <style>
         .header-clean-icon-btn {
@@ -129,6 +136,109 @@ $currentReader = \App\Core\Auth::reader();
         .live-search-item:hover {
             background: #f8fafc !important;
         }
+
+        /* ── Mobile Top Utility Bar ── */
+        @media (max-width: 991.98px) {
+            .top-utility-header .mobile-hide-text {
+                display: none !important;
+            }
+            .top-utility-header {
+                justify-content: flex-end !important;
+            }
+        }
+
+        /* ── Mobile: Hide inline search in navbar collapse (use dedicated mobile search instead) ── */
+        @media (max-width: 991.98px) {
+            #headerSearchForm {
+                display: none !important;
+            }
+        }
+
+        /* ── Mobile Navbar Collapse — Professional Slide-Down Panel ── */
+        @media (max-width: 991.98px) {
+            #mainNavbar {
+                background: #ffffff;
+                border-top: 1px solid #e5e7eb;
+                border-bottom: 1px solid #e5e7eb;
+                box-shadow: 0 8px 24px rgba(15, 23, 42, 0.10);
+                padding: 0.5rem 0 !important;
+                margin-top: 0;
+            }
+            /* Mobile menu items container */
+            #mainNavbar .mobile-menu-section {
+                padding: 0.5rem 0.75rem;
+            }
+            #mainNavbar .mobile-menu-divider {
+                height: 1px;
+                background: #f1f5f9;
+                margin: 0.35rem 0.75rem;
+            }
+            #mainNavbar .mobile-menu-label {
+                font-size: 0.65rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
+                color: #94a3b8;
+                padding: 0.5rem 0.75rem 0.25rem;
+            }
+            #mainNavbar .mobile-menu-item {
+                display: flex;
+                align-items: center;
+                gap: 0.65rem;
+                padding: 0.6rem 0.75rem;
+                border-radius: 6px;
+                color: #334155;
+                font-size: 0.88rem;
+                font-weight: 600;
+                text-decoration: none;
+                transition: background 0.15s ease;
+            }
+            #mainNavbar .mobile-menu-item:hover,
+            #mainNavbar .mobile-menu-item:active {
+                background: #f8fafc;
+                color: #c8102e;
+            }
+            #mainNavbar .mobile-menu-item i {
+                font-size: 1.05rem;
+                width: 20px;
+                text-align: center;
+                flex-shrink: 0;
+            }
+        }
+
+        /* ── Notification dropdown — full-width on mobile ── */
+        @media (max-width: 575.98px) {
+            #notifBellBtn + .dropdown-menu,
+            .mobile-notif-dropdown .dropdown-menu {
+                position: fixed !important;
+                top: auto !important;
+                left: 8px !important;
+                right: 8px !important;
+                width: calc(100vw - 16px) !important;
+                max-width: none !important;
+                transform: none !important;
+                border-radius: 10px !important;
+                box-shadow: 0 16px 48px rgba(0,0,0,0.18) !important;
+            }
+        }
+
+        /* ── Mobile Icon Bar (between brand and hamburger) ── */
+        .mobile-icon-bar {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        .mobile-icon-bar .header-clean-icon-btn {
+            width: 34px;
+            height: 34px;
+        }
+        .mobile-icon-bar .divider-dot {
+            width: 3px;
+            height: 3px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            margin: 0 2px;
+        }
     </style>
 </head>
 
@@ -137,8 +247,8 @@ $currentReader = \App\Core\Auth::reader();
 
     <!-- ── CNA-Style Top Utility Bar (Matches Admin Site Fit) ──────────── -->
     <div class="top-utility-header d-flex align-items-center justify-content-between px-3 px-md-4 py-1">
-        <!-- Left: Date & CDA Badge -->
-        <div class="d-flex align-items-center gap-2.5" style="font-size:0.72rem; font-weight:600;">
+        <!-- Left: Date & CDA Badge (hidden on mobile) -->
+        <div class="d-flex align-items-center gap-2.5 mobile-hide-text" style="font-size:0.72rem; font-weight:600;">
             <span style="color:rgba(255,255,255,0.40);"><?= \App\Core\TemplateEngine::formatDate(date('Y-m-d H:i:s'), 'l, d F Y') ?></span>
             <span class="opacity-25">|</span>
             <span style="color:rgba(255,255,255,0.60);"><?= __('cda_badge') ?></span>
@@ -202,13 +312,57 @@ $currentReader = \App\Core\Auth::reader();
             <div class="d-none d-lg-block mx-3" style="width:1px; height:32px; background:#e5e7eb; flex-shrink:0;">
             </div>
 
-            <!-- Mobile Controls (Search Button + Hamburger Toggler) -->
-            <div class="d-flex align-items-center gap-1.5 ms-auto me-1 d-lg-none">
+            <!-- Mobile Controls (Icons + Search + Hamburger) — Always visible on mobile -->
+            <div class="d-flex align-items-center ms-auto d-lg-none mobile-icon-bar">
+
+                <!-- Mobile: Saved Reading List Icon -->
+                <?php if ($currentReader || \App\Core\Auth::check()) { ?>
+                    <button type="button"
+                        class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative p-0"
+                        data-bs-toggle="offcanvas" data-bs-target="#savedArticlesModal"
+                        title="<?= __('saved_reading_list') ?? 'Saved Reading List' ?>">
+                        <i class="bi bi-bookmark-fill text-danger" style="font-size: 1.1rem;"></i>
+                        <span id="mobileSavedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center" style="top:-1px; right:-3px; font-size: 0.55rem; width: 15px; height: 15px; display: none;">0</span>
+                    </button>
+                <?php } ?>
+
+                <!-- Mobile: Notification Bell -->
+                <?php if ($currentReader || \App\Core\Auth::check()) { ?>
+                    <div class="dropdown position-relative mobile-notif-dropdown">
+                        <button type="button"
+                            class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative p-0"
+                            id="mobileNotifBellBtn" data-bs-toggle="dropdown" aria-expanded="false"
+                            title="<?= __('notifications_title') ?>">
+                            <i class="bi bi-bell-fill text-dark" style="font-size: 1.1rem;"></i>
+                            <span id="mobileNotifBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center"
+                                style="top:-1px; right:-3px; font-size: 0.55rem; width: 15px; height: 15px; display: none;">0</span>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 mt-2" style="width: 340px; max-height: 380px; overflow-y: auto; border-radius: 8px; z-index: 1080;">
+                            <div class="p-2.5 border-bottom d-flex align-items-center justify-content-between" style="background:#f8fafc;">
+                                <span class="fw-bold small text-dark"><i class="bi bi-bell-fill me-1 text-danger"></i> <?= __('notifications_title') ?></span>
+                                <span class="badge bg-danger text-white text-2xs" id="mobileNotifCountLabel">0</span>
+                            </div>
+                            <div id="mobileNotifList" class="list-group list-group-flush small">
+                                <div class="p-3 text-center text-muted text-xs">
+                                    <span class="spinner-border spinner-border-sm me-1"></span> <?= __('loading') ?? 'Loading...' ?>
+                                </div>
+                            </div>
+                            <div class="p-2 border-top text-center" style="background:#f8fafc;">
+                                <a href="<?= url('index.php?breaking=1') ?>" class="text-xs text-danger text-decoration-none fw-semibold">
+                                    <?= __('filter_breaking_only') ?> &rarr;
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                <?php } ?>
+
+                <span class="divider-dot"></span>
+
                 <!-- Mobile Search Toggle Button -->
                 <button class="header-clean-icon-btn d-flex align-items-center justify-content-center p-0"
                     type="button" data-bs-toggle="collapse" data-bs-target="#mobileSearchCollapse"
                     aria-expanded="false" aria-controls="mobileSearchCollapse" title="<?= __('search') ?>">
-                    <i class="bi bi-search text-dark" style="font-size: 1.15rem;"></i>
+                    <i class="bi bi-search text-dark" style="font-size: 1.05rem;"></i>
                 </button>
 
                 <!-- Mobile Hamburger Toggler -->
@@ -245,10 +399,10 @@ $currentReader = \App\Core\Auth::reader();
                     </div>
                 </form>
 
-                <!-- Reader Controls, Notifications & CTAs -->
-                <div class="d-flex align-items-center gap-2 ms-lg-auto pe-1">
+                <!-- Desktop: Reader Controls, Notifications & CTAs (hidden on mobile — icons moved to mobile bar) -->
+                <div class="d-none d-lg-flex align-items-center gap-2 ms-lg-auto pe-1">
                     
-                    <!-- Saved Reading List Offcanvas Trigger (Account Required) -->
+                    <!-- Saved Reading List Offcanvas Trigger (Only for Registered/Logged-in Readers) -->
                     <?php if ($currentReader || \App\Core\Auth::check()) { ?>
                         <button type="button"
                             class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
@@ -256,13 +410,6 @@ $currentReader = \App\Core\Auth::reader();
                             title="<?= __('saved_reading_list') ?? 'Saved Reading List' ?>">
                             <i class="bi bi-bookmark-fill text-danger" style="font-size: 1.2rem;"></i>
                             <span id="savedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center" style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; display: none;">0</span>
-                        </button>
-                    <?php } else { ?>
-                        <button type="button"
-                            class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
-                            data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register"
-                            title="<?= __('bookmark_account_required') ?? 'Create an account to save articles' ?>">
-                            <i class="bi bi-bookmark text-secondary" style="font-size: 1.2rem;"></i>
                         </button>
                     <?php } ?>
 
@@ -296,7 +443,7 @@ $currentReader = \App\Core\Auth::reader();
                         </div>
                     <?php } ?>
 
-                    <!-- Reader Auth Dropdown / Buttons -->
+                    <!-- Reader Auth Dropdown / Buttons (Desktop) -->
                     <?php if ($currentReader) { ?>
                         <div class="dropdown ms-1">
                             <button class="btn btn-outline-danger btn-sm px-2.5 py-1.5 d-flex align-items-center gap-1.5 rounded-2 dropdown-toggle text-nowrap"
@@ -332,7 +479,57 @@ $currentReader = \App\Core\Auth::reader();
                             </button>
                         </div>
                     <?php } ?>
+                </div>
 
+                <!-- Mobile: Clean Professional Menu Panel (replaces messy list) -->
+                <div class="d-lg-none">
+                    <div class="mobile-menu-divider"></div>
+
+                    <!-- User Account Section -->
+                    <?php if ($currentReader) { ?>
+                        <div class="mobile-menu-section">
+                            <div class="d-flex align-items-center gap-2.5 py-2">
+                                <div class="d-flex align-items-center justify-content-center" style="width:36px; height:36px; border-radius:50%; background:rgba(217,4,41,0.08);">
+                                    <i class="bi bi-person-fill text-danger" style="font-size:1.1rem;"></i>
+                                </div>
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="fw-bold text-dark" style="font-size:0.88rem;"><?= e($currentReader['name']) ?></div>
+                                    <div class="text-muted" style="font-size:0.72rem;"><?= e($currentReader['email']) ?></div>
+                                </div>
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25" style="font-size:0.6rem;">
+                                    <?= __('verified_reader_badge') ?>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="mobile-menu-divider"></div>
+                        <a class="mobile-menu-item" href="<?= url('settings.php') ?>">
+                            <i class="bi bi-gear-fill text-muted"></i>
+                            <?= __('settings_page_title') ?>
+                        </a>
+                        <a class="mobile-menu-item text-danger" href="<?= url('logout.php') ?>">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <?= __('sign_out') ?>
+                        </a>
+                    <?php } else { ?>
+                        <div class="mobile-menu-section">
+                            <button type="button" class="btn btn-danger btn-sm w-100 py-2 fw-semibold rounded-2 shadow-sm"
+                                data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register"
+                                style="font-size:0.85rem;">
+                                <i class="bi bi-person-plus-fill me-1.5"></i>
+                                <?= __('create_account') ?>
+                            </button>
+                        </div>
+                    <?php } ?>
+
+                    <!-- Mobile PWA Install Trigger -->
+                    <div class="mobile-menu-section">
+                        <button type="button" id="mobilePwaInstallBtn"
+                            class="btn btn-outline-danger btn-sm w-100 d-none align-items-center justify-content-center gap-1.5 py-1.5 fw-semibold text-xs rounded-2"
+                            title="<?= __('pwa_install') ?>">
+                            <i class="bi bi-download"></i>
+                            <span><?= __('pwa_install') ?></span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -537,57 +734,74 @@ $currentReader = \App\Core\Auth::reader();
                     .then(res => res.json())
                     .then(data => {
                         if (data && data.success && Array.isArray(data.notifications)) {
+                            // Desktop elements
                             const badge = document.getElementById('notifBadge');
                             const countLabel = document.getElementById('notifCountLabel');
                             const list = document.getElementById('notifList');
+                            // Mobile elements
+                            const mobileBadge = document.getElementById('mobileNotifBadge');
+                            const mobileCountLabel = document.getElementById('mobileNotifCountLabel');
+                            const mobileList = document.getElementById('mobileNotifList');
                             
                             const count = data.count || data.notifications.length;
-                            if (badge) {
-                                badge.textContent = count > 99 ? '99+' : count;
-                                badge.style.display = count > 0 ? 'flex' : 'none';
-                            }
-                            if (countLabel) countLabel.textContent = count;
-                            
-                            if (list) {
-                                if (data.notifications.length === 0) {
-                                    list.innerHTML = '<div class="p-3 text-center text-muted text-xs"><?= addslashes(__('no_notifications')) ?></div>';
-                                } else {
-                                    list.innerHTML = data.notifications.map(n => {
-                                        const isBreaking = n.type === 'breaking';
-                                        const isSubTopic = n.is_subscribed_topic;
-                                        let badgeHtml = '';
-                                        if (isBreaking) {
-                                            badgeHtml = '<span class="badge bg-danger text-white text-3xs px-1.5 py-0.5 rounded-1 fw-bold me-1">HOT</span>';
-                                        } else if (isSubTopic) {
-                                            badgeHtml = '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-3xs px-1.5 py-0.5 rounded-1 fw-bold me-1">✓ <?= addslashes(__('subscribed_topic_badge')) ?></span>';
-                                        }
-                                        const catLabel = n.category_display ? `<span class="badge bg-light text-secondary text-3xs px-1.5 py-0.5 rounded-1">${escapeHtml(n.category_display)}</span>` : '';
+                            const countText = count > 99 ? '99+' : count;
 
-                                        return `
-                                        <a href="${n.article_url}" class="list-group-item list-group-item-action py-2 px-2.5 border-bottom">
-                                            <div class="d-flex align-items-start gap-2">
-                                                <div class="mt-0.5 flex-shrink-0">
-                                                    ${isBreaking 
-                                                        ? '<span class="badge bg-danger rounded-circle p-1 d-inline-flex"><i class="bi bi-lightning-fill text-white" style="font-size:0.75rem;"></i></span>' 
-                                                        : (isSubTopic 
-                                                            ? '<span class="badge bg-danger bg-opacity-15 text-danger rounded-circle p-1 d-inline-flex"><i class="bi bi-bookmark-star-fill text-danger" style="font-size:0.75rem;"></i></span>'
-                                                            : '<span class="badge bg-primary bg-opacity-10 text-primary rounded-circle p-1 d-inline-flex"><i class="bi bi-newspaper" style="font-size:0.75rem;"></i></span>')}
-                                                </div>
-                                                <div class="flex-grow-1 overflow-hidden min-w-0">
-                                                    <div class="d-flex align-items-center gap-1 mb-0.5 flex-wrap">
-                                                        ${badgeHtml}
-                                                        ${catLabel}
-                                                    </div>
-                                                    <div class="fw-bold text-dark text-xs text-truncate" style="line-height:1.35;">${escapeHtml(n.title)}</div>
-                                                    <div class="text-muted text-2xs text-truncate mt-0.5">${escapeHtml(n.message || '')}</div>
-                                                    <div class="text-2xs text-secondary mt-1"><i class="bi bi-clock me-1"></i>${escapeHtml(n.time_ago || '')}</div>
-                                                </div>
-                                            </div>
-                                        </a>
-                                    `;
-                                    }).join('');
+                            // Update both desktop and mobile badges
+                            [badge, mobileBadge].forEach(b => {
+                                if (b) {
+                                    b.textContent = countText;
+                                    b.style.display = count > 0 ? 'flex' : 'none';
                                 }
+                            });
+                            [countLabel, mobileCountLabel].forEach(cl => {
+                                if (cl) cl.textContent = count;
+                            });
+                            
+                            // Build notification HTML
+                            let notifHtml = '';
+                            if (data.notifications.length === 0) {
+                                notifHtml = '<div class="p-3 text-center text-muted text-xs"><?= addslashes(__('no_notifications')) ?></div>';
+                            } else {
+                                notifHtml = data.notifications.map(n => {
+                                    const isBreaking = n.type === 'breaking';
+                                    const isSubTopic = n.is_subscribed_topic;
+                                    let badgeHtml = '';
+                                    if (isBreaking) {
+                                        badgeHtml = '<span class="badge bg-danger text-white text-3xs px-1.5 py-0.5 rounded-1 fw-bold me-1">HOT</span>';
+                                    } else if (isSubTopic) {
+                                        badgeHtml = '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-3xs px-1.5 py-0.5 rounded-1 fw-bold me-1">✓ <?= addslashes(__('subscribed_topic_badge')) ?></span>';
+                                    }
+                                    const catLabel = n.category_display ? `<span class="badge bg-light text-secondary text-3xs px-1.5 py-0.5 rounded-1">${escapeHtml(n.category_display)}</span>` : '';
+
+                                    return `
+                                    <a href="${n.article_url}" class="list-group-item list-group-item-action py-2 px-2.5 border-bottom">
+                                        <div class="d-flex align-items-start gap-2">
+                                            <div class="mt-0.5 flex-shrink-0">
+                                                ${isBreaking 
+                                                    ? '<span class="badge bg-danger rounded-circle p-1 d-inline-flex"><i class="bi bi-lightning-fill text-white" style="font-size:0.75rem;"></i></span>' 
+                                                    : (isSubTopic 
+                                                        ? '<span class="badge bg-danger bg-opacity-15 text-danger rounded-circle p-1 d-inline-flex"><i class="bi bi-bookmark-star-fill text-danger" style="font-size:0.75rem;"></i></span>'
+                                                        : '<span class="badge bg-primary bg-opacity-10 text-primary rounded-circle p-1 d-inline-flex"><i class="bi bi-newspaper" style="font-size:0.75rem;"></i></span>')}
+                                            </div>
+                                            <div class="flex-grow-1 overflow-hidden min-w-0">
+                                                <div class="d-flex align-items-center gap-1 mb-0.5 flex-wrap">
+                                                    ${badgeHtml}
+                                                    ${catLabel}
+                                                </div>
+                                                <div class="fw-bold text-dark text-xs text-truncate" style="line-height:1.35;">${escapeHtml(n.title)}</div>
+                                                <div class="text-muted text-2xs text-truncate mt-0.5">${escapeHtml(n.message || '')}</div>
+                                                <div class="text-2xs text-secondary mt-1"><i class="bi bi-clock me-1"></i>${escapeHtml(n.time_ago || '')}</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                `;
+                                }).join('');
                             }
+
+                            // Apply to both desktop and mobile lists
+                            [list, mobileList].forEach(l => {
+                                if (l) l.innerHTML = notifHtml;
+                            });
                         }
                     })
                     .catch(e => console.debug('Notifications poll:', e));
@@ -667,6 +881,15 @@ $currentReader = \App\Core\Auth::reader();
                         </div>
                     </div>
                 </div>
+
+                <!-- Breaking News Browser Push Alerts Opt-In Button -->
+                <button type="button" id="pushSubscribeBtn"
+                    class="btn btn-sm py-0.5 px-2 d-none align-items-center gap-1.5 flex-shrink-0 text-white"
+                    style="font-size:0.7rem; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.22); border-radius:2px; height:24px; transition:all 0.2s;"
+                    title="<?= __('push_alerts_title') ?>">
+                    <i class="bi bi-bell-fill text-warning" id="pushSubscribeIcon" style="font-size:0.75rem;"></i>
+                    <span id="pushSubscribeText" class="d-none d-sm-inline fw-semibold"><?= __('push_alerts_subscribe') ?></span>
+                </button>
             </div>
         </div>
     <?php } ?>

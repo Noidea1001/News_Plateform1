@@ -5,10 +5,12 @@
 $qvModal    = __DIR__ . '/../components/quick-view-modal.php';
 $savedModal = __DIR__ . '/../components/saved-articles-modal.php';
 $authModal  = __DIR__ . '/../components/auth-modal.php';
+$pwaModal   = __DIR__ . '/../components/pwa-install-modal.php';
 
 if (file_exists($qvModal))    { include $qvModal; }
 if (file_exists($savedModal)) { include $savedModal; }
 if (file_exists($authModal))  { include $authModal; }
+if (file_exists($pwaModal))   { include $pwaModal; }
 ?>
 
 <!-- ── CNA-Style Footer ────────────────────────────────────────────────── -->
@@ -106,22 +108,6 @@ if (file_exists($authModal))  { include $authModal; }
                        onmouseover="this.style.color='rgba(255,255,255,0.80)'"
                        onmouseout="this.style.color='rgba(255,255,255,0.40)'">
                         <?= __('cda_badge') ?>
-                    </a>
-                    <span>&bull;</span>
-                    <a href="<?= url('api/v1/articles.php') ?>" target="_blank"
-                       class="text-decoration-none"
-                       style="color:rgba(255,255,255,0.40);"
-                       onmouseover="this.style.color='rgba(255,255,255,0.80)'"
-                       onmouseout="this.style.color='rgba(255,255,255,0.40)'">
-                        <i class="bi bi-code-slash me-1"></i><?= __('api_documentation') ?>
-                    </a>
-                    <span>&bull;</span>
-                    <a href="<?= url('admin/login.php') ?>"
-                       class="text-decoration-none"
-                       style="color:rgba(255,255,255,0.40);"
-                       onmouseover="this.style.color='rgba(255,255,255,0.80)'"
-                       onmouseout="this.style.color='rgba(255,255,255,0.40)'">
-                        <i class="bi bi-shield-lock me-1"></i><?= __('cma_link') ?>
                     </a>
                 </div>
             </div>
@@ -271,18 +257,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function updateSavedCountBadge() {
         const badge = document.getElementById('savedCountBadge');
+        const mobileBadge = document.getElementById('mobileSavedCountBadge');
         const clearBtn = document.getElementById('clearSavedArticlesBtn');
         const list = getSavedArticles();
-        if (badge) {
-            badge.textContent = list.length;
-            badge.style.display = list.length > 0 ? 'inline-block' : 'none';
-        }
+        const count = list.length;
+        const countText = count > 99 ? '99+' : count;
+
+        [badge, mobileBadge].forEach(b => {
+            if (b) {
+                b.textContent = countText;
+                b.style.display = count > 0 ? 'flex' : 'none';
+            }
+        });
         if (clearBtn) {
-            clearBtn.style.display = list.length > 0 ? 'block' : 'none';
+            clearBtn.style.display = count > 0 ? 'block' : 'none';
         }
         const confirmCard = document.getElementById('clearSavedConfirmCard');
         const clearBar = document.getElementById('clearSavedButtonBar');
-        if (list.length === 0) {
+        if (count === 0) {
             if (confirmCard) confirmCard.classList.add('d-none');
             if (clearBar) clearBar.classList.remove('d-none');
         }
@@ -343,20 +335,20 @@ document.addEventListener('DOMContentLoaded', function () {
             const displayReadingTime = formatReadingTimeJs(item.reading_time);
 
             html += `
-                <div class="list-group-item p-3 border-bottom d-flex gap-3 align-items-start position-relative">
-                    ${item.image ? `<img src="${item.image}" style="width:68px; height:48px; object-fit:cover; border-radius:2px; flex-shrink:0;">` : ''}
-                    <div class="flex-grow-1 min-w-0">
-                        <div class="text-xs font-monospace text-uppercase fw-bold text-danger mb-1">${displayCategory}</div>
-                        <h6 class="fw-bold mb-1" style="font-size:0.86rem; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
+                <div class="list-group-item p-3 border-bottom d-flex gap-2.5 align-items-start position-relative">
+                    ${item.image ? `<img src="${item.image}" style="width:72px; height:52px; object-fit:cover; border-radius:4px; flex-shrink:0;">` : ''}
+                    <div class="flex-grow-1 min-w-0 pe-1">
+                        <div class="text-3xs font-monospace text-uppercase fw-bold text-danger mb-1">${displayCategory}</div>
+                        <h6 class="fw-bold mb-1" style="font-size:0.84rem; line-height:1.35; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
                             <a href="${item.url}" class="text-dark text-decoration-none">${displayTitle}</a>
                         </h6>
-                        <div class="text-xs text-muted d-flex align-items-center gap-2">
+                        <div class="text-2xs text-muted d-flex align-items-center gap-1.5 flex-wrap mt-1">
                             <span>${displayReadingTime}</span>
                             <span>&bull;</span>
                             <a href="${item.url}" class="text-danger fw-bold text-decoration-none">${TXT_READ_STORY} &rarr;</a>
                         </div>
                     </div>
-                    <button type="button" class="btn btn-link text-muted p-0 remove-saved-btn" data-id="${item.id}" title="Remove from list" style="font-size:0.9rem;">
+                    <button type="button" class="btn btn-link text-muted p-1 remove-saved-btn ms-auto flex-shrink-0" data-id="${item.id}" title="Remove from list" style="font-size:1.05rem; line-height:1;">
                         <i class="bi bi-x-circle-fill"></i>
                     </button>
                 </div>
@@ -536,43 +528,254 @@ document.addEventListener('DOMContentLoaded', function () {
     syncBookmarkButtonsState();
 
     // 4. Progressive Web App (PWA) & Service Worker Registration
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+    const pwaBtn = document.getElementById('pwaInstallBtn');
+    const mobilePwaBtn = document.getElementById('mobilePwaInstallBtn');
+    const modalInstallBtn = document.getElementById('pwaModalInstallBtn');
+    let deferredPrompt = null;
+
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
-            navigator.serviceWorker.register('<?= url("sw.js") ?>')
+            const swUrl = '<?= url("sw.js") ?>';
+            const swScope = '<?= rtrim(url(""), "/") ?>/';
+            navigator.serviceWorker.register(swUrl, { scope: swScope })
                 .then(function (reg) {
-                    console.log('NewsPlatform PWA Service Worker registered:', reg.scope);
+                    console.log('[PWA] Service Worker registered with scope:', reg.scope);
                 })
                 .catch(function (err) {
-                    console.log('PWA Service Worker registration skipped/failed:', err);
+                    console.warn('[PWA] Service Worker registration failed:', err);
                 });
         });
     }
 
-    // PWA Install Prompt Handler
-    let deferredPrompt = null;
-    const pwaBtn = document.getElementById('pwaInstallBtn');
-
-    window.addEventListener('beforeinstallprompt', function (e) {
-        e.preventDefault();
-        deferredPrompt = e;
+    function showInstallUi() {
+        if (isStandalone) return;
         if (pwaBtn) {
             pwaBtn.classList.remove('d-none');
             pwaBtn.classList.add('d-inline-flex');
         }
+        if (mobilePwaBtn) {
+            mobilePwaBtn.classList.remove('d-none');
+            mobilePwaBtn.classList.add('d-flex');
+        }
+    }
+
+    function hideInstallUi() {
+        if (pwaBtn) {
+            pwaBtn.classList.remove('d-inline-flex');
+            pwaBtn.classList.add('d-none');
+        }
+        if (mobilePwaBtn) {
+            mobilePwaBtn.classList.remove('d-flex');
+            mobilePwaBtn.classList.add('d-none');
+        }
+    }
+
+    // Capture beforeinstallprompt event (Chrome, Edge, Android)
+    window.addEventListener('beforeinstallprompt', function (e) {
+        e.preventDefault();
+        deferredPrompt = e;
+        showInstallUi();
     });
 
-    if (pwaBtn) {
-        pwaBtn.addEventListener('click', async function () {
-            if (!deferredPrompt) return;
+    async function triggerInstallFlow() {
+        if (deferredPrompt) {
             deferredPrompt.prompt();
             const choiceResult = await deferredPrompt.userChoice;
             if (choiceResult && choiceResult.outcome === 'accepted') {
-                pwaBtn.classList.remove('d-inline-flex');
-                pwaBtn.classList.add('d-none');
+                hideInstallUi();
             }
             deferredPrompt = null;
+        } else {
+            // Show guide modal for browsers without prompt or manual install
+            const modalEl = document.getElementById('pwaInstallModal');
+            if (modalEl && typeof bootstrap !== 'undefined') {
+                const modal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                modal.show();
+            }
+        }
+    }
+
+    if (pwaBtn) {
+        pwaBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            triggerInstallFlow();
         });
     }
+
+    if (mobilePwaBtn) {
+        mobilePwaBtn.addEventListener('click', function (e) {
+            e.preventDefault();
+            triggerInstallFlow();
+        });
+    }
+
+    if (modalInstallBtn) {
+        modalInstallBtn.addEventListener('click', async function (e) {
+            e.preventDefault();
+            if (deferredPrompt) {
+                const modalEl = document.getElementById('pwaInstallModal');
+                if (modalEl && typeof bootstrap !== 'undefined') {
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    if (modal) modal.hide();
+                }
+                deferredPrompt.prompt();
+                const choiceResult = await deferredPrompt.userChoice;
+                if (choiceResult && choiceResult.outcome === 'accepted') {
+                    hideInstallUi();
+                }
+                deferredPrompt = null;
+            } else {
+                alert('<?= addslashes(__('pwa_desktop_instructions')) ?>');
+            }
+        });
+    }
+
+    // Listen for successful app installation
+    window.addEventListener('appinstalled', function () {
+        console.log('[PWA] App successfully installed!');
+        hideInstallUi();
+        deferredPrompt = null;
+    });
+
+    // 5. Web Push API: Browser Push Alerts for Breaking News Ticker Items
+    const pushBtn = document.getElementById('pushSubscribeBtn');
+    const pushIcon = document.getElementById('pushSubscribeIcon');
+    const pushText = document.getElementById('pushSubscribeText');
+
+    function urlB64ToUint8Array(base64String) {
+        const padding = '='.repeat((4 - base64String.length % 4) % 4);
+        const base64 = (base64String + padding).replace(/\-/g, '+').replace(/_/g, '/');
+        const rawData = window.atob(base64);
+        const outputArray = new Uint8Array(rawData.length);
+        for (let i = 0; i < rawData.length; ++i) {
+            outputArray[i] = rawData.charCodeAt(i);
+        }
+        return outputArray;
+    }
+
+    async function initPushSubscriptionUi() {
+        if (!('PushManager' in window) || !('serviceWorker' in navigator) || !('Notification' in window)) {
+            return;
+        }
+
+        if (pushBtn) {
+            pushBtn.classList.remove('d-none');
+            pushBtn.classList.add('d-inline-flex');
+        }
+
+        try {
+            const reg = await navigator.serviceWorker.ready;
+            const sub = await reg.pushManager.getSubscription();
+
+            if (sub) {
+                updatePushBtnState(true);
+            } else if (Notification.permission === 'denied') {
+                updatePushBtnState(false, true);
+            } else {
+                updatePushBtnState(false);
+            }
+        } catch (err) {
+            console.warn('[WebPush] Error checking subscription state:', err);
+        }
+    }
+
+    function updatePushBtnState(isSubscribed, isDenied = false) {
+        if (!pushBtn) return;
+        if (isDenied) {
+            if (pushIcon) pushIcon.className = 'bi bi-bell-slash text-white opacity-50';
+            if (pushText) pushText.textContent = '<?= addslashes(__('push_alerts_denied')) ?>';
+            pushBtn.disabled = true;
+            pushBtn.style.opacity = '0.6';
+        } else if (isSubscribed) {
+            if (pushIcon) pushIcon.className = 'bi bi-bell-fill text-success';
+            if (pushText) pushText.textContent = '<?= addslashes(__('push_alerts_subscribed')) ?>';
+            pushBtn.disabled = false;
+            pushBtn.classList.add('active');
+            pushBtn.style.background = 'rgba(34, 197, 94, 0.25)';
+            pushBtn.style.borderColor = 'rgba(34, 197, 94, 0.5)';
+        } else {
+            if (pushIcon) pushIcon.className = 'bi bi-bell-fill text-warning';
+            if (pushText) pushText.textContent = '<?= addslashes(__('push_alerts_subscribe')) ?>';
+            pushBtn.disabled = false;
+            pushBtn.classList.remove('active');
+            pushBtn.style.background = 'rgba(255, 255, 255, 0.14)';
+            pushBtn.style.borderColor = 'rgba(255, 255, 255, 0.22)';
+        }
+    }
+
+    if (pushBtn) {
+        pushBtn.addEventListener('click', async function (e) {
+            e.preventDefault();
+
+            if (!('Notification' in window)) {
+                alert('This browser does not support Web Push notifications.');
+                return;
+            }
+
+            try {
+                const reg = await navigator.serviceWorker.ready;
+                const existingSub = await reg.pushManager.getSubscription();
+
+                if (existingSub) {
+                    // Toggle Off: Unsubscribe
+                    const endpoint = existingSub.endpoint;
+                    await existingSub.unsubscribe();
+                    await fetch('<?= url("api/v1/push-subscription.php") ?>', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'unsubscribe', endpoint: endpoint })
+                    });
+                    updatePushBtnState(false);
+                } else {
+                    // Toggle On: Request permission & subscribe
+                    const permission = await Notification.requestPermission();
+                    if (permission !== 'granted') {
+                        updatePushBtnState(false, true);
+                        return;
+                    }
+
+                    // Fetch VAPID Public Key
+                    const keyRes = await fetch('<?= url("api/v1/push-subscription.php") ?>');
+                    const keyData = await keyRes.json();
+
+                    if (!keyData.success || !keyData.publicKey) {
+                        throw new Error(keyData.error || 'Failed to retrieve VAPID key');
+                    }
+
+                    const sub = await reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: urlB64ToUint8Array(keyData.publicKey)
+                    });
+
+                    const subJson = sub.toJSON();
+
+                    // Send subscription to backend
+                    const saveRes = await fetch('<?= url("api/v1/push-subscription.php") ?>', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            action: 'subscribe',
+                            endpoint: subJson.endpoint,
+                            keys: subJson.keys
+                        })
+                    });
+
+                    const saveResult = await saveRes.json();
+                    if (saveResult.success) {
+                        updatePushBtnState(true);
+                    } else {
+                        throw new Error(saveResult.error || 'Server rejected subscription');
+                    }
+                }
+            } catch (err) {
+                console.error('[WebPush] Subscription error:', err);
+                alert('Could not enable push alerts: ' + err.message);
+            }
+        });
+    }
+
+    initPushSubscriptionUi();
 });
 </script>
 </body>
