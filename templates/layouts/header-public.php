@@ -5,9 +5,11 @@
  */
 require_once __DIR__ . '/../../src/Core/helpers.php';
 require_once __DIR__ . '/../../languages/common.php';
-$currentLang = $_SESSION['lang'] ?? 'en';
+$currentLang   = $_SESSION['lang'] ?? 'en';
 $currentReader = \App\Core\Auth::reader();
-$headerDb = \App\Core\Database::getInstance();
+$staffUser     = \App\Core\Auth::check() ? \App\Core\Auth::user() : null;
+$currentUser   = $currentReader ?: $staffUser;
+$headerDb      = \App\Core\Database::getInstance();
 $catNavList = $headerDb->fetchAll("SELECT * FROM categories ORDER BY name ASC");
 $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
 ?>
@@ -315,8 +317,8 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
             <!-- Mobile Controls (Icons + Search + Hamburger) — Always visible on mobile -->
             <div class="d-flex align-items-center ms-auto d-lg-none mobile-icon-bar">
 
-                <!-- Mobile: Saved Reading List Icon -->
-                <?php if ($currentReader || \App\Core\Auth::check()) { ?>
+                <!-- Mobile: Saved Reading List Icon & Notification Bell (Only for Logged-In Users) -->
+                <?php if ($currentUser) { ?>
                     <button type="button"
                         class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative p-0"
                         data-bs-toggle="offcanvas" data-bs-target="#savedArticlesModal"
@@ -324,10 +326,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                         <i class="bi bi-bookmark-fill text-danger" style="font-size: 1.1rem;"></i>
                         <span id="mobileSavedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center" style="top:-1px; right:-3px; font-size: 0.55rem; width: 15px; height: 15px; display: none;">0</span>
                     </button>
-                <?php } ?>
 
-                <!-- Mobile: Notification Bell -->
-                <?php if ($currentReader || \App\Core\Auth::check()) { ?>
                     <div class="dropdown position-relative mobile-notif-dropdown">
                         <button type="button"
                             class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative p-0"
@@ -402,8 +401,8 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                 <!-- Desktop: Reader Controls, Notifications & CTAs (hidden on mobile — icons moved to mobile bar) -->
                 <div class="d-none d-lg-flex align-items-center gap-2 ms-lg-auto pe-1">
                     
-                    <!-- Saved Reading List Offcanvas Trigger (Only for Registered/Logged-in Readers) -->
-                    <?php if ($currentReader || \App\Core\Auth::check()) { ?>
+                    <?php if ($currentUser) { ?>
+                        <!-- Saved Reading List Offcanvas Trigger (Only for Logged-in Users) -->
                         <button type="button"
                             class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
                             data-bs-toggle="offcanvas" data-bs-target="#savedArticlesModal"
@@ -411,10 +410,8 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                             <i class="bi bi-bookmark-fill text-danger" style="font-size: 1.2rem;"></i>
                             <span id="savedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center" style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; display: none;">0</span>
                         </button>
-                    <?php } ?>
 
-                    <!-- Real-Time Notification Bell Dropdown (Only for Registered/Logged-in Users) -->
-                    <?php if ($currentReader || \App\Core\Auth::check()) { ?>
+                        <!-- Real-Time Notification Bell Dropdown (Only for Logged-in Users) -->
                         <div class="dropdown position-relative">
                             <button type="button"
                                 class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
@@ -441,29 +438,35 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                                 </div>
                             </div>
                         </div>
-                    <?php } ?>
 
-                    <!-- Reader Auth Dropdown / Buttons (Desktop) -->
-                    <?php if ($currentReader) { ?>
+                        <!-- User Profile Dropdown (Desktop) -->
                         <div class="dropdown ms-1">
                             <button class="btn btn-outline-danger btn-sm px-2.5 py-1.5 d-flex align-items-center gap-1.5 rounded-2 dropdown-toggle text-nowrap"
                                 type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.78rem;">
                                 <i class="bi bi-person-circle text-danger"></i>
-                                <span class="fw-bold"><?= e($currentReader['name']) ?></span>
+                                <span class="fw-bold"><?= e($currentReader ? $currentReader['name'] : ($staffUser['username'] ?? 'Staff Admin')) ?></span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" style="min-width: 200px;">
                                 <li class="px-3 py-2 border-bottom">
-                                    <div class="fw-bold small text-dark"><?= e($currentReader['name']) ?></div>
-                                    <div class="text-muted text-2xs"><?= e($currentReader['email']) ?></div>
+                                    <div class="fw-bold small text-dark"><?= e($currentReader ? $currentReader['name'] : ($staffUser['username'] ?? 'Staff Admin')) ?></div>
+                                    <div class="text-muted text-2xs"><?= e($currentReader ? $currentReader['email'] : ($staffUser['email'] ?? '')) ?></div>
                                     <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-3xs mt-1">
-                                        <?= __('verified_reader_badge') ?>
+                                        <?= $currentReader ? __('verified_reader_badge') : 'Staff Admin' ?>
                                     </span>
                                 </li>
-                            <li>
+                                <?php if ($currentReader) { ?>
+                                <li>
                                     <a class="dropdown-item small py-2" href="<?= url('settings.php') ?>">
                                         <i class="bi bi-gear-fill me-1.5 text-muted"></i> <?= __('settings_page_title') ?>
                                     </a>
                                 </li>
+                                <?php } else { ?>
+                                <li>
+                                    <a class="dropdown-item small py-2" href="<?= url('admin/dashboard.php') ?>">
+                                        <i class="bi bi-speedometer2 me-1.5 text-muted"></i> Admin Dashboard
+                                    </a>
+                                </li>
+                                <?php } ?>
                                 <li>
                                     <a class="dropdown-item small py-2 text-danger" href="<?= url('logout.php') ?>">
                                         <i class="bi bi-box-arrow-right me-1.5"></i> <?= __('sign_out') ?>
@@ -472,6 +475,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                             </ul>
                         </div>
                     <?php } else { ?>
+                        <!-- Guest: Create Account CTA Button -->
                         <div class="d-flex align-items-center ms-1">
                             <button type="button" class="btn btn-danger btn-sm px-2.5 py-1.5 fw-semibold text-xs rounded-2 shadow-2xs text-nowrap"
                                 data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register">
@@ -485,27 +489,34 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                 <div class="d-lg-none">
                     <div class="mobile-menu-divider"></div>
 
-                    <!-- User Account Section -->
-                    <?php if ($currentReader) { ?>
+                    <!-- User Account Section (Mobile) -->
+                    <?php if ($currentUser) { ?>
                         <div class="mobile-menu-section">
                             <div class="d-flex align-items-center gap-2.5 py-2">
                                 <div class="d-flex align-items-center justify-content-center" style="width:36px; height:36px; border-radius:50%; background:rgba(217,4,41,0.08);">
                                     <i class="bi bi-person-fill text-danger" style="font-size:1.1rem;"></i>
                                 </div>
                                 <div class="flex-grow-1 min-w-0">
-                                    <div class="fw-bold text-dark" style="font-size:0.88rem;"><?= e($currentReader['name']) ?></div>
-                                    <div class="text-muted" style="font-size:0.72rem;"><?= e($currentReader['email']) ?></div>
+                                    <div class="fw-bold text-dark" style="font-size:0.88rem;"><?= e($currentReader ? $currentReader['name'] : ($staffUser['username'] ?? 'Staff Admin')) ?></div>
+                                    <div class="text-muted" style="font-size:0.72rem;"><?= e($currentReader ? $currentReader['email'] : ($staffUser['email'] ?? '')) ?></div>
                                 </div>
                                 <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25" style="font-size:0.6rem;">
-                                    <?= __('verified_reader_badge') ?>
+                                    <?= $currentReader ? __('verified_reader_badge') : 'Staff Admin' ?>
                                 </span>
                             </div>
                         </div>
                         <div class="mobile-menu-divider"></div>
+                        <?php if ($currentReader) { ?>
                         <a class="mobile-menu-item" href="<?= url('settings.php') ?>">
                             <i class="bi bi-gear-fill text-muted"></i>
                             <?= __('settings_page_title') ?>
                         </a>
+                        <?php } else { ?>
+                        <a class="mobile-menu-item" href="<?= url('admin/dashboard.php') ?>">
+                            <i class="bi bi-speedometer2 text-muted"></i>
+                            Admin Dashboard
+                        </a>
+                        <?php } ?>
                         <a class="mobile-menu-item text-danger" href="<?= url('logout.php') ?>">
                             <i class="bi bi-box-arrow-right"></i>
                             <?= __('sign_out') ?>
@@ -730,6 +741,9 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
             }
 
             function fetchNotifications() {
+                <?php if (!$currentUser) { ?>
+                    return; // Guests don't fetch notifications
+                <?php } ?>
                 fetch('<?= url("api/v1/notifications.php") ?>?lang=<?= $currentLang ?>')
                     .then(res => res.json())
                     .then(data => {

@@ -287,6 +287,11 @@ class WebPush
             'Authorization: vapid t=' . $jwt . ', k=' . $config['public_key']
         ];
 
+        $verifySsl = true;
+        if (str_contains(__DIR__, 'xampp') || str_contains(__DIR__, 'XAMPP') || getenv('APP_ENV') === 'local' || (isset($_SERVER['HTTP_HOST']) && str_contains($_SERVER['HTTP_HOST'], 'localhost'))) {
+            $verifySsl = false;
+        }
+
         $ch = curl_init();
         curl_setopt_array($ch, [
             CURLOPT_URL => $endpoint,
@@ -295,11 +300,16 @@ class WebPush
             CURLOPT_HTTPHEADER => $headers,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_TIMEOUT => 15,
-            CURLOPT_SSL_VERIFYPEER => true
+            CURLOPT_SSL_VERIFYPEER => $verifySsl,
+            CURLOPT_SSL_VERIFYHOST => $verifySsl ? 2 : 0
         ]);
 
         curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $curlErr = curl_error($ch);
+        if ($curlErr) {
+            error_log("[WebPush] cURL error calling {$endpoint}: {$curlErr}");
+        }
         if (\PHP_VERSION_ID < 80000 && function_exists('curl_close')) {
             @call_user_func('curl_close', $ch);
         }
