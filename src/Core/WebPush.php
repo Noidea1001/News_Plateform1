@@ -203,61 +203,9 @@ class WebPush
     }
 
     /**
-     * Broadcast payload to all opted-in push subscriptions
+     * Prepare a cURL handle for push notification
      */
-    public static function sendToAll(array $payload): array
-    {
-        $db = Database::getInstance();
-        $subscriptions = $db->fetchAll("SELECT * FROM push_subscriptions ORDER BY id DESC");
-
-        $results = [
-            'total' => count($subscriptions),
-            'success' => 0,
-            'failed' => 0,
-            'pruned' => 0
-        ];
-
-        if (empty($subscriptions)) {
-            return $results;
-        }
-
-        $payloadJson = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
-        $pruneIds = [];
-
-        foreach ($subscriptions as $sub) {
-            try {
-                $status = self::sendPush($sub, $payloadJson);
-
-                if ($status >= 200 && $status < 300) {
-                    $results['success']++;
-                    $db->execute("UPDATE push_subscriptions SET last_notified_at = NOW() WHERE id = :id", ['id' => $sub['id']]);
-                } elseif ($status === 404 || $status === 410) {
-                    // Subscription expired or unregistered by client browser
-                    $pruneIds[] = (int)$sub['id'];
-                    $results['failed']++;
-                } else {
-                    $results['failed']++;
-                }
-            } catch (Throwable $e) {
-                error_log('[WebPush] Error sending notification to sub ID ' . $sub['id'] . ': ' . $e->getMessage());
-                $results['failed']++;
-            }
-        }
-
-        // Clean up expired subscriptions
-        if (!empty($pruneIds)) {
-            $inClause = implode(',', $pruneIds);
-            $db->execute("DELETE FROM push_subscriptions WHERE id IN ({$inClause})");
-            $results['pruned'] = count($pruneIds);
-        }
-
-        return $results;
-    }
-
-    /**
-     * Send encrypted push notification via cURL
-     */
-    public static function sendPush(array $subscription, string $payloadJson): int
+    public static function preparePushHandle(array $subscription, string $payloadJson)
     {
         $endpoint = $subscription['endpoint'];
         $clientPubKeyB64 = $subscription['p256dh'];
@@ -265,7 +213,7 @@ class WebPush
 
         $parsedUrl = parse_url($endpoint);
         if (!$parsedUrl || !isset($parsedUrl['scheme'], $parsedUrl['host'])) {
-            return 400;
+            return false;
         }
 
         $origin = $parsedUrl['scheme'] . '://' . $parsedUrl['host'];
@@ -284,6 +232,7 @@ class WebPush
             'Content-Encoding: aes128gcm',
             'TTL: 86400',
             'Urgency: high',
+            'Topic: breaking',
             'Authorization: vapid t=' . $jwt . ', k=' . $config['public_key']
         ];
 
@@ -299,22 +248,134 @@ class WebPush
             CURLOPT_POSTFIELDS => $encrypted,
             CURLOPT_HTTPHEADER => $headers,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => 15,
+            CURLOPT_TIMEOUT => 5,
+            CURLOPT_CONNECTTIMEOUT => 3,
             CURLOPT_SSL_VERIFYPEER => $verifySsl,
             CURLOPT_SSL_VERIFYHOST => $verifySsl ? 2 : 0
         ]);
 
+        return $ch;
+    }
+
+    /**
+     * Broadcast payload to all opted-in push subscriptions in parallel (ultra-fast curl_multi)
+     */
+    public static function sendToAll(array $payload): array
+    {
+        $db = Database::getInstance();
+        $subscriptions = $db->fetchAll("SELECT * FROM push_subscriptions ORDER BY id DESC");
+
+        $results = [
+            'total' => count($subscriptions),
+            'success' => 0,
+            'failed' => 0,
+            'pruned' => 0
+        ];
+
+        if (empty($subscriptions)) {
+            return $results;
+        }
+
+        $payloadJson = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $mh = curl_multi_init();
+        $handles = [];
+
+        foreach ($subscriptions as $sub) {
+            try {
+                $ch = self::preparePushHandle($sub, $payloadJson);
+                if ($ch) {
+                    curl_multi_add_handle($mh, $ch);
+                    $handles[(int)$sub['id']] = [
+                        'ch' => $ch,
+                        'sub' => $sub
+                    ];
+                } else {
+                    $results['failed']++;
+                }
+            } catch (Throwable $e) {
+                error_log('[WebPush] Error preparing sub ID ' . $sub['id'] . ': ' . $e->getMessage());
+                $results['failed']++;
+            }
+        }
+
+        if (empty($handles)) {
+            if ($mh) curl_multi_close($mh);
+            return $results;
+        }
+
+        // Execute all cURL handles in parallel (PHP 8 safe)
+        $active = null;
+        do {
+            $mrc = curl_multi_exec($mh, $active);
+            if ($active) {
+                curl_multi_select($mh, 0.05);
+            }
+        } while ($active && $mrc == CURLM_OK);
+
+        // Process results
+        $pruneIds = [];
+        $successIds = [];
+
+        foreach ($handles as $subId => $item) {
+            $ch = $item['ch'];
+            $httpCode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            $curlErr = curl_error($ch);
+            if ($curlErr) {
+                error_log("[WebPush] Parallel cURL error on sub ID {$subId}: {$curlErr}");
+            }
+
+            if ($httpCode >= 200 && $httpCode < 300) {
+                $results['success']++;
+                $successIds[] = $subId;
+            } elseif ($httpCode === 404 || $httpCode === 410) {
+                $pruneIds[] = $subId;
+                $results['failed']++;
+            } else {
+                $results['failed']++;
+            }
+
+            curl_multi_remove_handle($mh, $ch);
+            if (\PHP_VERSION_ID < 80000 && function_exists('curl_close')) {
+                @call_user_func('curl_close', $ch);
+            }
+        }
+
+        curl_multi_close($mh);
+
+        if (!empty($successIds)) {
+            $inClause = implode(',', $successIds);
+            $db->execute("UPDATE push_subscriptions SET last_notified_at = NOW() WHERE id IN ({$inClause})");
+        }
+
+        // Clean up expired subscriptions
+        if (!empty($pruneIds)) {
+            $inClause = implode(',', $pruneIds);
+            $db->execute("DELETE FROM push_subscriptions WHERE id IN ({$inClause})");
+            $results['pruned'] = count($pruneIds);
+        }
+
+        return $results;
+    }
+
+    /**
+     * Send encrypted push notification to single subscription via cURL
+     */
+    public static function sendPush(array $subscription, string $payloadJson): int
+    {
+        $ch = self::preparePushHandle($subscription, $payloadJson);
+        if (!$ch) return 400;
+
         curl_exec($ch);
-        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        $httpCode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $curlErr = curl_error($ch);
         if ($curlErr) {
-            error_log("[WebPush] cURL error calling {$endpoint}: {$curlErr}");
+            error_log("[WebPush] cURL error calling endpoint: {$curlErr}");
         }
         if (\PHP_VERSION_ID < 80000 && function_exists('curl_close')) {
             @call_user_func('curl_close', $ch);
         }
 
-        return (int)$httpCode;
+        return $httpCode;
     }
 
     /**
