@@ -35,9 +35,11 @@
                 </p>
             </div>
             <div class="modal-footer border-top py-3 px-4 bg-light d-flex justify-content-between align-items-center">
-                <button type="button" id="qvBookmarkBtn" class="btn btn-outline-secondary btn-sm fw-bold d-inline-flex align-items-center gap-1.5" style="border-radius:2px;">
-                    <i class="bi bi-bookmark"></i> <span><?= __('save_for_later') ?? 'Save Article' ?></span>
-                </button>
+                <?php if (\App\Core\Auth::readerCheck() || \App\Core\Auth::check()) { ?>
+                    <button type="button" id="qvBookmarkBtn" class="btn btn-outline-secondary btn-sm fw-bold d-inline-flex align-items-center gap-1.5" style="border-radius:2px;">
+                        <i class="bi bi-bookmark"></i> <span><?= __('save_for_later') ?? 'Save Article' ?></span>
+                    </button>
+                <?php } ?>
                 <a id="qvFullArticleLink" href="#" class="btn btn-danger btn-sm px-4 fw-bold" style="border-radius:2px; text-transform:uppercase; letter-spacing:0.04em;">
                     <?= __('read_full_article') ?? 'Read Full Story' ?> <i class="bi bi-arrow-right ms-1"></i>
                 </a>

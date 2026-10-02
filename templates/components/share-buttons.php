@@ -28,8 +28,8 @@ $shareTitle = article_title($article['title'] ?? 'NewsPlatform Story');
     <!-- Right: Bookmark & Clean Share Dropdown -->
     <div class="d-flex align-items-center gap-2 ms-auto">
         
-        <!-- 1. Bookmark / Save Button -->
-        <?php if (isset($article) && isset($artData)) { ?>
+        <!-- 1. Bookmark / Save Button (Only for Registered Readers) -->
+        <?php if ((\App\Core\Auth::readerCheck() || \App\Core\Auth::check()) && isset($article) && isset($artData)) { ?>
             <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 bookmark-toggle-btn d-inline-flex align-items-center gap-1.5 shadow-none text-xs fw-semibold"
                 data-id="<?= (int)$article['id'] ?>" data-article='<?= $artData ?>' title="<?= __('save_for_later') ?? 'Save' ?>" style="height:32px;">
                 <i class="bi bi-bookmark text-danger"></i>

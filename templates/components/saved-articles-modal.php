@@ -6,14 +6,15 @@
 $isReaderLoggedIn = \App\Core\Auth::readerCheck() || \App\Core\Auth::check();
 ?>
 <!-- Saved Articles Offcanvas / Modal -->
-<div class="offcanvas offcanvas-end border-start" tabindex="-1" id="savedArticlesModal" aria-labelledby="savedArticlesModalLabel" style="width: 380px; max-width: 90vw; overflow: hidden !important;">
-    <div class="offcanvas-header border-bottom py-3 px-3 bg-white" style="border-left: 4px solid #c8102e; border-top-left-radius: inherit;">
-        <h5 class="offcanvas-title fw-bold text-dark d-flex align-items-center gap-2" id="savedArticlesModalLabel" style="font-size: 1rem;">
-            <i class="bi bi-bookmark-fill text-danger"></i> <?= __('saved_reading_list') ?? 'Saved Reading List' ?>
+<div class="offcanvas offcanvas-end border-start shadow-lg" tabindex="-1" id="savedArticlesModal" aria-labelledby="savedArticlesModalLabel" style="width: 380px; max-width: 90vw; z-index: 1065;">
+    <div class="offcanvas-header border-bottom py-3 px-3 bg-white align-items-center" style="border-left: 4px solid #c8102e; min-height: 56px;">
+        <h5 class="offcanvas-title fw-bold text-dark d-flex align-items-center gap-2 m-0" id="savedArticlesModalLabel" style="font-size: 0.95rem; line-height: 1.3;">
+            <i class="bi bi-bookmark-fill text-danger flex-shrink-0" style="font-size: 1.1rem;"></i>
+            <span><?= __('saved_reading_list') ?? 'Saved Reading List' ?></span>
         </h5>
-        <button type="button" class="btn-close shadow-none" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        <button type="button" class="btn-close shadow-none ms-auto" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
-    <div class="offcanvas-body p-0 bg-white d-flex flex-column">
+    <div class="offcanvas-body p-0 bg-white d-flex flex-column overflow-hidden">
         <?php if ($isReaderLoggedIn) { ?>
             <div id="savedArticlesList" class="list-group list-group-flush flex-grow-1 overflow-y-auto">
                 <!-- Dynamically populated via JS -->
@@ -24,10 +25,10 @@ $isReaderLoggedIn = \App\Core\Auth::readerCheck() || \App\Core\Auth::check();
                 </div>
             </div>
 
-            <div class="p-3 border-top bg-light mt-auto">
+            <div class="p-3 border-top bg-light mt-auto flex-shrink-0">
                 <!-- Default Bar: Clear Button -->
                 <div id="clearSavedButtonBar" class="text-end">
-                    <button type="button" id="clearSavedArticlesBtn" class="btn btn-outline-danger btn-sm fw-bold w-100 py-1.5" style="border-radius: 4px; display: none;">
+                    <button type="button" id="clearSavedArticlesBtn" class="btn btn-outline-danger btn-sm fw-bold w-100 py-2" style="border-radius: 4px; display: none;">
                         <i class="bi bi-trash3 me-1"></i> <?= __('clear_all_saved') ?? 'Clear Saved Reading List' ?>
                     </button>
                 </div>
