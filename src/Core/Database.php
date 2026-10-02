@@ -216,6 +216,21 @@ class Database
                 INDEX `idx_reader_sub_category` (`category_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
 
+            // Ensure push_subscriptions table exists for Web Push API (Browser Push Alerts)
+            $this->pdo->exec("CREATE TABLE IF NOT EXISTS `push_subscriptions` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `endpoint` TEXT NOT NULL,
+                `endpoint_hash` CHAR(64) NOT NULL UNIQUE,
+                `p256dh` TEXT NOT NULL,
+                `auth` TEXT NOT NULL,
+                `reader_id` INT NULL,
+                `user_agent` VARCHAR(250) NULL,
+                `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                `last_notified_at` DATETIME NULL,
+                INDEX `idx_push_sub_hash` (`endpoint_hash`),
+                INDEX `idx_push_sub_reader` (`reader_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;");
+
 
             // Seed initial notifications if empty
             $notifCount = (int)$this->fetchColumn("SELECT COUNT(*) FROM notifications");

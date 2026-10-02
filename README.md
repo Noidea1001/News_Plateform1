@@ -76,9 +76,10 @@ A production-grade, decoupled **Content Management System (CMS)** and **Content 
 - 🖼️ **MS Word-Style Media Shortcodes**: Floating media alignment tags (`[image:1:left]`, `[image:1:right]`, `[video:1:full]`) allowing text to wrap naturally around images and videos.
 - 📊 **Reading Progress Bar**: Dynamic top scroll progress bar (`#readingProgressBar`) tracking long-form reading depth in real time.
 - 💬 **Interactive Reader Community & Threaded Discussions**: Production-grade threaded discussion system with nested parent/child replies, dynamic like counter with instant AJAX feedback, avatar initials generator, and bilingual Khmer/English support across all 3 article layout blueprints.
+- 🔔 **Real-Time Web Push API (RFC 8292 VAPID & PWA Notifications)**: Production-grade browser push alert system with RFC 8292 VAPID ES256 JWT authorization, RFC 8291 payload encryption, Service Worker background receiver (`sw.js`), automatic local SSL handshake fallback for XAMPP, and instant welcome test dispatches on desktop and mobile devices.
 - 📱 **Progressive Web App (PWA) & Offline Reading**: Service worker caching strategy, Web App Manifest (`manifest.json`), home-screen install prompt, and dedicated offline fallback screen (`offline.html`) allowing readers to browse saved dispatches without internet access.
 - 📈 **Visual Analytics Dashboard (Chart.js)**: Enhanced CMA dashboard featuring 6 high-level KPI cards, interactive Category Readership Distribution horizontal bar chart, Top Stories leaderboard, and 30-day traffic impressions.
-- 🌐 **Decoupled RESTful Public API v1**: Clean JSON endpoints (`/api/v1/articles`, `/api/v1/categories`, `/api/v1/comments`) with full-text search, pagination, CORS compliance, and single-article detail extraction for mobile or headless frontends.
+- 🌐 **Decoupled RESTful Public API v1**: Clean JSON endpoints (`/api/v1/articles`, `/api/v1/categories`, `/api/v1/comments`, `/api/v1/push-subscription`) with full-text search, pagination, CORS compliance, and single-article detail extraction for mobile or headless frontends.
 - ⚡ **Auto Database Schema Initialization & Seeder**: Self-healing database handler that automatically creates database tables, seeds default categories, users, comments, and sample news stories upon initial load.
 
 ---
@@ -110,10 +111,14 @@ Copy or extract the project folder to your local Apache web server root director
 - **WAMP**: `C:\wamp64\www\News-platform-1\`
 - **Laragon**: `C:\laragon\www\News-platform-1\`
 
-### Step 2: Configure Database Credentials
-Open [config/database.php](file:///c:/xampp/htdocs/News-platform-1/config/database.php) and adjust your local MySQL credentials if needed:
+### Step 2: Configure Database Credentials & Environment Variables
+1. Open [config/database.php](file:///c:/xampp/htdocs/News-platform-1/config/database.php) and adjust your local MySQL credentials if needed.
+2. Open [.env.example](file:///c:/xampp/htdocs/News-platform-1/.env.example) for reference when deploying to production environments like Render.
+3. VAPID Web Push notification keys are defined in [config/vapid.php](file:///c:/xampp/htdocs/News-platform-1/config/vapid.php) with environment variable fallbacks (`VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_SUBJECT`).
+4. Local secret VAPID key overrides are stored in `config/vapid.local.php` and protected by [.gitignore](file:///c:/xampp/htdocs/News-platform-1/.gitignore).
 
 ```php
+// config/database.php
 return [
     'host'     => 'localhost',
     'port'     => 3306,
@@ -128,7 +133,7 @@ return [
 **No manual database imports are required!** Simply open the application in your web browser:
 1. Navigating to `http://localhost/News-platform-1/public/` triggers `Database::autoInitializeSchema()`.
 2. It automatically creates the `news_platform` database if it does not exist.
-3. It creates all 5 relational tables (`users`, `categories`, `articles`, `subscribers`, `login_attempts`).
+3. It creates all relational tables (`users`, `categories`, `articles`, `subscribers`, `push_subscriptions`, `login_attempts`).
 4. It seeds initial staff accounts (`admin`, `eleanor_vane`, `reporter`) and sample categories.
 
 *(Optional: Visit `http://localhost/News-platform-1/seed_news.php` in your browser anytime to re-seed 12 fresh sample news stories).*
@@ -403,16 +408,23 @@ erdiagram
 
 ---
 
-## 🌟 Recent Platform Enhancements & Reader Account System (v2.5 Upgrade)
+## 🌟 Recent Platform Enhancements & Web Push System (v2.6 Upgrade)
 
-The platform has recently undergone a major architecture and user experience upgrade focused on reader engagement, security, and editorial polish:
+The platform has recently undergone a major architecture and user experience upgrade focused on real-time reader engagement, security, and editorial polish:
 
-### 1. 👤 Reader Authentication & Session Architecture
+### 1. 🔔 Web Push API (RFC 8292 VAPID) & Instant Push Delivery Architecture
+* **VAPID Key Authorization & Crypto Encryption**: Full implementation of RFC 8292 Voluntary Application Server Identification (VAPID) with ES256 JWT authorization and RFC 8291 AES-128-GCM message payload encryption.
+* **Environment Variable & Secret Protection**: Configuration file [config/vapid.php](file:///c:/xampp/htdocs/News-platform-1/config/vapid.php) reads `VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, and `VAPID_SUBJECT` dynamically from environment variables (`getenv()`, `$_ENV`), with support for git-ignored local overrides (`config/vapid.local.php`).
+* **Git Security Protection**: File [.gitignore](file:///c:/xampp/htdocs/News-platform-1/.gitignore) explicitly excludes `config/vapid.local.php` and `.env` files while tracking [.env.example](file:///c:/xampp/htdocs/News-platform-1/.env.example) and deployment blueprints ([render.yaml](file:///c:/xampp/htdocs/News-platform-1/render.yaml)).
+* **Local Development & XAMPP SSL Fallback**: Automatic detection for local XAMPP environments in [src/Core/WebPush.php](file:///c:/xampp/htdocs/News-platform-1/src/Core/WebPush.php) prevents cURL SSL bundle verification failures when connecting to Google FCM (`fcm.googleapis.com`) or Mozilla Push endpoints.
+* **Instant Welcome Test Push**: Automatically dispatches a welcome push alert upon subscription to provide immediate visual confirmation to readers on mobile or PC.
+
+### 2. 👤 Reader Authentication & Session Architecture
 * **Dedicated Reader Identity Layer**: An isolated reader authentication system (`Auth::reader()`, `Auth::readerCheck()`, `Auth::readerLogin()`, `Auth::readerLogout()`) operating completely independently from staff and administrative sessions.
-* **Minimalist Public Navbar**: Unauthenticated visitors see only a clean, prominent **"+ បង្កើតគណនី" (Create Account)** button. Once registered and logged in, a personalized dropdown displays the reader's name, verified reader pill, one-click access to **Account Settings**, and secure logout.
+* **Minimalist Public Navbar**: Unauthenticated visitors see only a clean, prominent **"+ បង្កើតគណនី" (Create Account)** button. Bookmark and notification icons are strictly reserved for logged-in accounts.
 * **Registration with Auto-Login**: Fast, lightweight reader registration flow (`/register.php`) featuring CSRF token protection, password confirmation validation, email uniqueness enforcement, bcrypt password hashing, and immediate automatic login upon submission.
 
-### 2. ⚙️ Full-Format User Settings & Preferences Dashboard (`/settings.php`)
+### 3. ⚙️ Full-Format User Settings & Preferences Dashboard (`/settings.php`)
 * **Spacious Responsive Layout**: Replaced cramped floating modals with a spacious, professional desktop dashboard (`1200px` container) with fluid mobile-responsive breakpoints.
 * **Top Account Overview Hero**: Displays user avatar with live status indicator, verified reader badge, user email, and metric chips (Member Since date, total comments posted, and subscribed topics count).
 * **Personal Profile Tab**: Edit full name and email with a **Real-Time Live Avatar URL Previewer** that verifies and previews image links immediately with graceful fallback to the user's initial monogram letter.
@@ -420,30 +432,30 @@ The platform has recently undergone a major architecture and user experience upg
 * **Topic Subscriptions Tab**: Interactive 3-column topic preference grid with live REST AJAX subscription toggling (`/api/v1/subscription.php`), instant subscriber counter updates, and soft rose card styling.
 * **Danger Zone Tab**: Account deletion workflow requiring exact confirmation phrase (`delete`), cleanly purging reader data, comments, and category subscriptions with graceful session cleanup.
 
-### 3. 🔖 Account-Gated Bookmarks & Custom In-Drawer Alert Card
+### 4. 🔖 Account-Gated Bookmarks & Custom In-Drawer Alert Card
 * **Account Requirement Guard**: Readers must have an account to save articles for later reading. Clicking the bookmark icon on any feed card, article detail, or quick-view modal prompts unauthenticated visitors to create an account.
 * **Custom Alert Card for Clearing Saved Reading List**: Replaced ugly native browser `confirm()` dialogues with an elegant in-drawer confirmation card (`#clearSavedConfirmCard`) featuring warning icons, Khmer prompt **"តើអ្នកប្រាកដជាចង់សម្អាតបញ្ជីអត្ថបទដែលបានរក្សាទុកទាំងអស់មែនទេ?"**, and Cancel / Clear action buttons.
 
-### 4. 🔔 Account-Gated Real-Time News Alerts ("ការជូនដំណឹងព័ត៌មានថ្មីៗ")
+### 5. 🔔 Account-Gated Real-Time News Alerts ("ការជូនដំណឹងព័ត៌មានថ្មីៗ")
 * **Registered-Only News Feed**: Real-time breaking news and customized topic notification feeds are reserved for registered readers.
 * **Clean Unregistered State**: The notification bell icon is hidden for unregistered visitors, keeping the public navigation bar minimalist and uncluttered.
 * **Smart Polling & API Guard**: Background network polling (`fetchNotifications`) only executes for active reader sessions. The backend endpoint `/api/v1/notifications.php` validates credentials and returns `requires_auth: true` for anonymous requests.
 
-### 5. 💬 Reader-Gated Community Discussions
+### 6. 💬 Reader-Gated Community Discussions
 * **Account-Required Comments**: Visitors must have a reader account to submit comments (`Auth::readerCheck()`).
 * **Clean Discussion UI**: High-readability comment section styled like Facebook/YouTube with nested reply threads, like reactions, and Khmer typography formatting.
 
-### 6. 🔍 Live Search with Scrollable Dropdown & Mobile Support
+### 7. 🔍 Live Search with Scrollable Dropdown & Mobile Support
 * **Scrollable Live Search**: Dynamic search container with a max-height of `380px` on desktop and custom slim scrollbars preventing viewport overflow when searching broad terms.
 * **Bilingual Instant Matching**: Full-text search across Khmer and English article titles and summaries.
 * **Mobile Search Drawer**: Responsive collapsible search bar on mobile screens with dedicated quick-search trigger buttons.
 
-### 7. 📐 Topbar Flush Fit & Admin Alignment
+### 8. 📐 Topbar Flush Fit & Admin Alignment
 * **Exact Height Uniformity**: Unified public top utility bar (`.top-utility-header`) and admin top bar (`.admin-topbar`) to identical dimensions: **`height: 32px; min-height: 32px;`**, background `#0f172a`, and clean edge-to-edge padding (`px-3 px-md-4`).
 * **BOM Encoding Elimination**: Cleaned hidden UTF-8 BOM characters from language dictionary files (`lang_kh.php` and `lang_en.php`) that previously caused an unwanted white gap above the dark topbar.
 * **Z-Index Elevation Stack**: Corrected language dropdown z-index (`z-index: 1060`) preventing menus from clipping beneath sticky navbars.
 
-### 8. 🖼️ Editorial Image Max-Height & Thumbnail Guards
+### 9. 🖼️ Editorial Image Max-Height & Thumbnail Guards
 * **Admin Archive Thumbnails**: Fixed `56×42px` thumbnail wrappers with `object-fit: cover` preventing stretched or oversized preview images.
 * **Public Aspect Protection**: Strict max-height rules on Quick View and feature images across mobile (`220px`), tablet (`280px`), and desktop (`380px`).
 
@@ -461,9 +473,9 @@ To further elevate **NewsPlatform CMS** into an enterprise-grade digital newsroo
 * **Decoupled JSON REST API**: Expose authenticated RESTful JSON endpoints (`/api/v1/articles`, `/api/v1/categories`, `/api/v1/search`) with JWT (JSON Web Tokens) or OAuth2 authentication.
 * **Cross-Platform Mobile Integration**: Enable mobile applications built on Flutter or React Native to seamlessly consume published articles, breaking news push alerts, and reader category preferences.
 
-### 3. 🔔 Web Push Notifications & Progressive Web App (PWA)
-* **Service Worker Integration**: Upgrade the CDA reader frontend into a full Progressive Web App (PWA) supporting offline article caching and installability on iOS and Android homescreens.
-* **Browser Push Alerts**: Integrate Web Push API (VAPID keys) to send real-time browser notifications to opted-in subscribers whenever a **Breaking News** ticker item is published.
+### 3. 🌐 Web Push Notification Topic Segmentation & Geo-Targeting
+* **Category-Based Push Filtering**: Allow readers to customize push alert preferences per category (e.g. only receive push notifications for *Technology* or *Politics*).
+* **Geo-Location Push Dispatches**: Deliver regional alert notifications based on reader geographic selection.
 
 ### 4. 📈 Advanced Editorial Analytics & Reader Heatmaps
 * **In-Depth Editorial Dashboard**: Expand the CMA admin panel with visual analytics powered by Chart.js tracking average reading scroll depth, reader drop-off points, peak readership hours, and category popularity trends.
