@@ -300,8 +300,8 @@ class WebPush
 
         curl_exec($ch);
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if (\PHP_VERSION_ID < 80000) {
-            @curl_close($ch);
+        if (\PHP_VERSION_ID < 80000 && function_exists('curl_close')) {
+            @call_user_func('curl_close', $ch);
         }
 
         return (int)$httpCode;
