@@ -208,19 +208,22 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
             }
         }
 
-        /* ── Notification dropdown — full-width on mobile ── */
+        /* ── Notification dropdown — full-width on mobile with fixed anchoring ── */
         @media (max-width: 575.98px) {
             #notifBellBtn + .dropdown-menu,
             .mobile-notif-dropdown .dropdown-menu {
                 position: fixed !important;
-                top: auto !important;
+                top: 58px !important;
                 left: 8px !important;
                 right: 8px !important;
                 width: calc(100vw - 16px) !important;
                 max-width: none !important;
+                max-height: calc(85vh - 65px) !important;
                 transform: none !important;
-                border-radius: 10px !important;
-                box-shadow: 0 16px 48px rgba(0,0,0,0.18) !important;
+                border-radius: 12px !important;
+                box-shadow: 0 16px 48px rgba(0,0,0,0.22) !important;
+                z-index: 1095 !important;
+                overflow-y: auto !important;
             }
         }
 
@@ -251,16 +254,16 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
     <div class="top-utility-header d-flex align-items-center justify-content-between px-3 px-md-4 py-1">
         <!-- Left: Date & CDA Badge (hidden on mobile) -->
         <div class="d-flex align-items-center gap-2.5 mobile-hide-text" style="font-size:0.72rem; font-weight:600;">
-            <span style="color:rgba(255,255,255,0.40);"><?= \App\Core\TemplateEngine::formatDate(date('Y-m-d H:i:s'), 'l, d F Y') ?></span>
-            <span class="opacity-25">|</span>
-            <span style="color:rgba(255,255,255,0.60);"><?= __('cda_badge') ?></span>
+            <span style="color:rgba(255,255,255,0.70);"><?= \App\Core\TemplateEngine::formatDate(date('Y-m-d H:i:s'), 'l, d F Y') ?></span>
+            <span class="opacity-40">|</span>
+            <span style="color:rgba(255,255,255,0.90);"><?= __('cda_badge') ?></span>
         </div>
 
         <!-- Right: PWA Install & Language -->
         <div class="d-flex align-items-center gap-2.5">
             <button type="button" id="pwaInstallBtn"
                 class="btn btn-outline-light btn-sm py-0 px-2 d-none align-items-center gap-1"
-                style="font-size:0.7rem; border-radius:2px; border-color:rgba(255,255,255,0.3); opacity:0.85;"
+                style="font-size:0.7rem; border-radius:2px; border-color:rgba(255,255,255,0.4); opacity:0.9;"
                 title="<?= __('pwa_install') ?>">
                 <i class="bi bi-download" style="font-size:0.68rem;"></i>
                 <span class="d-none d-sm-inline"><?= __('pwa_install') ?></span>
@@ -268,9 +271,9 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
 
             <div class="dropdown">
                 <button class="btn btn-link text-white p-0 text-decoration-none dropdown-toggle"
-                    style="font-size:0.72rem; font-weight:600; opacity:0.75;" type="button"
+                    style="font-size:0.74rem; font-weight:700; opacity:1;" type="button"
                     data-bs-toggle="dropdown" aria-expanded="false" id="langDropdownBtn">
-                    <i class="bi bi-globe2 me-1" style="font-size:0.7rem;"></i>
+                    <i class="bi bi-globe2 me-1" style="font-size:0.75rem;"></i>
                     <span id="currentLangLabel"><?= ($currentLang === 'kh' || $currentLang === 'km') ? 'ខ្មែរ' : 'EN' ?></span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width:140px;">
@@ -331,22 +334,31 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
 
                     <div class="dropdown position-relative mobile-notif-dropdown">
                         <button type="button"
-                            class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative p-0"
+                            class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative p-0 notif-bell-btn"
                             id="mobileNotifBellBtn" data-bs-toggle="dropdown" aria-expanded="false"
                             title="<?= __('notifications_title') ?>">
-                            <i class="bi bi-bell-fill text-dark" style="font-size: 1.1rem;"></i>
+                            <i class="bi bi-bell-fill text-dark notif-bell-icon" style="font-size: 1.1rem;"></i>
                             <span id="mobileNotifBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center"
                                 style="top:-1px; right:-3px; font-size: 0.55rem; width: 15px; height: 15px; display: none;">0</span>
                         </button>
                         <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 mt-2" style="width: 330px; max-height: 420px; overflow-y: auto; border-radius: 8px; z-index: 1080;">
                             <div class="p-2.5 px-3 border-bottom d-flex align-items-center justify-content-between bg-white">
                                 <div class="d-flex align-items-center gap-1.5">
+                                    <i class="bi bi-bell-fill text-danger" style="font-size:0.92rem;"></i>
                                     <span class="fw-bold text-dark" style="font-size:0.88rem;"><?= __('notifications_title') ?></span>
                                     <span class="badge rounded-pill bg-danger text-white text-3xs px-1.5 py-0.5" id="mobileNotifCountLabel">0</span>
                                 </div>
-                                <button type="button" class="btn btn-link text-decoration-none p-0 text-muted clear-all-notifs-btn" style="font-size:0.75rem;" title="<?= __('clear_all_notifs') ?>">
-                                    <i class="bi bi-trash3 me-1"></i><?= __('clear_all_notifs') ?>
-                                </button>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle text-3xs px-2 py-0.5 rounded-pill d-inline-flex align-items-center gap-1" title="Notifications live status">
+                                        <span class="notif-pulse-dot"></span> <span>ON</span>
+                                    </span>
+                                    <button type="button" class="btn btn-link text-decoration-none p-0 text-muted clear-all-notifs-btn" style="font-size:0.75rem;" title="<?= __('clear_all_notifs') ?>">
+                                        <i class="bi bi-trash3"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-link text-decoration-none p-0 text-secondary close-notif-btn" title="Close notifications" onclick="bootstrap.Dropdown.getInstance(document.getElementById('mobileNotifBellBtn'))?.hide();">
+                                        <i class="bi bi-x-lg" style="font-size:0.85rem;"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div id="mobileNotifList" class="list-group list-group-flush" style="font-size: 0.83rem;">
                                 <div class="p-3 text-center text-muted text-xs">
@@ -421,22 +433,31 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                         <!-- Real-Time Notification Bell Dropdown (Only for Logged-in Users) -->
                         <div class="dropdown position-relative">
                             <button type="button"
-                                class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
+                                class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative notif-bell-btn"
                                 id="notifBellBtn" data-bs-toggle="dropdown" aria-expanded="false"
                                 title="<?= __('notifications_title') ?>">
-                                <i class="bi bi-bell-fill text-dark" style="font-size: 1.2rem;"></i>
+                                <i class="bi bi-bell-fill text-dark notif-bell-icon" style="font-size: 1.2rem;"></i>
                                 <span id="notifBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center"
                                     style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; display: none;">0</span>
                             </button>
                             <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 mt-2" style="width: 330px; max-height: 420px; overflow-y: auto; border-radius: 8px; z-index: 1080;">
                                 <div class="p-2.5 px-3 border-bottom d-flex align-items-center justify-content-between bg-white">
                                     <div class="d-flex align-items-center gap-1.5">
+                                        <i class="bi bi-bell-fill text-danger" style="font-size:0.95rem;"></i>
                                         <span class="fw-bold text-dark" style="font-size:0.88rem;"><?= __('notifications_title') ?></span>
                                         <span class="badge rounded-pill bg-danger text-white text-3xs px-1.5 py-0.5" id="notifCountLabel">0</span>
                                     </div>
-                                    <button type="button" class="btn btn-link text-decoration-none p-0 text-muted clear-all-notifs-btn" style="font-size:0.75rem;" title="<?= __('clear_all_notifs') ?>">
-                                        <i class="bi bi-trash3 me-1"></i><?= __('clear_all_notifs') ?>
-                                    </button>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle text-3xs px-2 py-0.5 rounded-pill d-inline-flex align-items-center gap-1" title="Notifications live status">
+                                            <span class="notif-pulse-dot"></span> <span>ON</span>
+                                        </span>
+                                        <button type="button" class="btn btn-link text-decoration-none p-0 text-muted clear-all-notifs-btn" style="font-size:0.75rem;" title="<?= __('clear_all_notifs') ?>">
+                                            <i class="bi bi-trash3"></i>
+                                        </button>
+                                        <button type="button" class="btn btn-link text-decoration-none p-0 text-secondary close-notif-btn" title="Close notifications" onclick="bootstrap.Dropdown.getInstance(document.getElementById('notifBellBtn'))?.hide();">
+                                            <i class="bi bi-x-lg" style="font-size:0.85rem;"></i>
+                                        </button>
+                                    </div>
                                 </div>
                                 <div id="notifList" class="list-group list-group-flush" style="font-size: 0.83rem;">
                                     <div class="p-3 text-center text-muted text-xs">
@@ -836,12 +857,20 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                 if (count === 0) {
                     notifHtml = `
                         <div class="p-4 text-center text-muted" style="font-size:0.8rem;">
-                            <i class="bi bi-bell-slash text-secondary opacity-50 mb-1.5 d-block" style="font-size:1.4rem;"></i>
-                            <span><?= addslashes(__('no_notifications')) ?></span>
+                            <div class="mb-2">
+                                <i class="bi bi-bell-check text-success" style="font-size:1.8rem;"></i>
+                            </div>
+                            <div class="fw-bold text-dark text-xs mb-1"><?= addslashes(__('no_notifications')) ?></div>
+                            <div class="text-secondary text-3xs d-flex align-items-center justify-content-center gap-1">
+                                <span class="notif-pulse-dot"></span> Notifications are Active (ON)
+                            </div>
                         </div>`;
                 } else {
                     notifHtml = active.map(n => {
                         const isBreaking = n.type === 'breaking';
+                        const typeIcon = isBreaking 
+                            ? `<i class="bi bi-lightning-charge-fill text-danger"></i>`
+                            : `<i class="bi bi-newspaper text-primary"></i>`;
                         const tagHtml = isBreaking 
                             ? `<span class="badge bg-danger text-white text-3xs px-1.5 py-0.5 rounded-1 fw-bold me-1"><?= addslashes(__('breaking')) ?></span>` 
                             : '';
@@ -849,7 +878,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                         return `
                         <div class="list-group-item list-group-item-action py-2.5 px-3 border-bottom notif-item-card position-relative" data-notif-id="${n.id}" data-url="${escapeHtml(n.article_url)}" style="cursor:pointer; background:#ffffff; transition:background 0.15s ease;">
                             <div class="d-flex align-items-start gap-2.5">
-                                <span class="rounded-circle bg-danger mt-1.5 flex-shrink-0" style="width:7px; height:7px; display:inline-block;"></span>
+                                <span class="mt-0.5 flex-shrink-0" style="font-size: 0.85rem;">${typeIcon}</span>
                                 <div class="flex-grow-1 min-w-0">
                                     <div class="d-flex align-items-center gap-1.5 mb-1 flex-wrap">
                                         ${tagHtml}
@@ -859,7 +888,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                                         ${escapeHtml(n.title)}
                                     </div>
                                 </div>
-                                <button type="button" class="btn btn-link text-muted p-0 text-decoration-none dismiss-notif-btn ms-1 flex-shrink-0" data-notif-id="${n.id}" title="<?= addslashes(__('dismiss_notif') ?? 'Dismiss') ?>" style="font-size:0.9rem; line-height:1; opacity:0.4;">
+                                <button type="button" class="btn btn-link text-muted p-0 text-decoration-none dismiss-notif-btn ms-1 flex-shrink-0" data-notif-id="${n.id}" title="<?= addslashes(__('dismiss_notif') ?? 'Dismiss') ?>" style="font-size:0.9rem; line-height:1; opacity:0.5;">
                                     <i class="bi bi-x"></i>
                                 </button>
                             </div>
@@ -1018,6 +1047,33 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
             window.addEventListener('focus', fetchNotifications);
             document.addEventListener('visibilitychange', function() {
                 if (document.visibilityState === 'visible') fetchNotifications();
+            });
+
+            // Dynamic Open/Off toggle state indicator on bell buttons
+            ['notifBellBtn', 'mobileNotifBellBtn'].forEach(function(btnId) {
+                const btn = document.getElementById(btnId);
+                if (!btn) return;
+                const parent = btn.closest('.dropdown');
+                if (!parent) return;
+
+                parent.addEventListener('show.bs.dropdown', function () {
+                    btn.classList.add('notif-open-active');
+                    const icon = btn.querySelector('.notif-bell-icon');
+                    if (icon) {
+                        icon.className = 'bi bi-bell-slash text-danger notif-bell-icon';
+                    }
+                    btn.setAttribute('title', 'Close notifications');
+                    fetchNotifications();
+                });
+
+                parent.addEventListener('hide.bs.dropdown', function () {
+                    btn.classList.remove('notif-open-active');
+                    const icon = btn.querySelector('.notif-bell-icon');
+                    if (icon) {
+                        icon.className = 'bi bi-bell-fill text-dark notif-bell-icon';
+                    }
+                    btn.setAttribute('title', '<?= addslashes(__("notifications_title")) ?>');
+                });
             });
             <?php } ?>
         });
