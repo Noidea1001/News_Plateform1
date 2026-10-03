@@ -322,7 +322,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
             <!-- Mobile Controls (Icons + Search + Hamburger) — Always visible on mobile -->
             <div class="d-flex align-items-center ms-auto d-lg-none mobile-icon-bar">
 
-                <!-- Mobile: Saved Reading List Icon & Notification Bell (Only for Logged-In Users) -->
+                <!-- Mobile: Saved Reading List Icon & Notification Bell (Visible for All Readers) -->
                 <?php if ($currentUser) { ?>
                     <button type="button"
                         class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative p-0"
@@ -331,48 +331,81 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                         <i class="bi bi-bookmark-fill text-danger" style="font-size: 1.1rem;"></i>
                         <span id="mobileSavedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center" style="top:-1px; right:-3px; font-size: 0.55rem; width: 15px; height: 15px; display: none;">0</span>
                     </button>
+                <?php } else { ?>
+                    <button type="button"
+                        class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative p-0"
+                        data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="login"
+                        title="<?= __('saved_reading_list') ?? 'Saved Reading List' ?>">
+                        <i class="bi bi-bookmark text-secondary" style="font-size: 1.1rem;"></i>
+                    </button>
+                <?php } ?>
 
-                    <div class="dropdown position-relative mobile-notif-dropdown">
-                        <button type="button"
-                            class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative p-0 notif-bell-btn"
-                            id="mobileNotifBellBtn" data-bs-toggle="dropdown" aria-expanded="false"
-                            title="<?= __('notifications_title') ?>">
-                            <i class="bi bi-bell-fill text-dark notif-bell-icon" style="font-size: 1.1rem;"></i>
-                            <span id="mobileNotifBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center"
-                                style="top:-1px; right:-3px; font-size: 0.55rem; width: 15px; height: 15px; display: none;">0</span>
-                        </button>
-                        <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 mt-2" style="width: 330px; max-height: 420px; overflow-y: auto; border-radius: 8px; z-index: 1080;">
-                            <div class="p-2.5 px-3 border-bottom d-flex align-items-center justify-content-between bg-white">
-                                <div class="d-flex align-items-center gap-1.5">
-                                    <i class="bi bi-bell-fill text-danger" style="font-size:0.92rem;"></i>
-                                    <span class="fw-bold text-dark" style="font-size:0.88rem;"><?= __('notifications_title') ?></span>
-                                    <span class="badge rounded-pill bg-danger text-white text-3xs px-1.5 py-0.5" id="mobileNotifCountLabel">0</span>
-                                </div>
-                                <div class="d-flex align-items-center gap-2">
-                                    <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle text-3xs px-2 py-0.5 rounded-pill d-inline-flex align-items-center gap-1" title="Notifications live status">
-                                        <span class="notif-pulse-dot"></span> <span>ON</span>
-                                    </span>
+                <div class="dropdown position-relative mobile-notif-dropdown">
+                    <button type="button"
+                        class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative p-0 notif-bell-btn"
+                        id="mobileNotifBellBtn" data-bs-toggle="dropdown" aria-expanded="false"
+                        title="<?= __('notifications_title') ?>">
+                        <i class="bi bi-bell-fill text-dark notif-bell-icon" style="font-size: 1.1rem;"></i>
+                        <span id="mobileNotifBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center"
+                            style="top:-1px; right:-3px; font-size: 0.55rem; width: 15px; height: 15px; display: none;">0</span>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 mt-2" style="width: 330px; max-height: 420px; overflow-y: auto; border-radius: 8px; z-index: 1080;">
+                        <div class="p-2.5 px-3 border-bottom d-flex align-items-center justify-content-between bg-white">
+                            <div class="d-flex align-items-center gap-1.5">
+                                <i class="bi bi-bell-fill text-danger" style="font-size:0.92rem;"></i>
+                                <span class="fw-bold text-dark" style="font-size:0.88rem;"><?= __('notifications_title') ?></span>
+                                <span class="badge rounded-pill bg-danger text-white text-3xs px-1.5 py-0.5" id="mobileNotifCountLabel">0</span>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle text-3xs px-2 py-0.5 rounded-pill d-inline-flex align-items-center gap-1" title="Notifications live status">
+                                    <span class="notif-pulse-dot"></span> <span>ON</span>
+                                </span>
+                                <?php if ($currentUser) { ?>
                                     <button type="button" class="btn btn-link text-decoration-none p-0 text-muted clear-all-notifs-btn" style="font-size:0.75rem;" title="<?= __('clear_all_notifs') ?>">
                                         <i class="bi bi-trash3"></i>
                                     </button>
-                                    <button type="button" class="btn btn-link text-decoration-none p-0 text-secondary close-notif-btn" title="Close notifications" onclick="bootstrap.Dropdown.getInstance(document.getElementById('mobileNotifBellBtn'))?.hide();">
-                                        <i class="bi bi-x-lg" style="font-size:0.85rem;"></i>
-                                    </button>
-                                </div>
+                                <?php } ?>
+                                <button type="button" class="btn btn-link text-decoration-none p-0 text-secondary close-notif-btn" title="Close notifications" onclick="bootstrap.Dropdown.getInstance(document.getElementById('mobileNotifBellBtn'))?.hide();">
+                                    <i class="bi bi-x-lg" style="font-size:0.85rem;"></i>
+                                </button>
                             </div>
+                        </div>
+                        <?php if ($currentUser) { ?>
                             <div id="mobileNotifList" class="list-group list-group-flush" style="font-size: 0.83rem;">
                                 <div class="p-3 text-center text-muted text-xs">
                                     <span class="spinner-border spinner-border-sm me-1"></span> <?= __('loading') ?? 'Loading...' ?>
                                 </div>
                             </div>
-                            <div class="p-2 border-top text-center" style="background:#fafafa;">
-                                <a href="<?= url('index.php?breaking=1') ?>" class="text-xs text-danger text-decoration-none fw-semibold">
-                                    <?= __('filter_breaking_only') ?> &rarr;
-                                </a>
+                        <?php } else { ?>
+                            <div class="p-4 text-center bg-white" style="font-size: 0.83rem;">
+                                <div class="rounded-circle bg-danger bg-opacity-10 text-danger d-inline-flex align-items-center justify-content-center mb-2.5" style="width: 44px; height: 44px;">
+                                    <i class="bi bi-bell-fill fs-5"></i>
+                                </div>
+                                <div class="fw-bold text-dark mb-1" style="font-size: 0.88rem;"><?= __('notifications_title') ?></div>
+                                <p class="text-secondary small mb-3 px-2" style="font-size: 0.76rem; line-height: 1.45;">
+                                    <?= __('login_reader_desc') ?? 'Sign in to receive breaking news alerts and customize topics.' ?>
+                                </p>
+                                <div class="d-flex flex-column gap-2 px-2">
+                                    <button type="button" class="btn btn-danger btn-sm w-100 fw-semibold rounded-2 py-1.5 text-xs shadow-2xs"
+                                        data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="login"
+                                        onclick="bootstrap.Dropdown.getInstance(document.getElementById('mobileNotifBellBtn'))?.hide();">
+                                        <i class="bi bi-box-arrow-in-right me-1"></i> <?= __('sign_in') ?>
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary btn-sm w-100 rounded-2 py-1 text-2xs"
+                                        data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register"
+                                        onclick="bootstrap.Dropdown.getInstance(document.getElementById('mobileNotifBellBtn'))?.hide();">
+                                        <?= __('create_account') ?>
+                                    </button>
+                                </div>
                             </div>
+                        <?php } ?>
+                        <div class="p-2 border-top text-center" style="background:#fafafa;">
+                            <a href="<?= url('index.php?breaking=1') ?>" class="text-xs text-danger text-decoration-none fw-semibold">
+                                <?= __('filter_breaking_only') ?> &rarr;
+                            </a>
                         </div>
                     </div>
-                <?php } ?>
+                </div>
 
                 <span class="divider-dot"></span>
 
@@ -567,17 +600,46 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                             Admin Dashboard
                         </a>
                         <?php } ?>
+
+                        <!-- Mobile: Push Notification Toggle Row -->
+                        <button type="button"
+                            class="mobile-menu-item push-toggle-action-btn w-100 text-start border-0 bg-transparent"
+                            id="mobilePushMenuBtn"
+                            style="cursor:pointer;">
+                            <i class="bi bi-bell-fill push-toggle-icon text-warning" style="font-size:1.05rem; width:20px; text-align:center; flex-shrink:0;"></i>
+                            <span class="push-toggle-text flex-grow-1"><?= addslashes(__('push_alerts_subscribe') ?: 'Enable Notifications') ?></span>
+                            <span id="mobilePushStatusBadge" class="badge rounded-pill ms-auto" style="font-size:0.6rem; display:none;"></span>
+                        </button>
+
                         <a class="mobile-menu-item text-danger" href="<?= url('logout.php') ?>">
                             <i class="bi bi-box-arrow-right"></i>
                             <?= __('sign_out') ?>
                         </a>
                     <?php } else { ?>
-                        <div class="mobile-menu-section">
+                        <div class="mobile-menu-section d-flex flex-column gap-2">
                             <button type="button" class="btn btn-danger btn-sm w-100 py-2 fw-semibold rounded-2 shadow-sm"
                                 data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register"
                                 style="font-size:0.85rem;">
                                 <i class="bi bi-person-plus-fill me-1.5"></i>
                                 <?= __('create_account') ?>
+                            </button>
+                            <button type="button" class="btn btn-outline-secondary btn-sm w-100 py-1.5 rounded-2"
+                                data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="login"
+                                style="font-size:0.82rem;">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>
+                                <?= __('sign_in') ?>
+                            </button>
+                        </div>
+                        <div class="mobile-menu-divider"></div>
+                        <!-- Mobile: Push Notification Button (For All Visitors) -->
+                        <div class="mobile-menu-section py-1">
+                            <button type="button"
+                                class="mobile-menu-item push-toggle-action-btn w-100 text-start border-0 bg-transparent"
+                                id="mobilePushMenuBtnGuest"
+                                style="cursor:pointer;">
+                                <i class="bi bi-bell-fill push-toggle-icon text-warning" style="font-size:1.05rem; width:20px; text-align:center; flex-shrink:0;"></i>
+                                <span class="push-toggle-text flex-grow-1"><?= addslashes(__('push_alerts_subscribe') ?: 'Enable Notifications') ?></span>
+                                <span class="mobile-push-status-badge badge rounded-pill ms-auto" style="font-size:0.6rem; display:none;"></span>
                             </button>
                         </div>
                     <?php } ?>
@@ -1048,8 +1110,9 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
             document.addEventListener('visibilitychange', function() {
                 if (document.visibilityState === 'visible') fetchNotifications();
             });
+            <?php } ?>
 
-            // Dynamic Open/Off toggle state indicator on bell buttons
+            // Dynamic Open/Off toggle state indicator on bell buttons (for both logged-in and guests)
             ['notifBellBtn', 'mobileNotifBellBtn'].forEach(function(btnId) {
                 const btn = document.getElementById(btnId);
                 if (!btn) return;
@@ -1063,7 +1126,9 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                         icon.className = 'bi bi-bell-slash text-danger notif-bell-icon';
                     }
                     btn.setAttribute('title', 'Close notifications');
-                    fetchNotifications();
+                    if (typeof fetchNotifications === 'function') {
+                        fetchNotifications();
+                    }
                 });
 
                 parent.addEventListener('hide.bs.dropdown', function () {
@@ -1075,7 +1140,6 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                     btn.setAttribute('title', '<?= addslashes(__("notifications_title")) ?>');
                 });
             });
-            <?php } ?>
         });
     </script>
 

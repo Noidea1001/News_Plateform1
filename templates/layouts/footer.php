@@ -715,23 +715,45 @@ document.addEventListener('DOMContentLoaded', function () {
         toggleBtns.forEach(btn => {
             const icon = btn.querySelector('.push-toggle-icon, #pushSubscribeIcon');
             const text = btn.querySelector('.push-toggle-text, #pushSubscribeText');
+            const badge = btn.querySelector('.mobile-push-status-badge, #mobilePushStatusBadge');
+            const isMenuItem = btn.classList.contains('mobile-menu-item');
 
             if (isDenied) {
                 if (icon) {
-                    icon.style.display = 'none';
+                    icon.className = 'bi bi-bell-slash-fill text-secondary';
+                    icon.style.display = isMenuItem ? 'inline-block' : 'none';
                 }
                 if (text) text.textContent = '<?= addslashes(__('push_alerts_denied')) ?>';
                 btn.disabled = true;
-                btn.classList.remove('btn-outline-danger', 'btn-success');
-                btn.classList.add('btn-secondary');
+                if (!isMenuItem) {
+                    btn.classList.remove('btn-outline-danger', 'btn-success');
+                    btn.classList.add('btn-secondary');
+                } else {
+                    btn.style.opacity = '0.5';
+                    if (badge) {
+                        badge.className = 'mobile-push-status-badge badge rounded-pill ms-auto bg-secondary text-white';
+                        badge.textContent = 'OFF';
+                        badge.style.display = 'inline-flex';
+                    }
+                }
             } else if (isSubscribed) {
                 if (icon) {
-                    icon.style.display = 'none';
+                    icon.className = 'bi bi-bell-fill text-success';
+                    icon.style.display = isMenuItem ? 'inline-block' : 'none';
                 }
                 if (text) text.textContent = '<?= addslashes(__('push_alerts_subscribed')) ?>';
                 btn.disabled = false;
-                btn.classList.remove('btn-outline-danger', 'btn-secondary');
-                btn.classList.add('btn-success');
+                if (!isMenuItem) {
+                    btn.classList.remove('btn-outline-danger', 'btn-secondary');
+                    btn.classList.add('btn-success');
+                } else {
+                    btn.style.opacity = '1';
+                    if (badge) {
+                        badge.className = 'mobile-push-status-badge badge rounded-pill ms-auto bg-success text-white';
+                        badge.textContent = 'ON';
+                        badge.style.display = 'inline-flex';
+                    }
+                }
             } else {
                 if (icon) {
                     icon.className = 'bi bi-bell text-warning';
@@ -739,8 +761,17 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
                 if (text) text.textContent = '<?= addslashes(__('push_alerts_subscribe')) ?>';
                 btn.disabled = false;
-                btn.classList.remove('btn-success', 'btn-secondary');
-                btn.classList.add('btn-outline-danger');
+                if (!isMenuItem) {
+                    btn.classList.remove('btn-success', 'btn-secondary');
+                    btn.classList.add('btn-outline-danger');
+                } else {
+                    btn.style.opacity = '1';
+                    if (badge) {
+                        badge.className = 'mobile-push-status-badge badge rounded-pill ms-auto bg-warning text-dark';
+                        badge.textContent = 'TAP';
+                        badge.style.display = 'inline-flex';
+                    }
+                }
             }
         });
 
