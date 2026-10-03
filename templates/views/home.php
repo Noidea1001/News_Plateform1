@@ -91,12 +91,12 @@
             if (!empty($lead)) {
                 $leadData = htmlspecialchars(json_encode([
                     'id' => $lead['id'],
-                    'title' => article_title($lead['title']),
-                    'title_kh' => article_title($lead['title'], 'kh'),
-                    'title_en' => article_title($lead['title'], 'en'),
-                    'summary' => article_summary($lead['summary']),
-                    'summary_kh' => article_summary($lead['summary'], 'kh'),
-                    'summary_en' => article_summary($lead['summary'], 'en'),
+                    'title' => article_title($lead),
+                    'title_kh' => article_title($lead, 'kh'),
+                    'title_en' => article_title($lead, 'en'),
+                    'summary' => article_summary($lead),
+                    'summary_kh' => article_summary($lead, 'kh'),
+                    'summary_en' => article_summary($lead, 'en'),
                     'category' => cat_name($lead['category_name']),
                     'category_kh' => cat_name($lead['category_name'], 'kh'),
                     'category_en' => cat_name($lead['category_name'], 'en'),
@@ -119,7 +119,7 @@
                     <!-- Image -->
                     <div class="lead-article-image position-relative overflow-hidden" style="background:#0f172a;">
                         <?php if (!empty($lead['featured_image'])) { ?>
-                            <img src="<?= e(image_url($lead['featured_image'])) ?>" alt="<?= e(article_title($lead['title'])) ?>" loading="eager"
+                            <img src="<?= e(image_url($lead['featured_image'])) ?>" alt="<?= e(article_title($lead)) ?>" loading="eager"
                                  style="width:100%; height:100%; object-fit:cover;"
                                  onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.classList.remove('d-none');">
                             <div class="d-none align-items-center justify-content-center h-100 w-100 fs-1 text-muted"
@@ -158,11 +158,11 @@
 
                         <h2 class="lead-article-title">
                             <a href="<?= url('article.php?slug=' . urlencode($lead['slug'])) ?>">
-                                <?= e(article_title($lead['title'])) ?>
+                                <?= e(article_title($lead)) ?>
                             </a>
                         </h2>
 
-                        <p class="lead-article-summary"><?= e(article_summary($lead['summary'])) ?></p>
+                        <p class="lead-article-summary"><?= e(article_summary($lead)) ?></p>
 
                         <div class="lead-article-footer d-flex align-items-center justify-content-between w-100">
                             <a href="<?= url('article.php?slug=' . urlencode($lead['slug'])) ?>" class="lead-read-link">
@@ -192,12 +192,12 @@
                         <?php
                         $sData = htmlspecialchars(json_encode([
                             'id' => $sItem['id'],
-                            'title' => article_title($sItem['title']),
-                            'title_kh' => article_title($sItem['title'], 'kh'),
-                            'title_en' => article_title($sItem['title'], 'en'),
-                            'summary' => article_summary($sItem['summary']),
-                            'summary_kh' => article_summary($sItem['summary'], 'kh'),
-                            'summary_en' => article_summary($sItem['summary'], 'en'),
+                            'title' => article_title($sItem),
+                            'title_kh' => article_title($sItem, 'kh'),
+                            'title_en' => article_title($sItem, 'en'),
+                            'summary' => article_summary($sItem),
+                            'summary_kh' => article_summary($sItem, 'kh'),
+                            'summary_en' => article_summary($sItem, 'en'),
                             'category' => cat_name($sItem['category_name']),
                             'category_kh' => cat_name($sItem['category_name'], 'kh'),
                             'category_en' => cat_name($sItem['category_name'], 'en'),
@@ -214,7 +214,7 @@
                             <div class="secondary-grid-thumb position-relative overflow-hidden" style="background:#f1f5f9;">
                                 <?php if (!empty($sItem['featured_image'])) { ?>
                                     <img src="<?= e(image_url($sItem['featured_image'])) ?>" 
-                                         alt="<?= e(article_title($sItem['title'])) ?>" 
+                                         alt="<?= e(article_title($sItem)) ?>" 
                                          loading="lazy" 
                                          style="width:100%; height:100%; object-fit:cover;"
                                          onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
@@ -238,10 +238,10 @@
                                 </div>
                                 <h3 class="secondary-grid-title">
                                     <a href="<?= url('article.php?slug=' . urlencode($sItem['slug'])) ?>">
-                                        <?= e(article_title($sItem['title'])) ?>
+                                        <?= e(article_title($sItem)) ?>
                                     </a>
                                 </h3>
-                                <p class="secondary-grid-summary"><?= e(article_summary($sItem['summary'])) ?></p>
+                                <p class="secondary-grid-summary"><?= e(article_summary($sItem)) ?></p>
                                 <div class="d-flex align-items-center justify-content-between mt-auto pt-2 border-top">
                                     <span class="text-xs text-muted">
                                         <i class="bi bi-clock me-1"></i><?= e($sItem['reading_time'] ?? '3 min read') ?>
@@ -295,12 +295,12 @@
 
                                 $itemData = htmlspecialchars(json_encode([
                                     'id' => $item['id'],
-                                    'title' => article_title($item['title']),
-                                    'title_kh' => article_title($item['title'], 'kh'),
-                                    'title_en' => article_title($item['title'], 'en'),
-                                    'summary' => article_summary($item['summary']),
-                                    'summary_kh' => article_summary($item['summary'], 'kh'),
-                                    'summary_en' => article_summary($item['summary'], 'en'),
+                                    'title' => article_title($item),
+                                    'title_kh' => article_title($item, 'kh'),
+                                    'title_en' => article_title($item, 'en'),
+                                    'summary' => article_summary($item),
+                                    'summary_kh' => article_summary($item, 'kh'),
+                                    'summary_en' => article_summary($item, 'en'),
                                     'category' => cat_name($item['category_name']),
                                     'category_kh' => cat_name($item['category_name'], 'kh'),
                                     'category_en' => cat_name($item['category_name'], 'en'),
@@ -323,7 +323,7 @@
                                     <div class="cna-feed-thumb">
                                         <a href="<?= url('article.php?slug=' . urlencode($item['slug'])) ?>">
                                             <?php if (!empty($item['featured_image'])) { ?>
-                                                <img src="<?= e(image_url($item['featured_image'])) ?>" alt="<?= e(article_title($item['title'])) ?>" loading="lazy">
+                                                <img src="<?= e(image_url($item['featured_image'])) ?>" alt="<?= e(article_title($item)) ?>" loading="lazy">
                                             <?php } else { ?>
                                                 <div class="cna-feed-thumb-empty">NP</div>
                                             <?php } ?>
@@ -343,12 +343,12 @@
                                         <!-- Title -->
                                         <h4 class="cna-feed-title">
                                             <a href="<?= url('article.php?slug=' . urlencode($item['slug'])) ?>" class="text-decoration-none color-inherit">
-                                                <?= e(article_title($item['title'])) ?>
+                                                <?= e(article_title($item)) ?>
                                             </a>
                                         </h4>
 
                                         <!-- Summary -->
-                                        <p class="cna-feed-summary"><?= e(article_summary($item['summary'])) ?></p>
+                                        <p class="cna-feed-summary"><?= e(article_summary($item)) ?></p>
 
                                         <!-- Bottom row: author · views · actions -->
                                         <div class="cna-feed-footer">
