@@ -51,13 +51,50 @@ $currentLang = $_SESSION['lang'] ?? 'kh';
 $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
 ?>
 
+<style>
+.comments-stream-container {
+    max-height: 460px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    padding-right: 6px;
+}
+.comments-stream-container::-webkit-scrollbar {
+    width: 5px;
+}
+.comments-stream-container::-webkit-scrollbar-track {
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+.comments-stream-container::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+.comments-stream-container::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+.comment-bubble {
+    background: #f1f5f9;
+    border-radius: 14px;
+    padding: 8px 12px;
+    max-width: 100%;
+    display: inline-block;
+}
+.comment-reply-bubble {
+    background: #f1f5f9;
+    border-radius: 12px;
+    padding: 6px 10px;
+    max-width: 100%;
+    display: inline-block;
+}
+</style>
+
 <div class="comments-section-container mt-4 pt-3 border-top" id="commentsSection">
-    <!-- Header: Compact & Clean -->
+    <!-- Header: Compact & Clean (YouTube/FB Style) -->
     <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
         <div class="d-flex align-items-center gap-2">
-            <h5 class="fw-bold mb-0 text-dark d-flex align-items-center gap-1.5" style="font-size: 1.05rem;">
-                <i class="bi bi-chat-left-text-fill text-danger"></i>
-                <span><?= __('comments_title') ?></span>
+            <h5 class="fw-bold mb-0 text-dark" style="font-size: 1.05rem;">
+                <?= __('comments_title') ?>
             </h5>
             <span class="badge bg-secondary bg-opacity-10 text-secondary rounded-pill px-2 py-0.5 text-xs fw-bold" id="commentsCounterBadge">
                 <?= $isKhmer ? km_num($totalCommentCount) : $totalCommentCount ?>
@@ -65,7 +102,7 @@ $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
         </div>
         <?php if ($isLoggedIn): ?>
             <a href="#commentContent" class="btn btn-outline-danger btn-sm rounded-pill px-2.5 py-0.5 text-3xs fw-semibold">
-                <i class="bi bi-pencil me-1"></i><?= __('leave_comment') ?>
+                <?= __('leave_comment') ?>
             </a>
         <?php endif; ?>
     </div>
@@ -77,10 +114,10 @@ $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
                 <!-- Replying To Banner -->
                 <div id="replyingToBadge" class="d-none align-items-center justify-content-between bg-white border border-danger-subtle px-2.5 py-1 rounded-2 mb-2 text-2xs">
                     <span class="text-muted">
-                        <i class="bi bi-reply-fill text-danger me-1"></i><?= __('replying_to') ?? 'ឆ្លើយតបទៅកាន់' ?>: <strong id="replyingToName" class="text-dark"></strong>
+                        <?= __('replying_to') ?? 'ឆ្លើយតបទៅកាន់' ?>: <strong id="replyingToName" class="text-dark"></strong>
                     </span>
                     <button type="button" class="btn btn-link text-muted p-0 text-decoration-none" id="cancelReplyBtn" title="<?= __('cancel_reply') ?>">
-                        <i class="bi bi-x-circle-fill text-secondary"></i>
+                        <i class="bi bi-x fs-6"></i>
                     </button>
                 </div>
 
@@ -92,10 +129,16 @@ $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
 
                     <div class="d-flex align-items-start gap-2">
                         <!-- Current User Avatar -->
-                        <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0 shadow-2xs"
-                            style="width: 34px; height: 34px; font-size: 0.78rem; background-color: <?= getAvatarBgColor($currentUser['name']) ?>;">
-                            <?= getInitials($currentUser['name']) ?>
-                        </div>
+                        <?php 
+                        $currAvatar = $currentUser['avatar_url'] ?? '';
+                        if (!empty($currAvatar)): ?>
+                            <img src="<?= e(image_url($currAvatar)) ?>" alt="Avatar" class="rounded-circle object-fit-cover flex-shrink-0 shadow-2xs border border-danger-subtle" style="width: 34px; height: 34px;">
+                        <?php else: ?>
+                            <div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0 shadow-2xs"
+                                style="width: 34px; height: 34px; font-size: 0.78rem; background-color: <?= getAvatarBgColor($currentUser['name']) ?>;">
+                                <?= getInitials($currentUser['name']) ?>
+                            </div>
+                        <?php endif; ?>
 
                         <!-- Textarea & Action Controls -->
                         <div class="flex-grow-1 min-w-0">
@@ -110,16 +153,12 @@ $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
                                     rows="2" placeholder="<?= __('write_a_comment') ?>" required maxlength="3000"
                                     style="background:#ffffff; border:1px solid #cbd5e1; resize:vertical; font-size:0.84rem; line-height:1.45;"></textarea>
                             </div>
-                            <div class="d-flex align-items-center justify-content-between mt-2 pt-0.5">
-                                <span class="text-3xs text-muted d-none d-sm-inline">
-                                    <i class="bi bi-shield-check text-success me-1"></i><?= __('civil_discourse_hint') ?? 'មតិស្ថាបនា និងគោរពគ្នាតាមក្រមសីលធម៌' ?>
-                                </span>
-                                <div class="d-flex align-items-center gap-1.5 ms-auto">
+                            <div class="d-flex align-items-center justify-content-end mt-2 pt-0.5">
+                                <div class="d-flex align-items-center gap-1.5">
                                     <button type="button" class="btn btn-light btn-sm rounded-pill px-2.5 py-1 text-3xs fw-bold text-secondary border d-none" id="clearCommentBtn">
                                         <?= __('cancel') ?>
                                     </button>
-                                    <button type="submit" class="btn btn-danger btn-sm rounded-pill px-3 py-1 text-3xs fw-bold shadow-2xs d-inline-flex align-items-center gap-1" id="submitCommentBtn">
-                                        <i class="bi bi-send-fill" style="font-size: 0.75rem;"></i>
+                                    <button type="submit" class="btn btn-danger btn-sm rounded-pill px-3 py-1 text-3xs fw-bold shadow-2xs d-inline-flex align-items-center" id="submitCommentBtn">
                                         <span><?= __('post_comment') ?></span>
                                     </button>
                                 </div>
@@ -130,20 +169,13 @@ $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
             <?php else: ?>
                 <!-- Not Logged In Callout (YouTube / Facebook Style) -->
                 <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between gap-2.5 py-1">
-                    <div class="d-flex align-items-center gap-2.5 text-center text-sm-start">
-                        <div class="rounded-circle d-flex align-items-center justify-content-center text-danger flex-shrink-0"
-                            style="width: 38px; height: 38px; background: rgba(200, 16, 46, 0.08);">
-                            <i class="bi bi-chat-heart fs-5"></i>
-                        </div>
-                        <div>
-                            <div class="fw-bold text-dark text-xs"><?= __('comment_login_prompt_title') ?></div>
-                            <div class="text-muted text-3xs"><?= __('comment_login_prompt_desc') ?></div>
-                        </div>
+                    <div class="text-center text-sm-start">
+                        <div class="fw-bold text-dark text-xs"><?= __('comment_login_prompt_title') ?></div>
+                        <div class="text-muted text-3xs"><?= __('comment_login_prompt_desc') ?></div>
                     </div>
                     <div class="d-flex align-items-center flex-shrink-0 mt-1 mt-sm-0">
-                        <button type="button" class="btn btn-danger btn-sm px-3 py-1.5 text-xs fw-bold rounded-pill shadow-2xs d-inline-flex align-items-center gap-1.5"
+                        <button type="button" class="btn btn-danger btn-sm px-3 py-1.5 text-xs fw-bold rounded-pill shadow-2xs"
                             data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register">
-                            <i class="bi bi-person-plus"></i>
                             <span><?= __('create_account') ?></span>
                         </button>
                     </div>
@@ -152,53 +184,53 @@ $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
         </div>
     </div>
 
-    <!-- Comments List Stream -->
-    <div class="comments-stream mb-4" id="commentsStream">
+    <!-- Comments List Stream with Facebook/YouTube Max-Height Scroll -->
+    <div class="comments-stream comments-stream-container mb-4" id="commentsStream">
         <?php if (empty($rootComments)): ?>
             <div class="text-center py-4 px-3 rounded-2 text-muted mb-3" id="noCommentsPrompt" style="background:#f8fafc; border:1px dashed #e2e8f0;">
-                <i class="bi bi-chat-square-dots text-secondary mb-1 d-block" style="font-size: 1.6rem; opacity: 0.7;"></i>
-                <p class="mb-0 text-xs fw-medium text-secondary"><?= __('no_comments_yet') ?></p>
+                <p class="mb-0 text-xs text-secondary"><?= __('no_comments_yet') ?></p>
             </div>
         <?php else: ?>
-            <div class="d-flex flex-column gap-2.5">
+            <div class="d-flex flex-column gap-2.5 pb-2">
                 <?php foreach ($rootComments as $c): ?>
                     <div class="comment-thread" id="comment-thread-<?= $c['id'] ?>">
-                        <!-- Parent Comment Bubble -->
+                        <!-- Parent Comment Bubble (Facebook / YouTube Style) -->
                         <div class="d-flex align-items-start gap-2 comment-item" id="comment-<?= $c['id'] ?>">
                             <!-- Avatar -->
-                            <div class="comment-avatar rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0"
-                                style="width: 32px; height: 32px; font-size: 0.75rem; background-color: <?= getAvatarBgColor($c['user_name']) ?>;">
-                                <?= getInitials($c['user_name']) ?>
-                            </div>
+                            <?php if (!empty($c['avatar_url'])): ?>
+                                <img src="<?= e(image_url($c['avatar_url'])) ?>" alt="Avatar" class="comment-avatar rounded-circle object-fit-cover flex-shrink-0 border border-light-subtle" style="width: 32px; height: 32px;">
+                            <?php else: ?>
+                                <div class="comment-avatar rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0"
+                                    style="width: 32px; height: 32px; font-size: 0.75rem; background-color: <?= getAvatarBgColor($c['user_name']) ?>;">
+                                    <?= getInitials($c['user_name']) ?>
+                                </div>
+                            <?php endif; ?>
 
                             <div class="flex-grow-1 min-w-0">
                                 <!-- Facebook-Style Bubble -->
-                                <div class="p-2 px-2.5 rounded-3 d-inline-block" style="background: #f1f5f9; max-width: 100%;">
+                                <div class="comment-bubble">
                                     <div class="d-flex align-items-center gap-1.5 mb-0.5">
                                         <span class="fw-bold text-dark text-xs"><?= e($c['user_name']) ?></span>
                                         <?php if (str_contains(strtolower($c['user_name']), 'editor') || str_contains(strtolower($c['user_name']), 'desk')): ?>
                                             <span class="badge bg-danger text-white rounded-pill px-1.5 py-0 text-3xs font-monospace"><?= __('editorial_badge') ?></span>
                                         <?php endif; ?>
                                     </div>
-                                    <div class="comment-text text-dark" style="font-size: 0.83rem; line-height: 1.4; word-break: break-word; white-space: pre-line;"><?= e($c['content']) ?></div>
+                                    <div class="comment-text text-dark" style="font-size: 0.83rem; line-height: 1.45; word-break: break-word; white-space: pre-line;"><?= e($c['content']) ?></div>
                                 </div>
 
-                                <!-- Action Line (Like, Reply, Time Ago) -->
-                                <div class="d-flex align-items-center gap-2.5 ps-2 pt-1 text-3xs text-muted">
+                                <!-- Action Line (Time Ago · Like · Reply) -->
+                                <div class="d-flex align-items-center gap-2 ps-1 pt-1 text-3xs text-muted">
                                     <span><?= \App\Core\TemplateEngine::timeAgo($c['created_at']) ?></span>
+                                    <span>&middot;</span>
 
-                                    <button type="button" class="btn btn-link text-decoration-none p-0 comment-like-btn text-muted text-3xs fw-bold d-inline-flex align-items-center gap-1"
+                                    <button type="button" class="btn btn-link text-decoration-none p-0 comment-like-btn text-muted text-3xs fw-semibold"
                                         data-comment-id="<?= $c['id'] ?>">
-                                        <i class="bi bi-heart text-danger"></i>
                                         <span><?= __('like') ?></span>
-                                        <?php if ((int)$c['likes_count'] > 0): ?>
-                                            <span class="likes-count fw-bold text-danger"><?= (int)$c['likes_count'] ?></span>
-                                        <?php else: ?>
-                                            <span class="likes-count d-none">0</span>
-                                        <?php endif; ?>
+                                        <span class="likes-count text-danger fw-bold ms-1 <?= (int)$c['likes_count'] > 0 ? '' : 'd-none' ?>"><?= (int)$c['likes_count'] > 0 ? (int)$c['likes_count'] : '0' ?></span>
                                     </button>
+                                    <span>&middot;</span>
 
-                                    <button type="button" class="btn btn-link text-decoration-none p-0 comment-reply-btn text-muted text-3xs fw-bold d-inline-flex align-items-center gap-1"
+                                    <button type="button" class="btn btn-link text-decoration-none p-0 comment-reply-btn text-muted text-3xs fw-semibold"
                                         data-parent-id="<?= $c['id'] ?>" data-parent-name="<?= e($c['user_name']) ?>">
                                         <span><?= __('reply') ?></span>
                                     </button>
@@ -209,31 +241,31 @@ $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
                                     <div class="comment-replies ms-2 ms-sm-3 ps-2 mt-2 border-start border-2 border-light-subtle d-flex flex-column gap-2">
                                         <?php foreach ($repliesByParent[$c['id']] as $reply): ?>
                                             <div class="d-flex align-items-start gap-2" id="comment-<?= $reply['id'] ?>">
-                                                <div class="comment-avatar rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0"
-                                                    style="width: 26px; height: 26px; font-size: 0.68rem; background-color: <?= getAvatarBgColor($reply['user_name']) ?>;">
-                                                    <?= getInitials($reply['user_name']) ?>
-                                                </div>
+                                                <?php if (!empty($reply['avatar_url'])): ?>
+                                                    <img src="<?= e(image_url($reply['avatar_url'])) ?>" alt="Avatar" class="comment-avatar rounded-circle object-fit-cover flex-shrink-0 border border-light-subtle" style="width: 26px; height: 26px;">
+                                                <?php else: ?>
+                                                    <div class="comment-avatar rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0"
+                                                        style="width: 26px; height: 26px; font-size: 0.68rem; background-color: <?= getAvatarBgColor($reply['user_name']) ?>;">
+                                                        <?= getInitials($reply['user_name']) ?>
+                                                    </div>
+                                                <?php endif; ?>
                                                 <div class="flex-grow-1 min-w-0">
-                                                    <div class="p-1.5 px-2.5 rounded-3 d-inline-block" style="background: #f1f5f9; max-width: 100%;">
+                                                    <div class="comment-reply-bubble">
                                                         <div class="d-flex align-items-center gap-1.5 mb-0.5">
                                                             <span class="fw-bold text-dark text-xs"><?= e($reply['user_name']) ?></span>
                                                             <?php if (str_contains(strtolower($reply['user_name']), 'editor') || str_contains(strtolower($reply['user_name']), 'desk')): ?>
                                                                 <span class="badge bg-danger text-white rounded-pill px-1.5 py-0 text-3xs font-monospace"><?= __('editorial_badge') ?></span>
                                                             <?php endif; ?>
                                                         </div>
-                                                        <div class="comment-text text-dark" style="font-size: 0.81rem; line-height: 1.4; word-break: break-word; white-space: pre-line;"><?= e($reply['content']) ?></div>
+                                                        <div class="comment-text text-dark" style="font-size: 0.81rem; line-height: 1.45; word-break: break-word; white-space: pre-line;"><?= e($reply['content']) ?></div>
                                                     </div>
-                                                    <div class="d-flex align-items-center gap-2.5 ps-2 pt-0.5 text-3xs text-muted">
+                                                    <div class="d-flex align-items-center gap-2 ps-1 pt-0.5 text-3xs text-muted">
                                                         <span><?= \App\Core\TemplateEngine::timeAgo($reply['created_at']) ?></span>
-                                                        <button type="button" class="btn btn-link text-decoration-none p-0 comment-like-btn text-muted text-3xs fw-bold d-inline-flex align-items-center gap-1"
+                                                        <span>&middot;</span>
+                                                        <button type="button" class="btn btn-link text-decoration-none p-0 comment-like-btn text-muted text-3xs fw-semibold"
                                                             data-comment-id="<?= $reply['id'] ?>">
-                                                            <i class="bi bi-heart text-danger"></i>
                                                             <span><?= __('like') ?></span>
-                                                            <?php if ((int)$reply['likes_count'] > 0): ?>
-                                                                <span class="likes-count fw-bold text-danger"><?= (int)$reply['likes_count'] ?></span>
-                                                            <?php else: ?>
-                                                                <span class="likes-count d-none">0</span>
-                                                            <?php endif; ?>
+                                                            <span class="likes-count text-danger fw-bold ms-1 <?= (int)$reply['likes_count'] > 0 ? '' : 'd-none' ?>"><?= (int)$reply['likes_count'] > 0 ? (int)$reply['likes_count'] : '0' ?></span>
                                                         </button>
                                                     </div>
                                                 </div>
@@ -334,10 +366,8 @@ document.addEventListener('DOMContentLoaded', function () {
             const countSpan = likeBtn.querySelector('.likes-count');
 
             // Optimistic UI update
-            likeBtn.classList.add('liked');
-            if (heartIcon) {
-                heartIcon.className = 'bi bi-heart-fill text-danger';
-            }
+            likeBtn.classList.add('liked', 'text-danger');
+            likeBtn.classList.remove('text-muted');
 
             let currentLikes = parseInt(countSpan ? countSpan.textContent : '0') || 0;
             currentLikes++;
@@ -364,7 +394,44 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    // 4. Form Submit Handler (AJAX)
+    let totalCommentsCount = <?= (int)$totalCommentCount ?>;
+
+    function getAvatarBgColor(name) {
+        const colors = ['#c8102e', '#0f172a', '#1e40af', '#047857', '#b45309', '#6d28d9', '#be185d', '#0369a1'];
+        let hash = 0;
+        for (let i = 0; i < (name || '').length; i++) {
+            hash = (hash << 5) - hash + name.charCodeAt(i);
+            hash |= 0;
+        }
+        return colors[Math.abs(hash) % colors.length];
+    }
+
+    function getInitials(name) {
+        const parts = (name || '').trim().split(/\s+/);
+        if (parts.length >= 2) {
+            return (parts[0].slice(0, 1) + parts[1].slice(0, 1)).toUpperCase();
+        }
+        return (name || '').slice(0, 2).toUpperCase();
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+    }
+
+    function toKmNum(n) {
+        const isKh = <?= $isKhmer ? 'true' : 'false' ?>;
+        if (!isKh) return String(n);
+        const khmerDigits = ['០','១','២','៣','៤','៥','៦','៧','៨','៩'];
+        return String(n).split('').map(d => khmerDigits[d] || d).join('');
+    }
+
+    // 4. Form Submit Handler (Seamless AJAX without Page Refresh - FB/YouTube Style)
     if (commentForm) {
         commentForm.addEventListener('submit', function (e) {
             e.preventDefault();
@@ -398,24 +465,126 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(data => {
                 if (submitBtn) {
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="bi bi-send-fill" style="font-size:0.75rem;"></i> <span><?= addslashes(__("post_comment")) ?></span>';
+                    submitBtn.innerHTML = '<span><?= addslashes(__("post_comment")) ?></span>';
                 }
 
-                if (data.success) {
-                    if (alertBox) {
-                        alertBox.className = 'alert alert-success d-block mb-2 py-1.5 px-2.5 text-2xs rounded-2';
-                        alertBox.textContent = data.message;
-                    }
+                if (data.success && data.comment) {
+                    const c = data.comment;
+                    const escName = escapeHtml(c.user_name);
+                    const escContent = escapeHtml(c.content);
+                    const initials = getInitials(c.user_name);
+                    const avatarBg = getAvatarBgColor(c.user_name);
+                    const timeAgo = c.time_ago || 'Just now';
+                    const isStaff = escName.toLowerCase().includes('editor') || escName.toLowerCase().includes('desk');
+                    const editorialBadge = isStaff ? '<span class="badge bg-danger text-white rounded-pill px-1.5 py-0 text-3xs font-monospace"><?= addslashes(__("editorial_badge")) ?></span>' : '';
+
                     if (noCommentsPrompt) {
                         noCommentsPrompt.style.display = 'none';
                     }
 
+                    let streamContainer = document.getElementById('commentsStream');
+                    let streamList = streamContainer.querySelector(':scope > .d-flex.flex-column');
+                    if (!streamList) {
+                        streamList = document.createElement('div');
+                        streamList.className = 'd-flex flex-column gap-2.5 pb-2';
+                        streamContainer.appendChild(streamList);
+                    }
+
+                    if (c.parent_id) {
+                        // It's a reply to an existing parent comment thread
+                        const parentThread = document.getElementById('comment-thread-' + c.parent_id);
+                        if (parentThread) {
+                            let repliesWrapper = parentThread.querySelector('.comment-replies');
+                            if (!repliesWrapper) {
+                                repliesWrapper = document.createElement('div');
+                                repliesWrapper.className = 'comment-replies ms-2 ms-sm-3 ps-2 mt-2 border-start border-2 border-light-subtle d-flex flex-column gap-2';
+                                const flexGrow = parentThread.querySelector('.flex-grow-1');
+                                if (flexGrow) flexGrow.appendChild(repliesWrapper);
+                            }
+
+                            const replyItem = document.createElement('div');
+                            replyItem.className = 'd-flex align-items-start gap-2';
+                            replyItem.id = 'comment-' + c.id;
+                            const replyAvatarHtml = c.avatar_url 
+                                ? `<img src="${escapeHtml(c.avatar_url)}" alt="Avatar" class="comment-avatar rounded-circle object-fit-cover flex-shrink-0 border border-light-subtle" style="width: 26px; height: 26px;">`
+                                : `<div class="comment-avatar rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0" style="width: 26px; height: 26px; font-size: 0.68rem; background-color: ${avatarBg};">${initials}</div>`;
+
+                            replyItem.innerHTML = `
+                                ${replyAvatarHtml}
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="comment-reply-bubble">
+                                        <div class="d-flex align-items-center gap-1.5 mb-0.5">
+                                            <span class="fw-bold text-dark text-xs">${escName}</span>
+                                            ${editorialBadge}
+                                        </div>
+                                        <div class="comment-text text-dark" style="font-size: 0.81rem; line-height: 1.45; word-break: break-word; white-space: pre-line;">${escContent}</div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 ps-1 pt-0.5 text-3xs text-muted">
+                                        <span>${timeAgo}</span>
+                                        <span>&middot;</span>
+                                        <button type="button" class="btn btn-link text-decoration-none p-0 comment-like-btn text-muted text-3xs fw-semibold"
+                                            data-comment-id="${c.id}">
+                                            <span><?= addslashes(__("like")) ?></span>
+                                            <span class="likes-count text-danger fw-bold ms-1 d-none">0</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            `;
+                            repliesWrapper.appendChild(replyItem);
+                            replyItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                    } else {
+                        // It's a new root comment
+                        const threadItem = document.createElement('div');
+                        threadItem.className = 'comment-thread';
+                        threadItem.id = 'comment-thread-' + c.id;
+
+                        const rootAvatarHtml = c.avatar_url 
+                            ? `<img src="${escapeHtml(c.avatar_url)}" alt="Avatar" class="comment-avatar rounded-circle object-fit-cover flex-shrink-0 border border-light-subtle" style="width: 32px; height: 32px;">`
+                            : `<div class="comment-avatar rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0" style="width: 32px; height: 32px; font-size: 0.75rem; background-color: ${avatarBg};">${initials}</div>`;
+
+                        threadItem.innerHTML = `
+                            <div class="d-flex align-items-start gap-2 comment-item" id="comment-${c.id}">
+                                ${rootAvatarHtml}
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="comment-bubble">
+                                        <div class="d-flex align-items-center gap-1.5 mb-0.5">
+                                            <span class="fw-bold text-dark text-xs">${escName}</span>
+                                            ${editorialBadge}
+                                        </div>
+                                        <div class="comment-text text-dark" style="font-size: 0.83rem; line-height: 1.45; word-break: break-word; white-space: pre-line;">${escContent}</div>
+                                    </div>
+                                    <div class="d-flex align-items-center gap-2 ps-1 pt-1 text-3xs text-muted">
+                                        <span>${timeAgo}</span>
+                                        <span>&middot;</span>
+                                        <button type="button" class="btn btn-link text-decoration-none p-0 comment-like-btn text-muted text-3xs fw-semibold"
+                                            data-comment-id="${c.id}">
+                                            <span><?= addslashes(__("like")) ?></span>
+                                            <span class="likes-count text-danger fw-bold ms-1 d-none">0</span>
+                                        </button>
+                                        <span>&middot;</span>
+                                        <button type="button" class="btn btn-link text-decoration-none p-0 comment-reply-btn text-muted text-3xs fw-semibold"
+                                            data-parent-id="${c.id}" data-parent-name="${escName}">
+                                            <span><?= addslashes(__("reply")) ?></span>
+                                        </button>
+                                    </div>
+                                    <div class="comment-replies ms-2 ms-sm-3 ps-2 mt-2 border-start border-2 border-light-subtle d-flex flex-column gap-2" style="display:none;"></div>
+                                </div>
+                            </div>
+                        `;
+                        streamList.appendChild(threadItem);
+                        threadItem.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    }
+
+                    // Increment comment count badge
+                    totalCommentsCount++;
+                    if (commentsCounter) {
+                        commentsCounter.textContent = toKmNum(totalCommentsCount);
+                    }
+
+                    // Reset comment inputs
                     if (commentContent) commentContent.value = '';
                     resetReplyState();
-
-                    setTimeout(() => {
-                        window.location.reload();
-                    }, 600);
                 } else if (data.require_login) {
                     const authModal = document.getElementById('readerAuthModal');
                     if (authModal && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
@@ -431,7 +600,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .catch(err => {
                 if (submitBtn) {
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = '<i class="bi bi-send-fill" style="font-size:0.75rem;"></i> <span><?= addslashes(__("post_comment")) ?></span>';
+                    submitBtn.innerHTML = '<span><?= addslashes(__("post_comment")) ?></span>';
                 }
                 if (alertBox) {
                     alertBox.className = 'alert alert-danger d-block mb-2 py-1.5 px-2.5 text-2xs rounded-2';

@@ -10,7 +10,7 @@ $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
 $uri = $_SERVER['REQUEST_URI'] ?? '/';
 $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on');
 $currentUrl = ($isHttps ? "https://" : "http://") . $host . $uri;
-$shareTitle = article_title($article['title'] ?? 'NewsPlatform Story');
+$shareTitle = article_title($article ?? ($article['title'] ?? 'NewsPlatform Story'));
 ?>
 
 <!-- ── Modern Clean Editorial Action & Dropdown Share Strip ────── -->
