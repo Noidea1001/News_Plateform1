@@ -178,15 +178,30 @@ self.addEventListener('push', event => {
         }
     }
 
+    // Language detection: Check navigator.language or fallback
+    const navLang = (navigator.language || 'en').toLowerCase();
+    const isKhmerDevice = navLang.startsWith('kh') || navLang.startsWith('km');
+
+    let displayTitle = payload.title;
+    let displayBody = payload.body;
+
+    if (isKhmerDevice) {
+        if (payload.title_kh) displayTitle = payload.title_kh;
+        if (payload.body_kh) displayBody = payload.body_kh;
+    } else {
+        if (payload.title_en) displayTitle = payload.title_en;
+        if (payload.body_en) displayBody = payload.body_en;
+    }
+
     const scope = self.registration.scope;
     const iconUrl = payload.icon ? new URL(payload.icon, scope).href : new URL('assets/icons/icon-192.png', scope).href;
     const badgeUrl = payload.badge ? new URL(payload.badge, scope).href : new URL('assets/icons/icon-192.png', scope).href;
 
     const options = {
-        body: payload.body,
+        body: displayBody,
         icon: iconUrl,
         badge: badgeUrl,
-        tag: payload.tag || 'breaking-news',
+        tag: payload.tag || ('breaking-news-' + Date.now()),
         renotify: true,
         requireInteraction: true,
         vibrate: [300, 100, 400],
@@ -194,7 +209,7 @@ self.addEventListener('push', event => {
     };
 
     event.waitUntil(
-        self.registration.showNotification(payload.title, options)
+        self.registration.showNotification(displayTitle, options)
     );
 });
 
