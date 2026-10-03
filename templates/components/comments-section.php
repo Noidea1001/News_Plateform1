@@ -126,6 +126,8 @@ $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
                 <form id="commentForm" action="<?= url('comment.php') ?>" method="POST">
                     <input type="hidden" name="article_id" value="<?= (int)$article['id'] ?>">
                     <input type="hidden" name="parent_id" id="commentParentId" value="">
+                    <input type="hidden" name="is_ajax" value="1">
+                    <input type="hidden" name="redirect_to" value="<?= e($_SERVER['REQUEST_URI'] ?? url('article.php?id=' . (int)$article['id'])) ?>">
 
                     <div class="d-flex align-items-start gap-2">
                         <!-- Current User Avatar -->
@@ -379,10 +381,15 @@ document.addEventListener('DOMContentLoaded', function () {
             const formData = new FormData();
             formData.append('action', 'like');
             formData.append('comment_id', commentId);
+            formData.append('is_ajax', '1');
 
             fetch('<?= url("comment.php") ?>', {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
             })
             .then(res => res.json())
             .then(data => {
@@ -459,7 +466,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             fetch('<?= url("comment.php") ?>', {
                 method: 'POST',
-                body: formData
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
             })
             .then(res => res.json())
             .then(data => {

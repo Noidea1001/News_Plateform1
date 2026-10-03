@@ -242,8 +242,11 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(function(err) {
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalText;
-                // If network fails, submit standard POST
-                form.submit();
+                if (alertBox) {
+                    alertBox.className = 'alert alert-danger py-2 px-3 small rounded-2 mb-3';
+                    alertBox.textContent = 'Connection error. Please try again.';
+                    alertBox.classList.remove('d-none');
+                }
             });
         });
     }
