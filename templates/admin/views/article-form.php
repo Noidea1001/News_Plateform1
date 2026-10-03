@@ -466,7 +466,10 @@ $formAction = url('admin/actions/save-article.php');
                         <select class="form-select" id="category_id" name="category_id" required>
                             <option value=""><?= __('select_category_option') ?></option>
                             <?php foreach ($categories as $cat) { ?>
-                                <option value="<?= (int) $cat['id'] ?>" <?= (isset($article['category_id']) && (int) $article['category_id'] === (int) $cat['id']) ? 'selected' : '' ?>>
+                                <option value="<?= (int) $cat['id'] ?>"
+                                    data-name-kh="<?= e(cat_name($cat['name'], 'kh')) ?>"
+                                    data-name-en="<?= e(cat_name($cat['name'], 'en')) ?>"
+                                    <?= (isset($article['category_id']) && (int) $article['category_id'] === (int) $cat['id']) ? 'selected' : '' ?>>
                                     <?= e(cat_name($cat['name'])) ?>
                                 </option>
                             <?php } ?>
@@ -957,9 +960,13 @@ $formAction = url('admin/actions/save-article.php');
         }
 
         // =========================================================================
-        // Professional Article Live Preview System
         // =========================================================================
-        let currentPreviewLang = 'kh';
+        // Professional Article Live Preview System (Bilingual: Khmer & English)
+        // =========================================================================
+        let currentPreviewLang = '<?= e($currentLang ?? "kh") ?>';
+        if (currentPreviewLang !== 'kh' && currentPreviewLang !== 'en') {
+            currentPreviewLang = 'kh';
+        }
         let currentPreviewDevice = 'desktop';
 
         const btnLivePreview = document.getElementById('btnLivePreviewArticle');
@@ -973,6 +980,34 @@ $formAction = url('admin/actions/save-article.php');
             role: <?= json_encode(ucfirst($currentUser['role'] ?? 'Reporter')) ?>,
             avatar: <?= json_encode(!empty($currentUser['avatar_url']) ? image_url($currentUser['avatar_url']) : '') ?>
         };
+
+        function escapeHtml(str) {
+            if (str === null || str === undefined) return '';
+            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
+            return String(str).replace(/[&<>"']/g, function (m) { return map[m]; });
+        }
+
+        function toKmNum(str) {
+            if (str === null || str === undefined) return '';
+            const digits = { '0': '០', '1': '១', '2': '២', '3': '៣', '4': '៤', '5': '៥', '6': '៦', '7': '៧', '8': '៨', '9': '៩' };
+            return String(str).replace(/[0-9]/g, function (d) { return digits[d] || d; });
+        }
+
+        function formatPreviewDate(isKh) {
+            const now = new Date();
+            if (isKh) {
+                const khMonths = [
+                    'មករា', 'កុម្ភៈ', 'មីនា', 'មេសា', 'ឧសភា', 'មិថុនា',
+                    'កក្កដា', 'សីហា', 'កញ្ញា', 'តុលា', 'វិច្ឆិកា', 'ធ្នូ'
+                ];
+                const day = toKmNum(now.getDate());
+                const month = khMonths[now.getMonth()];
+                const year = toKmNum(now.getFullYear());
+                return `ថ្ងៃទី ${day} ខែ ${month} ឆ្នាំ ${year}`;
+            } else {
+                return now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            }
+        }
 
         function getPreviewFormData() {
             syncTitles();
@@ -988,7 +1023,21 @@ $formAction = url('admin/actions/save-article.php');
             const templateType = (document.getElementById('template_type') ? document.getElementById('template_type').value : 'standard') || 'standard';
 
             const catSelect = document.getElementById('category_id');
-            const catName = catSelect && catSelect.selectedIndex >= 0 ? catSelect.options[catSelect.selectedIndex].text.trim() : 'News';
+            let catNameKh = 'ព័ត៌មានទូទៅ';
+            let catNameEn = 'General News';
+            let catNameFallback = 'News';
+
+            if (catSelect && catSelect.selectedIndex >= 0) {
+                const selectedOpt = catSelect.options[catSelect.selectedIndex];
+                if (selectedOpt) {
+                    catNameKh = selectedOpt.getAttribute('data-name-kh') || selectedOpt.text.trim();
+                    catNameEn = selectedOpt.getAttribute('data-name-en') || selectedOpt.text.trim();
+                    catNameFallback = selectedOpt.text.trim();
+                }
+            }
+
+            const isKh = (currentPreviewLang === 'kh');
+            const catName = isKh ? (catNameKh || catNameFallback) : (catNameEn || catNameFallback);
 
             const hasDropCap = document.getElementById('has_drop_cap') ? document.getElementById('has_drop_cap').checked : false;
             const audioEmbedUrl = document.getElementById('audio_embed_url') ? document.getElementById('audio_embed_url').value.trim() : '';
@@ -996,7 +1045,7 @@ $formAction = url('admin/actions/save-article.php');
             const refUrl = document.getElementById('reference_url') ? document.getElementById('reference_url').value.trim() : '';
             const refSource = document.getElementById('reference_source_name') ? document.getElementById('reference_source_name').value.trim() : '';
 
-            // Featured Image
+            // Featured Image preview source
             let featuredImgSrc = '';
             const featInput = document.getElementById('featured_image');
             if (featInput && featInput.files && featInput.files[0]) {
@@ -1008,11 +1057,11 @@ $formAction = url('admin/actions/save-article.php');
                 }
             }
 
-            // Word count / reading time
-            const activeText = (currentPreviewLang === 'kh' ? (quillKh ? quillKh.getText() : '') : (quillEn ? quillEn.getText() : '')) || '';
+            // Word count & Reading Time calculation
+            const activeText = (isKh ? (quillKh ? quillKh.getText() : '') : (quillEn ? quillEn.getText() : '')) || '';
             const wordCount = activeText.trim().split(/\s+/).filter(Boolean).length;
             const readingTimeMin = Math.max(1, Math.ceil(wordCount / 180));
-            const readingTimeStr = currentPreviewLang === 'kh' ? `រយះពេលអាន ${readingTimeMin} នាទី` : `${readingTimeMin} min read`;
+            const readingTimeStr = isKh ? `រយៈពេលអាន ${toKmNum(readingTimeMin)} នាទី` : `${readingTimeMin} min read`;
 
             return {
                 titleKh, titleEn, summaryKh, summaryEn,
@@ -1025,25 +1074,42 @@ $formAction = url('admin/actions/save-article.php');
         function renderArticlePreview() {
             if (!previewRenderContainer) return;
 
-            const data = getPreviewFormData();
             const isKh = (currentPreviewLang === 'kh');
-            const title = (isKh ? (data.titleKh || data.titleEn) : (data.titleEn || data.titleKh)) || (isKh ? 'ចំណងជើងអត្ថបទ' : 'Article Title');
-            const summary = (isKh ? (data.summaryKh || data.summaryEn) : (data.summaryEn || data.summaryKh)) || '';
-            let content = (isKh ? (data.contentKh || data.contentEn) : (data.contentEn || data.contentKh)) || (isKh ? '<p>មាតិកាអត្ថបទនឹងបង្ហាញនៅទីនេះ...</p>' : '<p>Article body will appear here...</p>');
+            const data = getPreviewFormData();
 
-            if (data.hasDropCap) {
+            // Language specific texts with proper fallbacks
+            const title = (isKh ? (data.titleKh || data.titleEn) : (data.titleEn || data.titleKh)) || (isKh ? 'ចំណងជើងអត្ថបទ (សូមបញ្ចូល)' : 'Article Title (Please enter)');
+            const summary = (isKh ? (data.summaryKh || data.summaryEn) : (data.summaryEn || data.summaryKh)) || '';
+            
+            let rawContent = isKh ? (data.contentKh || data.contentEn) : (data.contentEn || data.contentKh);
+            let hasRealContent = rawContent && rawContent.replace(/<[^>]*>/g, '').trim().length > 0;
+            let content = hasRealContent ? rawContent : (isKh ? '<p class="text-muted fst-italic">មាតិកាអត្ថបទនឹងបង្ហាញនៅទីនេះ...</p>' : '<p class="text-muted fst-italic">Article body content will appear here...</p>');
+
+            if (data.hasDropCap && content) {
                 content = content.replace(/<p>/i, '<p class="has-drop-cap">');
             }
 
+            // Update Header Blueprint Badge
             if (previewTemplateBadge) {
-                previewTemplateBadge.textContent = data.templateType.toUpperCase() + ' BLUEPRINT';
+                if (data.templateType === 'investigative') {
+                    previewTemplateBadge.textContent = isKh ? 'ទម្រង់ស៊ើបអង្កេត (Investigative)' : 'Investigative Blueprint';
+                } else if (data.templateType === 'opinion') {
+                    previewTemplateBadge.textContent = isKh ? 'ទម្រង់ទស្សនៈ (Opinion)' : 'Opinion Blueprint';
+                } else {
+                    previewTemplateBadge.textContent = isKh ? 'ទម្រង់ស្តង់ដារ (Standard)' : 'Standard Blueprint';
+                }
             }
 
-            const todayStr = new Date().toLocaleDateString(isKh ? 'km-KH' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+            const todayStr = formatPreviewDate(isKh);
+            const viewsLabel = isKh ? `០ ការទស្សនា` : `0 views`;
+            const audioLabel = isKh ? `សំឡេងអានអត្ថបទ / ផតខាស្ត` : `Audio Narration / Podcast`;
+            const sourceLabel = isKh ? `ប្រភព៖` : `Source:`;
+            const reportBadgeLabel = isKh ? `របាយការណ៍ស៊ើបអង្កេត` : `INVESTIGATIVE REPORT`;
+            const opinionBadgeLabel = isKh ? `មតិ និងទស្សនវិស័យ` : `OPINION & PERSPECTIVE`;
 
             const authorAvatarHtml = authorMetadata.avatar 
-                ? `<img src="${authorMetadata.avatar}" alt="${authorMetadata.name}" class="rounded-circle object-fit-cover flex-shrink-0" style="width:38px;height:38px;">`
-                : `<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0" style="width:38px;height:38px;background:#c8102e;font-size:0.9rem;">${authorMetadata.name.charAt(0).toUpperCase()}</div>`;
+                ? `<img src="${escapeHtml(authorMetadata.avatar)}" alt="${escapeHtml(authorMetadata.name)}" class="rounded-circle object-fit-cover flex-shrink-0" style="width:38px;height:38px;">`
+                : `<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0" style="width:38px;height:38px;background:#c8102e;font-size:0.9rem;">${escapeHtml(authorMetadata.name.charAt(0).toUpperCase())}</div>`;
 
             let templateHtml = '';
 
@@ -1051,30 +1117,49 @@ $formAction = url('admin/actions/save-article.php');
                 templateHtml = `
                     <div class="investigative-preview">
                         <div class="bg-dark text-white p-4 p-md-5 rounded-3 mb-4" style="background:#0b1320 !important;">
-                            <div class="d-flex align-items-center gap-2 mb-2">
-                                <span class="badge bg-danger text-uppercase px-2 py-0.5" style="font-size:0.7rem;">${escapeHtml(data.catName)}</span>
-                                <span class="badge bg-white bg-opacity-10 text-white-50 text-3xs">INVESTIGATIVE REPORT</span>
+                            <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                                <span class="badge bg-danger text-uppercase px-2.5 py-1" style="font-size:0.75rem;">${escapeHtml(data.catName)}</span>
+                                <span class="badge bg-white bg-opacity-10 text-white-50" style="font-size:0.7rem;">${reportBadgeLabel}</span>
                             </div>
-                            <h1 class="fw-bold display-6 mb-3 text-white" style="line-height:1.25;">${escapeHtml(title)}</h1>
-                            ${summary ? `<p class="fs-6 text-white-50 mb-4" style="line-height:1.6;">${escapeHtml(summary)}</p>` : ''}
-                            <div class="d-flex align-items-center gap-2.5 text-white-50 text-xs border-top border-secondary border-opacity-25 pt-3">
+                            <h1 class="fw-bold display-6 mb-3 text-white" style="line-height:1.35;">${escapeHtml(title)}</h1>
+                            ${summary ? `<p class="fs-6 text-white-50 mb-4" style="line-height:1.7;">${escapeHtml(summary)}</p>` : ''}
+                            <div class="d-flex align-items-center flex-wrap gap-2.5 text-white-50 text-xs border-top border-secondary border-opacity-25 pt-3">
                                 <span class="text-white fw-semibold">${escapeHtml(authorMetadata.name)}</span>
                                 <span>&middot;</span>
                                 <span>${todayStr}</span>
                                 <span>&middot;</span>
                                 <span>${data.readingTimeStr}</span>
+                                <span>&middot;</span>
+                                <span>${viewsLabel}</span>
                             </div>
                         </div>
 
                         ${data.featuredImgSrc ? `
                             <div class="mb-4 text-center">
-                                <img src="${data.featuredImgSrc}" class="img-fluid rounded-3 shadow-sm w-100 object-fit-cover" style="max-height:460px;" alt="Lead Cover">
+                                <img src="${escapeHtml(data.featuredImgSrc)}" class="img-fluid rounded-3 shadow-sm w-100 object-fit-cover" style="max-height:460px;" alt="Lead Cover">
                             </div>
                         ` : ''}
 
-                        <div class="article-content" style="font-size:1.05rem; line-height:1.8; color:#1e293b;">
+                        ${data.audioEmbedUrl ? `
+                            <div class="p-3 mb-4 bg-light border rounded-3 d-flex align-items-center gap-3">
+                                <i class="bi bi-volume-up-fill fs-4 text-danger"></i>
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="fw-bold text-xs text-dark mb-1">${audioLabel}</div>
+                                    <audio controls class="w-100" style="height:32px;"><source src="${escapeHtml(data.audioEmbedUrl)}"></audio>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <div class="article-content" style="font-size:1.05rem; line-height:1.85; color:#1e293b;">
                             ${content}
                         </div>
+
+                        ${data.refUrl ? `
+                            <div class="mt-4 pt-3 border-top text-muted text-xs d-flex align-items-center gap-2">
+                                <i class="bi bi-link-45deg fs-6 text-danger"></i>
+                                <span>${sourceLabel} <strong>${escapeHtml(data.refSource || 'External Reference')}</strong> (<a href="${escapeHtml(data.refUrl)}" target="_blank" rel="noopener" class="text-danger text-decoration-none">${escapeHtml(data.refUrl)}</a>)</span>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             } else if (data.templateType === 'opinion') {
@@ -1083,49 +1168,68 @@ $formAction = url('admin/actions/save-article.php');
                         <div class="p-3.5 p-md-4 mb-4 rounded-3 bg-white border shadow-2xs d-flex align-items-center gap-3.5">
                             <div class="flex-shrink-0">
                                 ${authorMetadata.avatar 
-                                    ? `<img src="${authorMetadata.avatar}" alt="${authorMetadata.name}" class="rounded-circle object-fit-cover border" style="width:68px;height:68px;">`
-                                    : `<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold fs-4" style="width:68px;height:68px;background:#0f172a;">${authorMetadata.name.charAt(0).toUpperCase()}</div>`
+                                    ? `<img src="${escapeHtml(authorMetadata.avatar)}" alt="${escapeHtml(authorMetadata.name)}" class="rounded-circle object-fit-cover border" style="width:64px;height:64px;">`
+                                    : `<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold fs-4" style="width:64px;height:64px;background:#0f172a;">${escapeHtml(authorMetadata.name.charAt(0).toUpperCase())}</div>`
                                 }
                             </div>
                             <div class="min-w-0">
-                                <div class="text-danger fw-bold text-3xs text-uppercase mb-1 tracking-wider">OPINION & PERSPECTIVE &bull; ${escapeHtml(data.catName)}</div>
+                                <div class="text-danger fw-bold text-3xs text-uppercase mb-1 tracking-wider">${opinionBadgeLabel} &bull; ${escapeHtml(data.catName)}</div>
                                 <h4 class="fw-bold text-dark mb-0.5">${escapeHtml(authorMetadata.name)}</h4>
                                 <div class="text-muted text-xs">${escapeHtml(authorMetadata.role)}</div>
                             </div>
                         </div>
 
-                        <h1 class="fw-bold mb-3 text-dark" style="font-size:1.85rem; line-height:1.3;">${escapeHtml(title)}</h1>
-                        ${summary ? `<p class="lead text-secondary mb-3 fst-italic" style="font-size:1.05rem; line-height:1.6;">${escapeHtml(summary)}</p>` : ''}
+                        <h1 class="fw-bold mb-3 text-dark" style="font-size:1.85rem; line-height:1.35;">${escapeHtml(title)}</h1>
+                        ${summary ? `<p class="lead text-secondary mb-3 fst-italic" style="font-size:1.05rem; line-height:1.7;">${escapeHtml(summary)}</p>` : ''}
                         
-                        <div class="d-flex align-items-center gap-2 text-muted text-2xs py-2 mb-4 border-top border-bottom">
+                        <div class="d-flex align-items-center flex-wrap gap-2 text-muted text-2xs py-2 mb-4 border-top border-bottom">
                             <span>${todayStr}</span>
                             <span>&middot;</span>
                             <span>${data.readingTimeStr}</span>
+                            <span>&middot;</span>
+                            <span>${viewsLabel}</span>
                         </div>
 
                         ${data.featuredImgSrc ? `
                             <div class="mb-4">
-                                <img src="${data.featuredImgSrc}" class="img-fluid rounded-2 shadow-2xs w-100 object-fit-cover" style="max-height:420px;" alt="Cover">
+                                <img src="${escapeHtml(data.featuredImgSrc)}" class="img-fluid rounded-2 shadow-2xs w-100 object-fit-cover" style="max-height:420px;" alt="Cover">
                             </div>
                         ` : ''}
 
-                        <div class="article-content" style="font-size:1.05rem; line-height:1.8; color:#1e293b;">
+                        ${data.audioEmbedUrl ? `
+                            <div class="p-3 mb-4 bg-light border rounded-2 d-flex align-items-center gap-3">
+                                <i class="bi bi-volume-up-fill fs-4 text-danger"></i>
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="fw-bold text-xs text-dark mb-1">${audioLabel}</div>
+                                    <audio controls class="w-100" style="height:32px;"><source src="${escapeHtml(data.audioEmbedUrl)}"></audio>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <div class="article-content" style="font-size:1.05rem; line-height:1.85; color:#1e293b;">
                             ${content}
                         </div>
+
+                        ${data.refUrl ? `
+                            <div class="mt-4 pt-3 border-top text-muted text-xs d-flex align-items-center gap-2">
+                                <i class="bi bi-link-45deg fs-6 text-danger"></i>
+                                <span>${sourceLabel} <strong>${escapeHtml(data.refSource || 'External Reference')}</strong> (<a href="${escapeHtml(data.refUrl)}" target="_blank" rel="noopener" class="text-danger text-decoration-none">${escapeHtml(data.refUrl)}</a>)</span>
+                            </div>
+                        ` : ''}
                     </div>
                 `;
             } else {
                 templateHtml = `
                     <div class="standard-preview">
                         <div class="mb-2">
-                            <span class="badge bg-danger text-uppercase px-2 py-1 fw-bold" style="font-size:0.68rem; letter-spacing:0.04em;">
+                            <span class="badge bg-danger text-uppercase px-2.5 py-1 fw-bold" style="font-size:0.72rem; letter-spacing:0.04em;">
                                 ${escapeHtml(data.catName)}
                             </span>
                         </div>
-                        <h1 class="fw-bold mb-3 text-dark" style="font-size:1.85rem; line-height:1.32; letter-spacing:-0.01em;">
+                        <h1 class="fw-bold mb-3 text-dark" style="font-size:1.85rem; line-height:1.35; letter-spacing:-0.01em;">
                             ${escapeHtml(title)}
                         </h1>
-                        ${summary ? `<p class="lead text-muted mb-3" style="font-size:1.02rem; line-height:1.6;">${escapeHtml(summary)}</p>` : ''}
+                        ${summary ? `<p class="lead text-muted mb-3" style="font-size:1.05rem; line-height:1.7;">${escapeHtml(summary)}</p>` : ''}
 
                         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 py-2.5 my-3 border-top border-bottom">
                             <div class="d-flex align-items-center gap-2.5">
@@ -1135,18 +1239,18 @@ $formAction = url('admin/actions/save-article.php');
                                     <div class="text-muted text-3xs">${escapeHtml(authorMetadata.role)}</div>
                                 </div>
                             </div>
-                            <div class="d-flex align-items-center gap-2 text-muted text-2xs">
+                            <div class="d-flex align-items-center flex-wrap gap-2 text-muted text-2xs">
                                 <span>${todayStr}</span>
                                 <span>&middot;</span>
                                 <span>${data.readingTimeStr}</span>
                                 <span>&middot;</span>
-                                <span>0 views</span>
+                                <span>${viewsLabel}</span>
                             </div>
                         </div>
 
                         ${data.featuredImgSrc ? `
                             <div class="mb-4">
-                                <img src="${data.featuredImgSrc}" class="img-fluid rounded-2 shadow-2xs w-100 object-fit-cover" style="max-height:440px;" alt="Cover">
+                                <img src="${escapeHtml(data.featuredImgSrc)}" class="img-fluid rounded-2 shadow-2xs w-100 object-fit-cover" style="max-height:440px;" alt="Cover">
                             </div>
                         ` : ''}
 
@@ -1154,20 +1258,20 @@ $formAction = url('admin/actions/save-article.php');
                             <div class="p-3 mb-4 bg-light border rounded-2 d-flex align-items-center gap-3">
                                 <i class="bi bi-volume-up-fill fs-4 text-danger"></i>
                                 <div class="flex-grow-1 min-w-0">
-                                    <div class="fw-bold text-xs text-dark mb-1">Audio Narration / Podcast</div>
+                                    <div class="fw-bold text-xs text-dark mb-1">${audioLabel}</div>
                                     <audio controls class="w-100" style="height:32px;"><source src="${escapeHtml(data.audioEmbedUrl)}"></audio>
                                 </div>
                             </div>
                         ` : ''}
 
-                        <div class="article-content" style="font-size:1.02rem; line-height:1.8; color:#1e293b;">
+                        <div class="article-content" style="font-size:1.05rem; line-height:1.85; color:#1e293b;">
                             ${content}
                         </div>
 
                         ${data.refUrl ? `
                             <div class="mt-4 pt-3 border-top text-muted text-xs d-flex align-items-center gap-2">
                                 <i class="bi bi-link-45deg fs-6 text-danger"></i>
-                                <span>Source: <strong>${escapeHtml(data.refSource || 'External Reference')}</strong> (<a href="${escapeHtml(data.refUrl)}" target="_blank" class="text-danger text-decoration-none">${escapeHtml(data.refUrl)}</a>)</span>
+                                <span>${sourceLabel} <strong>${escapeHtml(data.refSource || 'External Reference')}</strong> (<a href="${escapeHtml(data.refUrl)}" target="_blank" rel="noopener" class="text-danger text-decoration-none">${escapeHtml(data.refUrl)}</a>)</span>
                             </div>
                         ` : ''}
                     </div>
@@ -1181,10 +1285,19 @@ $formAction = url('admin/actions/save-article.php');
         if (btnLivePreview) {
             btnLivePreview.addEventListener('click', function(e) {
                 e.preventDefault();
-                renderArticlePreview();
-                if (previewModalEl && typeof bootstrap !== 'undefined') {
-                    const bsModal = bootstrap.Modal.getOrCreateInstance(previewModalEl);
-                    bsModal.show();
+                try {
+                    renderArticlePreview();
+                    if (previewModalEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        const bsModal = bootstrap.Modal.getOrCreateInstance(previewModalEl);
+                        bsModal.show();
+                    } else if (previewModalEl) {
+                        // Fallback in case bootstrap global differs
+                        previewModalEl.classList.add('show');
+                        previewModalEl.style.display = 'block';
+                        document.body.classList.add('modal-open');
+                    }
+                } catch (err) {
+                    console.error('Error opening article preview:', err);
                 }
             });
         }
@@ -1224,8 +1337,12 @@ $formAction = url('admin/actions/save-article.php');
         // Language Switcher Handlers
         document.querySelectorAll('.preview-lang-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                document.querySelectorAll('.preview-lang-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
+                document.querySelectorAll('.preview-lang-btn').forEach(b => {
+                    b.classList.remove('active', 'btn-danger');
+                    b.classList.add('btn-outline-danger');
+                });
+                this.classList.add('active', 'btn-danger');
+                this.classList.remove('btn-outline-danger');
                 currentPreviewLang = this.getAttribute('data-lang') || 'kh';
                 renderArticlePreview();
             });
@@ -1235,7 +1352,7 @@ $formAction = url('admin/actions/save-article.php');
         const btnPreviewPublishSubmit = document.getElementById('btnPreviewPublishSubmit');
         if (btnPreviewPublishSubmit && articleForm) {
             btnPreviewPublishSubmit.addEventListener('click', function() {
-                if (previewModalEl && typeof bootstrap !== 'undefined') {
+                if (previewModalEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
                     const bsModal = bootstrap.Modal.getInstance(previewModalEl);
                     if (bsModal) bsModal.hide();
                 }
