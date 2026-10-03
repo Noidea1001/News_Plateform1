@@ -776,7 +776,8 @@ class PublicController
      */
     public function registerReader(array $postData): void
     {
-        $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') || !empty($postData['ajax']);
+        $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+            || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false);
         $redirectTo = !empty($postData['redirect_to']) ? $postData['redirect_to'] : url('index.php');
         if (!str_starts_with($redirectTo, '/') && !str_starts_with($redirectTo, url(''))) {
             $redirectTo = url('index.php');
@@ -855,7 +856,8 @@ class PublicController
      */
     public function loginReader(array $postData): void
     {
-        $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest') || !empty($postData['ajax']);
+        $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest')
+            || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false);
         $redirectTo = !empty($postData['redirect_to']) ? $postData['redirect_to'] : url('index.php');
         if (!str_starts_with($redirectTo, '/') && !str_starts_with($redirectTo, url(''))) {
             $redirectTo = url('index.php');
