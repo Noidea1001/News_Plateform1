@@ -269,19 +269,21 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
             <div class="dropdown">
                 <button class="btn btn-link text-white p-0 text-decoration-none dropdown-toggle"
                     style="font-size:0.72rem; font-weight:600; opacity:0.75;" type="button"
-                    data-bs-toggle="dropdown" aria-expanded="false">
+                    data-bs-toggle="dropdown" aria-expanded="false" id="langDropdownBtn">
                     <i class="bi bi-globe2 me-1" style="font-size:0.7rem;"></i>
-                    <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'ខ្មែរ' : 'EN' ?>
+                    <span id="currentLangLabel"><?= ($currentLang === 'kh' || $currentLang === 'km') ? 'ខ្មែរ' : 'EN' ?></span>
                 </button>
-                <ul class="dropdown-menu dropdown-menu-end" style="min-width:140px;">
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width:140px;">
                     <li>
-                        <a class="dropdown-item <?= $currentLang === 'en' ? 'active' : '' ?>"
+                        <a class="dropdown-item lang-switch-link <?= $currentLang === 'en' ? 'active' : '' ?>"
+                            data-lang="en"
                             href="<?= lang_url('en') ?>">
                             English (EN)
                         </a>
                     </li>
                     <li>
-                        <a class="dropdown-item <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'active' : '' ?>"
+                        <a class="dropdown-item lang-switch-link <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'active' : '' ?>"
+                            data-lang="kh"
                             href="<?= lang_url('kh') ?>">
                             ភាសាខ្មែរ (KH)
                         </a>
@@ -336,23 +338,22 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                             <span id="mobileNotifBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center"
                                 style="top:-1px; right:-3px; font-size: 0.55rem; width: 15px; height: 15px; display: none;">0</span>
                         </button>
-                        <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 mt-2" style="width: 340px; max-height: 380px; overflow-y: auto; border-radius: 8px; z-index: 1080;">
-                            <div class="p-2.5 border-bottom d-flex align-items-center justify-content-between" style="background:#f8fafc;">
-                                <span class="fw-bold small text-dark"><i class="bi bi-bell-fill me-1 text-danger"></i> <?= __('notifications_title') ?></span>
-                                <span class="badge bg-danger text-white text-2xs" id="mobileNotifCountLabel">0</span>
-                            </div>
-                            <div class="p-2 border-bottom bg-light-subtle px-3 text-center">
-                                <button type="button" class="btn btn-sm btn-outline-danger w-100 py-1 fw-bold text-xs d-flex align-items-center justify-content-center gap-1.5 push-toggle-action-btn">
-                                    <i class="bi bi-bell-fill push-toggle-icon"></i>
-                                    <span class="push-toggle-text"><?= __('push_alerts_subscribe') ?></span>
+                        <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 mt-2" style="width: 330px; max-height: 420px; overflow-y: auto; border-radius: 8px; z-index: 1080;">
+                            <div class="p-2.5 px-3 border-bottom d-flex align-items-center justify-content-between bg-white">
+                                <div class="d-flex align-items-center gap-1.5">
+                                    <span class="fw-bold text-dark" style="font-size:0.88rem;"><?= __('notifications_title') ?></span>
+                                    <span class="badge rounded-pill bg-danger text-white text-3xs px-1.5 py-0.5" id="mobileNotifCountLabel">0</span>
+                                </div>
+                                <button type="button" class="btn btn-link text-decoration-none p-0 text-muted clear-all-notifs-btn" style="font-size:0.75rem;" title="<?= __('clear_all_notifs') ?>">
+                                    <i class="bi bi-trash3 me-1"></i><?= __('clear_all_notifs') ?>
                                 </button>
                             </div>
-                            <div id="mobileNotifList" class="list-group list-group-flush small">
+                            <div id="mobileNotifList" class="list-group list-group-flush" style="font-size: 0.83rem;">
                                 <div class="p-3 text-center text-muted text-xs">
                                     <span class="spinner-border spinner-border-sm me-1"></span> <?= __('loading') ?? 'Loading...' ?>
                                 </div>
                             </div>
-                            <div class="p-2 border-top text-center" style="background:#f8fafc;">
+                            <div class="p-2 border-top text-center" style="background:#fafafa;">
                                 <a href="<?= url('index.php?breaking=1') ?>" class="text-xs text-danger text-decoration-none fw-semibold">
                                     <?= __('filter_breaking_only') ?> &rarr;
                                 </a>
@@ -427,23 +428,22 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                                 <span id="notifBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center"
                                     style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; display: none;">0</span>
                             </button>
-                            <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 mt-2" style="width: 340px; max-height: 420px; overflow-y: auto; border-radius: 6px; z-index: 1080;">
-                                <div class="p-3 border-bottom d-flex align-items-center justify-content-between bg-light">
-                                    <span class="fw-bold small text-dark"><i class="bi bi-bell-fill me-1 text-danger"></i> <?= __('notifications_title') ?></span>
-                                    <span class="badge bg-danger text-white text-2xs" id="notifCountLabel">0</span>
-                                </div>
-                                <div class="p-2 border-bottom bg-light-subtle px-3 text-center">
-                                    <button type="button" class="btn btn-sm btn-outline-danger w-100 py-1 fw-bold text-xs d-flex align-items-center justify-content-center gap-1.5 push-toggle-action-btn">
-                                        <i class="bi bi-bell-fill push-toggle-icon"></i>
-                                        <span class="push-toggle-text"><?= __('push_alerts_subscribe') ?></span>
+                            <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 mt-2" style="width: 330px; max-height: 420px; overflow-y: auto; border-radius: 8px; z-index: 1080;">
+                                <div class="p-2.5 px-3 border-bottom d-flex align-items-center justify-content-between bg-white">
+                                    <div class="d-flex align-items-center gap-1.5">
+                                        <span class="fw-bold text-dark" style="font-size:0.88rem;"><?= __('notifications_title') ?></span>
+                                        <span class="badge rounded-pill bg-danger text-white text-3xs px-1.5 py-0.5" id="notifCountLabel">0</span>
+                                    </div>
+                                    <button type="button" class="btn btn-link text-decoration-none p-0 text-muted clear-all-notifs-btn" style="font-size:0.75rem;" title="<?= __('clear_all_notifs') ?>">
+                                        <i class="bi bi-trash3 me-1"></i><?= __('clear_all_notifs') ?>
                                     </button>
                                 </div>
-                                <div id="notifList" class="list-group list-group-flush small">
+                                <div id="notifList" class="list-group list-group-flush" style="font-size: 0.83rem;">
                                     <div class="p-3 text-center text-muted text-xs">
                                         <span class="spinner-border spinner-border-sm me-1"></span> <?= __('loading') ?? 'Loading...' ?>
                                     </div>
                                 </div>
-                                <div class="p-2 border-top text-center bg-light">
+                                <div class="p-2 border-top text-center" style="background:#fafafa;">
                                     <a href="<?= url('index.php?breaking=1') ?>" class="text-xs text-danger text-decoration-none fw-semibold">
                                         <?= __('filter_breaking_only') ?> &rarr;
                                     </a>
@@ -452,17 +452,30 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                         </div>
 
                         <!-- User Profile Dropdown (Desktop) -->
+                        <!-- User Profile Dropdown (Desktop) -->
                         <div class="dropdown ms-1">
+                            <?php $headerAvatar = $currentReader['avatar_url'] ?? ($staffUser['avatar_url'] ?? ''); ?>
                             <button class="btn btn-outline-danger btn-sm px-2.5 py-1.5 d-flex align-items-center gap-1.5 rounded-2 dropdown-toggle text-nowrap"
                                 type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.78rem;">
-                                <i class="bi bi-person-circle text-danger"></i>
+                                <?php if (!empty($headerAvatar)): ?>
+                                    <img src="<?= e(image_url($headerAvatar)) ?>" alt="Avatar" class="rounded-circle object-fit-cover flex-shrink-0" style="width: 20px; height: 20px;">
+                                <?php else: ?>
+                                    <i class="bi bi-person-circle text-danger"></i>
+                                <?php endif; ?>
                                 <span class="fw-bold"><?= e($currentReader ? $currentReader['name'] : ($staffUser['username'] ?? 'Staff Admin')) ?></span>
                             </button>
-                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" style="min-width: 200px;">
+                            <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2" style="min-width: 210px;">
                                 <li class="px-3 py-2 border-bottom">
-                                    <div class="fw-bold small text-dark"><?= e($currentReader ? $currentReader['name'] : ($staffUser['username'] ?? 'Staff Admin')) ?></div>
-                                    <div class="text-muted text-2xs"><?= e($currentReader ? $currentReader['email'] : ($staffUser['email'] ?? '')) ?></div>
-                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-3xs mt-1">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <?php if (!empty($headerAvatar)): ?>
+                                            <img src="<?= e(image_url($headerAvatar)) ?>" alt="Avatar" class="rounded-circle object-fit-cover flex-shrink-0 border" style="width: 32px; height: 32px;">
+                                        <?php endif; ?>
+                                        <div class="min-w-0">
+                                            <div class="fw-bold small text-dark text-truncate"><?= e($currentReader ? $currentReader['name'] : ($staffUser['username'] ?? 'Staff Admin')) ?></div>
+                                            <div class="text-muted text-3xs text-truncate"><?= e($currentReader ? $currentReader['email'] : ($staffUser['email'] ?? '')) ?></div>
+                                        </div>
+                                    </div>
+                                    <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-3xs mt-1.5">
                                         <?= $currentReader ? __('verified_reader_badge') : 'Staff Admin' ?>
                                     </span>
                                 </li>
@@ -505,8 +518,12 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                     <?php if ($currentUser) { ?>
                         <div class="mobile-menu-section">
                             <div class="d-flex align-items-center gap-2.5 py-2">
-                                <div class="d-flex align-items-center justify-content-center" style="width:36px; height:36px; border-radius:50%; background:rgba(217,4,41,0.08);">
-                                    <i class="bi bi-person-fill text-danger" style="font-size:1.1rem;"></i>
+                                <div class="d-flex align-items-center justify-content-center overflow-hidden flex-shrink-0" style="width:36px; height:36px; border-radius:50%; background:rgba(217,4,41,0.08);">
+                                    <?php if (!empty($headerAvatar)): ?>
+                                        <img src="<?= e(image_url($headerAvatar)) ?>" alt="Avatar" class="w-100 h-100 object-fit-cover">
+                                    <?php else: ?>
+                                        <i class="bi bi-person-fill text-danger" style="font-size:1.1rem;"></i>
+                                    <?php endif; ?>
                                 </div>
                                 <div class="flex-grow-1 min-w-0">
                                     <div class="fw-bold text-dark" style="font-size:0.88rem;"><?= e($currentReader ? $currentReader['name'] : ($staffUser['username'] ?? 'Staff Admin')) ?></div>
@@ -543,6 +560,23 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                             </button>
                         </div>
                     <?php } ?>
+
+                    <!-- Mobile Language Switcher Row -->
+                    <div class="mobile-menu-section d-flex align-items-center justify-content-between py-2">
+                        <span class="text-muted text-xs d-flex align-items-center gap-1.5 fw-semibold">
+                            <i class="bi bi-globe2 text-secondary"></i> <?= __('language') ?? 'Language' ?>
+                        </span>
+                        <div class="btn-group btn-group-sm" role="group">
+                            <a class="btn btn-sm lang-switch-link <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'btn-danger text-white' : 'btn-outline-secondary' ?>"
+                                data-lang="kh" href="<?= lang_url('kh') ?>" style="font-size:0.75rem; padding: 2px 10px;">
+                                ខ្មែរ
+                            </a>
+                            <a class="btn btn-sm lang-switch-link <?= $currentLang === 'en' ? 'btn-danger text-white' : 'btn-outline-secondary' ?>"
+                                data-lang="en" href="<?= lang_url('en') ?>" style="font-size:0.75rem; padding: 2px 10px;">
+                                EN
+                            </a>
+                        </div>
+                    </div>
 
                     <!-- Mobile PWA Install Trigger -->
                     <div class="mobile-menu-section">
@@ -752,6 +786,135 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                 });
             }
 
+            let currentFetchedNotifs = [];
+
+            function getClearedNotifs() {
+                try {
+                    const val = JSON.parse(localStorage.getItem('np_cleared_notifs') || '[]');
+                    return Array.isArray(val) ? val.map(String) : [];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function addClearedNotif(id) {
+                const cleared = getClearedNotifs();
+                const sId = String(id);
+                if (!cleared.includes(sId)) {
+                    cleared.push(sId);
+                    if (cleared.length > 300) cleared.splice(0, cleared.length - 300);
+                    localStorage.setItem('np_cleared_notifs', JSON.stringify(cleared));
+                }
+            }
+
+            function renderNotifsList(notifications) {
+                const badge = document.getElementById('notifBadge');
+                const countLabel = document.getElementById('notifCountLabel');
+                const list = document.getElementById('notifList');
+                const mobileBadge = document.getElementById('mobileNotifBadge');
+                const mobileCountLabel = document.getElementById('mobileNotifCountLabel');
+                const mobileList = document.getElementById('mobileNotifList');
+
+                const cleared = getClearedNotifs();
+                const active = (notifications || []).filter(n => !cleared.includes(String(n.id)));
+                const count = active.length;
+                const countText = count > 99 ? '99+' : count;
+
+                // Update badges
+                [badge, mobileBadge].forEach(b => {
+                    if (b) {
+                        b.textContent = countText;
+                        b.style.display = count > 0 ? 'flex' : 'none';
+                    }
+                });
+                [countLabel, mobileCountLabel].forEach(cl => {
+                    if (cl) cl.textContent = count;
+                });
+
+                // Build clean minimal notification list
+                let notifHtml = '';
+                if (count === 0) {
+                    notifHtml = `
+                        <div class="p-4 text-center text-muted" style="font-size:0.8rem;">
+                            <i class="bi bi-bell-slash text-secondary opacity-50 mb-1.5 d-block" style="font-size:1.4rem;"></i>
+                            <span><?= addslashes(__('no_notifications')) ?></span>
+                        </div>`;
+                } else {
+                    notifHtml = active.map(n => {
+                        const isBreaking = n.type === 'breaking';
+                        const tagHtml = isBreaking 
+                            ? `<span class="badge bg-danger text-white text-3xs px-1.5 py-0.5 rounded-1 fw-bold me-1"><?= addslashes(__('breaking')) ?></span>` 
+                            : '';
+
+                        return `
+                        <div class="list-group-item list-group-item-action py-2.5 px-3 border-bottom notif-item-card position-relative" data-notif-id="${n.id}" data-url="${escapeHtml(n.article_url)}" style="cursor:pointer; background:#ffffff; transition:background 0.15s ease;">
+                            <div class="d-flex align-items-start gap-2.5">
+                                <span class="rounded-circle bg-danger mt-1.5 flex-shrink-0" style="width:7px; height:7px; display:inline-block;"></span>
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="d-flex align-items-center gap-1.5 mb-1 flex-wrap">
+                                        ${tagHtml}
+                                        <span class="text-secondary text-3xs">${escapeHtml(n.time_ago || '')}</span>
+                                    </div>
+                                    <div class="fw-semibold text-dark text-xs mb-0.5" style="line-height:1.4; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
+                                        ${escapeHtml(n.title)}
+                                    </div>
+                                </div>
+                                <button type="button" class="btn btn-link text-muted p-0 text-decoration-none dismiss-notif-btn ms-1 flex-shrink-0" data-notif-id="${n.id}" title="<?= addslashes(__('dismiss_notif') ?? 'Dismiss') ?>" style="font-size:0.9rem; line-height:1; opacity:0.4;">
+                                    <i class="bi bi-x"></i>
+                                </button>
+                            </div>
+                        </div>
+                        `;
+                    }).join('');
+                }
+
+                [list, mobileList].forEach(l => {
+                    if (l) l.innerHTML = notifHtml;
+                });
+            }
+
+            // Global delegation for notification interactions: auto-clean on watch, dismiss, clear all
+            document.addEventListener('click', function(e) {
+                // 1. Dismiss single notification
+                const dismissBtn = e.target.closest('.dismiss-notif-btn');
+                if (dismissBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const notifId = dismissBtn.getAttribute('data-notif-id');
+                    if (notifId) {
+                        addClearedNotif(notifId);
+                        renderNotifsList(currentFetchedNotifs);
+                    }
+                    return;
+                }
+
+                // 2. Click to watch notification item -> clean auto and open article
+                const itemCard = e.target.closest('.notif-item-card');
+                if (itemCard) {
+                    e.preventDefault();
+                    const notifId = itemCard.getAttribute('data-notif-id');
+                    const url = itemCard.getAttribute('data-url');
+                    if (notifId) {
+                        addClearedNotif(notifId);
+                        renderNotifsList(currentFetchedNotifs);
+                    }
+                    if (url) {
+                        window.location.href = url;
+                    }
+                    return;
+                }
+
+                // 3. Clear all notifications button
+                const clearAllBtn = e.target.closest('.clear-all-notifs-btn');
+                if (clearAllBtn) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    (currentFetchedNotifs || []).forEach(n => addClearedNotif(n.id));
+                    renderNotifsList(currentFetchedNotifs);
+                    return;
+                }
+            });
+
             function fetchNotifications() {
                 <?php if (!$currentUser) { ?>
                     return; // Guests don't fetch notifications
@@ -760,98 +923,44 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                     .then(res => res.json())
                     .then(data => {
                         if (data && data.success && Array.isArray(data.notifications)) {
-                            // Desktop elements
-                            const badge = document.getElementById('notifBadge');
-                            const countLabel = document.getElementById('notifCountLabel');
-                            const list = document.getElementById('notifList');
-                            // Mobile elements
-                            const mobileBadge = document.getElementById('mobileNotifBadge');
-                            const mobileCountLabel = document.getElementById('mobileNotifCountLabel');
-                            const mobileList = document.getElementById('mobileNotifList');
-                            
-                            const count = data.count || data.notifications.length;
-                            const countText = count > 99 ? '99+' : count;
+                            currentFetchedNotifs = data.notifications;
+                            renderNotifsList(currentFetchedNotifs);
 
-                            // Update both desktop and mobile badges
-                            [badge, mobileBadge].forEach(b => {
-                                if (b) {
-                                    b.textContent = countText;
-                                    b.style.display = count > 0 ? 'flex' : 'none';
-                                }
-                            });
-                            [countLabel, mobileCountLabel].forEach(cl => {
-                                if (cl) cl.textContent = count;
-                            });
-                            
-                            // Build notification HTML
-                            let notifHtml = '';
-                            if (data.notifications.length === 0) {
-                                notifHtml = '<div class="p-3 text-center text-muted text-xs"><?= addslashes(__('no_notifications')) ?></div>';
-                            } else {
-                                notifHtml = data.notifications.map(n => {
-                                    const isBreaking = n.type === 'breaking';
-                                    const isSubTopic = n.is_subscribed_topic;
-                                    let badgeHtml = '';
-                                    if (isBreaking) {
-                                        badgeHtml = '<span class="badge bg-danger text-white text-3xs px-1.5 py-0.5 rounded-1 fw-bold me-1">HOT</span>';
-                                    } else if (isSubTopic) {
-                                        badgeHtml = '<span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-3xs px-1.5 py-0.5 rounded-1 fw-bold me-1">✓ <?= addslashes(__('subscribed_topic_badge')) ?></span>';
-                                    }
-                                    const catLabel = n.category_display ? `<span class="badge bg-light text-secondary text-3xs px-1.5 py-0.5 rounded-1">${escapeHtml(n.category_display)}</span>` : '';
-
-                                    return `
-                                    <a href="${n.article_url}" class="list-group-item list-group-item-action py-2 px-2.5 border-bottom">
-                                        <div class="d-flex align-items-start gap-2">
-                                            <div class="mt-0.5 flex-shrink-0">
-                                                ${isBreaking 
-                                                    ? '<span class="badge bg-danger rounded-circle p-1 d-inline-flex"><i class="bi bi-lightning-fill text-white" style="font-size:0.75rem;"></i></span>' 
-                                                    : (isSubTopic 
-                                                        ? '<span class="badge bg-danger bg-opacity-15 text-danger rounded-circle p-1 d-inline-flex"><i class="bi bi-bookmark-star-fill text-danger" style="font-size:0.75rem;"></i></span>'
-                                                        : '<span class="badge bg-primary bg-opacity-10 text-primary rounded-circle p-1 d-inline-flex"><i class="bi bi-newspaper" style="font-size:0.75rem;"></i></span>')}
-                                            </div>
-                                            <div class="flex-grow-1 overflow-hidden min-w-0">
-                                                <div class="d-flex align-items-center gap-1 mb-0.5 flex-wrap">
-                                                    ${badgeHtml}
-                                                    ${catLabel}
-                                                </div>
-                                                <div class="fw-bold text-dark text-xs text-truncate" style="line-height:1.35;">${escapeHtml(n.title)}</div>
-                                                <div class="text-muted text-2xs text-truncate mt-0.5">${escapeHtml(n.message || '')}</div>
-                                                <div class="text-2xs text-secondary mt-1"><i class="bi bi-clock me-1"></i>${escapeHtml(n.time_ago || '')}</div>
-                                            </div>
-                                        </div>
-                                    </a>
-                                `;
-                                }).join('');
-                            }
-
-                            // Apply to both desktop and mobile lists
-                            [list, mobileList].forEach(l => {
-                                if (l) l.innerHTML = notifHtml;
-                            });
-
-                            // Trigger OS System Pop-up Banner for new notifications
+                            // Instant In-App Toast & OS System Banner for new notifications
                             if (data.notifications && data.notifications.length > 0) {
                                 const latest = data.notifications[0];
-                                const lastSeenId = parseInt(localStorage.getItem('np_last_notif_id') || '0', 10);
-                                if (latest.id > lastSeenId) {
+                                const rawLastSeen = localStorage.getItem('np_last_notif_id');
+
+                                if (rawLastSeen === null) {
+                                    // Initial load baseline
                                     localStorage.setItem('np_last_notif_id', latest.id);
-                                    if (lastSeenId > 0 && 'Notification' in window && Notification.permission === 'granted') {
-                                        const notifTitle = (latest.type === 'breaking' ? '🚨 BREAKING NEWS: ' : '📰 ') + latest.title;
-                                        if ('serviceWorker' in navigator) {
-                                            navigator.serviceWorker.ready.then(reg => {
-                                                reg.showNotification(notifTitle, {
-                                                    body: latest.message,
-                                                    icon: '<?= url("assets/icons/icon-192.png") ?>',
-                                                    badge: '<?= url("assets/icons/icon-192.png") ?>',
-                                                    tag: 'notif-' + latest.id,
-                                                    requireInteraction: true,
-                                                    data: { url: latest.article_url }
+                                } else {
+                                    const lastSeenId = parseInt(rawLastSeen, 10);
+                                    if (latest.id > lastSeenId) {
+                                        localStorage.setItem('np_last_notif_id', latest.id);
+                                        const notifTitle = (latest.type === 'breaking' ? '🚨 BREAKING: ' : '📰 ') + latest.title;
+
+                                        // 1. Instant Floating Toast Banner on Screen
+                                        showInAppToastAlert(notifTitle, latest.message, latest.article_url);
+
+                                        // 2. OS System Notification Popup
+                                        if ('Notification' in window && Notification.permission === 'granted') {
+                                            if ('serviceWorker' in navigator) {
+                                                navigator.serviceWorker.ready.then(reg => {
+                                                    reg.showNotification(notifTitle, {
+                                                        body: latest.message,
+                                                        icon: '<?= url("assets/icons/icon-192.png") ?>',
+                                                        badge: '<?= url("assets/icons/icon-192.png") ?>',
+                                                        tag: 'notif-' + latest.id,
+                                                        requireInteraction: true,
+                                                        data: { url: latest.article_url }
+                                                    });
+                                                }).catch(() => {
+                                                    try {
+                                                        new Notification(notifTitle, { body: latest.message, icon: '<?= url("assets/icons/icon-192.png") ?>' });
+                                                    } catch(e) {}
                                                 });
-                                            }).catch(() => {
-                                                try {
-                                                    new Notification(notifTitle, { body: latest.message, icon: '<?= url("assets/icons/icon-192.png") ?>' });
-                                                } catch(e) {}
-                                            });
+                                            }
                                         }
                                     }
                                 }
@@ -861,9 +970,55 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                     .catch(e => console.debug('Notifications poll:', e));
             }
 
+            function showInAppToastAlert(title, message, targetUrl) {
+                let container = document.getElementById('np-toast-container');
+                if (!container) {
+                    container = document.createElement('div');
+                    container.id = 'np-toast-container';
+                    container.style.cssText = 'position:fixed; top:75px; right:20px; z-index:99999; max-width:380px; width:calc(100vw - 40px); pointer-events:none;';
+                    document.body.appendChild(container);
+                }
+
+                const toast = document.createElement('div');
+                toast.className = 'toast show border-0 shadow-lg mb-2 rounded-3 text-white animate__animated animate__fadeInDown';
+                toast.style.cssText = 'pointer-events:auto; background:linear-gradient(135deg, #dc2626 0%, #991b1b 100%); box-shadow:0 10px 30px rgba(220,38,38,0.4);';
+
+                const escTitle = escapeHtml(title);
+                const escMsg = escapeHtml(message || '');
+
+                toast.innerHTML = `
+                    <div class="toast-header bg-transparent text-white border-0 py-2 px-3 align-items-center">
+                        <span class="badge bg-white text-danger rounded-circle p-1 me-2 d-inline-flex align-items-center justify-content-center" style="width:22px;height:22px;">
+                            <i class="bi bi-lightning-charge-fill" style="font-size:0.75rem;"></i>
+                        </span>
+                        <strong class="me-auto text-uppercase text-xs tracking-wider fw-bold text-white">Breaking News Alert</strong>
+                        <small class="text-white-50 text-2xs me-2">Just now</small>
+                        <button type="button" class="btn-close btn-close-white ms-auto" onclick="this.closest('.toast').remove()"></button>
+                    </div>
+                    <div class="toast-body py-2 px-3 text-white border-top border-white border-opacity-10" style="cursor:pointer;" onclick="window.location.href='${targetUrl}'">
+                        <div class="fw-bold text-sm mb-1 text-white" style="line-height:1.3;">${escTitle}</div>
+                        <div class="text-xs text-white-80 text-truncate">${escMsg}</div>
+                    </div>
+                `;
+
+                container.appendChild(toast);
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.style.opacity = '0';
+                        toast.style.transition = 'opacity 0.4s ease';
+                        setTimeout(() => toast.remove(), 400);
+                    }
+                }, 8000);
+            }
+
             <?php if ($currentUser) { ?>
             fetchNotifications();
-            setInterval(fetchNotifications, 10000);
+            // Ultra-fast 3-second live polling
+            setInterval(fetchNotifications, 3000);
+            window.addEventListener('focus', fetchNotifications);
+            document.addEventListener('visibilitychange', function() {
+                if (document.visibilityState === 'visible') fetchNotifications();
+            });
             <?php } ?>
         });
     </script>
@@ -918,7 +1073,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                                     class="text-white text-decoration-none fw-semibold me-5 text-nowrap ticker-link">
                                     <span
                                         style="color:#f87171; font-weight:700;">[<?= e(cat_name($bItem['category_name'])) ?>]</span>
-                                    <?= e(article_title($bItem['title'])) ?>
+                                    <?= e(article_title($bItem)) ?>
                                 </a>
                             <?php } ?>
                         </div>
@@ -929,7 +1084,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                                     class="text-white text-decoration-none fw-semibold me-5 text-nowrap ticker-link">
                                     <span
                                         style="color:#f87171; font-weight:700;">[<?= e(cat_name($bItem['category_name'])) ?>]</span>
-                                    <?= e(article_title($bItem['title'])) ?>
+                                    <?= e(article_title($bItem)) ?>
                                 </a>
                             <?php } ?>
                         </div>

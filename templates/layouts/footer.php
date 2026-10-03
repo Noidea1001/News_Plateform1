@@ -6,11 +6,13 @@ $qvModal    = __DIR__ . '/../components/quick-view-modal.php';
 $savedModal = __DIR__ . '/../components/saved-articles-modal.php';
 $authModal  = __DIR__ . '/../components/auth-modal.php';
 $pwaModal   = __DIR__ . '/../components/pwa-install-modal.php';
+$pushPromptModal = __DIR__ . '/../components/push-prompt-banner.php';
 
 if (file_exists($qvModal))    { include $qvModal; }
 if (file_exists($savedModal)) { include $savedModal; }
 if (file_exists($authModal))  { include $authModal; }
 if (file_exists($pwaModal))   { include $pwaModal; }
+if (file_exists($pushPromptModal)) { include $pushPromptModal; }
 ?>
 
 <!-- ── CNA-Style Footer ────────────────────────────────────────────────── -->
@@ -134,8 +136,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 2. Bookmark LocalStorage Storage Engine
     const BOOKMARK_KEY = 'np_saved_articles_v1';
-    const CURRENT_LANG = '<?= $_SESSION['lang'] ?? 'en' ?>';
-    const IS_KHMER = (CURRENT_LANG === 'kh' || CURRENT_LANG === 'km');
+    window.CURRENT_LANG = '<?= $_SESSION['lang'] ?? 'en' ?>';
+    let CURRENT_LANG = window.CURRENT_LANG;
+    let IS_KHMER = (CURRENT_LANG === 'kh' || CURRENT_LANG === 'km');
     const TXT_READ_STORY = '<?= __('read_story') ?>';
     const IS_LOGGED_IN = <?= (\App\Core\Auth::readerCheck() || \App\Core\Auth::check()) ? 'true' : 'false' ?>;
 
@@ -668,12 +671,33 @@ document.addEventListener('DOMContentLoaded', function () {
             const reg = await navigator.serviceWorker.ready;
             const sub = await reg.pushManager.getSubscription();
 
+            const promptEl = document.getElementById('npPushNotificationPrompt');
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isStandalonePwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
             if (sub) {
                 updatePushBtnState(true);
+                if (promptEl) promptEl.classList.add('d-none');
             } else if (Notification.permission === 'denied') {
                 updatePushBtnState(false, true);
+                if (promptEl) promptEl.classList.add('d-none');
             } else {
                 updatePushBtnState(false);
+
+                // Show floating opt-in card if not dismissed recently
+                const dismissedUntil = localStorage.getItem('np_push_prompt_dismissed_until');
+                const now = Date.now();
+                if (!dismissedUntil || now > parseInt(dismissedUntil, 10)) {
+                    setTimeout(() => {
+                        if (promptEl && (!Notification.permission || Notification.permission === 'default')) {
+                            if (isIOS && !isStandalonePwa) {
+                                const iosHint = document.getElementById('iosSafariPushHint');
+                                if (iosHint) iosHint.classList.remove('d-none');
+                            }
+                            promptEl.classList.remove('d-none');
+                        }
+                    }, 2000);
+                }
             }
         } catch (err) {
             console.warn('[WebPush] Error checking subscription state:', err);
@@ -687,29 +711,53 @@ document.addEventListener('DOMContentLoaded', function () {
             const text = btn.querySelector('.push-toggle-text, #pushSubscribeText');
 
             if (isDenied) {
-                if (icon) icon.className = 'bi bi-bell-slash text-danger opacity-50';
+                if (icon) {
+                    icon.style.display = 'none';
+                }
                 if (text) text.textContent = '<?= addslashes(__('push_alerts_denied')) ?>';
                 btn.disabled = true;
                 btn.classList.remove('btn-outline-danger', 'btn-success');
                 btn.classList.add('btn-secondary');
             } else if (isSubscribed) {
-                if (icon) icon.className = 'bi bi-check-circle-fill text-white';
-                if (text) text.textContent = '✓ <?= addslashes(__('push_alerts_subscribed')) ?>';
+                if (icon) {
+                    icon.style.display = 'none';
+                }
+                if (text) text.textContent = '<?= addslashes(__('push_alerts_subscribed')) ?>';
                 btn.disabled = false;
                 btn.classList.remove('btn-outline-danger', 'btn-secondary');
                 btn.classList.add('btn-success');
             } else {
-                if (icon) icon.className = 'bi bi-bell-fill text-danger';
+                if (icon) {
+                    icon.className = 'bi bi-bell text-warning';
+                    icon.style.display = 'inline-block';
+                }
                 if (text) text.textContent = '<?= addslashes(__('push_alerts_subscribe')) ?>';
                 btn.disabled = false;
                 btn.classList.remove('btn-success', 'btn-secondary');
                 btn.classList.add('btn-outline-danger');
             }
         });
+
+        const promptEl = document.getElementById('npPushNotificationPrompt');
+        if (isSubscribed && promptEl) {
+            promptEl.classList.add('d-none');
+        }
     }
 
     async function handlePushToggleAction(e) {
-        if (e) e.preventDefault();
+        if (e && typeof e.preventDefault === 'function') e.preventDefault();
+
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        const isStandalonePwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
+        if (isIOS && !isStandalonePwa) {
+            const iosModalEl = document.getElementById('iosPushGuideModal');
+            if (iosModalEl && typeof bootstrap !== 'undefined') {
+                const modal = bootstrap.Modal.getOrCreateInstance(iosModalEl);
+                modal.show();
+                return;
+            }
+        }
 
         if (!('Notification' in window)) {
             alert('This browser does not support Web Push notifications.');
@@ -767,6 +815,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 const saveResult = await saveRes.json();
                 if (saveResult.success) {
                     updatePushBtnState(true);
+                    if (typeof window.showAdminToast === 'function') {
+                        window.showAdminToast('<?= addslashes(__('push_alerts_success_msg')) ?>', 'success');
+                    }
                 } else {
                     throw new Error(saveResult.error || 'Server rejected subscription');
                 }
@@ -777,11 +828,142 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    // Push Prompt Banner event listeners
+    const dismissBtn = document.getElementById('dismissPushPromptBtn');
+    const laterBtn = document.getElementById('laterPushPromptBtn');
+    const acceptBtn = document.getElementById('acceptPushPromptBtn');
+
+    function dismissPushPrompt() {
+        const promptEl = document.getElementById('npPushNotificationPrompt');
+        if (promptEl) promptEl.classList.add('d-none');
+        localStorage.setItem('np_push_prompt_dismissed_until', (Date.now() + 86400000).toString());
+    }
+
+    if (dismissBtn) dismissBtn.addEventListener('click', dismissPushPrompt);
+    if (laterBtn) laterBtn.addEventListener('click', dismissPushPrompt);
+    if (acceptBtn) {
+        acceptBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            handlePushToggleAction(e);
+            dismissPushPrompt();
+        });
+    }
+
     document.addEventListener('click', function(e) {
         const toggleBtn = e.target.closest('.push-toggle-action-btn, #pushSubscribeBtn');
         if (toggleBtn) {
             e.preventDefault();
             handlePushToggleAction(e);
+        }
+    });
+
+    // =========================================================================
+    // Seamless In-Place Language Switcher (Zero Reload / Zero Refresh)
+    // =========================================================================
+    window.switchLanguageSeamlessly = async function(targetLang, targetUrl) {
+        if (!targetUrl) return;
+        const normLang = (targetLang === 'km' || targetLang === 'kh') ? 'kh' : 'en';
+
+        // Check if already in the target language
+        if (window.CURRENT_LANG === normLang) return;
+
+        const savedScrollY = window.scrollY;
+        const progressBar = document.getElementById('readingProgressBar');
+        if (progressBar) {
+            progressBar.style.transition = 'width 0.15s ease';
+            progressBar.style.width = '60%';
+            progressBar.style.opacity = '1';
+        }
+
+        try {
+            const response = await fetch(targetUrl, {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            });
+
+            if (!response.ok) {
+                window.location.href = targetUrl;
+                return;
+            }
+
+            const html = await response.text();
+            const parser = new DOMParser();
+            const newDoc = parser.parseFromString(html, 'text/html');
+
+            // 1. Update Title & HTML Language
+            document.title = newDoc.title;
+            document.documentElement.lang = normLang;
+            window.CURRENT_LANG = normLang;
+            CURRENT_LANG = normLang;
+            IS_KHMER = (normLang === 'kh');
+
+            // 2. Update address bar URL cleanly without page reload
+            if (window.history && window.history.replaceState) {
+                window.history.replaceState(null, newDoc.title, targetUrl);
+            }
+
+            // 3. Swap page regions smoothly in place
+            const swapSelectors = [
+                '.top-utility-header',
+                '.navbar-main',
+                '#mobileSearchCollapse',
+                '.nav-category-toolbar',
+                '.breaking-ticker-bar',
+                'main',
+                'footer',
+                '#savedArticlesModal',
+                '#readerAuthModal',
+                '#quickViewModal'
+            ];
+
+            swapSelectors.forEach(selector => {
+                const currentEl = document.querySelector(selector);
+                const newEl = newDoc.querySelector(selector);
+                if (currentEl && newEl) {
+                    currentEl.innerHTML = newEl.innerHTML;
+                    if (newEl.className !== currentEl.className) {
+                        currentEl.className = newEl.className;
+                    }
+                }
+            });
+
+            // 4. Maintain exact reading position
+            window.scrollTo(0, savedScrollY);
+
+            // 5. Hide micro progress bar
+            if (progressBar) {
+                progressBar.style.width = '100%';
+                setTimeout(() => {
+                    progressBar.style.opacity = '0';
+                    progressBar.style.width = '0%';
+                }, 200);
+            }
+
+            // 6. Dismiss any open dropdowns or mobile menus
+            document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
+
+            // 7. Sync bookmarks & notification counter
+            if (typeof syncBookmarkButtonsState === 'function') {
+                syncBookmarkButtonsState();
+            }
+            if (typeof fetchNotifications === 'function') {
+                fetchNotifications();
+            }
+
+        } catch (err) {
+            console.error('Seamless language transition failed:', err);
+            window.location.href = targetUrl;
+        }
+    };
+
+    // Delegated click listener for all language switch triggers
+    document.addEventListener('click', function(e) {
+        const langTrigger = e.target.closest('.lang-switch-link');
+        if (!langTrigger) return;
+        e.preventDefault();
+        const lang = langTrigger.getAttribute('data-lang') || 'en';
+        const href = langTrigger.getAttribute('href') || langTrigger.getAttribute('data-href');
+        if (href) {
+            window.switchLanguageSeamlessly(lang, href);
         }
     });
 

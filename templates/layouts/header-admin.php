@@ -219,13 +219,15 @@ $currentLang = $_SESSION['lang'] ?? 'en';
                         <ul class="dropdown-menu dropdown-menu-end shadow-lg border mt-1"
                             aria-labelledby="adminLangDropdown" style="min-width:150px; z-index:2000 !important;">
                             <li>
-                                <a class="dropdown-item py-2 fw-bold <?= $currentLang === 'en' ? 'active bg-danger text-white' : '' ?>"
+                                <a class="dropdown-item py-2 fw-bold lang-switch-link <?= $currentLang === 'en' ? 'active bg-danger text-white' : '' ?>"
+                                    data-lang="en"
                                     href="<?= lang_url('en') ?>">
                                     English (EN)
                                 </a>
                             </li>
                             <li>
-                                <a class="dropdown-item py-2 fw-bold <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'active bg-danger text-white' : '' ?>"
+                                <a class="dropdown-item py-2 fw-bold lang-switch-link <?= ($currentLang === 'kh' || $currentLang === 'km') ? 'active bg-danger text-white' : '' ?>"
+                                    data-lang="kh"
                                     href="<?= lang_url('kh') ?>">
                                     ភាសាខ្មែរ (KH)
                                 </a>
@@ -247,23 +249,35 @@ $currentLang = $_SESSION['lang'] ?? 'en';
                                 class="btn btn-light btn-sm dropdown-toggle d-flex align-items-center gap-2 fw-semibold text-nowrap"
                                 style="font-size:0.8rem; border:1px solid #cbd5e1; border-radius:4px; padding:0.4rem 0.75rem; color:#0f172a; background:#ffffff;"
                                 type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                <span class="d-flex align-items-center justify-content-center rounded fw-bold text-white"
-                                    style="width:22px;height:22px;font-size:0.68rem;background:#c8102e;border-radius:2px;flex-shrink:0;">
-                                    <?= strtoupper(substr($currentUser['username'], 0, 1)) ?>
-                                </span>
+                                <?php if (!empty($currentUser['avatar_url'])) { ?>
+                                    <img src="<?= e(image_url($currentUser['avatar_url'])) ?>" alt="Avatar" class="rounded-circle object-fit-cover" style="width:24px;height:24px;border:1px solid #c8102e;flex-shrink:0;">
+                                <?php } else { ?>
+                                    <span class="d-flex align-items-center justify-content-center rounded fw-bold text-white"
+                                        style="width:22px;height:22px;font-size:0.68rem;background:#c8102e;border-radius:2px;flex-shrink:0;">
+                                        <?= strtoupper(substr($currentUser['username'], 0, 1)) ?>
+                                    </span>
+                                <?php } ?>
                                 <span><?= e($currentUser['username']) ?></span>
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end shadow-lg border mt-1" 
                                 style="min-width:220px; max-width:300px; right:0; left:auto; border-radius:6px; z-index:3000 !important; box-shadow: 0 10px 25px rgba(0,0,0,0.15) !important;">
                                 <li>
-                                    <div class="px-3 py-2.5 border-bottom" style="font-size:0.8rem; background:#f8fafc;">
-                                        <div class="fw-bold text-dark mb-1" style="word-break: break-all; line-height: 1.35;">
-                                            <?= e($currentUser['email']) ?>
+                                    <div class="px-3 py-2.5 border-bottom d-flex align-items-center gap-2.5" style="font-size:0.8rem; background:#f8fafc;">
+                                        <?php if (!empty($currentUser['avatar_url'])) { ?>
+                                            <img src="<?= e(image_url($currentUser['avatar_url'])) ?>" alt="Avatar" class="rounded-circle object-fit-cover flex-shrink-0 border" style="width:36px;height:36px;">
+                                        <?php } ?>
+                                        <div class="min-w-0">
+                                            <div class="fw-bold text-dark text-truncate" style="line-height: 1.35;">
+                                                <?= e($currentUser['username']) ?>
+                                            </div>
+                                            <div class="text-muted text-3xs text-truncate">
+                                                <?= e($currentUser['email']) ?>
+                                            </div>
+                                            <span class="badge text-uppercase mt-1"
+                                                style="background:rgba(200,16,46,0.10);color:#c8102e;border:1px solid rgba(200,16,46,0.25);font-size:0.62rem;border-radius:3px;padding:0.2em 0.5em;">
+                                                <?= e($currentUser['role']) ?>
+                                            </span>
                                         </div>
-                                        <span class="badge text-uppercase"
-                                            style="background:rgba(200,16,46,0.10);color:#c8102e;border:1px solid rgba(200,16,46,0.25);font-size:0.65rem;border-radius:3px;padding:0.3em 0.6em;">
-                                            <?= e($currentUser['role']) ?>
-                                        </span>
                                     </div>
                                 </li>
                                 <li>
@@ -391,6 +405,45 @@ $currentLang = $_SESSION['lang'] ?? 'en';
                 setTimeout(function() { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
             }, 4000);
         };
+
+        // Seamless Admin Language Switcher (Zero Reload / Zero Refresh)
+        document.addEventListener('click', async function(e) {
+            const langTrigger = e.target.closest('.lang-switch-link');
+            if (!langTrigger) return;
+            e.preventDefault();
+            const targetLang = langTrigger.getAttribute('data-lang') || 'en';
+            const targetUrl = langTrigger.getAttribute('href');
+            if (!targetUrl) return;
+
+            const savedScrollY = window.scrollY;
+            try {
+                const response = await fetch(targetUrl, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                if (!response.ok) { window.location.href = targetUrl; return; }
+                const html = await response.text();
+                const parser = new DOMParser();
+                const newDoc = parser.parseFromString(html, 'text/html');
+
+                document.title = newDoc.title;
+                document.documentElement.lang = targetLang;
+                if (window.history && window.history.replaceState) {
+                    window.history.replaceState(null, newDoc.title, targetUrl);
+                }
+
+                ['.admin-topbar', 'header', '.admin-sidebar', 'main', '.content-wrapper'].forEach(selector => {
+                    const currentEl = document.querySelector(selector);
+                    const newEl = newDoc.querySelector(selector);
+                    if (currentEl && newEl) {
+                        currentEl.innerHTML = newEl.innerHTML;
+                    }
+                });
+
+                window.scrollTo(0, savedScrollY);
+                document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
+            } catch (err) {
+                console.error('Seamless admin language switch error:', err);
+                window.location.href = targetUrl;
+            }
+        });
     </script>
 
     <main class="flex-grow-1">
