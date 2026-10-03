@@ -357,8 +357,15 @@ $lang['push_alerts_title'] = "ការជូនដំណឹងរហ័សត�
 $lang['push_alerts_subscribe'] = "ទទួលដំណឹងបន្ទាន់";
 $lang['push_alerts_subscribed'] = "បានបើកការជូនដំណឹង";
 $lang['push_alerts_denied'] = "បានបដិសេធក្នុង Browser";
-$lang['push_alerts_enable_prompt'] = "អនុញ្ញាតការជូនដំណឹងតាម Browser ដើម្បីទទួលបានព័ត៌មានបន្ទាន់ទាន់ហេតុការណ៍ភ្លាមៗនៅលើឧបករណ៍របស់អ្នក។";
+$lang['push_alerts_enable_prompt'] = "អនុញ្ញាតការជូនដំណឹងតាម Browser ដើម្បីទទួលបានព័ត៌មានបន្ទាន់ទាន់ហេតុការណ៍ភ្លាមៗនៅលើឧបករណ៍របស់អ្នក ទោះបីជាបិទ Browser ក៏ដោយ។";
 $lang['push_alerts_unsubscribed'] = "បានបិទការជូនដំណឹងតាម Browser។";
+$lang['push_alerts_ios_title'] = "របៀបបើកការជូនដំណឹងលើ iPhone";
+$lang['push_alerts_ios_step1'] = "ចុចលើប៊ូតុង Share (⎋) នៅផ្នែកខាងក្រោមនៃ Safari។";
+$lang['push_alerts_ios_step2'] = "អូសចុះក្រោម រួចជ្រើសរើស 'Add to Home Screen' (+ លើអេក្រង់ដើម)។";
+$lang['push_alerts_ios_step3'] = "បើក NewsPlatform ពីអេក្រង់ដើម (Home Screen) ដើម្បីទទួលការជូនដំណឹងទោះបីជាបិទកម្មវិធី។";
+$lang['push_alerts_prompt_btn'] = "បើកការជូនដំណឹង";
+$lang['push_alerts_later_btn'] = "ពេលក្រោយ";
+$lang['push_alerts_success_msg'] = "បានបើកការជូនដំណឹងជោគជ័យ! អ្នកនឹងទទួលបានព័ត៌មានទាន់ហេតុការណ៍គ្រប់ពេលវេលា។";
 
 // 14. RESTful API & Developers
 $lang['api_documentation'] = "RESTful API";
@@ -399,6 +406,8 @@ $lang['reader_signout'] = "ចាកចេញ";
 $lang['reader_profile'] = "ព័ត៌មានអ្នកអាន";
 $lang['notifications_title'] = "ការជូនដំណឹងព័ត៌មានថ្មីៗ";
 $lang['mark_all_read'] = "សម្គាល់ថាបានអានទាំងអស់";
+$lang['clear_all_notifs'] = "សម្អាតទាំងអស់";
+$lang['dismiss_notif'] = "លុបចោល";
 $lang['no_notifications'] = "មិនទាន់មានការជូនដំណឹងនៅឡើយទេ។";
 $lang['breaking_alert'] = "ដំណឹងបន្ទាន់";
 $lang['published_alert'] = "អត្ថបទថ្មីបានផ្សាយ";

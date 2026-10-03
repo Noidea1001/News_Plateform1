@@ -357,8 +357,15 @@ $lang['push_alerts_title'] = "Real-Time Browser Push Alerts";
 $lang['push_alerts_subscribe'] = "Get Breaking Alerts";
 $lang['push_alerts_subscribed'] = "Breaking Alerts Active";
 $lang['push_alerts_denied'] = "Alerts Blocked in Browser";
-$lang['push_alerts_enable_prompt'] = "Enable instant push notifications to get breaking news alerts directly on your device.";
+$lang['push_alerts_enable_prompt'] = "Enable instant push notifications to get breaking news alerts directly on your device even when your browser is closed.";
 $lang['push_alerts_unsubscribed'] = "Push notifications turned off.";
+$lang['push_alerts_ios_title'] = "Enable Push Notifications on iPhone";
+$lang['push_alerts_ios_step1'] = "Tap the Share button ⎋ at the bottom of Safari.";
+$lang['push_alerts_ios_step2'] = "Scroll down and select 'Add to Home Screen' (+).";
+$lang['push_alerts_ios_step3'] = "Open NewsPlatform from your Home Screen to receive instant alerts even when closed.";
+$lang['push_alerts_prompt_btn'] = "Turn on Alerts";
+$lang['push_alerts_later_btn'] = "Maybe Later";
+$lang['push_alerts_success_msg'] = "Push alerts enabled! You will now receive breaking news notifications anytime.";
 
 // 14. RESTful API & Developers
 $lang['api_documentation'] = "RESTful API";
@@ -399,6 +406,8 @@ $lang['reader_signout'] = "Sign Out";
 $lang['reader_profile'] = "Reader Profile";
 $lang['notifications_title'] = "News Alerts & Notifications";
 $lang['mark_all_read'] = "Mark all as read";
+$lang['clear_all_notifs'] = "Clear all";
+$lang['dismiss_notif'] = "Dismiss";
 $lang['no_notifications'] = "No news alerts at this time.";
 $lang['breaking_alert'] = "Breaking Alert";
 $lang['published_alert'] = "New Story Published";
