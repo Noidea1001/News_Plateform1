@@ -126,7 +126,6 @@ $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
                 <form id="commentForm" action="<?= url('comment.php') ?>" method="POST">
                     <input type="hidden" name="article_id" value="<?= (int)$article['id'] ?>">
                     <input type="hidden" name="parent_id" id="commentParentId" value="">
-                    <input type="hidden" name="is_ajax" value="1">
                     <input type="hidden" name="redirect_to" value="<?= e($_SERVER['REQUEST_URI'] ?? url('article.php?id=' . (int)$article['id'])) ?>">
 
                     <div class="d-flex align-items-start gap-2">
@@ -285,8 +284,10 @@ $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function () {
+function initCommentsSection() {
     const commentForm = document.getElementById('commentForm');
+    if (!commentForm || commentForm.dataset.initialized) return;
+    commentForm.dataset.initialized = 'true';
     const submitBtn = document.getElementById('submitCommentBtn');
     const alertBox = document.getElementById('commentAlertBox');
     const parentIdInput = document.getElementById('commentParentId');
@@ -620,5 +621,10 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     }
-});
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCommentsSection);
+} else {
+    initCommentsSection();
+}
 </script>

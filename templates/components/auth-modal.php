@@ -49,7 +49,6 @@ $currentRequestUri = $_SERVER['REQUEST_URI'] ?? url('index.php');
                         <form id="modalLoginForm" action="<?= url('login.php') ?>" method="POST">
                             <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
                             <input type="hidden" name="redirect_to" value="<?= e($currentRequestUri) ?>">
-                            <input type="hidden" name="ajax" value="1">
 
                             <div class="mb-3">
                                 <label for="modalLoginEmail" class="form-label small fw-semibold text-dark mb-1">
@@ -92,7 +91,6 @@ $currentRequestUri = $_SERVER['REQUEST_URI'] ?? url('index.php');
                         <form id="modalRegisterForm" action="<?= url('register.php') ?>" method="POST">
                             <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
                             <input type="hidden" name="redirect_to" value="<?= e($currentRequestUri) ?>">
-                            <input type="hidden" name="ajax" value="1">
 
                             <div class="mb-2.5">
                                 <label for="modalRegName" class="form-label small fw-semibold text-dark mb-1">
@@ -179,9 +177,10 @@ function switchAuthTab(tab) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+function initAuthModal() {
     const modalEl = document.getElementById('readerAuthModal');
-    if (!modalEl) return;
+    if (!modalEl || modalEl.dataset.initialized) return;
+    modalEl.dataset.initialized = 'true';
 
     modalEl.addEventListener('show.bs.modal', function(event) {
         const triggerBtn = event.relatedTarget;
@@ -253,5 +252,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     setupAuthForm('modalLoginForm', 'modalLoginSubmit');
     setupAuthForm('modalRegisterForm', 'modalRegSubmit');
-});
+}
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAuthModal);
+} else {
+    initAuthModal();
+}
 </script>
