@@ -28,7 +28,7 @@ $formAction = url('admin/actions/save-article.php');
                 class="btn btn-outline-secondary px-3.5 py-2 fw-semibold rounded-3 text-nowrap shadow-sm">
                 <span><?= __('cancel') ?></span>
             </a>
-            <button type="button" id="btnLivePreviewArticle"
+            <button type="button" id="btnLivePreviewArticle" onclick="if(window.openArticleLivePreview) window.openArticleLivePreview(event);"
                 class="btn btn-outline-danger px-3.5 py-2 fw-semibold rounded-3 text-nowrap shadow-sm d-inline-flex align-items-center gap-1.5">
                 <i class="bi bi-eye-fill"></i>
                 <span><?= __('live_preview') ?? 'Live Preview' ?></span>
@@ -546,69 +546,78 @@ $formAction = url('admin/actions/save-article.php');
 </div>
 
 <!-- =========================================================================
-     Professional Article Live Preview Modal
+     Professional Article Live Preview Modal (True Full-Page & Responsive Simulator)
      ========================================================================= -->
 <div class="modal fade" id="articlePreviewModal" tabindex="-1" aria-labelledby="articlePreviewModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-lg-down">
-        <div class="modal-content border-0 shadow-lg">
+    <div class="modal-dialog modal-fullscreen">
+        <div class="modal-content border-0 rounded-0" style="background: #e2e8f0;">
             
-            <!-- Modal Header with Viewport & Language Controls -->
-            <div class="modal-header py-2.5 px-3 bg-light border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
-                <div class="d-flex align-items-center gap-2">
-                    <span class="badge bg-danger rounded-1 px-2.5 py-1 text-uppercase fw-bold" style="font-size:0.72rem; letter-spacing:0.04em;">
+            <!-- Modal Header: Sticky Top Control Bar -->
+            <div class="modal-header py-2 px-3 bg-dark text-white border-bottom border-secondary border-opacity-25 d-flex align-items-center justify-content-between flex-wrap gap-2 sticky-top" style="z-index: 1060; background: #0f172a !important;">
+                <div class="d-flex align-items-center gap-2.5">
+                    <span class="badge bg-danger rounded-1 px-2.5 py-1 text-uppercase fw-bold" style="font-size:0.75rem; letter-spacing:0.04em;">
                         <i class="bi bi-eye-fill me-1"></i><?= __('live_preview') ?? 'Live Preview' ?>
                     </span>
-                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-2 py-0.5 text-3xs fw-bold" id="previewTemplateBadge">
-                        Standard Blueprint
+                    <span class="badge bg-white bg-opacity-10 text-white-50 border border-white border-opacity-10 px-2 py-0.5 text-3xs fw-bold" id="previewTemplateBadge">
+                        100% Real Template
+                    </span>
+                    <span class="text-white-50 text-3xs d-none d-md-inline">|</span>
+                    <span class="text-white-50 text-3xs d-none d-md-inline" id="previewResolutionIndicator">
+                        <i class="bi bi-display me-1"></i>Desktop Full Page (100%)
                     </span>
                 </div>
 
                 <!-- Responsive Device Viewport Switcher -->
-                <div class="d-flex align-items-center gap-1 bg-white p-1 rounded-2 border shadow-2xs">
-                    <button type="button" class="btn btn-xs btn-light px-2.5 py-1 text-3xs fw-semibold active device-switch-btn" data-device="desktop" title="Desktop View (100%)">
-                        <i class="bi bi-display me-1 text-secondary"></i>Desktop
+                <div class="d-flex align-items-center gap-1 bg-black bg-opacity-40 p-1 rounded-2 border border-secondary border-opacity-25 shadow-2xs">
+                    <button type="button" class="btn btn-xs btn-outline-light px-2.5 py-1 text-3xs fw-semibold active device-switch-btn" data-device="desktop" title="Desktop Full Page View (100%)">
+                        <i class="bi bi-display me-1 text-white-50"></i>Desktop
                     </button>
-                    <button type="button" class="btn btn-xs btn-light px-2.5 py-1 text-3xs fw-semibold device-switch-btn" data-device="tablet" title="Tablet View (768px)">
-                        <i class="bi bi-tablet me-1 text-secondary"></i>Tablet
+                    <button type="button" class="btn btn-xs btn-outline-light px-2.5 py-1 text-3xs fw-semibold device-switch-btn" data-device="tablet" title="Tablet View (768px)">
+                        <i class="bi bi-tablet me-1 text-white-50"></i>Tablet
                     </button>
-                    <button type="button" class="btn btn-xs btn-light px-2.5 py-1 text-3xs fw-semibold device-switch-btn" data-device="mobile" title="Mobile View (390px)">
-                        <i class="bi bi-phone me-1 text-secondary"></i>Mobile
+                    <button type="button" class="btn btn-xs btn-outline-light px-2.5 py-1 text-3xs fw-semibold device-switch-btn" data-device="mobile" title="Mobile Phone View (390px)">
+                        <i class="bi bi-phone me-1 text-white-50"></i>Mobile
                     </button>
                 </div>
 
-                <!-- Preview Language Switcher & Close Button -->
+                <!-- Language Toggle, Open in New Tab & Close Button -->
                 <div class="d-flex align-items-center gap-2">
                     <div class="btn-group btn-group-sm" role="group">
-                        <button type="button" class="btn btn-xs btn-outline-danger active preview-lang-btn" data-lang="kh" style="font-size:0.75rem; padding:2px 10px;">
+                        <button type="button" class="btn btn-xs <?= ($currentLang ?? 'kh') === 'kh' ? 'btn-danger active' : 'btn-outline-danger' ?> preview-lang-btn" data-lang="kh" style="font-size:0.75rem; padding:3px 10px;">
                             ខ្មែរ (KH)
                         </button>
-                        <button type="button" class="btn btn-xs btn-outline-danger preview-lang-btn" data-lang="en" style="font-size:0.75rem; padding:2px 10px;">
+                        <button type="button" class="btn btn-xs <?= ($currentLang ?? 'kh') === 'en' ? 'btn-danger active' : 'btn-outline-danger' ?> preview-lang-btn" data-lang="en" style="font-size:0.75rem; padding:3px 10px;">
                             EN
                         </button>
                     </div>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn btn-outline-light btn-xs px-2.5 py-1 text-3xs fw-semibold rounded" id="btnOpenPreviewNewTab" title="Open 100% Real Full Page in New Browser Tab">
+                        <i class="bi bi-box-arrow-up-right me-1"></i>New Tab
+                    </button>
+                    <button type="button" class="btn btn-danger btn-sm px-3 py-1 fw-bold rounded-2 d-none d-sm-inline-flex align-items-center gap-1 shadow-sm" id="btnPreviewPublishSubmit">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span><?= $isEdit ? __('update_article') : __('publish_save') ?></span>
+                    </button>
+                    <button type="button" class="btn-close btn-close-white ms-1" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
             </div>
 
-            <!-- Modal Body with Device Simulation Frame -->
-            <div class="modal-body p-0 bg-light-subtle d-flex justify-content-center overflow-auto" style="min-height: 520px; background:#f1f5f9;">
-                <div id="previewFrameWrapper" style="width: 100%; max-width: 100%; transition: all 0.25s ease; background: #ffffff; min-height: 520px;">
-                    <div id="previewRenderContainer" class="p-3 p-md-4">
-                        <!-- Dynamic rendered article inserted via JavaScript -->
-                    </div>
+            <!-- Modal Body: Real 100% Live Template Iframe Container -->
+            <div class="modal-body p-0 d-flex justify-content-center overflow-auto" id="previewModalBodyScroll" style="background: #0b1320; min-height: calc(100vh - 100px);">
+                <div id="previewFrameWrapper" style="width: 100%; max-width: 100%; transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); background: #ffffff; height: 100%; min-height: calc(100vh - 100px); display: flex; flex-direction: column;">
+                    <iframe id="livePreviewIframe" name="livePreviewIframe" src="about:blank" style="width: 100%; height: 100%; min-height: calc(100vh - 100px); border: none; flex-grow: 1; display: block;" allowfullscreen></iframe>
                 </div>
             </div>
 
-            <!-- Modal Footer -->
-            <div class="modal-footer py-2.5 px-3 bg-white border-top d-flex align-items-center justify-content-between">
+            <!-- Modal Sticky Bottom Status Bar -->
+            <div class="modal-footer py-2 px-3 bg-white border-top d-flex align-items-center justify-content-between">
                 <button type="button" class="btn btn-outline-secondary btn-sm px-3 rounded-2 fw-semibold" data-bs-dismiss="modal">
                     &larr; <?= __('back_to_editor') ?? 'Back to Editing' ?>
                 </button>
                 <div class="d-flex align-items-center gap-2">
                     <span class="text-muted text-3xs d-none d-md-inline">
-                        <i class="bi bi-info-circle me-1"></i><?= __('preview_disclaimer') ?? 'Simulates live reader viewport and blueprint styling' ?>
+                        <i class="bi bi-info-circle me-1"></i>Full-page responsive preview renders actual article blueprints with breadcrumbs, typography, citations, audio & related coverage
                     </span>
-                    <button type="button" id="btnPreviewPublishSubmit" class="btn btn-danger btn-sm px-3.5 py-1.5 rounded-2 fw-bold shadow-2xs">
+                    <button type="button" class="btn btn-danger btn-sm px-3.5 py-1.5 rounded-2 fw-bold shadow-2xs" onclick="document.getElementById('btnPreviewPublishSubmit').click()">
                         <?= $isEdit ? __('update_article') : __('publish_save') ?>
                     </button>
                 </div>
@@ -620,9 +629,10 @@ $formAction = url('admin/actions/save-article.php');
 
 <!-- Real-Time JavaScript Slug Generator & Bilingual Quill Setup -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+    function initArticleFormPage() {
         const titleKhInput = document.getElementById('title_kh');
         const titleEnInput = document.getElementById('title_en');
+
         const compositeTitleInput = document.getElementById('title');
         const summaryKhInput = document.getElementById('summary_kh');
         const summaryEnInput = document.getElementById('summary_en');
@@ -960,8 +970,7 @@ $formAction = url('admin/actions/save-article.php');
         }
 
         // =========================================================================
-        // =========================================================================
-        // Professional Article Live Preview System (Bilingual: Khmer & English)
+        // Authentic Full Page Live Preview System (Real Public Article Templates)
         // =========================================================================
         let currentPreviewLang = '<?= e($currentLang ?? "kh") ?>';
         if (currentPreviewLang !== 'kh' && currentPreviewLang !== 'en') {
@@ -969,366 +978,172 @@ $formAction = url('admin/actions/save-article.php');
         }
         let currentPreviewDevice = 'desktop';
 
-        const btnLivePreview = document.getElementById('btnLivePreviewArticle');
+        // 100% Authentic Full Page Live Preview System (Real Public Article Templates)
+        // =========================================================================
         const previewModalEl = document.getElementById('articlePreviewModal');
+        const previewIframe = document.getElementById('livePreviewIframe');
         const previewFrameWrapper = document.getElementById('previewFrameWrapper');
-        const previewRenderContainer = document.getElementById('previewRenderContainer');
         const previewTemplateBadge = document.getElementById('previewTemplateBadge');
+        const btnLivePreview = document.getElementById('btnLivePreviewArticle');
+        const btnOpenPreviewNewTab = document.getElementById('btnOpenPreviewNewTab');
 
-        const authorMetadata = {
-            name: <?= json_encode($currentUser['username'] ?? 'Editorial Author') ?>,
-            role: <?= json_encode(ucfirst($currentUser['role'] ?? 'Reporter')) ?>,
-            avatar: <?= json_encode(!empty($currentUser['avatar_url']) ? image_url($currentUser['avatar_url']) : '') ?>
-        };
-
-        function escapeHtml(str) {
-            if (str === null || str === undefined) return '';
-            const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#039;' };
-            return String(str).replace(/[&<>"']/g, function (m) { return map[m]; });
+        // Create or reuse hidden preview form to post real draft data to /preview.php
+        let hiddenPreviewForm = document.getElementById('hiddenPreviewPostForm');
+        if (!hiddenPreviewForm) {
+            hiddenPreviewForm = document.createElement('form');
+            hiddenPreviewForm.id = 'hiddenPreviewPostForm';
+            hiddenPreviewForm.method = 'POST';
+            hiddenPreviewForm.style.display = 'none';
+            document.body.appendChild(hiddenPreviewForm);
         }
 
-        function toKmNum(str) {
-            if (str === null || str === undefined) return '';
-            const digits = { '0': '០', '1': '១', '2': '២', '3': '៣', '4': '៤', '5': '៥', '6': '៦', '7': '៧', '8': '៨', '9': '៩' };
-            return String(str).replace(/[0-9]/g, function (d) { return digits[d] || d; });
-        }
-
-        function formatPreviewDate(isKh) {
-            const now = new Date();
-            if (isKh) {
-                const khMonths = [
-                    'មករា', 'កុម្ភៈ', 'មីនា', 'មេសា', 'ឧសភា', 'មិថុនា',
-                    'កក្កដា', 'សីហា', 'កញ្ញា', 'តុលា', 'វិច្ឆិកា', 'ធ្នូ'
-                ];
-                const day = toKmNum(now.getDate());
-                const month = khMonths[now.getMonth()];
-                const year = toKmNum(now.getFullYear());
-                return `ថ្ងៃទី ${day} ខែ ${month} ឆ្នាំ ${year}`;
-            } else {
-                return now.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
-            }
-        }
-
-        function getPreviewFormData() {
+        function submitToLivePreview(targetName = 'livePreviewIframe', langOverride = null) {
             syncTitles();
             syncSummaries();
             syncQuillContent();
 
-            const titleKh = titleKhInput ? titleKhInput.value.trim() : '';
-            const titleEn = titleEnInput ? titleEnInput.value.trim() : '';
-            const summaryKh = summaryKhInput ? summaryKhInput.value.trim() : '';
-            const summaryEn = summaryEnInput ? summaryEnInput.value.trim() : '';
-            const contentKh = quillKh ? quillKh.root.innerHTML : '';
-            const contentEn = quillEn ? quillEn.root.innerHTML : '';
-            const templateType = (document.getElementById('template_type') ? document.getElementById('template_type').value : 'standard') || 'standard';
+            const previewUrl = '<?= url("preview.php") ?>' + (langOverride ? '?lang=' + encodeURIComponent(langOverride) : '?lang=' + encodeURIComponent(currentPreviewLang));
 
-            const catSelect = document.getElementById('category_id');
-            let catNameKh = 'ព័ត៌មានទូទៅ';
-            let catNameEn = 'General News';
-            let catNameFallback = 'News';
+            hiddenPreviewForm.action = previewUrl;
+            hiddenPreviewForm.target = targetName;
+            hiddenPreviewForm.innerHTML = '';
 
-            if (catSelect && catSelect.selectedIndex >= 0) {
-                const selectedOpt = catSelect.options[catSelect.selectedIndex];
-                if (selectedOpt) {
-                    catNameKh = selectedOpt.getAttribute('data-name-kh') || selectedOpt.text.trim();
-                    catNameEn = selectedOpt.getAttribute('data-name-en') || selectedOpt.text.trim();
-                    catNameFallback = selectedOpt.text.trim();
+            // Clone/extract all inputs from active article form
+            const formData = new FormData(articleForm);
+            for (let [key, val] of formData.entries()) {
+                if (typeof val === 'string') {
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = key;
+                    input.value = val;
+                    hiddenPreviewForm.appendChild(input);
                 }
             }
 
-            const isKh = (currentPreviewLang === 'kh');
-            const catName = isKh ? (catNameKh || catNameFallback) : (catNameEn || catNameFallback);
-
-            const hasDropCap = document.getElementById('has_drop_cap') ? document.getElementById('has_drop_cap').checked : false;
-            const audioEmbedUrl = document.getElementById('audio_embed_url') ? document.getElementById('audio_embed_url').value.trim() : '';
-            const videoEmbedUrl = document.getElementById('video_embed_url') ? document.getElementById('video_embed_url').value.trim() : '';
-            const refUrl = document.getElementById('reference_url') ? document.getElementById('reference_url').value.trim() : '';
-            const refSource = document.getElementById('reference_source_name') ? document.getElementById('reference_source_name').value.trim() : '';
-
-            // Featured Image preview source
-            let featuredImgSrc = '';
-            const featInput = document.getElementById('featured_image');
-            if (featInput && featInput.files && featInput.files[0]) {
-                featuredImgSrc = URL.createObjectURL(featInput.files[0]);
-            } else {
-                const existingImg = document.getElementById('featuredImagePreview');
-                if (existingImg && existingImg.src && !existingImg.src.includes('data:image/svg+xml')) {
-                    featuredImgSrc = existingImg.src;
-                }
-            }
-
-            // Word count & Reading Time calculation
-            const activeText = (isKh ? (quillKh ? quillKh.getText() : '') : (quillEn ? quillEn.getText() : '')) || '';
-            const wordCount = activeText.trim().split(/\s+/).filter(Boolean).length;
-            const readingTimeMin = Math.max(1, Math.ceil(wordCount / 180));
-            const readingTimeStr = isKh ? `រយៈពេលអាន ${toKmNum(readingTimeMin)} នាទី` : `${readingTimeMin} min read`;
-
-            return {
-                titleKh, titleEn, summaryKh, summaryEn,
-                contentKh, contentEn, templateType, catName,
-                hasDropCap, audioEmbedUrl, videoEmbedUrl, refUrl, refSource,
-                featuredImgSrc, readingTimeStr
+            // Explicitly ensure Quill contents and titles are present
+            const explicitFields = {
+                title_kh: titleKhInput ? titleKhInput.value : '',
+                title_en: titleEnInput ? titleEnInput.value : '',
+                title: compositeTitleInput ? compositeTitleInput.value : '',
+                summary_kh: summaryKhInput ? summaryKhInput.value : '',
+                summary_en: summaryEnInput ? summaryEnInput.value : '',
+                summary: compositeSummaryInput ? compositeSummaryInput.value : '',
+                content_kh: quillKh ? quillKh.root.innerHTML : '',
+                content_en: quillEn ? quillEn.root.innerHTML : '',
+                content: compositeContentInput ? compositeContentInput.value : '',
+                template_type: document.getElementById('template_type') ? document.getElementById('template_type').value : 'standard',
+                category_id: document.getElementById('category_id') ? document.getElementById('category_id').value : '1',
+                is_breaking: document.getElementById('is_breaking') && document.getElementById('is_breaking').checked ? '1' : '0',
+                has_drop_cap: document.getElementById('has_drop_cap') && document.getElementById('has_drop_cap').checked ? '1' : '0',
+                audio_embed_url: document.getElementById('audio_embed_url') ? document.getElementById('audio_embed_url').value : '',
+                video_embed_url: document.getElementById('video_embed_url') ? document.getElementById('video_embed_url').value : '',
+                reference_url: document.getElementById('reference_url') ? document.getElementById('reference_url').value : '',
+                reference_source_name: document.getElementById('reference_source_name') ? document.getElementById('reference_source_name').value : ''
             };
-        }
 
-        function renderArticlePreview() {
-            if (!previewRenderContainer) return;
-
-            const isKh = (currentPreviewLang === 'kh');
-            const data = getPreviewFormData();
-
-            // Language specific texts with proper fallbacks
-            const title = (isKh ? (data.titleKh || data.titleEn) : (data.titleEn || data.titleKh)) || (isKh ? 'ចំណងជើងអត្ថបទ (សូមបញ្ចូល)' : 'Article Title (Please enter)');
-            const summary = (isKh ? (data.summaryKh || data.summaryEn) : (data.summaryEn || data.summaryKh)) || '';
-            
-            let rawContent = isKh ? (data.contentKh || data.contentEn) : (data.contentEn || data.contentKh);
-            let hasRealContent = rawContent && rawContent.replace(/<[^>]*>/g, '').trim().length > 0;
-            let content = hasRealContent ? rawContent : (isKh ? '<p class="text-muted fst-italic">មាតិកាអត្ថបទនឹងបង្ហាញនៅទីនេះ...</p>' : '<p class="text-muted fst-italic">Article body content will appear here...</p>');
-
-            if (data.hasDropCap && content) {
-                content = content.replace(/<p>/i, '<p class="has-drop-cap">');
-            }
-
-            // Update Header Blueprint Badge
-            if (previewTemplateBadge) {
-                if (data.templateType === 'investigative') {
-                    previewTemplateBadge.textContent = isKh ? 'ទម្រង់ស៊ើបអង្កេត (Investigative)' : 'Investigative Blueprint';
-                } else if (data.templateType === 'opinion') {
-                    previewTemplateBadge.textContent = isKh ? 'ទម្រង់ទស្សនៈ (Opinion)' : 'Opinion Blueprint';
-                } else {
-                    previewTemplateBadge.textContent = isKh ? 'ទម្រង់ស្តង់ដារ (Standard)' : 'Standard Blueprint';
+            for (let [k, v] of Object.entries(explicitFields)) {
+                if (!hiddenPreviewForm.querySelector(`[name="${k}"]`)) {
+                    const inp = document.createElement('input');
+                    inp.type = 'hidden';
+                    inp.name = k;
+                    inp.value = v;
+                    hiddenPreviewForm.appendChild(inp);
                 }
             }
 
-            const todayStr = formatPreviewDate(isKh);
-            const viewsLabel = isKh ? `០ ការទស្សនា` : `0 views`;
-            const audioLabel = isKh ? `សំឡេងអានអត្ថបទ / ផតខាស្ត` : `Audio Narration / Podcast`;
-            const sourceLabel = isKh ? `ប្រភព៖` : `Source:`;
-            const reportBadgeLabel = isKh ? `របាយការណ៍ស៊ើបអង្កេត` : `INVESTIGATIVE REPORT`;
-            const opinionBadgeLabel = isKh ? `មតិ និងទស្សនវិស័យ` : `OPINION & PERSPECTIVE`;
-
-            const authorAvatarHtml = authorMetadata.avatar 
-                ? `<img src="${escapeHtml(authorMetadata.avatar)}" alt="${escapeHtml(authorMetadata.name)}" class="rounded-circle object-fit-cover flex-shrink-0" style="width:38px;height:38px;">`
-                : `<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0" style="width:38px;height:38px;background:#c8102e;font-size:0.9rem;">${escapeHtml(authorMetadata.name.charAt(0).toUpperCase())}</div>`;
-
-            let templateHtml = '';
-
-            if (data.templateType === 'investigative') {
-                templateHtml = `
-                    <div class="investigative-preview">
-                        <div class="bg-dark text-white p-4 p-md-5 rounded-3 mb-4" style="background:#0b1320 !important;">
-                            <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
-                                <span class="badge bg-danger text-uppercase px-2.5 py-1" style="font-size:0.75rem;">${escapeHtml(data.catName)}</span>
-                                <span class="badge bg-white bg-opacity-10 text-white-50" style="font-size:0.7rem;">${reportBadgeLabel}</span>
-                            </div>
-                            <h1 class="fw-bold display-6 mb-3 text-white" style="line-height:1.35;">${escapeHtml(title)}</h1>
-                            ${summary ? `<p class="fs-6 text-white-50 mb-4" style="line-height:1.7;">${escapeHtml(summary)}</p>` : ''}
-                            <div class="d-flex align-items-center flex-wrap gap-2.5 text-white-50 text-xs border-top border-secondary border-opacity-25 pt-3">
-                                <span class="text-white fw-semibold">${escapeHtml(authorMetadata.name)}</span>
-                                <span>&middot;</span>
-                                <span>${todayStr}</span>
-                                <span>&middot;</span>
-                                <span>${data.readingTimeStr}</span>
-                                <span>&middot;</span>
-                                <span>${viewsLabel}</span>
-                            </div>
-                        </div>
-
-                        ${data.featuredImgSrc ? `
-                            <div class="mb-4 text-center">
-                                <img src="${escapeHtml(data.featuredImgSrc)}" class="img-fluid rounded-3 shadow-sm w-100 object-fit-cover" style="max-height:460px;" alt="Lead Cover">
-                            </div>
-                        ` : ''}
-
-                        ${data.audioEmbedUrl ? `
-                            <div class="p-3 mb-4 bg-light border rounded-3 d-flex align-items-center gap-3">
-                                <i class="bi bi-volume-up-fill fs-4 text-danger"></i>
-                                <div class="flex-grow-1 min-w-0">
-                                    <div class="fw-bold text-xs text-dark mb-1">${audioLabel}</div>
-                                    <audio controls class="w-100" style="height:32px;"><source src="${escapeHtml(data.audioEmbedUrl)}"></audio>
-                                </div>
-                            </div>
-                        ` : ''}
-
-                        <div class="article-content" style="font-size:1.05rem; line-height:1.85; color:#1e293b;">
-                            ${content}
-                        </div>
-
-                        ${data.refUrl ? `
-                            <div class="mt-4 pt-3 border-top text-muted text-xs d-flex align-items-center gap-2">
-                                <i class="bi bi-link-45deg fs-6 text-danger"></i>
-                                <span>${sourceLabel} <strong>${escapeHtml(data.refSource || 'External Reference')}</strong> (<a href="${escapeHtml(data.refUrl)}" target="_blank" rel="noopener" class="text-danger text-decoration-none">${escapeHtml(data.refUrl)}</a>)</span>
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-            } else if (data.templateType === 'opinion') {
-                templateHtml = `
-                    <div class="opinion-preview">
-                        <div class="p-3.5 p-md-4 mb-4 rounded-3 bg-white border shadow-2xs d-flex align-items-center gap-3.5">
-                            <div class="flex-shrink-0">
-                                ${authorMetadata.avatar 
-                                    ? `<img src="${escapeHtml(authorMetadata.avatar)}" alt="${escapeHtml(authorMetadata.name)}" class="rounded-circle object-fit-cover border" style="width:64px;height:64px;">`
-                                    : `<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold fs-4" style="width:64px;height:64px;background:#0f172a;">${escapeHtml(authorMetadata.name.charAt(0).toUpperCase())}</div>`
-                                }
-                            </div>
-                            <div class="min-w-0">
-                                <div class="text-danger fw-bold text-3xs text-uppercase mb-1 tracking-wider">${opinionBadgeLabel} &bull; ${escapeHtml(data.catName)}</div>
-                                <h4 class="fw-bold text-dark mb-0.5">${escapeHtml(authorMetadata.name)}</h4>
-                                <div class="text-muted text-xs">${escapeHtml(authorMetadata.role)}</div>
-                            </div>
-                        </div>
-
-                        <h1 class="fw-bold mb-3 text-dark" style="font-size:1.85rem; line-height:1.35;">${escapeHtml(title)}</h1>
-                        ${summary ? `<p class="lead text-secondary mb-3 fst-italic" style="font-size:1.05rem; line-height:1.7;">${escapeHtml(summary)}</p>` : ''}
-                        
-                        <div class="d-flex align-items-center flex-wrap gap-2 text-muted text-2xs py-2 mb-4 border-top border-bottom">
-                            <span>${todayStr}</span>
-                            <span>&middot;</span>
-                            <span>${data.readingTimeStr}</span>
-                            <span>&middot;</span>
-                            <span>${viewsLabel}</span>
-                        </div>
-
-                        ${data.featuredImgSrc ? `
-                            <div class="mb-4">
-                                <img src="${escapeHtml(data.featuredImgSrc)}" class="img-fluid rounded-2 shadow-2xs w-100 object-fit-cover" style="max-height:420px;" alt="Cover">
-                            </div>
-                        ` : ''}
-
-                        ${data.audioEmbedUrl ? `
-                            <div class="p-3 mb-4 bg-light border rounded-2 d-flex align-items-center gap-3">
-                                <i class="bi bi-volume-up-fill fs-4 text-danger"></i>
-                                <div class="flex-grow-1 min-w-0">
-                                    <div class="fw-bold text-xs text-dark mb-1">${audioLabel}</div>
-                                    <audio controls class="w-100" style="height:32px;"><source src="${escapeHtml(data.audioEmbedUrl)}"></audio>
-                                </div>
-                            </div>
-                        ` : ''}
-
-                        <div class="article-content" style="font-size:1.05rem; line-height:1.85; color:#1e293b;">
-                            ${content}
-                        </div>
-
-                        ${data.refUrl ? `
-                            <div class="mt-4 pt-3 border-top text-muted text-xs d-flex align-items-center gap-2">
-                                <i class="bi bi-link-45deg fs-6 text-danger"></i>
-                                <span>${sourceLabel} <strong>${escapeHtml(data.refSource || 'External Reference')}</strong> (<a href="${escapeHtml(data.refUrl)}" target="_blank" rel="noopener" class="text-danger text-decoration-none">${escapeHtml(data.refUrl)}</a>)</span>
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-            } else {
-                templateHtml = `
-                    <div class="standard-preview">
-                        <div class="mb-2">
-                            <span class="badge bg-danger text-uppercase px-2.5 py-1 fw-bold" style="font-size:0.72rem; letter-spacing:0.04em;">
-                                ${escapeHtml(data.catName)}
-                            </span>
-                        </div>
-                        <h1 class="fw-bold mb-3 text-dark" style="font-size:1.85rem; line-height:1.35; letter-spacing:-0.01em;">
-                            ${escapeHtml(title)}
-                        </h1>
-                        ${summary ? `<p class="lead text-muted mb-3" style="font-size:1.05rem; line-height:1.7;">${escapeHtml(summary)}</p>` : ''}
-
-                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 py-2.5 my-3 border-top border-bottom">
-                            <div class="d-flex align-items-center gap-2.5">
-                                ${authorAvatarHtml}
-                                <div>
-                                    <div class="fw-bold text-dark text-xs" style="line-height:1.25;">${escapeHtml(authorMetadata.name)}</div>
-                                    <div class="text-muted text-3xs">${escapeHtml(authorMetadata.role)}</div>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center flex-wrap gap-2 text-muted text-2xs">
-                                <span>${todayStr}</span>
-                                <span>&middot;</span>
-                                <span>${data.readingTimeStr}</span>
-                                <span>&middot;</span>
-                                <span>${viewsLabel}</span>
-                            </div>
-                        </div>
-
-                        ${data.featuredImgSrc ? `
-                            <div class="mb-4">
-                                <img src="${escapeHtml(data.featuredImgSrc)}" class="img-fluid rounded-2 shadow-2xs w-100 object-fit-cover" style="max-height:440px;" alt="Cover">
-                            </div>
-                        ` : ''}
-
-                        ${data.audioEmbedUrl ? `
-                            <div class="p-3 mb-4 bg-light border rounded-2 d-flex align-items-center gap-3">
-                                <i class="bi bi-volume-up-fill fs-4 text-danger"></i>
-                                <div class="flex-grow-1 min-w-0">
-                                    <div class="fw-bold text-xs text-dark mb-1">${audioLabel}</div>
-                                    <audio controls class="w-100" style="height:32px;"><source src="${escapeHtml(data.audioEmbedUrl)}"></audio>
-                                </div>
-                            </div>
-                        ` : ''}
-
-                        <div class="article-content" style="font-size:1.05rem; line-height:1.85; color:#1e293b;">
-                            ${content}
-                        </div>
-
-                        ${data.refUrl ? `
-                            <div class="mt-4 pt-3 border-top text-muted text-xs d-flex align-items-center gap-2">
-                                <i class="bi bi-link-45deg fs-6 text-danger"></i>
-                                <span>${sourceLabel} <strong>${escapeHtml(data.refSource || 'External Reference')}</strong> (<a href="${escapeHtml(data.refUrl)}" target="_blank" rel="noopener" class="text-danger text-decoration-none">${escapeHtml(data.refUrl)}</a>)</span>
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
+            // Existing featured image if present
+            const existingImg = document.getElementById('featuredImagePreview');
+            if (existingImg && existingImg.src && !existingImg.src.includes('data:image/svg+xml')) {
+                const imgInp = document.createElement('input');
+                imgInp.type = 'hidden';
+                imgInp.name = 'existing_featured_image';
+                imgInp.value = existingImg.src;
+                hiddenPreviewForm.appendChild(imgInp);
             }
 
-            previewRenderContainer.innerHTML = templateHtml;
+            // Update badge in modal header
+            if (previewTemplateBadge) {
+                const currentTmpl = explicitFields.template_type;
+                previewTemplateBadge.textContent = currentTmpl.toUpperCase() + ' BLUEPRINT (100% REAL)';
+            }
+
+            hiddenPreviewForm.submit();
         }
 
-        // Live Preview Modal Trigger
+        // Expose openArticleLivePreview globally for direct or delegated triggering
+        window.openArticleLivePreview = function(e) {
+            if (e && e.preventDefault) e.preventDefault();
+            try {
+                // Open Fullscreen Modal
+                if (previewModalEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                    const bsModal = bootstrap.Modal.getOrCreateInstance(previewModalEl);
+                    bsModal.show();
+                } else if (previewModalEl) {
+                    previewModalEl.classList.add('show');
+                    previewModalEl.style.display = 'block';
+                    document.body.classList.add('modal-open');
+                }
+
+                // Post real draft data into iframe
+                submitToLivePreview('livePreviewIframe');
+            } catch (err) {
+                console.error('Error opening article preview:', err);
+            }
+        };
+
+        // Live Preview Button Trigger
         if (btnLivePreview) {
-            btnLivePreview.addEventListener('click', function(e) {
+            btnLivePreview.addEventListener('click', window.openArticleLivePreview);
+        }
+
+        // Open Real Preview in New Tab
+        if (btnOpenPreviewNewTab) {
+            btnOpenPreviewNewTab.addEventListener('click', function(e) {
                 e.preventDefault();
-                try {
-                    renderArticlePreview();
-                    if (previewModalEl && typeof bootstrap !== 'undefined' && bootstrap.Modal) {
-                        const bsModal = bootstrap.Modal.getOrCreateInstance(previewModalEl);
-                        bsModal.show();
-                    } else if (previewModalEl) {
-                        // Fallback in case bootstrap global differs
-                        previewModalEl.classList.add('show');
-                        previewModalEl.style.display = 'block';
-                        document.body.classList.add('modal-open');
-                    }
-                } catch (err) {
-                    console.error('Error opening article preview:', err);
+                const newWindow = window.open('about:blank', '_blank');
+                if (newWindow) {
+                    newWindow.name = 'livePreviewNewTab_' + Date.now();
+                    submitToLivePreview(newWindow.name);
                 }
             });
         }
 
-        // Viewport Switcher Handlers
+        // Viewport Switcher Handlers (Desktop 100%, Tablet 768px, Mobile 390px)
         document.querySelectorAll('.device-switch-btn').forEach(btn => {
             btn.addEventListener('click', function() {
-                document.querySelectorAll('.device-switch-btn').forEach(b => b.classList.remove('active'));
-                this.classList.add('active');
+                document.querySelectorAll('.device-switch-btn').forEach(b => {
+                    b.classList.remove('active', 'btn-light');
+                    b.classList.add('btn-outline-light');
+                });
+                this.classList.add('active', 'btn-light');
+                this.classList.remove('btn-outline-light');
                 const device = this.getAttribute('data-device');
                 currentPreviewDevice = device;
+
+                const resIndicator = document.getElementById('previewResolutionIndicator');
 
                 if (previewFrameWrapper) {
                     if (device === 'mobile') {
                         previewFrameWrapper.style.maxWidth = '390px';
-                        previewFrameWrapper.style.boxShadow = '0 12px 40px rgba(0,0,0,0.18)';
-                        previewFrameWrapper.style.border = '2px solid #334155';
-                        previewFrameWrapper.style.borderRadius = '24px';
-                        previewFrameWrapper.style.margin = '20px auto';
+                        previewFrameWrapper.style.boxShadow = '0 20px 60px rgba(0,0,0,0.45)';
+                        previewFrameWrapper.style.border = '10px solid #1e293b';
+                        previewFrameWrapper.style.borderRadius = '36px';
+                        previewFrameWrapper.style.margin = '24px auto';
+                        if (resIndicator) resIndicator.innerHTML = '<i class="bi bi-phone me-1"></i>Mobile Viewport (390px)';
                     } else if (device === 'tablet') {
                         previewFrameWrapper.style.maxWidth = '768px';
-                        previewFrameWrapper.style.boxShadow = '0 8px 30px rgba(0,0,0,0.12)';
-                        previewFrameWrapper.style.border = '1px solid #cbd5e1';
-                        previewFrameWrapper.style.borderRadius = '10px';
-                        previewFrameWrapper.style.margin = '16px auto';
+                        previewFrameWrapper.style.boxShadow = '0 16px 48px rgba(0,0,0,0.30)';
+                        previewFrameWrapper.style.border = '6px solid #334155';
+                        previewFrameWrapper.style.borderRadius = '20px';
+                        previewFrameWrapper.style.margin = '20px auto';
+                        if (resIndicator) resIndicator.innerHTML = '<i class="bi bi-tablet me-1"></i>Tablet Viewport (768px)';
                     } else {
                         previewFrameWrapper.style.maxWidth = '100%';
                         previewFrameWrapper.style.boxShadow = 'none';
                         previewFrameWrapper.style.border = 'none';
                         previewFrameWrapper.style.borderRadius = '0';
                         previewFrameWrapper.style.margin = '0';
+                        if (resIndicator) resIndicator.innerHTML = '<i class="bi bi-display me-1"></i>Desktop Full Page (100%)';
                     }
                 }
             });
@@ -1344,7 +1159,7 @@ $formAction = url('admin/actions/save-article.php');
                 this.classList.add('active', 'btn-danger');
                 this.classList.remove('btn-outline-danger');
                 currentPreviewLang = this.getAttribute('data-lang') || 'kh';
-                renderArticlePreview();
+                submitToLivePreview('livePreviewIframe', currentPreviewLang);
             });
         });
 
@@ -1364,5 +1179,11 @@ $formAction = url('admin/actions/save-article.php');
                 }
             });
         }
-    });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initArticleFormPage);
+    } else {
+        initArticleFormPage();
+    }
 </script>
