@@ -298,6 +298,108 @@ if (!function_exists('lang_url')) {
     }
 }
 
+if (!function_exists('split_dual_language')) {
+    /**
+     * Intelligent Bilingual Content Extractor (Khmer & English)
+     * Accurately parses dual-language inputs separated by:
+     * - Delimiters: ' / ', ' | ', ' - ', '---', '///', '|||', '<hr class="lang-separator">'
+     * - Markup: [kh]...[/kh] [en]...[/en], <!-- kh -->...<!-- en -->
+     * - Parentheses: "Khmer (English)" or "English (Khmer)"
+     * - Brackets: "Khmer [English]" or "English [Khmer]"
+     * - Newlines: Double line breaks separating language versions
+     *
+     * @param string|null $text
+     * @return array{kh: string, en: string}
+     */
+    function split_dual_language(?string $text): array
+    {
+        if ($text === null || trim($text) === '') {
+            return ['kh' => '', 'en' => ''];
+        }
+        $str = trim($text);
+
+        // 1. Explicit BBCode-style markers [kh]...[/kh] and [en]...[/en]
+        $hasKhTag = preg_match('/\[kh\](.*?)\[\/kh\]/is', $str, $mKh);
+        $hasEnTag = preg_match('/\[en\](.*?)\[\/en\]/is', $str, $mEn);
+        if ($hasKhTag || $hasEnTag) {
+            return [
+                'kh' => $hasKhTag ? trim($mKh[1]) : '',
+                'en' => $hasEnTag ? trim($mEn[1]) : ''
+            ];
+        }
+
+        // 2. HTML comments <!-- kh -->...<!-- en -->
+        if (preg_match('/<!--\s*(?:lang:)?kh\s*-->(.*?)<!--\s*(?:lang:)?en\s*-->(.*?)$/is', $str, $m)) {
+            return ['kh' => trim($m[1]), 'en' => trim($m[2])];
+        }
+        if (preg_match('/<!--\s*(?:lang:)?en\s*-->(.*?)<!--\s*(?:lang:)?kh\s*-->(.*?)$/is', $str, $m)) {
+            return ['kh' => trim($m[2]), 'en' => trim($m[1])];
+        }
+
+        $hasKhmerChar = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $str);
+        $hasLatinChar = (bool) preg_match('/[a-zA-Z]/', $str);
+
+        // 3. Delimiters (check from longest to shortest)
+        $delimiters = [
+            '<hr class="lang-separator">', '<hr class="lang-separator"/>', '<hr class="lang-separator" />',
+            "\n---\n", "\n///\n", "\n|||\n", ' --- ', ' /// ', ' ||| ',
+            " | ", " / ", " - ", "\r\n\r\n", "\n\n"
+        ];
+
+        foreach ($delimiters as $delim) {
+            if (str_contains($str, $delim)) {
+                $parts = explode($delim, $str, 2);
+                $p1 = trim($parts[0]);
+                $p2 = trim($parts[1]);
+
+                if ($p1 !== '' && $p2 !== '') {
+                    $p1Kh = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $p1);
+                    $p2Kh = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $p2);
+                    $p1En = (bool) preg_match('/[a-zA-Z]/', $p1);
+                    $p2En = (bool) preg_match('/[a-zA-Z]/', $p2);
+
+                    if ($p1Kh && $p2En && !$p1En) {
+                        return ['kh' => $p1, 'en' => $p2];
+                    }
+                    if ($p2Kh && $p1En && !$p2En) {
+                        return ['kh' => $p2, 'en' => $p1];
+                    }
+                    if ($p1Kh && !$p2Kh) {
+                        return ['kh' => $p1, 'en' => $p2];
+                    }
+                    if ($p2Kh && !$p1Kh) {
+                        return ['kh' => $p2, 'en' => $p1];
+                    }
+                }
+            }
+        }
+
+        // 4. Parentheses: "Part1 (Part2)" or "Part1 [Part2]"
+        if (preg_match('/^(.+?)\s*[\(\[](.+?)[\)\]]$/us', $str, $matches)) {
+            $p1 = trim($matches[1]);
+            $p2 = trim($matches[2]);
+            $p1Kh = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $p1);
+            $p2Kh = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $p2);
+            if ($p1Kh && !$p2Kh) {
+                return ['kh' => $p1, 'en' => $p2];
+            }
+            if (!$p1Kh && $p2Kh) {
+                return ['kh' => $p2, 'en' => $p1];
+            }
+        }
+
+        // 5. Single script without delimiter
+        if ($hasKhmerChar && !$hasLatinChar) {
+            return ['kh' => $str, 'en' => ''];
+        }
+        if ($hasLatinChar && !$hasKhmerChar) {
+            return ['kh' => '', 'en' => $str];
+        }
+
+        return ['kh' => $str, 'en' => $str];
+    }
+}
+
 if (!function_exists('article_title')) {
     /**
      * Dynamic Article Title Language Translation Resolver
@@ -309,57 +411,75 @@ if (!function_exists('article_title')) {
         $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
 
         if (is_array($title)) {
-            if ($isKhmer && !empty($title['title_kh'])) {
-                return km_num($title['title_kh']);
+            $tKh = trim((string)($title['title_kh'] ?? ''));
+            $tEn = trim((string)($title['title_en'] ?? ''));
+            $tRaw = trim((string)($title['title'] ?? ''));
+
+            $tEnHasLatin = (bool) preg_match('/[a-zA-Z]/', $tEn);
+            $tKhHasKhmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $tKh);
+
+            if ($isKhmer) {
+                if (!empty($tKh) && $tKhHasKhmer) {
+                    $split = split_dual_language($tKh);
+                    return km_num($split['kh'] ?: $tKh);
+                }
+                if (!empty($tRaw)) {
+                    $split = split_dual_language($tRaw);
+                    if (!empty($split['kh'])) return km_num($split['kh']);
+                }
+                if (!empty($tKh)) return km_num($tKh);
+                if (!empty($tEn)) return $tEn;
+                return !empty($tRaw) ? km_num($tRaw) : '';
+            } else {
+                // English requested
+                if (!empty($tEn) && $tEnHasLatin) {
+                    $split = split_dual_language($tEn);
+                    return $split['en'] ?: $tEn;
+                }
+                if (!empty($tRaw)) {
+                    $split = split_dual_language($tRaw);
+                    if (!empty($split['en'])) return $split['en'];
+                }
+                if (!empty($tKh)) {
+                    $split = split_dual_language($tKh);
+                    if (!empty($split['en'])) return $split['en'];
+                }
+
+                // Check static dictionary mapping fallback
+                $maps = get_translation_maps();
+                $checkStr = $tKh ?: $tRaw;
+                if (!empty($checkStr) && isset($maps['titles'][$checkStr])) {
+                    return $maps['titles'][$checkStr];
+                }
+
+                // Safe fallback for old data
+                return $tEn ?: ($tKh ?: $tRaw);
             }
-            if (!$isKhmer && !empty($title['title_en'])) {
-                return $title['title_en'];
-            }
-            $str = trim((string)($title['title'] ?? ''));
-        } else {
-            $str = trim((string)$title);
         }
 
+        // String input
+        $str = trim((string)$title);
         if (empty($str)) {
             return '';
         }
 
-        // 1. Check parenthetical dual-language pattern "Part1 (Part2)"
-        if (preg_match('/^([^()]+)\s*\(([^()]+)\)$/u', $str, $matches)) {
-            $part1 = trim($matches[1]);
-            $part2 = trim($matches[2]);
-
-            $isPart1Khmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $part1);
-            $isPart2Khmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $part2);
-
-            if ($isKhmer) {
-                if ($isPart1Khmer) return km_num($part1);
-                if ($isPart2Khmer) return km_num($part2);
-            } else {
-                // English requested
-                if (!$isPart1Khmer && !empty($part1)) return $part1;
-                if (!$isPart2Khmer && !empty($part2)) return $part2;
-            }
-        }
-
-        // 2. Exact static mapping fallback from centralized get_translation_maps()
-        $maps = get_translation_maps();
-        $kmToEnTitle = $maps['titles'];
-        $enToKmTitle = array_flip($kmToEnTitle);
-
-        $hasKhmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $str);
-
+        $split = split_dual_language($str);
         if ($isKhmer) {
-            if ($hasKhmer) {
-                return km_num($str);
+            if (!empty($split['kh'])) {
+                return km_num($split['kh']);
             }
-            return isset($enToKmTitle[$str]) ? km_num($enToKmTitle[$str]) : $str;
+            $maps = get_translation_maps();
+            $enToKmTitle = array_flip($maps['titles']);
+            return isset($enToKmTitle[$str]) ? km_num($enToKmTitle[$str]) : km_num($str);
         } else {
-            // English mode requested
-            if (!$hasKhmer) {
-                return $str;
+            if (!empty($split['en'])) {
+                return $split['en'];
             }
-            return $kmToEnTitle[$str] ?? $str;
+            $maps = get_translation_maps();
+            if (isset($maps['titles'][$str])) {
+                return $maps['titles'][$str];
+            }
+            return $str;
         }
     }
 }
@@ -367,9 +487,6 @@ if (!function_exists('article_title')) {
 if (!function_exists('parse_dual_lang')) {
     /**
      * General Multi-Format Dual-Language Content Extractor
-     * Supports:
-     * 1. Delimiters: '---', '///', '|||', '<!-- lang:en -->', '<hr class="lang-separator">', '[en]...[/en][kh]...[/kh]'
-     * 2. Parentheses: "Khmer text (English text)"
      */
     function parse_dual_lang(?string $text, ?string $targetLang = null): string
     {
@@ -381,69 +498,12 @@ if (!function_exists('parse_dual_lang')) {
         $isKhmerMode = ($currentLang === 'kh' || $currentLang === 'km');
         $str = trim($text);
 
-        // 1. Check explicit language markers [kh]...[/kh] [en]...[/en]
-        if (str_contains($str, '[kh]') || str_contains($str, '[en]')) {
-            if ($isKhmerMode && preg_match('/\[kh\](.*?)\[\/kh\]/is', $str, $m)) {
-                return km_num(trim($m[1]));
-            }
-            if (!$isKhmerMode && preg_match('/\[en\](.*?)\[\/en\]/is', $str, $m)) {
-                return trim($m[1]);
-            }
-        }
-
-        // 2. Check HTML comment tags <!-- lang:kh --> or <!-- kh --> vs <!-- lang:en --> or <!-- en -->
-        if (preg_match('/<!--\s*(?:lang:)?kh\s*-->(.*?)<!--\s*(?:lang:)?en\s*-->(.*?)$/is', $str, $m)) {
-            return $isKhmerMode ? km_num(trim($m[1])) : trim($m[2]);
-        }
-
-        // 3. Check explicit delimiters like '---', '///', '|||', or '<hr class="lang-separator">'
-        $delimiters = ['<hr class="lang-separator">', '<hr class="lang-separator"/>', '<hr class="lang-separator" />', '---', '///', '|||'];
-        foreach ($delimiters as $delim) {
-            if (str_contains($str, $delim)) {
-                $parts = explode($delim, $str, 2);
-                $part1 = trim($parts[0]);
-                $part2 = trim($parts[1]);
-
-                $isPart1Khmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $part1);
-                $isPart2Khmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $part2);
-
-                if ($isKhmerMode) {
-                    if ($isPart1Khmer) return km_num($part1);
-                    if ($isPart2Khmer) return km_num($part2);
-                    return km_num($part1);
-                } else {
-                    if (!$isPart1Khmer && !empty($part1)) return $part1;
-                    if (!$isPart2Khmer && !empty($part2)) return $part2;
-                    return $part2 ?: $part1;
-                }
-            }
-        }
-
-        // 4. Check parenthetical format: "Part1 (Part2)"
-        if (preg_match('/^([^()]+)\s*\(([^()]+)\)$/us', $str, $matches)) {
-            $part1 = trim($matches[1]);
-            $part2 = trim($matches[2]);
-
-            $isPart1Khmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $part1);
-            $isPart2Khmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $part2);
-
-            if ($isKhmerMode) {
-                if ($isPart1Khmer) return km_num($part1);
-                if ($isPart2Khmer) return km_num($part2);
-                return km_num($part1);
-            } else {
-                if (!$isPart1Khmer && !empty($part1)) return $part1;
-                if (!$isPart2Khmer && !empty($part2)) return $part2;
-                return $part2 ?: $part1;
-            }
-        }
-
-        // Fallback: single language text
+        $split = split_dual_language($str);
         if ($isKhmerMode) {
-            return km_num($str);
+            return !empty($split['kh']) ? km_num($split['kh']) : km_num($str);
+        } else {
+            return !empty($split['en']) ? $split['en'] : $str;
         }
-
-        return $str;
     }
 }
 
@@ -457,17 +517,42 @@ if (!function_exists('article_summary')) {
         $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
 
         if (is_array($summary)) {
-            if ($isKhmer && !empty($summary['summary_kh'])) {
-                return km_num($summary['summary_kh']);
+            $sKh = trim((string)($summary['summary_kh'] ?? ''));
+            $sEn = trim((string)($summary['summary_en'] ?? ''));
+            $sRaw = trim((string)($summary['summary'] ?? ''));
+
+            $sEnHasLatin = (bool) preg_match('/[a-zA-Z]/', $sEn);
+            $sKhHasKhmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $sKh);
+
+            if ($isKhmer) {
+                if (!empty($sKh) && $sKhHasKhmer) {
+                    $split = split_dual_language($sKh);
+                    return km_num($split['kh'] ?: $sKh);
+                }
+                if (!empty($sRaw)) {
+                    $split = split_dual_language($sRaw);
+                    if (!empty($split['kh'])) return km_num($split['kh']);
+                }
+                if (!empty($sKh)) return km_num($sKh);
+                return !empty($sRaw) ? km_num($sRaw) : (!empty($sEn) ? $sEn : '');
+            } else {
+                if (!empty($sEn) && $sEnHasLatin) {
+                    $split = split_dual_language($sEn);
+                    return $split['en'] ?: $sEn;
+                }
+                if (!empty($sRaw)) {
+                    $split = split_dual_language($sRaw);
+                    if (!empty($split['en'])) return $split['en'];
+                }
+                if (!empty($sKh)) {
+                    $split = split_dual_language($sKh);
+                    if (!empty($split['en'])) return $split['en'];
+                }
+                return $sEn ?: ($sKh ?: $sRaw);
             }
-            if (!$isKhmer && !empty($summary['summary_en'])) {
-                return $summary['summary_en'];
-            }
-            $str = (string)($summary['summary'] ?? '');
-        } else {
-            $str = (string)$summary;
         }
 
+        $str = (string)$summary;
         return parse_dual_lang($str, $targetLang);
     }
 }
@@ -482,17 +567,42 @@ if (!function_exists('article_content')) {
         $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
 
         if (is_array($content)) {
-            if ($isKhmer && !empty($content['content_kh'])) {
-                return km_num($content['content_kh']);
+            $cKh = trim((string)($content['content_kh'] ?? ''));
+            $cEn = trim((string)($content['content_en'] ?? ''));
+            $cRaw = trim((string)($content['content'] ?? ''));
+
+            $cEnHasLatin = (bool) preg_match('/[a-zA-Z]/', strip_tags($cEn));
+            $cKhHasKhmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', strip_tags($cKh));
+
+            if ($isKhmer) {
+                if (!empty($cKh) && $cKhHasKhmer) {
+                    $split = split_dual_language($cKh);
+                    return km_num($split['kh'] ?: $cKh);
+                }
+                if (!empty($cRaw)) {
+                    $split = split_dual_language($cRaw);
+                    if (!empty($split['kh'])) return km_num($split['kh']);
+                }
+                if (!empty($cKh)) return km_num($cKh);
+                return !empty($cRaw) ? km_num($cRaw) : (!empty($cEn) ? $cEn : '');
+            } else {
+                if (!empty($cEn) && $cEnHasLatin) {
+                    $split = split_dual_language($cEn);
+                    return $split['en'] ?: $cEn;
+                }
+                if (!empty($cRaw)) {
+                    $split = split_dual_language($cRaw);
+                    if (!empty($split['en'])) return $split['en'];
+                }
+                if (!empty($cKh)) {
+                    $split = split_dual_language($cKh);
+                    if (!empty($split['en'])) return $split['en'];
+                }
+                return $cEn ?: ($cKh ?: $cRaw);
             }
-            if (!$isKhmer && !empty($content['content_en'])) {
-                return $content['content_en'];
-            }
-            $str = (string)($content['content'] ?? '');
-        } else {
-            $str = (string)$content;
         }
 
+        $str = (string)$content;
         return parse_dual_lang($str, $targetLang);
     }
 }

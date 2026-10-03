@@ -205,44 +205,96 @@ class AdminController
 
         $id = !empty($postData['id']) ? (int)$postData['id'] : null;
         
-        // Bilingual 2-Field Processing: Khmer & English
+        // Bilingual Processing: Khmer & English with smart dual-language auto-split
         $titleKh = trim($postData['title_kh'] ?? '');
         $titleEn = trim($postData['title_en'] ?? '');
         $title = trim($postData['title'] ?? '');
+
+        // Auto-split if user input two languages into title_kh, title_en, or title
+        if (!empty($titleKh)) {
+            $split = split_dual_language($titleKh);
+            if (!empty($split['kh']) && !empty($split['en'])) {
+                $titleKh = $split['kh'];
+                if (empty($titleEn)) $titleEn = $split['en'];
+            }
+        }
+        if (!empty($titleEn)) {
+            $split = split_dual_language($titleEn);
+            if (!empty($split['kh']) && !empty($split['en'])) {
+                if (empty($titleKh)) $titleKh = $split['kh'];
+                $titleEn = $split['en'];
+            }
+        }
+        if (!empty($title) && (empty($titleKh) || empty($titleEn))) {
+            $split = split_dual_language($title);
+            if (empty($titleKh) && !empty($split['kh'])) $titleKh = $split['kh'];
+            if (empty($titleEn) && !empty($split['en'])) $titleEn = $split['en'];
+        }
         if (empty($title)) {
             $title = $titleKh !== '' ? $titleKh : $titleEn;
         }
         if ($titleKh === '') {
             $titleKh = $title;
         }
-        if ($titleEn === '') {
-            $titleEn = $title;
-        }
 
         $summaryKh = trim($postData['summary_kh'] ?? '');
         $summaryEn = trim($postData['summary_en'] ?? '');
         $summary = trim($postData['summary'] ?? '');
+
+        if (!empty($summaryKh)) {
+            $split = split_dual_language($summaryKh);
+            if (!empty($split['kh']) && !empty($split['en'])) {
+                $summaryKh = $split['kh'];
+                if (empty($summaryEn)) $summaryEn = $split['en'];
+            }
+        }
+        if (!empty($summaryEn)) {
+            $split = split_dual_language($summaryEn);
+            if (!empty($split['kh']) && !empty($split['en'])) {
+                if (empty($summaryKh)) $summaryKh = $split['kh'];
+                $summaryEn = $split['en'];
+            }
+        }
+        if (!empty($summary) && (empty($summaryKh) || empty($summaryEn))) {
+            $split = split_dual_language($summary);
+            if (empty($summaryKh) && !empty($split['kh'])) $summaryKh = $split['kh'];
+            if (empty($summaryEn) && !empty($split['en'])) $summaryEn = $split['en'];
+        }
         if (empty($summary)) {
             $summary = $summaryKh !== '' ? $summaryKh : $summaryEn;
         }
         if ($summaryKh === '') {
             $summaryKh = $summary;
         }
-        if ($summaryEn === '') {
-            $summaryEn = $summary;
-        }
 
         $contentKh = trim($postData['content_kh'] ?? '');
         $contentEn = trim($postData['content_en'] ?? '');
         $content = trim($postData['content'] ?? '');
+
+        if (!empty($contentKh)) {
+            $split = split_dual_language($contentKh);
+            if (!empty($split['kh']) && !empty($split['en'])) {
+                $contentKh = $split['kh'];
+                if (empty($contentEn)) $contentEn = $split['en'];
+            }
+        }
+        if (!empty($contentEn)) {
+            $split = split_dual_language($contentEn);
+            if (!empty($split['kh']) && !empty($split['en'])) {
+                if (empty($contentKh)) $contentKh = $split['kh'];
+                $contentEn = $split['en'];
+            }
+        }
+        if (!empty($content) && (empty($contentKh) || empty($contentEn))) {
+            $split = split_dual_language($content);
+            if (empty($contentKh) && !empty($split['kh'])) $contentKh = $split['kh'];
+            if (empty($contentEn) && !empty($split['en'])) $contentEn = $split['en'];
+        }
         if (empty($content)) {
             $content = $contentKh !== '' ? $contentKh : $contentEn;
         }
         if ($contentKh === '') {
             $contentKh = $content;
-        }
-        if ($contentEn === '') {
-            $contentEn = $content;
         }
 
         $providedSlug = trim($postData['slug'] ?? '');
@@ -1226,7 +1278,19 @@ class AdminController
                 $art = $this->db->fetch("SELECT slug, title, title_en, title_kh FROM articles WHERE id = :id", ['id' => $articleId]);
                 $slug = $art['slug'] ?? '';
                 $pushHeadline = !empty($art['title_en']) ? $art['title_en'] : ($art['title'] ?? $notifTitle);
-                WebPush::sendBreakingNewsNotification($articleId, $pushHeadline, $notifMsg, $slug);
+                $finalTitleKh = $art['title_kh'] ?? $titleKh;
+                $finalTitleEn = $art['title_en'] ?? $titleEn;
+
+                WebPush::sendBreakingNewsNotification(
+                    $articleId,
+                    $pushHeadline,
+                    $notifMsg,
+                    $slug,
+                    $finalTitleKh,
+                    $finalTitleEn,
+                    $summaryKh,
+                    $summaryEn
+                );
             }
         } catch (\Throwable $ne) {
             error_log("Failed to dispatch notification for article {$articleId}: " . $ne->getMessage());

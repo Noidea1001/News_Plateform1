@@ -179,15 +179,35 @@ class WebPush
     /**
      * Dispatch Breaking News Web Push Notification to all subscribed devices
      */
-    public static function sendBreakingNewsNotification(int $articleId, string $title, string $summary, string $slug): array
-    {
+    public static function sendBreakingNewsNotification(
+        int $articleId,
+        string $title,
+        string $summary,
+        string $slug,
+        string $titleKh = '',
+        string $titleEn = '',
+        string $summaryKh = '',
+        string $summaryEn = ''
+    ): array {
         $articleUrl = url('article.php?slug=' . urlencode($slug));
         $iconUrl = url('assets/icons/icon-192.png');
         $badgeUrl = url('assets/icons/icon-192.png');
 
+        $titleKhFormatted = !empty($titleKh) ? '🚨 ដំណឹងបន្ទាន់: ' . $titleKh : '';
+        $titleEnFormatted = !empty($titleEn) ? '🚨 BREAKING NEWS: ' . $titleEn : '';
+
+        // Default display headline
+        $mainTitle = !empty($titleKhFormatted) && !empty($titleEnFormatted)
+            ? "{$titleKhFormatted} | {$titleEnFormatted}"
+            : ($titleKhFormatted ?: ($titleEnFormatted ?: '🚨 ' . __('breaking') . ': ' . $title));
+
         $payload = [
-            'title' => '🚨 ' . __('breaking') . ': ' . $title,
-            'body' => mb_substr(strip_tags($summary), 0, 180),
+            'title' => $mainTitle,
+            'title_kh' => $titleKhFormatted ?: $mainTitle,
+            'title_en' => $titleEnFormatted ?: $mainTitle,
+            'body' => !empty($summaryKh) ? mb_substr(strip_tags($summaryKh), 0, 180) : mb_substr(strip_tags($summary), 0, 180),
+            'body_kh' => mb_substr(strip_tags($summaryKh ?: $summary), 0, 180),
+            'body_en' => mb_substr(strip_tags($summaryEn ?: $summary), 0, 180),
             'icon' => $iconUrl,
             'badge' => $badgeUrl,
             'tag' => 'breaking-news-' . $articleId,

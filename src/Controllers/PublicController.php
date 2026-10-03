@@ -121,7 +121,7 @@ class PublicController
 
         // 6. Fetch trending articles for sidebar
         $trendingArticles = $this->db->fetchAll(
-            "SELECT a.id, a.title, a.slug, a.views_count, a.published_at, c.name as category_name 
+            "SELECT a.*, c.name as category_name 
              FROM articles a 
              JOIN categories c ON a.category_id = c.id 
              WHERE a.status = 'published' 
@@ -210,9 +210,14 @@ class PublicController
 
         $categories = $this->db->fetchAll("SELECT * FROM categories ORDER BY name ASC");
 
-        // Fetch reader comments
+        // Fetch reader comments with commenter avatar (from readers or users)
         $comments = $this->db->fetchAll(
-            "SELECT * FROM comments WHERE article_id = :art_id AND status = 'approved' ORDER BY created_at ASC",
+            "SELECT c.*, COALESCE(r.avatar_url, u.avatar_url) as avatar_url 
+             FROM comments c 
+             LEFT JOIN readers r ON c.user_email = r.email 
+             LEFT JOIN users u ON c.user_email = u.email 
+             WHERE c.article_id = :art_id AND c.status = 'approved' 
+             ORDER BY c.created_at ASC",
             ['art_id' => $article['id']]
         );
 
@@ -300,7 +305,7 @@ class PublicController
              FROM articles a
              JOIN categories c ON a.category_id = c.id
              WHERE a.status = 'published'
-               AND CONCAT_WS(' ', a.title, a.summary, a.content, a.slug, c.name) LIKE :term
+               AND CONCAT_WS(' ', a.title, a.title_kh, a.title_en, a.summary, a.summary_kh, a.summary_en, a.content, a.slug, c.name) LIKE :term
              ORDER BY a.published_at DESC LIMIT 20",
             ['term' => $term]
         );
@@ -383,9 +388,19 @@ class PublicController
         );
 
         $newId = (int) $this->db->lastInsertId();
-        $newComment = $this->db->fetch("SELECT * FROM comments WHERE id = :id", ['id' => $newId]);
+        $newComment = $this->db->fetch(
+            "SELECT c.*, COALESCE(r.avatar_url, u.avatar_url) as avatar_url 
+             FROM comments c 
+             LEFT JOIN readers r ON c.user_email = r.email 
+             LEFT JOIN users u ON c.user_email = u.email 
+             WHERE c.id = :id",
+            ['id' => $newId]
+        );
         if ($newComment) {
             $newComment['time_ago'] = TemplateEngine::timeAgo($newComment['created_at']);
+            if (!empty($newComment['avatar_url'])) {
+                $newComment['avatar_url'] = image_url($newComment['avatar_url']);
+            }
         }
 
         return [

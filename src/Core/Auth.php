@@ -34,9 +34,12 @@ class Auth
             return;
         }
 
-        // Configure security cookie settings before session start
+        // Configure security cookie settings before session start (30-day persistence)
+        @ini_set('session.gc_maxlifetime', 2592000); // 30 days
+        @ini_set('session.cookie_lifetime', 2592000); // 30 days
+
         $cookieParams = [
-            'lifetime' => 0,
+            'lifetime' => 2592000, // 30 days
             'path' => '/',
             'domain' => '',
             'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
@@ -50,22 +53,24 @@ class Auth
 
         // Verify session fingerprint to prevent session hijacking
         self::verifyFingerprint();
+
+        // Restore reader session from persistent cookie if session was cleared
+        self::restoreReaderSessionFromCookie();
     }
 
     /**
-     * Generate or verify unique client session fingerprint (IP + User-Agent)
+     * Generate or verify unique client session fingerprint (User-Agent based)
+     * Note: IP address is intentionally excluded to prevent mobile users from being logged out
+     * when switching cellular towers, toggling Wi-Fi/4G/5G, or roaming.
      */
     private static function verifyFingerprint(): void
     {
-        $currentFingerprint = hash('sha256', ($_SERVER['REMOTE_ADDR'] ?? '127.0.0.1') . ($_SERVER['HTTP_USER_AGENT'] ?? 'Unknown'));
+        $currentFingerprint = hash('sha256', $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown');
 
         if (!isset($_SESSION['_fingerprint'])) {
             $_SESSION['_fingerprint'] = $currentFingerprint;
         } elseif ($_SESSION['_fingerprint'] !== $currentFingerprint) {
-            // Potential session hijacking detected: destroy session & reset
-            session_unset();
-            session_destroy();
-            session_start();
+            // User-agent changed significantly: regenerate session securely without destroying session state
             session_regenerate_id(true);
             $_SESSION['_fingerprint'] = $currentFingerprint;
         }
@@ -102,6 +107,7 @@ class Auth
             $_SESSION['username'] = $user['username'];
             $_SESSION['email'] = $user['email'];
             $_SESSION['role'] = $user['role'];
+            $_SESSION['avatar_url'] = $user['avatar_url'] ?? null;
             $_SESSION['logged_in_at'] = time();
 
             return true;
@@ -148,11 +154,17 @@ class Auth
             return null;
         }
 
+        if (!array_key_exists('avatar_url', $_SESSION)) {
+            $db = Database::getInstance();
+            $_SESSION['avatar_url'] = $db->fetchColumn("SELECT avatar_url FROM users WHERE id = :id", ['id' => (int)$_SESSION['user_id']]) ?: null;
+        }
+
         return [
             'id' => $_SESSION['user_id'],
             'username' => $_SESSION['username'],
             'email' => $_SESSION['email'],
             'role' => $_SESSION['role'],
+            'avatar_url' => $_SESSION['avatar_url'] ?? null,
         ];
     }
 
@@ -174,13 +186,114 @@ class Auth
         return $userRole === $roles;
     }
 
+    private const READER_COOKIE_NAME = 'np_reader_session';
+    private const AUTH_SALT = 'NewsPlatformSecureSecretKey2026';
+
+    /**
+     * Set a persistent signed reader cookie for 30 days
+     */
+    public static function setReaderRememberCookie(array $reader): void
+    {
+        if (headers_sent()) {
+            return;
+        }
+        $payload = [
+            'id' => (int)$reader['id'],
+            'email' => $reader['email'],
+            'hash' => hash_hmac('sha256', $reader['id'] . '|' . $reader['email'] . '|' . ($reader['password_hash'] ?? ''), self::AUTH_SALT),
+            'expires' => time() + (86400 * 30),
+        ];
+        $val = base64_encode(json_encode($payload));
+        $secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+        setcookie(self::READER_COOKIE_NAME, $val, [
+            'expires' => time() + (86400 * 30),
+            'path' => '/',
+            'domain' => '',
+            'secure' => $secure,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
+        $_COOKIE[self::READER_COOKIE_NAME] = $val;
+    }
+
+    /**
+     * Clear persistent reader cookie
+     */
+    public static function clearReaderRememberCookie(): void
+    {
+        $secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+        setcookie(self::READER_COOKIE_NAME, '', [
+            'expires' => time() - 86400,
+            'path' => '/',
+            'domain' => '',
+            'secure' => $secure,
+            'httponly' => true,
+            'samesite' => 'Lax',
+        ]);
+        if (isset($_COOKIE[self::READER_COOKIE_NAME])) {
+            unset($_COOKIE[self::READER_COOKIE_NAME]);
+        }
+    }
+
+    /**
+     * Automatically restore reader session from persistent cookie
+     */
+    public static function restoreReaderSessionFromCookie(): bool
+    {
+        if (!empty($_SESSION['reader_id'])) {
+            return true;
+        }
+
+        if (empty($_COOKIE[self::READER_COOKIE_NAME])) {
+            return false;
+        }
+
+        try {
+            $raw = base64_decode($_COOKIE[self::READER_COOKIE_NAME], true);
+            if (!$raw) return false;
+            $data = json_decode($raw, true);
+            if (!is_array($data) || empty($data['id']) || empty($data['hash']) || empty($data['expires'])) {
+                return false;
+            }
+
+            if ($data['expires'] < time()) {
+                self::clearReaderRememberCookie();
+                return false;
+            }
+
+            $db = Database::getInstance();
+            $reader = $db->fetch("SELECT * FROM readers WHERE id = :id LIMIT 1", ['id' => (int)$data['id']]);
+            if (!$reader) {
+                self::clearReaderRememberCookie();
+                return false;
+            }
+
+            $expectedHash = hash_hmac('sha256', $reader['id'] . '|' . $reader['email'] . '|' . ($reader['password_hash'] ?? ''), self::AUTH_SALT);
+            if (!hash_equals($expectedHash, $data['hash'])) {
+                self::clearReaderRememberCookie();
+                return false;
+            }
+
+            $_SESSION['reader_id'] = (int)$reader['id'];
+            $_SESSION['reader_name'] = $reader['name'];
+            $_SESSION['reader_email'] = $reader['email'];
+            $_SESSION['reader_avatar'] = $reader['avatar_url'] ?? null;
+            return true;
+        } catch (\Throwable $e) {
+            return false;
+        }
+    }
+
     /**
      * Check if public reader is logged in
      */
     public static function readerCheck(): bool
     {
         self::startSession();
-        return !empty($_SESSION['reader_id']);
+        if (!empty($_SESSION['reader_id'])) {
+            return true;
+        }
+        return self::restoreReaderSessionFromCookie();
     }
 
     /**
@@ -191,6 +304,11 @@ class Auth
         self::startSession();
         if (!self::readerCheck()) {
             return null;
+        }
+
+        if (!array_key_exists('reader_avatar', $_SESSION) && !empty($_SESSION['reader_id'])) {
+            $db = Database::getInstance();
+            $_SESSION['reader_avatar'] = $db->fetchColumn("SELECT avatar_url FROM readers WHERE id = :id", ['id' => (int)$_SESSION['reader_id']]) ?: null;
         }
 
         return [
@@ -220,6 +338,10 @@ class Auth
         $_SESSION['reader_name'] = $reader['name'];
         $_SESSION['reader_email'] = $reader['email'];
         $_SESSION['reader_avatar'] = $reader['avatar_url'] ?? null;
+
+        // Persist reader session across browser restarts
+        self::setReaderRememberCookie($reader);
+
         return true;
     }
 
@@ -269,6 +391,11 @@ class Auth
         $_SESSION['reader_email'] = $email;
         $_SESSION['reader_avatar'] = null;
 
+        $newReader = $db->fetch("SELECT * FROM readers WHERE id = :id LIMIT 1", ['id' => $readerId]);
+        if ($newReader) {
+            self::setReaderRememberCookie($newReader);
+        }
+
         return ['success' => true, 'message' => 'Registration successful!'];
     }
 
@@ -279,6 +406,7 @@ class Auth
     {
         self::startSession();
         unset($_SESSION['reader_id'], $_SESSION['reader_name'], $_SESSION['reader_email'], $_SESSION['reader_avatar']);
+        self::clearReaderRememberCookie();
     }
 
     /**
