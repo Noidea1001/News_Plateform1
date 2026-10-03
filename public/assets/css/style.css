@@ -397,11 +397,11 @@ img {
    ========================================================================== */
 .top-utility-header {
     background-color: #0f172a !important;
-    color: rgba(255, 255, 255, 0.60);
+    color: rgba(255, 255, 255, 0.85);
     font-size: 0.72rem;
     font-weight: 600;
     font-family: var(--font-sans);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     height: 32px;
     min-height: 32px;
     position: relative;
@@ -411,6 +411,24 @@ img {
     padding-bottom: 0 !important;
     z-index: 1055;
     overflow: visible;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    transform: translateZ(0);
+    -webkit-transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    filter: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+.top-utility-header #langDropdownBtn {
+    opacity: 1 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+    filter: none !important;
 }
 
 .top-utility-header .dropdown-menu {
@@ -3513,3 +3531,44 @@ input[type="text"]::-webkit-search-cancel-button {
     text-align: center !important;
     font-family: 'Kantumruy Pro', 'Noto Sans Khmer', 'Inter', sans-serif !important;
 }
+
+/* ==========================================================================
+   28. REAL-TIME NOTIFICATION BELL OPEN/OFF INDICATOR & MOBILE POSITIONING
+   ========================================================================== */
+.header-clean-icon-btn.notif-open-active,
+.header-clean-icon-btn[aria-expanded="true"] {
+    background: rgba(200, 16, 46, 0.10) !important;
+    color: #c8102e !important;
+    border-radius: 50% !important;
+}
+
+.header-clean-icon-btn.notif-open-active i,
+.header-clean-icon-btn[aria-expanded="true"] i {
+    color: #c8102e !important;
+}
+
+.notif-pulse-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #10b981;
+    display: inline-block;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    animation: notifPulse 2s infinite;
+}
+
+@keyframes notifPulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+    }
+}
+
