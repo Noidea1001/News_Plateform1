@@ -28,6 +28,11 @@ $formAction = url('admin/actions/save-article.php');
                 class="btn btn-outline-secondary px-3.5 py-2 fw-semibold rounded-3 text-nowrap shadow-sm">
                 <span><?= __('cancel') ?></span>
             </a>
+            <button type="button" id="btnLivePreviewArticle"
+                class="btn btn-outline-danger px-3.5 py-2 fw-semibold rounded-3 text-nowrap shadow-sm d-inline-flex align-items-center gap-1.5">
+                <i class="bi bi-eye-fill"></i>
+                <span><?= __('live_preview') ?? 'Live Preview' ?></span>
+            </button>
             <button type="submit" form="articleForm" id="btnSaveArticleSubmit"
                 class="btn btn-danger px-4 py-2 fw-semibold rounded-3 text-nowrap shadow">
                 <span><?= $isEdit ? __('update_article') : __('publish_save') ?></span>
@@ -537,6 +542,79 @@ $formAction = url('admin/actions/save-article.php');
 
 </div>
 
+<!-- =========================================================================
+     Professional Article Live Preview Modal
+     ========================================================================= -->
+<div class="modal fade" id="articlePreviewModal" tabindex="-1" aria-labelledby="articlePreviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-scrollable modal-fullscreen-lg-down">
+        <div class="modal-content border-0 shadow-lg">
+            
+            <!-- Modal Header with Viewport & Language Controls -->
+            <div class="modal-header py-2.5 px-3 bg-light border-bottom d-flex align-items-center justify-content-between flex-wrap gap-2">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-danger rounded-1 px-2.5 py-1 text-uppercase fw-bold" style="font-size:0.72rem; letter-spacing:0.04em;">
+                        <i class="bi bi-eye-fill me-1"></i><?= __('live_preview') ?? 'Live Preview' ?>
+                    </span>
+                    <span class="badge bg-secondary bg-opacity-10 text-secondary border border-secondary border-opacity-25 px-2 py-0.5 text-3xs fw-bold" id="previewTemplateBadge">
+                        Standard Blueprint
+                    </span>
+                </div>
+
+                <!-- Responsive Device Viewport Switcher -->
+                <div class="d-flex align-items-center gap-1 bg-white p-1 rounded-2 border shadow-2xs">
+                    <button type="button" class="btn btn-xs btn-light px-2.5 py-1 text-3xs fw-semibold active device-switch-btn" data-device="desktop" title="Desktop View (100%)">
+                        <i class="bi bi-display me-1 text-secondary"></i>Desktop
+                    </button>
+                    <button type="button" class="btn btn-xs btn-light px-2.5 py-1 text-3xs fw-semibold device-switch-btn" data-device="tablet" title="Tablet View (768px)">
+                        <i class="bi bi-tablet me-1 text-secondary"></i>Tablet
+                    </button>
+                    <button type="button" class="btn btn-xs btn-light px-2.5 py-1 text-3xs fw-semibold device-switch-btn" data-device="mobile" title="Mobile View (390px)">
+                        <i class="bi bi-phone me-1 text-secondary"></i>Mobile
+                    </button>
+                </div>
+
+                <!-- Preview Language Switcher & Close Button -->
+                <div class="d-flex align-items-center gap-2">
+                    <div class="btn-group btn-group-sm" role="group">
+                        <button type="button" class="btn btn-xs btn-outline-danger active preview-lang-btn" data-lang="kh" style="font-size:0.75rem; padding:2px 10px;">
+                            ខ្មែរ (KH)
+                        </button>
+                        <button type="button" class="btn btn-xs btn-outline-danger preview-lang-btn" data-lang="en" style="font-size:0.75rem; padding:2px 10px;">
+                            EN
+                        </button>
+                    </div>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            </div>
+
+            <!-- Modal Body with Device Simulation Frame -->
+            <div class="modal-body p-0 bg-light-subtle d-flex justify-content-center overflow-auto" style="min-height: 520px; background:#f1f5f9;">
+                <div id="previewFrameWrapper" style="width: 100%; max-width: 100%; transition: all 0.25s ease; background: #ffffff; min-height: 520px;">
+                    <div id="previewRenderContainer" class="p-3 p-md-4">
+                        <!-- Dynamic rendered article inserted via JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer py-2.5 px-3 bg-white border-top d-flex align-items-center justify-content-between">
+                <button type="button" class="btn btn-outline-secondary btn-sm px-3 rounded-2 fw-semibold" data-bs-dismiss="modal">
+                    &larr; <?= __('back_to_editor') ?? 'Back to Editing' ?>
+                </button>
+                <div class="d-flex align-items-center gap-2">
+                    <span class="text-muted text-3xs d-none d-md-inline">
+                        <i class="bi bi-info-circle me-1"></i><?= __('preview_disclaimer') ?? 'Simulates live reader viewport and blueprint styling' ?>
+                    </span>
+                    <button type="button" id="btnPreviewPublishSubmit" class="btn btn-danger btn-sm px-3.5 py-1.5 rounded-2 fw-bold shadow-2xs">
+                        <?= $isEdit ? __('update_article') : __('publish_save') ?>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <!-- Real-Time JavaScript Slug Generator & Bilingual Quill Setup -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -568,9 +646,65 @@ $formAction = url('admin/actions/save-article.php');
             }
         }
 
-        if (titleKhInput) titleKhInput.addEventListener('input', syncTitles);
+        function autoDetectDualLanguage(inputVal) {
+            const str = inputVal.trim();
+            const hasKhmer = /[\u1780-\u17FF]/.test(str);
+            const hasLatin = /[a-zA-Z]/.test(str);
+            if (!hasKhmer || !hasLatin) return null;
+
+            const delims = [' / ', ' | ', ' - ', '---', '///', '|||'];
+            for (const d of delims) {
+                if (str.includes(d)) {
+                    const parts = str.split(d);
+                    const p1 = parts[0].trim();
+                    const p2 = parts[1].trim();
+                    const p1Kh = /[\u1780-\u17FF]/.test(p1);
+                    const p2En = /[a-zA-Z]/.test(p2);
+                    if (p1Kh && p2En) return { kh: p1, en: p2 };
+                    const p2Kh = /[\u1780-\u17FF]/.test(p2);
+                    const p1En = /[a-zA-Z]/.test(p1);
+                    if (p2Kh && p1En) return { kh: p2, en: p1 };
+                }
+            }
+            const parenMatch = str.match(/^(.+?)\s*[\(\[](.+?)[\)\]]$/);
+            if (parenMatch) {
+                const p1 = parenMatch[1].trim();
+                const p2 = parenMatch[2].trim();
+                const p1Kh = /[\u1780-\u17FF]/.test(p1);
+                const p2Kh = /[\u1780-\u17FF]/.test(p2);
+                if (p1Kh && !p2Kh) return { kh: p1, en: p2 };
+                if (!p1Kh && p2Kh) return { kh: p2, en: p1 };
+            }
+            return null;
+        }
+
+        if (titleKhInput) {
+            titleKhInput.addEventListener('input', function() {
+                const detected = autoDetectDualLanguage(this.value);
+                if (detected) {
+                    this.value = detected.kh;
+                    if (titleEnInput && (!titleEnInput.value || !titleEnInput.value.trim())) {
+                        titleEnInput.value = detected.en;
+                        titleEnInput.dispatchEvent(new Event('input'));
+                    }
+                }
+                syncTitles();
+            });
+        }
         if (titleEnInput) titleEnInput.addEventListener('input', syncTitles);
-        if (summaryKhInput) summaryKhInput.addEventListener('input', syncSummaries);
+        if (summaryKhInput) {
+            summaryKhInput.addEventListener('input', function() {
+                const detected = autoDetectDualLanguage(this.value);
+                if (detected) {
+                    this.value = detected.kh;
+                    if (summaryEnInput && (!summaryEnInput.value || !summaryEnInput.value.trim())) {
+                        summaryEnInput.value = detected.en;
+                        summaryEnInput.dispatchEvent(new Event('input'));
+                    }
+                }
+                syncSummaries();
+            });
+        }
         if (summaryEnInput) summaryEnInput.addEventListener('input', syncSummaries);
 
         function slugify(text) {
@@ -819,6 +953,298 @@ $formAction = url('admin/actions/save-article.php');
                 syncTitles();
                 syncSummaries();
                 syncQuillContent();
+            });
+        }
+
+        // =========================================================================
+        // Professional Article Live Preview System
+        // =========================================================================
+        let currentPreviewLang = 'kh';
+        let currentPreviewDevice = 'desktop';
+
+        const btnLivePreview = document.getElementById('btnLivePreviewArticle');
+        const previewModalEl = document.getElementById('articlePreviewModal');
+        const previewFrameWrapper = document.getElementById('previewFrameWrapper');
+        const previewRenderContainer = document.getElementById('previewRenderContainer');
+        const previewTemplateBadge = document.getElementById('previewTemplateBadge');
+
+        const authorMetadata = {
+            name: <?= json_encode($currentUser['username'] ?? 'Editorial Author') ?>,
+            role: <?= json_encode(ucfirst($currentUser['role'] ?? 'Reporter')) ?>,
+            avatar: <?= json_encode(!empty($currentUser['avatar_url']) ? image_url($currentUser['avatar_url']) : '') ?>
+        };
+
+        function getPreviewFormData() {
+            syncTitles();
+            syncSummaries();
+            syncQuillContent();
+
+            const titleKh = titleKhInput ? titleKhInput.value.trim() : '';
+            const titleEn = titleEnInput ? titleEnInput.value.trim() : '';
+            const summaryKh = summaryKhInput ? summaryKhInput.value.trim() : '';
+            const summaryEn = summaryEnInput ? summaryEnInput.value.trim() : '';
+            const contentKh = quillKh ? quillKh.root.innerHTML : '';
+            const contentEn = quillEn ? quillEn.root.innerHTML : '';
+            const templateType = (document.getElementById('template_type') ? document.getElementById('template_type').value : 'standard') || 'standard';
+
+            const catSelect = document.getElementById('category_id');
+            const catName = catSelect && catSelect.selectedIndex >= 0 ? catSelect.options[catSelect.selectedIndex].text.trim() : 'News';
+
+            const hasDropCap = document.getElementById('has_drop_cap') ? document.getElementById('has_drop_cap').checked : false;
+            const audioEmbedUrl = document.getElementById('audio_embed_url') ? document.getElementById('audio_embed_url').value.trim() : '';
+            const videoEmbedUrl = document.getElementById('video_embed_url') ? document.getElementById('video_embed_url').value.trim() : '';
+            const refUrl = document.getElementById('reference_url') ? document.getElementById('reference_url').value.trim() : '';
+            const refSource = document.getElementById('reference_source_name') ? document.getElementById('reference_source_name').value.trim() : '';
+
+            // Featured Image
+            let featuredImgSrc = '';
+            const featInput = document.getElementById('featured_image');
+            if (featInput && featInput.files && featInput.files[0]) {
+                featuredImgSrc = URL.createObjectURL(featInput.files[0]);
+            } else {
+                const existingImg = document.getElementById('featuredImagePreview');
+                if (existingImg && existingImg.src && !existingImg.src.includes('data:image/svg+xml')) {
+                    featuredImgSrc = existingImg.src;
+                }
+            }
+
+            // Word count / reading time
+            const activeText = (currentPreviewLang === 'kh' ? (quillKh ? quillKh.getText() : '') : (quillEn ? quillEn.getText() : '')) || '';
+            const wordCount = activeText.trim().split(/\s+/).filter(Boolean).length;
+            const readingTimeMin = Math.max(1, Math.ceil(wordCount / 180));
+            const readingTimeStr = currentPreviewLang === 'kh' ? `រយះពេលអាន ${readingTimeMin} នាទី` : `${readingTimeMin} min read`;
+
+            return {
+                titleKh, titleEn, summaryKh, summaryEn,
+                contentKh, contentEn, templateType, catName,
+                hasDropCap, audioEmbedUrl, videoEmbedUrl, refUrl, refSource,
+                featuredImgSrc, readingTimeStr
+            };
+        }
+
+        function renderArticlePreview() {
+            if (!previewRenderContainer) return;
+
+            const data = getPreviewFormData();
+            const isKh = (currentPreviewLang === 'kh');
+            const title = (isKh ? (data.titleKh || data.titleEn) : (data.titleEn || data.titleKh)) || (isKh ? 'ចំណងជើងអត្ថបទ' : 'Article Title');
+            const summary = (isKh ? (data.summaryKh || data.summaryEn) : (data.summaryEn || data.summaryKh)) || '';
+            let content = (isKh ? (data.contentKh || data.contentEn) : (data.contentEn || data.contentKh)) || (isKh ? '<p>មាតិកាអត្ថបទនឹងបង្ហាញនៅទីនេះ...</p>' : '<p>Article body will appear here...</p>');
+
+            if (data.hasDropCap) {
+                content = content.replace(/<p>/i, '<p class="has-drop-cap">');
+            }
+
+            if (previewTemplateBadge) {
+                previewTemplateBadge.textContent = data.templateType.toUpperCase() + ' BLUEPRINT';
+            }
+
+            const todayStr = new Date().toLocaleDateString(isKh ? 'km-KH' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            const authorAvatarHtml = authorMetadata.avatar 
+                ? `<img src="${authorMetadata.avatar}" alt="${authorMetadata.name}" class="rounded-circle object-fit-cover flex-shrink-0" style="width:38px;height:38px;">`
+                : `<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold flex-shrink-0" style="width:38px;height:38px;background:#c8102e;font-size:0.9rem;">${authorMetadata.name.charAt(0).toUpperCase()}</div>`;
+
+            let templateHtml = '';
+
+            if (data.templateType === 'investigative') {
+                templateHtml = `
+                    <div class="investigative-preview">
+                        <div class="bg-dark text-white p-4 p-md-5 rounded-3 mb-4" style="background:#0b1320 !important;">
+                            <div class="d-flex align-items-center gap-2 mb-2">
+                                <span class="badge bg-danger text-uppercase px-2 py-0.5" style="font-size:0.7rem;">${escapeHtml(data.catName)}</span>
+                                <span class="badge bg-white bg-opacity-10 text-white-50 text-3xs">INVESTIGATIVE REPORT</span>
+                            </div>
+                            <h1 class="fw-bold display-6 mb-3 text-white" style="line-height:1.25;">${escapeHtml(title)}</h1>
+                            ${summary ? `<p class="fs-6 text-white-50 mb-4" style="line-height:1.6;">${escapeHtml(summary)}</p>` : ''}
+                            <div class="d-flex align-items-center gap-2.5 text-white-50 text-xs border-top border-secondary border-opacity-25 pt-3">
+                                <span class="text-white fw-semibold">${escapeHtml(authorMetadata.name)}</span>
+                                <span>&middot;</span>
+                                <span>${todayStr}</span>
+                                <span>&middot;</span>
+                                <span>${data.readingTimeStr}</span>
+                            </div>
+                        </div>
+
+                        ${data.featuredImgSrc ? `
+                            <div class="mb-4 text-center">
+                                <img src="${data.featuredImgSrc}" class="img-fluid rounded-3 shadow-sm w-100 object-fit-cover" style="max-height:460px;" alt="Lead Cover">
+                            </div>
+                        ` : ''}
+
+                        <div class="article-content" style="font-size:1.05rem; line-height:1.8; color:#1e293b;">
+                            ${content}
+                        </div>
+                    </div>
+                `;
+            } else if (data.templateType === 'opinion') {
+                templateHtml = `
+                    <div class="opinion-preview">
+                        <div class="p-3.5 p-md-4 mb-4 rounded-3 bg-white border shadow-2xs d-flex align-items-center gap-3.5">
+                            <div class="flex-shrink-0">
+                                ${authorMetadata.avatar 
+                                    ? `<img src="${authorMetadata.avatar}" alt="${authorMetadata.name}" class="rounded-circle object-fit-cover border" style="width:68px;height:68px;">`
+                                    : `<div class="rounded-circle d-flex align-items-center justify-content-center text-white fw-bold fs-4" style="width:68px;height:68px;background:#0f172a;">${authorMetadata.name.charAt(0).toUpperCase()}</div>`
+                                }
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-danger fw-bold text-3xs text-uppercase mb-1 tracking-wider">OPINION & PERSPECTIVE &bull; ${escapeHtml(data.catName)}</div>
+                                <h4 class="fw-bold text-dark mb-0.5">${escapeHtml(authorMetadata.name)}</h4>
+                                <div class="text-muted text-xs">${escapeHtml(authorMetadata.role)}</div>
+                            </div>
+                        </div>
+
+                        <h1 class="fw-bold mb-3 text-dark" style="font-size:1.85rem; line-height:1.3;">${escapeHtml(title)}</h1>
+                        ${summary ? `<p class="lead text-secondary mb-3 fst-italic" style="font-size:1.05rem; line-height:1.6;">${escapeHtml(summary)}</p>` : ''}
+                        
+                        <div class="d-flex align-items-center gap-2 text-muted text-2xs py-2 mb-4 border-top border-bottom">
+                            <span>${todayStr}</span>
+                            <span>&middot;</span>
+                            <span>${data.readingTimeStr}</span>
+                        </div>
+
+                        ${data.featuredImgSrc ? `
+                            <div class="mb-4">
+                                <img src="${data.featuredImgSrc}" class="img-fluid rounded-2 shadow-2xs w-100 object-fit-cover" style="max-height:420px;" alt="Cover">
+                            </div>
+                        ` : ''}
+
+                        <div class="article-content" style="font-size:1.05rem; line-height:1.8; color:#1e293b;">
+                            ${content}
+                        </div>
+                    </div>
+                `;
+            } else {
+                templateHtml = `
+                    <div class="standard-preview">
+                        <div class="mb-2">
+                            <span class="badge bg-danger text-uppercase px-2 py-1 fw-bold" style="font-size:0.68rem; letter-spacing:0.04em;">
+                                ${escapeHtml(data.catName)}
+                            </span>
+                        </div>
+                        <h1 class="fw-bold mb-3 text-dark" style="font-size:1.85rem; line-height:1.32; letter-spacing:-0.01em;">
+                            ${escapeHtml(title)}
+                        </h1>
+                        ${summary ? `<p class="lead text-muted mb-3" style="font-size:1.02rem; line-height:1.6;">${escapeHtml(summary)}</p>` : ''}
+
+                        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 py-2.5 my-3 border-top border-bottom">
+                            <div class="d-flex align-items-center gap-2.5">
+                                ${authorAvatarHtml}
+                                <div>
+                                    <div class="fw-bold text-dark text-xs" style="line-height:1.25;">${escapeHtml(authorMetadata.name)}</div>
+                                    <div class="text-muted text-3xs">${escapeHtml(authorMetadata.role)}</div>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2 text-muted text-2xs">
+                                <span>${todayStr}</span>
+                                <span>&middot;</span>
+                                <span>${data.readingTimeStr}</span>
+                                <span>&middot;</span>
+                                <span>0 views</span>
+                            </div>
+                        </div>
+
+                        ${data.featuredImgSrc ? `
+                            <div class="mb-4">
+                                <img src="${data.featuredImgSrc}" class="img-fluid rounded-2 shadow-2xs w-100 object-fit-cover" style="max-height:440px;" alt="Cover">
+                            </div>
+                        ` : ''}
+
+                        ${data.audioEmbedUrl ? `
+                            <div class="p-3 mb-4 bg-light border rounded-2 d-flex align-items-center gap-3">
+                                <i class="bi bi-volume-up-fill fs-4 text-danger"></i>
+                                <div class="flex-grow-1 min-w-0">
+                                    <div class="fw-bold text-xs text-dark mb-1">Audio Narration / Podcast</div>
+                                    <audio controls class="w-100" style="height:32px;"><source src="${escapeHtml(data.audioEmbedUrl)}"></audio>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <div class="article-content" style="font-size:1.02rem; line-height:1.8; color:#1e293b;">
+                            ${content}
+                        </div>
+
+                        ${data.refUrl ? `
+                            <div class="mt-4 pt-3 border-top text-muted text-xs d-flex align-items-center gap-2">
+                                <i class="bi bi-link-45deg fs-6 text-danger"></i>
+                                <span>Source: <strong>${escapeHtml(data.refSource || 'External Reference')}</strong> (<a href="${escapeHtml(data.refUrl)}" target="_blank" class="text-danger text-decoration-none">${escapeHtml(data.refUrl)}</a>)</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            previewRenderContainer.innerHTML = templateHtml;
+        }
+
+        // Live Preview Modal Trigger
+        if (btnLivePreview) {
+            btnLivePreview.addEventListener('click', function(e) {
+                e.preventDefault();
+                renderArticlePreview();
+                if (previewModalEl && typeof bootstrap !== 'undefined') {
+                    const bsModal = bootstrap.Modal.getOrCreateInstance(previewModalEl);
+                    bsModal.show();
+                }
+            });
+        }
+
+        // Viewport Switcher Handlers
+        document.querySelectorAll('.device-switch-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.device-switch-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const device = this.getAttribute('data-device');
+                currentPreviewDevice = device;
+
+                if (previewFrameWrapper) {
+                    if (device === 'mobile') {
+                        previewFrameWrapper.style.maxWidth = '390px';
+                        previewFrameWrapper.style.boxShadow = '0 12px 40px rgba(0,0,0,0.18)';
+                        previewFrameWrapper.style.border = '2px solid #334155';
+                        previewFrameWrapper.style.borderRadius = '24px';
+                        previewFrameWrapper.style.margin = '20px auto';
+                    } else if (device === 'tablet') {
+                        previewFrameWrapper.style.maxWidth = '768px';
+                        previewFrameWrapper.style.boxShadow = '0 8px 30px rgba(0,0,0,0.12)';
+                        previewFrameWrapper.style.border = '1px solid #cbd5e1';
+                        previewFrameWrapper.style.borderRadius = '10px';
+                        previewFrameWrapper.style.margin = '16px auto';
+                    } else {
+                        previewFrameWrapper.style.maxWidth = '100%';
+                        previewFrameWrapper.style.boxShadow = 'none';
+                        previewFrameWrapper.style.border = 'none';
+                        previewFrameWrapper.style.borderRadius = '0';
+                        previewFrameWrapper.style.margin = '0';
+                    }
+                }
+            });
+        });
+
+        // Language Switcher Handlers
+        document.querySelectorAll('.preview-lang-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.preview-lang-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                currentPreviewLang = this.getAttribute('data-lang') || 'kh';
+                renderArticlePreview();
+            });
+        });
+
+        // Publish from preview modal button
+        const btnPreviewPublishSubmit = document.getElementById('btnPreviewPublishSubmit');
+        if (btnPreviewPublishSubmit && articleForm) {
+            btnPreviewPublishSubmit.addEventListener('click', function() {
+                if (previewModalEl && typeof bootstrap !== 'undefined') {
+                    const bsModal = bootstrap.Modal.getInstance(previewModalEl);
+                    if (bsModal) bsModal.hide();
+                }
+                const btnSaveSubmit = document.getElementById('btnSaveArticleSubmit');
+                if (btnSaveSubmit) {
+                    btnSaveSubmit.click();
+                } else {
+                    articleForm.submit();
+                }
             });
         }
     });
