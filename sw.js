@@ -3,7 +3,7 @@
  * news-platform / public / sw.js
  */
 
-const CACHE_NAME = 'newsplatform-v2';
+const CACHE_NAME = 'newsplatform-v3';
 
 // 1. Install Event: Cache Core Assets Safely
 self.addEventListener('install', event => {
@@ -68,8 +68,9 @@ self.addEventListener('fetch', event => {
         return;
     }
 
-    // Bypass caching for live search API, dynamic APIs, and auth requests
+    // Bypass caching for live search API, dynamic APIs, comments, and auth requests
     if (url.pathname.includes('search_api.php') ||
+        url.pathname.includes('comment.php') ||
         url.pathname.includes('/api/') ||
         url.pathname.includes('login.php') ||
         url.pathname.includes('logout.php') ||

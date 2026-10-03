@@ -538,17 +538,23 @@ document.addEventListener('DOMContentLoaded', function () {
     let deferredPrompt = null;
 
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', function () {
+        const registerSw = function () {
             const swUrl = '<?= url("sw.js") ?>';
             const swScope = '<?= rtrim(url(""), "/") ?>/';
             navigator.serviceWorker.register(swUrl, { scope: swScope })
                 .then(function (reg) {
                     console.log('[PWA] Service Worker registered with scope:', reg.scope);
+                    reg.update();
                 })
                 .catch(function (err) {
                     console.warn('[PWA] Service Worker registration failed:', err);
                 });
-        });
+        };
+        if (document.readyState === 'complete') {
+            registerSw();
+        } else {
+            window.addEventListener('load', registerSw);
+        }
     }
 
     function showInstallUi() {
