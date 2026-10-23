@@ -1,0 +1,13 @@
+# Deny direct HTTP access to all configuration files
+# Config is loaded via PHP include only — never served directly to the browser
+
+# Apache 2.4+
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+
+# Apache 2.2 fallback
+<IfModule !mod_authz_core.c>
+    Order deny,allow
+    Deny from all
+</IfModule>
