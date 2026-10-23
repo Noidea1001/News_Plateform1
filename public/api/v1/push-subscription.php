@@ -109,8 +109,9 @@ try {
     exit;
 
 } catch (\Throwable $e) {
+    error_log('[push-subscription] ' . $e->getMessage());
     if (ob_get_length()) ob_end_clean();
     http_response_code(500);
-    echo json_encode(['success' => false, 'error' => $e->getMessage()]);
+    echo json_encode(['success' => false, 'error' => 'An unexpected server error occurred.']);
     exit;
 }
