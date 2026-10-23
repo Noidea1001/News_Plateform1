@@ -4,6 +4,7 @@
 .env.production
 config/database.local.php
 config/vapid.local.php
+config/vapid.php
 
 # User Uploaded Media (Allow sample uploads to be committed to Git)
 # public/uploads/*
