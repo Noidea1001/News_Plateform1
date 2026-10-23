@@ -342,6 +342,25 @@ class PublicController
             ];
         }
 
+        // CSRF validation — prevent cross-site request forgery
+        if (!Auth::verifyCsrfToken($postData['csrf_token'] ?? '')) {
+            return ['success' => false, 'message' => 'Security validation failed. Please refresh the page and try again.'];
+        }
+
+        // Comment rate limiting — max 5 comments per IP per minute
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+        $rateCacheKey = '_comment_rate_' . md5($ip);
+        if (!isset($_SESSION[$rateCacheKey])) {
+            $_SESSION[$rateCacheKey] = ['count' => 0, 'reset_at' => time() + 60];
+        }
+        if (time() > $_SESSION[$rateCacheKey]['reset_at']) {
+            $_SESSION[$rateCacheKey] = ['count' => 0, 'reset_at' => time() + 60];
+        }
+        $_SESSION[$rateCacheKey]['count']++;
+        if ($_SESSION[$rateCacheKey]['count'] > 5) {
+            return ['success' => false, 'message' => 'You are submitting comments too quickly. Please wait a moment.'];
+        }
+
         $articleId = (int) ($postData['article_id'] ?? 0);
         $parentId = !empty($postData['parent_id']) ? (int) $postData['parent_id'] : null;
         $userName = $reader ? $reader['name'] : ($staff['username'] ?? 'Staff');
@@ -374,16 +393,16 @@ class PublicController
             }
         }
 
-        // Insert comment
+        // Insert comment — store raw values; escaping is applied at render time via e()/htmlspecialchars
         $this->db->execute(
             "INSERT INTO comments (article_id, parent_id, user_name, user_email, content, likes_count, status, created_at) 
              VALUES (:aid, :pid, :name, :email, :content, 0, 'approved', NOW())",
             [
                 'aid' => $articleId,
                 'pid' => $parentId,
-                'name' => htmlspecialchars($userName, ENT_QUOTES, 'UTF-8'),
+                'name' => $userName,
                 'email' => strtolower($userEmail),
-                'content' => htmlspecialchars($content, ENT_QUOTES, 'UTF-8')
+                'content' => $content
             ]
         );
 
@@ -595,15 +614,16 @@ class PublicController
 
         if (!empty($subscribedCatIds)) {
             // User has customized subscriptions: prioritize breaking news + articles in their subscribed topics
-            $inClause = implode(',', $subscribedCatIds);
+            $placeholders = implode(',', array_fill(0, count($subscribedCatIds), '?'));
             $notifications = $this->db->fetchAll(
                 "SELECT n.*, a.slug as article_slug, a.featured_image, a.category_id, c.name as category_name,
                         a.title as article_title, a.title_kh, a.title_en, a.summary as article_summary, a.summary_kh, a.summary_en
                  FROM notifications n 
                  LEFT JOIN articles a ON n.article_id = a.id 
                  LEFT JOIN categories c ON a.category_id = c.id
-                 WHERE n.type = 'breaking' OR a.category_id IN ($inClause)
-                 ORDER BY n.created_at DESC LIMIT 20"
+                 WHERE n.type = 'breaking' OR a.category_id IN ($placeholders)
+                 ORDER BY n.created_at DESC LIMIT 20",
+                array_values($subscribedCatIds)
             );
         } else {
             // General stream: breaking news + latest published
@@ -992,6 +1012,14 @@ class PublicController
             $name = trim($postData['name'] ?? '');
             $email = strtolower(trim($postData['email'] ?? ''));
             $avatarUrl = trim($postData['avatar_url'] ?? '');
+
+            // Validate avatar URL — only allow http/https schemes to prevent javascript: injection
+            if (!empty($avatarUrl)) {
+                $scheme = strtolower(parse_url($avatarUrl, PHP_URL_SCHEME) ?? '');
+                if (!in_array($scheme, ['http', 'https'], true)) {
+                    $avatarUrl = '';
+                }
+            }
 
             if (mb_strlen($name) < 2 || mb_strlen($name) > 80) {
                 header('Location: ' . url('settings.php?error=' . urlencode('Name must be 2–80 characters.')));
