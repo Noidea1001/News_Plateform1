@@ -21,18 +21,26 @@ class Sanitizer
         // 1. Remove dangerous script tags and inline event handlers (onclick, onerror, onload, etc.)
         $html = preg_replace('#<script[^>]*?>.*?</script>#is', '', $html);
         $html = preg_replace('#<style[^>]*?>.*?</style>#is', '', $html);
-        $html = preg_replace('#on[a-z]+\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)#i', '', $html);
-        $html = preg_replace('#href\s*=\s*["\']?\s*javascript:[^"\'>]*["\']?#i', 'href="#"', $html);
+        // Case-insensitive removal of ALL on* event attributes (including mixed-case like OnClick)
+        $html = preg_replace('#\bon\w+\s*=\s*(?:"[^"]*"|\'[^\']*\'|[^\s>]+)#i', '', $html);
+        // Block javascript: in href and src attributes
+        $html = preg_replace('#href\s*=\s*["\']?\s*javascript:[^"\'>\s]*["\']?#i', 'href="#"', $html);
+        $html = preg_replace('#src\s*=\s*["\']?\s*javascript:[^"\'>\s]*["\']?#i', 'src=""', $html);
+        // Block data: URIs in src (XSS vector in some browsers)
+        $html = preg_replace('#src\s*=\s*["\']?\s*data:[^"\'>\s]*["\']?#i', 'src=""', $html);
 
         // 2. Allowed HTML tags for article rendering
         $allowedTags = '<p><br><h1><h2><h3><h4><h5><h6><strong><b><em><i><u><s><del><blockquote><pre><code><ul><ol><li><a><img><iframe><div><span><hr><table><thead><tbody><tr><th><td><figure><figcaption>';
 
         $sanitized = strip_tags($html, $allowedTags);
 
-        // 3. Remove inline background-color & background styles pasted from Quill/rich-text editors
+        // 3. Remove inline background-color & background styles pasted from Quill/rich-text editors;
+        //    also strip expression() and url() — IE/legacy CSS XSS vectors
         $sanitized = preg_replace_callback('/style=["\']([^"\']*)["\']/i', function ($matches) {
             $styleContent = $matches[1];
             $cleanedStyle = preg_replace('/background(?:-color)?\s*:\s*[^;]+;?/i', '', $styleContent);
+            $cleanedStyle = preg_replace('/expression\s*\([^)]*\)/i', '', $cleanedStyle);
+            $cleanedStyle = preg_replace('/url\s*\([^)]*\)/i', '', $cleanedStyle);
             $cleanedStyle = trim($cleanedStyle, " \t\n\r\0\x0B;");
             return !empty($cleanedStyle) ? 'style="' . htmlspecialchars($cleanedStyle, ENT_QUOTES, 'UTF-8') . '"' : '';
         }, $sanitized);
@@ -41,9 +49,16 @@ class Sanitizer
         $sanitized = preg_replace('/\bql-bg-[a-zA-Z0-9_\-]+\b/i', '', $sanitized);
 
         // 5. Ensure iframe embeds only allow trusted domains (YouTube, Spotify, SoundCloud, Vimeo)
-        $sanitized = preg_replace_callback('/<iframe[^>]+src=["\']([^"\']+)["\'][^>]*>.*?<\/iframe>/i', function ($matches) {
+        //    Use parse_url() for strict host validation instead of fragile regex matching
+        $trustedIframeHosts = [
+            'youtube.com', 'www.youtube.com', 'youtube-nocookie.com', 'www.youtube-nocookie.com',
+            'youtu.be', 'player.vimeo.com', 'vimeo.com',
+            'open.spotify.com', 'w.soundcloud.com',
+        ];
+        $sanitized = preg_replace_callback('/<iframe[^>]+src=["\']([^"\']+)["\'][^>]*>.*?<\/iframe>/is', function ($matches) use ($trustedIframeHosts) {
             $src = $matches[1];
-            if (preg_match('#^(https?:)?\/\/(www\.)?(youtube\.com|youtube-nocookie\.com|youtu\.be|player\.vimeo\.com|open\.spotify\.com|w\.soundcloud\.com)#i', $src)) {
+            $host = strtolower(parse_url($src, PHP_URL_HOST) ?? '');
+            if (in_array($host, $trustedIframeHosts, true)) {
                 return $matches[0];
             }
             return ''; // Strip untrusted iframe sources
