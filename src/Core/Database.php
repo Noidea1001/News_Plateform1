@@ -90,18 +90,14 @@ class Database
                 }
             }
 
-            // Sync default admin staff user password_hash for 'admin123' if needed
-            $adminUser = $this->fetch("SELECT id, password_hash FROM users WHERE username = 'admin' LIMIT 1");
-            if (!$adminUser || !password_verify('admin123', $adminUser['password_hash'])) {
+            // Seed default admin staff user ONLY on first install (never overwrite existing password)
+            $adminUser = $this->fetch("SELECT id FROM users WHERE username = 'admin' LIMIT 1");
+            if (!$adminUser) {
                 $freshHash = password_hash('admin123', PASSWORD_BCRYPT);
-                if ($adminUser) {
-                    $this->execute("UPDATE users SET password_hash = :hash, is_active = 1 WHERE username = 'admin'", ['hash' => $freshHash]);
-                } else {
-                    $this->execute(
-                        "INSERT INTO users (username, email, password_hash, role, is_active, created_at) VALUES ('admin', 'admin@newsplatform.local', :hash, 'admin', 1, NOW())",
-                        ['hash' => $freshHash]
-                    );
-                }
+                $this->execute(
+                    "INSERT INTO users (username, email, password_hash, role, is_active, created_at) VALUES ('admin', 'admin@newsplatform.local', :hash, 'admin', 1, NOW())",
+                    ['hash' => $freshHash]
+                );
             }
 
             // Ensure columns exist on articles table if table was created earlier without them
