@@ -26,6 +26,11 @@ class Auth
             return;
         }
 
+        // Emit HTTP security headers early (before any output)
+        if (!headers_sent()) {
+            self::sendSecurityHeaders();
+        }
+
         if (headers_sent()) {
             if (session_status() === PHP_SESSION_NONE) {
                 @session_start();
@@ -42,7 +47,7 @@ class Auth
             'lifetime' => 2592000, // 30 days
             'path' => '/',
             'domain' => '',
-            'secure' => isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on',
+            'secure' => self::isHttps(),
             'httponly' => true,
             'samesite' => 'Lax'
         ];
@@ -56,6 +61,38 @@ class Auth
 
         // Restore reader session from persistent cookie if session was cleared
         self::restoreReaderSessionFromCookie();
+    }
+
+    /**
+     * Emit HTTP security headers on every request
+     */
+    private static function sendSecurityHeaders(): void
+    {
+        // Prevent MIME-type sniffing attacks
+        header('X-Content-Type-Options: nosniff');
+        // Block framing except from same origin (clickjacking protection)
+        header('X-Frame-Options: SAMEORIGIN');
+        // Control referrer information sent to external sites
+        header('Referrer-Policy: strict-origin-when-cross-origin');
+        // Basic XSS filter for older browsers
+        header('X-XSS-Protection: 1; mode=block');
+        // Permissions Policy — restrict powerful browser APIs
+        header('Permissions-Policy: camera=(), microphone=(), geolocation=()');
+    }
+
+    /**
+     * Check whether the current request is served over HTTPS,
+     * accounting for reverse proxies that set X-Forwarded-Proto.
+     */
+    private static function isHttps(): bool
+    {
+        if (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') {
+            return true;
+        }
+        if (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && strtolower($_SERVER['HTTP_X_FORWARDED_PROTO']) === 'https') {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -187,7 +224,24 @@ class Auth
     }
 
     private const READER_COOKIE_NAME = 'np_reader_session';
-    private const AUTH_SALT = 'NewsPlatformSecureSecretKey2026';
+
+    /**
+     * Return the HMAC signing secret for reader remember-me cookies.
+     * Reads from AUTH_SALT environment variable; falls back to a compile-time
+     * constant only when no env value is set (development only).
+     */
+    private static function getAuthSalt(): string
+    {
+        $env = getenv('AUTH_SALT');
+        if ($env !== false && $env !== '') {
+            return $env;
+        }
+        if (!empty($_ENV['AUTH_SALT'])) {
+            return $_ENV['AUTH_SALT'];
+        }
+        // Fallback for local dev — override via environment in production
+        return 'NewsPlatformSecureSecretKey2026';
+    }
 
     /**
      * Set a persistent signed reader cookie for 30 days
@@ -200,11 +254,11 @@ class Auth
         $payload = [
             'id' => (int)$reader['id'],
             'email' => $reader['email'],
-            'hash' => hash_hmac('sha256', $reader['id'] . '|' . $reader['email'] . '|' . ($reader['password_hash'] ?? ''), self::AUTH_SALT),
+            'hash' => hash_hmac('sha256', $reader['id'] . '|' . $reader['email'] . '|' . ($reader['password_hash'] ?? ''), self::getAuthSalt()),
             'expires' => time() + (86400 * 30),
         ];
         $val = base64_encode(json_encode($payload));
-        $secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+        $secure = self::isHttps();
         setcookie(self::READER_COOKIE_NAME, $val, [
             'expires' => time() + (86400 * 30),
             'path' => '/',
@@ -221,7 +275,7 @@ class Auth
      */
     public static function clearReaderRememberCookie(): void
     {
-        $secure = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on';
+        $secure = self::isHttps();
         setcookie(self::READER_COOKIE_NAME, '', [
             'expires' => time() - 86400,
             'path' => '/',
@@ -268,7 +322,7 @@ class Auth
                 return false;
             }
 
-            $expectedHash = hash_hmac('sha256', $reader['id'] . '|' . $reader['email'] . '|' . ($reader['password_hash'] ?? ''), self::AUTH_SALT);
+            $expectedHash = hash_hmac('sha256', $reader['id'] . '|' . $reader['email'] . '|' . ($reader['password_hash'] ?? ''), self::getAuthSalt());
             if (!hash_equals($expectedHash, $data['hash'])) {
                 self::clearReaderRememberCookie();
                 return false;
@@ -326,8 +380,16 @@ class Auth
     {
         self::startSession();
         $db = Database::getInstance();
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '127.0.0.1';
+
+        // Brute-force protection — same limit as staff login (5 attempts / 15 min)
+        if (self::isRateLimited($ip)) {
+            throw new Exception('Too many failed login attempts. Please try again in 15 minutes.');
+        }
+
         $reader = $db->fetch("SELECT * FROM readers WHERE email = :email LIMIT 1", ['email' => strtolower(trim($email))]);
         if (!$reader || !password_verify($password, $reader['password_hash'])) {
+            self::recordLoginAttempt($ip);
             return false;
         }
 
@@ -363,8 +425,8 @@ class Auth
             return ['success' => false, 'message' => 'Please provide a valid email address.'];
         }
 
-        if (strlen($password) < 6) {
-            return ['success' => false, 'message' => 'Password must be at least 6 characters.'];
+        if (strlen($password) < 8) {
+            return ['success' => false, 'message' => 'Password must be at least 8 characters.'];
         }
 
         $existing = $db->fetch("SELECT id FROM readers WHERE email = :email", ['email' => $email]);
@@ -376,7 +438,7 @@ class Auth
         $db->execute(
             "INSERT INTO readers (name, email, password_hash, created_at) VALUES (:name, :email, :hash, NOW())",
             [
-                'name' => htmlspecialchars($name, ENT_QUOTES, 'UTF-8'),
+                'name' => $name,
                 'email' => $email,
                 'hash' => $passwordHash,
             ]
