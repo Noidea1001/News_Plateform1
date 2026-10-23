@@ -14,8 +14,21 @@ $isAjax = (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTT
     || (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false);
 
 // Fallback redirect destination for standard form submissions
+// Validate redirect_to against own origin to prevent open redirect attacks
 $articleId = (int)($_POST['article_id'] ?? 0);
-$redirectTo = !empty($_POST['redirect_to']) ? $_POST['redirect_to'] : ($_SERVER['HTTP_REFERER'] ?? ($articleId > 0 ? url("article.php?id={$articleId}") : url('index.php')));
+$rawRedirect = $_POST['redirect_to'] ?? ($_SERVER['HTTP_REFERER'] ?? '');
+$defaultFallback = $articleId > 0 ? url("article.php?id={$articleId}") : url('index.php');
+
+// Only allow same-origin redirects
+$redirectTo = $defaultFallback;
+if (!empty($rawRedirect)) {
+    $parsedRedirect = parse_url($rawRedirect);
+    $parsedSelf = parse_url(url(''));
+    $sameHost = empty($parsedRedirect['host']) || $parsedRedirect['host'] === ($parsedSelf['host'] ?? '');
+    if ($sameHost) {
+        $redirectTo = $rawRedirect;
+    }
+}
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     if ($isAjax) {
@@ -53,10 +66,11 @@ try {
     exit;
 
 } catch (Throwable $e) {
+    error_log('[comment.php] ' . $e->getMessage());
     if ($isAjax) {
         header('Content-Type: application/json; charset=UTF-8');
         http_response_code(500);
-        echo json_encode(['success' => false, 'message' => 'Internal server error: ' . $e->getMessage()]);
+        echo json_encode(['success' => false, 'message' => 'An unexpected error occurred. Please try again.']);
         exit;
     }
     $_SESSION['flash_error'] = 'An error occurred while saving your comment.';
