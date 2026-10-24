@@ -172,11 +172,9 @@
                                 <button type="button" class="btn btn-quick-view btn-sm qv-trigger-btn" data-article='<?= $leadData ?>'>
                                     <i class="bi bi-eye me-1"></i><?= __('quick_view') ?? 'Quick View' ?>
                                 </button>
-                                <?php if (\App\Core\Auth::readerCheck() || \App\Core\Auth::check()) { ?>
-                                    <button type="button" class="btn btn-bookmark btn-sm bookmark-toggle-btn" data-id="<?= $lead['id'] ?>" data-article='<?= $leadData ?>'>
-                                        <i class="bi bi-bookmark"></i>
-                                    </button>
-                                <?php } ?>
+                                <button type="button" class="btn btn-bookmark btn-sm bookmark-toggle-btn" data-id="<?= $lead['id'] ?>" data-article='<?= $leadData ?>' title="<?= __('save_for_later') ?? 'Save for later' ?>">
+                                    <i class="bi bi-bookmark"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -250,11 +248,9 @@
                                         <button type="button" class="btn btn-quick-view btn-sm qv-trigger-btn" data-article='<?= $sData ?>'>
                                             <i class="bi bi-eye"></i>
                                         </button>
-                                        <?php if (\App\Core\Auth::readerCheck() || \App\Core\Auth::check()) { ?>
-                                            <button type="button" class="btn btn-bookmark btn-sm bookmark-toggle-btn" data-id="<?= $sItem['id'] ?>" data-article='<?= $sData ?>'>
-                                                <i class="bi bi-bookmark"></i>
-                                            </button>
-                                        <?php } ?>
+                                        <button type="button" class="btn btn-bookmark btn-sm bookmark-toggle-btn" data-id="<?= $sItem['id'] ?>" data-article='<?= $sData ?>' title="<?= __('save_for_later') ?? 'Save for later' ?>">
+                                            <i class="bi bi-bookmark"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -360,11 +356,9 @@
                                                 <button type="button" class="btn btn-quick-view btn-sm qv-trigger-btn py-0.5 px-2" data-article='<?= $itemData ?>' title="Quick Preview">
                                                     <i class="bi bi-eye"></i>
                                                 </button>
-                                                <?php if (\App\Core\Auth::readerCheck() || \App\Core\Auth::check()) { ?>
-                                                    <button type="button" class="btn btn-bookmark btn-sm bookmark-toggle-btn py-0.5 px-2" data-id="<?= $item['id'] ?>" data-article='<?= $itemData ?>' title="Save for later">
-                                                        <i class="bi bi-bookmark"></i>
-                                                    </button>
-                                                <?php } ?>
+                                                <button type="button" class="btn btn-bookmark btn-sm bookmark-toggle-btn py-0.5 px-2" data-id="<?= $item['id'] ?>" data-article='<?= $itemData ?>' title="<?= __('save_for_later') ?? 'Save for later' ?>">
+                                                    <i class="bi bi-bookmark"></i>
+                                                </button>
                                                 <a href="<?= url('article.php?slug=' . urlencode($item['slug'])) ?>" class="cna-feed-read ms-1"><?= __('read_story') ?> &rarr;</a>
                                             </div>
                                         </div>
