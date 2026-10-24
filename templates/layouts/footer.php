@@ -229,14 +229,18 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function getSavedArticles() {
         try {
-            return JSON.parse(localStorage.getItem(BOOKMARK_KEY)) || [];
+            const raw = localStorage.getItem(BOOKMARK_KEY) || localStorage.getItem('np_saved_articles') || '[]';
+            const parsed = JSON.parse(raw);
+            return Array.isArray(parsed) ? parsed : [];
         } catch (e) {
             return [];
         }
     }
 
     function saveArticlesList(list) {
-        localStorage.setItem(BOOKMARK_KEY, JSON.stringify(list));
+        const jsonStr = JSON.stringify(list);
+        localStorage.setItem(BOOKMARK_KEY, jsonStr);
+        localStorage.setItem('np_saved_articles', jsonStr);
         updateSavedCountBadge();
         renderSavedArticlesList();
         syncBookmarkButtonsState();
@@ -294,15 +298,22 @@ document.addEventListener('DOMContentLoaded', function () {
         buttons.forEach(btn => {
             const id = btn.getAttribute('data-id');
             const icon = btn.querySelector('i');
+            const label = btn.querySelector('.bookmark-label');
             if (id && isSaved(id)) {
                 btn.classList.add('bookmarked');
                 if (icon) {
                     icon.className = 'bi bi-bookmark-fill text-danger';
                 }
+                if (label) {
+                    label.textContent = '<?= __('saved') ?? 'Saved' ?>';
+                }
             } else {
                 btn.classList.remove('bookmarked');
                 if (icon) {
-                    icon.className = 'bi bi-bookmark';
+                    icon.className = 'bi bi-bookmark text-danger';
+                }
+                if (label) {
+                    label.textContent = '<?= __('save_for_later') ?? 'Save' ?>';
                 }
             }
         });
@@ -396,15 +407,55 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
+            let articleData = null;
             const dataRaw = btn.getAttribute('data-article');
             if (dataRaw) {
                 try {
-                    const articleData = JSON.parse(dataRaw);
-                    toggleSaveArticle(articleData);
+                    articleData = JSON.parse(dataRaw);
                 } catch (err) {
-                    console.error('Error parsing article JSON for bookmark:', err);
+                    console.warn('Could not parse data-article JSON, attempting fallback metadata:', err);
                 }
             }
+
+            if (!articleData) {
+                const id = btn.getAttribute('data-id');
+                if (id) {
+                    const card = btn.closest('.cna-feed-row, .lead-article-card, .secondary-grid-card, .editorial-actions-bar, .article-container') || document;
+                    const titleEl = card.querySelector('.lead-article-title a, .secondary-grid-title a, .cna-feed-title a, h1, h2 a, h3 a, h4 a');
+                    const imgEl = card.querySelector('img');
+                    articleData = {
+                        id: id,
+                        title: titleEl ? titleEl.textContent.trim() : 'Saved Article',
+                        url: titleEl ? titleEl.href : window.location.href,
+                        image: imgEl ? imgEl.src : ''
+                    };
+                }
+            }
+
+            if (articleData && articleData.id) {
+                toggleSaveArticle(articleData);
+            }
+        }
+    });
+
+    // Delegated click listener to safely open Saved Articles Offcanvas drawer & ensure fresh rendering
+    document.addEventListener('click', function (e) {
+        const trigger = e.target.closest('[data-bs-target="#savedArticlesModal"], [data-bs-toggle="offcanvas"][href="#savedArticlesModal"]');
+        if (trigger) {
+            e.preventDefault();
+            const modalEl = document.getElementById('savedArticlesModal');
+            if (modalEl && typeof bootstrap !== 'undefined' && bootstrap.Offcanvas) {
+                renderSavedArticlesList();
+                const offcanvasInstance = bootstrap.Offcanvas.getOrCreateInstance(modalEl);
+                offcanvasInstance.show();
+            }
+        }
+    });
+
+    // Native show.bs.offcanvas hook to guarantee fresh render
+    document.addEventListener('show.bs.offcanvas', function (e) {
+        if (e.target && e.target.id === 'savedArticlesModal') {
+            renderSavedArticlesList();
         }
     });
 
@@ -1035,6 +1086,12 @@ document.addEventListener('DOMContentLoaded', function () {
             }
             if (typeof syncBookmarkButtonsState === 'function') {
                 syncBookmarkButtonsState();
+            }
+            if (typeof renderSavedArticlesList === 'function') {
+                renderSavedArticlesList();
+            }
+            if (typeof updateSavedCountBadge === 'function') {
+                updateSavedCountBadge();
             }
             if (typeof fetchNotifications === 'function') {
                 fetchNotifications();
