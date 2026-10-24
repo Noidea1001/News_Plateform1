@@ -878,13 +878,6 @@ document.addEventListener('DOMContentLoaded', function () {
             console.warn('[WebPush] Error checking subscription state:', err);
         }
     };
-        });
-
-        const promptEl = document.getElementById('npPushNotificationPrompt');
-        if (isSubscribed && promptEl) {
-            promptEl.classList.add('d-none');
-        }
-    }
 
     async function handlePushToggleAction(e) {
         if (e && typeof e.preventDefault === 'function') e.preventDefault();
