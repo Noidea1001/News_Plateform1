@@ -1287,7 +1287,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
 
                 <!-- Breaking News Browser Push Alerts Opt-In Button -->
                 <button type="button" id="pushSubscribeBtn"
-                    class="btn btn-sm py-0.5 px-2 d-none align-items-center gap-1.5 flex-shrink-0 text-white"
+                    class="btn btn-sm py-0.5 px-2 d-inline-flex align-items-center gap-1.5 flex-shrink-0 text-white"
                     style="font-size:0.7rem; background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.22); border-radius:2px; height:24px; transition:all 0.2s;"
                     title="<?= __('push_alerts_title') ?>">
                     <i class="bi bi-bell-fill text-warning" id="pushSubscribeIcon" style="font-size:0.75rem;"></i>
