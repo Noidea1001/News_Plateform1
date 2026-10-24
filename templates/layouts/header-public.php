@@ -1244,7 +1244,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
     if (!isset($breakingNews)) {
         $headerDb = \App\Core\Database::getInstance();
         $breakingNews = $headerDb->fetchAll(
-            "SELECT a.id, a.title, a.slug, c.name as category_name 
+            "SELECT a.id, a.title, a.title_en, a.title_kh, a.slug, c.name as category_name 
              FROM articles a 
              JOIN categories c ON a.category_id = c.id 
              WHERE a.status = 'published' AND a.is_breaking = 1 
