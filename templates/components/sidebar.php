@@ -35,242 +35,306 @@ $sidebarCats = $sidebarDb->fetchAll("SELECT id, name, slug FROM categories ORDER
 ?>
 
 <style>
-/* Specific responsive styles for the 3 sidebar widgets */
-.sidebar-most-read-rank {
-    width: 28px !important;
-    min-width: 28px !important;
-    height: 28px !important;
-    background: #c8102e !important;
-    color: #ffffff !important;
-    font-size: 0.74rem !important;
-    font-weight: 800 !important;
-    border-radius: 4px !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    flex-shrink: 0 !important;
-    margin-right: 12px !important;
-    margin-top: 2px !important;
-    line-height: 1 !important;
-    letter-spacing: 0.02em;
+/* ===== Compact sidebar widgets (Most Read · Explore Topics · Topic Subscriptions) ===== */
+.public-sidebar { gap: 0.85rem !important; }
+
+.sbw {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    overflow: hidden;
+}
+.sbw-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.55rem 0.8rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+.sbw-title {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin: 0;
+    font-size: 0.84rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.3;
+}
+.sbw-title::before {
+    content: "";
+    width: 3px;
+    height: 0.95rem;
+    border-radius: 2px;
+    background: #c8102e;
+    flex-shrink: 0;
+}
+.sbw-body { padding: 0.6rem 0.8rem 0.7rem; }
+
+/* --- 1. Most read: numbered list, no badge row --- */
+.sbw-rank-list { list-style: none; margin: 0; padding: 0; }
+.sbw-rank-item + .sbw-rank-item { border-top: 1px solid #f1f5f9; }
+.sbw-rank-link {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    padding: 0.5rem 0.8rem;
+    text-decoration: none;
+    transition: background 0.12s ease;
+}
+.sbw-rank-link:hover { background: #f8fafc; }
+.sbw-rank-num {
+    flex-shrink: 0;
+    width: 1.35rem;
+    font-size: 1.05rem;
+    font-weight: 800;
+    line-height: 1.25;
+    color: #cbd5e1;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+.sbw-rank-item:nth-child(-n+3) .sbw-rank-num { color: #c8102e; }
+.sbw-rank-text { min-width: 0; flex: 1; }
+.sbw-rank-title {
+    margin: 0 0 0.15rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: #0f172a;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.12s ease;
+}
+.sbw-rank-link:hover .sbw-rank-title { color: #c8102e; }
+.sbw-rank-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.66rem;
+    color: #94a3b8;
+    white-space: nowrap;
+    overflow: hidden;
+}
+.sbw-rank-meta .sbw-cat {
+    color: #c8102e;
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.sidebar-topic-chip {
+/* --- 2 & 3. Chips (topics + subscription toggles) --- */
+.sbw-chips { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.sbw-chip {
     display: inline-flex;
     align-items: center;
-    padding: 5px 12px;
-    font-size: 0.76rem;
+    gap: 0.25rem;
+    padding: 0.2rem 0.6rem;
+    font-size: 0.72rem;
     font-weight: 500;
+    line-height: 1.35;
     color: #334155;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
-    border-radius: 16px;
+    border-radius: 999px;
     text-decoration: none;
-    transition: all 0.15s ease;
-    line-height: 1.25;
+    cursor: pointer;
+    transition: color 0.12s ease, border-color 0.12s ease, background 0.12s ease;
 }
+.sbw-chip:hover { color: #c8102e; border-color: #fca5a5; background: #fff; }
+.sbw-chip i { font-size: 0.78rem; line-height: 1; }
 
-.sidebar-topic-chip:hover {
+.sbw-sub.is-sub {
+    color: #fff;
+    background: #c8102e;
+    border-color: #c8102e;
+}
+.sbw-sub.is-sub:hover { color: #fff; background: #a50d26; border-color: #a50d26; }
+.sbw-sub:disabled { opacity: 0.65; cursor: wait; }
+
+.sbw-count {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    padding: 0.1rem 0.45rem;
+    font-size: 0.66rem;
+    font-weight: 700;
     color: #c8102e;
-    border-color: #fca5a5;
-    background: #ffffff;
-    transform: translateY(-1px);
-    box-shadow: 0 2px 6px rgba(200, 16, 46, 0.08);
+    background: rgba(200, 16, 46, 0.08);
+    border-radius: 999px;
+    white-space: nowrap;
 }
-
-.sidebar-widget-card {
-    border: 1px solid #e5e7eb !important;
-    border-radius: 6px !important;
-    background: #ffffff !important;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+.sbw-desc {
+    margin: 0 0 0.5rem;
+    font-size: 0.7rem;
+    line-height: 1.4;
+    color: #64748b;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
     overflow: hidden;
 }
 
-.sidebar-widget-header {
-    background: #ffffff;
-    padding: 0.65rem 0.85rem;
-    border-bottom: 1px solid #f1f5f9;
-    border-left: 3px solid #c8102e;
+@media (max-width: 991.98px) {
+    .public-sidebar { margin-top: 0.5rem; }
 }
 </style>
 
-<aside class="d-flex flex-column gap-3.5 public-sidebar mb-4">
+<aside class="d-flex flex-column public-sidebar mb-4">
 
-    <!-- 1. Most Read Stories (អត្ថបទដែលមានអ្នកអានច្រើន) — Clean, Properly Spaced & Responsive -->
+    <!-- 1. Most Read Stories (អត្ថបទដែលមានអ្នកអានច្រើន) — compact numbered list -->
     <?php if (!empty($trendingArticles)) { ?>
-    <div class="card border-0 sidebar-widget-card most-read-card">
-        <div class="card-header sidebar-widget-header d-flex align-items-center justify-content-between">
-            <h6 class="mb-0 fw-bold" style="font-size:0.88rem; color:#0f172a; letter-spacing:-0.01em;">
-                <?= __('most_read') ?>
-            </h6>
-            <span style="font-size:0.68rem; color:#9ca3af; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">
-                <?= __('live_traffic') ?>
-            </span>
+    <section class="sbw">
+        <div class="sbw-head">
+            <h6 class="sbw-title"><?= __('most_read') ?></h6>
+            <i class="bi bi-graph-up-arrow text-danger" style="font-size:0.8rem;" aria-hidden="true"></i>
         </div>
-        <div class="list-group list-group-flush">
+        <ol class="sbw-rank-list">
             <?php foreach ($trendingArticles as $tIndex => $tItem) { ?>
-                <a href="<?= url('article.php?slug=' . urlencode($tItem['slug'])) ?>"
-                   class="list-group-item list-group-item-action py-2.5 px-3 border-bottom text-decoration-none trending-list-item"
-                   style="transition: background 0.12s ease;">
-                    <div class="d-flex align-items-start">
-                        <!-- Uniform Red Ranking Number with 12px Right Spacing -->
-                        <div class="sidebar-most-read-rank flex-shrink-0">
-                            <?= km_num(sprintf('%02d', $tIndex + 1)) ?>
-                        </div>
-                        <div class="flex-grow-1 min-w-0">
-                            <!-- Category label -->
-                            <div class="mb-1">
-                                <span class="badge bg-danger-subtle text-danger px-1.5 py-0.5 rounded-pill fw-bold"
-                                      style="font-size:0.64rem; letter-spacing:0.02em;">
-                                    <?= e(cat_name($tItem['category_name'])) ?>
-                                </span>
-                            </div>
-                            <!-- Title (max 2 lines with proper line height) -->
-                            <h6 class="mb-1 fw-bold trending-title"
-                                style="font-size:0.83rem; line-height:1.42; color:#0f172a; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">
-                                <?= e(article_title($tItem)) ?>
-                            </h6>
-                            <!-- Views + Time metadata -->
-                            <div class="d-flex align-items-center gap-1.5" style="font-size:0.68rem; color:#9ca3af;">
-                                <span><?= number_format((int)$tItem['views_count']) ?></span>
+                <li class="sbw-rank-item">
+                    <a href="<?= url('article.php?slug=' . urlencode($tItem['slug'])) ?>" class="sbw-rank-link">
+                        <span class="sbw-rank-num"><?= km_num((string)($tIndex + 1)) ?></span>
+                        <div class="sbw-rank-text">
+                            <h6 class="sbw-rank-title"><?= e(article_title($tItem)) ?></h6>
+                            <div class="sbw-rank-meta">
+                                <span class="sbw-cat"><?= e(cat_name($tItem['category_name'])) ?></span>
+                                <span>&middot;</span>
+                                <span><i class="bi bi-eye"></i> <?= km_num(number_format((int)$tItem['views_count'])) ?></span>
                                 <span>&middot;</span>
                                 <span><?= \App\Core\TemplateEngine::timeAgo($tItem['published_at']) ?></span>
                             </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                </li>
             <?php } ?>
-        </div>
-    </div>
+        </ol>
+    </section>
     <?php } ?>
 
-    <!-- 2. Explore Topics (រករកប្រធានបទ) — Clean & Responsive Topic Chips -->
+    <!-- 2. Explore Topics (រករកប្រធានបទ) — compact chips -->
     <?php if (!empty($categories)) { ?>
-    <div class="card border-0 sidebar-widget-card">
-        <div class="card-header sidebar-widget-header d-flex align-items-center justify-content-between">
-            <h6 class="mb-0 fw-bold" style="font-size:0.88rem; color:#0f172a;">
-                <?= __('explore_topics') ?>
-            </h6>
+    <section class="sbw">
+        <div class="sbw-head">
+            <h6 class="sbw-title"><?= __('explore_topics') ?></h6>
         </div>
-        <div class="card-body p-3 pb-3.5">
-            <div class="d-flex flex-wrap gap-2">
+        <div class="sbw-body">
+            <div class="sbw-chips">
                 <?php foreach ($categories as $catTag) { ?>
-                    <a href="<?= url('index.php?category=' . $catTag['id']) ?>"
-                       class="sidebar-topic-chip">
+                    <a href="<?= url('index.php?category=' . (int)$catTag['id']) ?>" class="sbw-chip">
                         <?= e(cat_name($catTag['name'])) ?>
                     </a>
                 <?php } ?>
             </div>
         </div>
-    </div>
+    </section>
     <?php } ?>
 
-    <!-- 3. Reader Topic Subscriptions (ការជាវព័ត៌មានតាមផ្នែក) — Correct Spacing, Responsive & Clear Buttons -->
-    <div class="card border-0 sidebar-widget-card">
-        <div class="card-header sidebar-widget-header d-flex align-items-center justify-content-between">
-            <h6 class="mb-0 fw-bold" style="font-size:0.88rem; color:#0f172a;">
-                <?= __('topic_subscriptions_title') ?>
-            </h6>
-            <span class="badge bg-danger bg-opacity-10 text-danger text-3xs px-2.5 py-1 rounded-pill fw-bold" id="sidebarSubCountBadge">
-                <?= count($sidebarSubscribedIds) ?> <?= __('subscribed_topic') ?>
+    <!-- 3. Reader Topic Subscriptions (ការជាវព័ត៌មានតាមផ្នែក) — toggle chips instead of rows -->
+    <section class="sbw">
+        <div class="sbw-head">
+            <h6 class="sbw-title"><?= __('topic_subscriptions_title') ?></h6>
+            <span class="sbw-count" id="sidebarSubCountBadge" title="<?= e(__('subscribed_topic')) ?>">
+                <i class="bi bi-bell-fill"></i>
+                <span id="sidebarSubCountNum"><?= km_num((string)count($sidebarSubscribedIds)) ?></span>
             </span>
         </div>
-        <div class="card-body p-3 pb-3.5">
-            <p class="text-muted text-xs mb-3" style="line-height:1.4; font-size:0.75rem;">
-                <?= __('topic_subscriptions_desc') ?>
-            </p>
-            <div class="d-flex flex-column gap-2" id="sidebarTopicList">
-                <?php foreach ($sidebarCats as $sCat) { 
+        <div class="sbw-body">
+            <p class="sbw-desc"><?= __('topic_subscriptions_desc') ?></p>
+            <div class="sbw-chips" id="sidebarTopicList">
+                <?php foreach ($sidebarCats as $sCat) {
                     $isSub = in_array((int)$sCat['id'], $sidebarSubscribedIds, true);
                 ?>
-                    <div class="d-flex align-items-center justify-content-between px-3 rounded-2 topic-item-row"
-                         style="background:#f8fafc; border:1px solid #f1f5f9; height:36px; transition:all 0.12s ease;">
-                        <span class="fw-semibold text-dark text-truncate pe-2" style="font-size:0.8rem;">
-                            <?= e(cat_name($sCat['name'])) ?>
-                        </span>
-                        <button type="button" 
-                            class="btn btn-sm <?= $isSub ? 'btn-danger text-white' : 'btn-outline-danger' ?> rounded-pill px-2.5 py-0 fw-bold flex-shrink-0 topic-sub-btn"
-                            data-cat-id="<?= (int)$sCat['id'] ?>"
-                            data-is-sub="<?= $isSub ? '1' : '0' ?>"
-                            data-logged-in="<?= $sidebarReader ? '1' : '0' ?>"
-                            style="font-size: 0.72rem; height: 24px; line-height: 22px; border-width: 1.5px;">
-                            <?= $isSub ? '✓ ' . __('subscribed_topic') : '+ ' . __('subscribe_topic') ?>
-                        </button>
-                    </div>
+                    <button type="button"
+                        class="sbw-chip sbw-sub topic-sub-btn<?= $isSub ? ' is-sub' : '' ?>"
+                        data-cat-id="<?= (int)$sCat['id'] ?>"
+                        data-is-sub="<?= $isSub ? '1' : '0' ?>"
+                        data-logged-in="<?= $sidebarReader ? '1' : '0' ?>"
+                        aria-pressed="<?= $isSub ? 'true' : 'false' ?>"
+                        title="<?= e($isSub ? __('subscribed_topic') : __('subscribe_topic')) ?>">
+                        <i class="bi <?= $isSub ? 'bi-check2' : 'bi-plus' ?>"></i>
+                        <span><?= e(cat_name($sCat['name'])) ?></span>
+                    </button>
                 <?php } ?>
             </div>
         </div>
-    </div>
+    </section>
 
 </aside>
 
 <script>
 (function() {
-    // Delegated click handler for topic subscription buttons (persists across dynamic language switches)
-    if (!window._sidebarSubAttached) {
-        window._sidebarSubAttached = true;
-        document.addEventListener('click', function(e) {
-            const btn = e.target.closest('.topic-sub-btn');
-            if (!btn) return;
-            e.preventDefault();
+    // Delegated click handler for topic subscription chips (persists across dynamic language switches)
+    if (window._sidebarSubAttached) return;
+    window._sidebarSubAttached = true;
 
-            const isLoggedIn = btn.getAttribute('data-logged-in') === '1';
-            if (!isLoggedIn) {
-                const authModal = document.getElementById('readerAuthModal');
-                if (authModal && typeof bootstrap !== 'undefined') {
-                    const bsModal = bootstrap.Modal.getOrCreateInstance(authModal);
-                    bsModal.show();
-                } else {
-                    window.location.href = '<?= url("login.php") ?>';
-                }
-                return;
-            }
+    const LABEL_SUB = <?= json_encode(__('subscribed_topic'), JSON_UNESCAPED_UNICODE) ?>;
+    const LABEL_UNSUB = <?= json_encode(__('subscribe_topic'), JSON_UNESCAPED_UNICODE) ?>;
 
-            const catId = btn.getAttribute('data-cat-id');
-            const wasSub = btn.getAttribute('data-is-sub') === '1';
-            btn.disabled = true;
-            btn.innerHTML = '<span class="spinner-border spinner-border-sm" style="width:0.6rem;height:0.6rem;"></span>';
-
-            fetch('<?= url("api/v1/subscription.php") ?>', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ category_id: parseInt(catId, 10) })
-            })
-            .then(res => res.json())
-            .then(data => {
-                btn.disabled = false;
-                if (data.success) {
-                    if (data.subscribed) {
-                        btn.setAttribute('data-is-sub', '1');
-                        btn.className = 'btn btn-sm btn-danger text-white rounded-pill px-2.5 py-0 fw-bold flex-shrink-0 topic-sub-btn';
-                        btn.innerHTML = '✓ <?= addslashes(__('subscribed_topic')) ?>';
-                    } else {
-                        btn.setAttribute('data-is-sub', '0');
-                        btn.className = 'btn btn-sm btn-outline-danger rounded-pill px-2.5 py-0 fw-bold flex-shrink-0 topic-sub-btn';
-                        btn.innerHTML = '+ <?= addslashes(__('subscribe_topic')) ?>';
-                    }
-                    const countBadge = document.getElementById('sidebarSubCountBadge');
-                    if (countBadge && typeof data.total_subscriptions !== 'undefined') {
-                        countBadge.textContent = data.total_subscriptions + ' <?= addslashes(__('subscribed_topic')) ?>';
-                    }
-                    if (typeof fetchNotifications === 'function') {
-                        fetchNotifications();
-                    }
-                } else if (data.require_login) {
-                    const authModal = document.getElementById('readerAuthModal');
-                    if (authModal && typeof bootstrap !== 'undefined') {
-                        bootstrap.Modal.getOrCreateInstance(authModal).show();
-                    }
-                }
-            })
-            .catch(() => {
-                btn.disabled = false;
-                btn.className = wasSub 
-                    ? 'btn btn-sm btn-danger text-white rounded-pill px-2.5 py-0 fw-bold flex-shrink-0 topic-sub-btn' 
-                    : 'btn btn-sm btn-outline-danger rounded-pill px-2.5 py-0 fw-bold flex-shrink-0 topic-sub-btn';
-                btn.innerHTML = wasSub ? '✓ <?= addslashes(__('subscribed_topic')) ?>' : '+ <?= addslashes(__('subscribe_topic')) ?>';
-            });
-        });
+    function setChipState(btn, subscribed) {
+        btn.setAttribute('data-is-sub', subscribed ? '1' : '0');
+        btn.setAttribute('aria-pressed', subscribed ? 'true' : 'false');
+        btn.setAttribute('title', subscribed ? LABEL_SUB : LABEL_UNSUB);
+        btn.classList.toggle('is-sub', subscribed);
+        const icon = btn.querySelector('i');
+        if (icon) icon.className = 'bi ' + (subscribed ? 'bi-check2' : 'bi-plus');
     }
+
+    function showAuthModal() {
+        const authModal = document.getElementById('readerAuthModal');
+        if (authModal && typeof bootstrap !== 'undefined') {
+            bootstrap.Modal.getOrCreateInstance(authModal).show();
+        } else {
+            window.location.href = <?= json_encode(url('login.php')) ?>;
+        }
+    }
+
+    document.addEventListener('click', function(e) {
+        const btn = e.target.closest('.topic-sub-btn');
+        if (!btn) return;
+        e.preventDefault();
+
+        if (btn.getAttribute('data-logged-in') !== '1') {
+            showAuthModal();
+            return;
+        }
+
+        const catId = parseInt(btn.getAttribute('data-cat-id'), 10);
+        const wasSub = btn.getAttribute('data-is-sub') === '1';
+        const icon = btn.querySelector('i');
+        btn.disabled = true;
+        if (icon) icon.className = 'spinner-border spinner-border-sm';
+        if (icon) { icon.style.width = '0.6rem'; icon.style.height = '0.6rem'; icon.style.borderWidth = '0.12em'; }
+
+        fetch(<?= json_encode(url('api/v1/subscription.php')) ?>, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ category_id: catId })
+        })
+        .then(res => res.json())
+        .then(data => {
+            btn.disabled = false;
+            if (icon) { icon.style.width = ''; icon.style.height = ''; icon.style.borderWidth = ''; }
+            if (data.success) {
+                setChipState(btn, !!data.subscribed);
+                const countNum = document.getElementById('sidebarSubCountNum');
+                if (countNum && typeof data.total_subscriptions !== 'undefined') {
+                    countNum.textContent = data.total_subscriptions;
+                }
+                if (typeof fetchNotifications === 'function') {
+                    fetchNotifications();
+                }
+            } else {
+                setChipState(btn, wasSub);
+                if (data.require_login) showAuthModal();
+            }
+        })
+        .catch(() => {
+            btn.disabled = false;
+            if (icon) { icon.style.width = ''; icon.style.height = ''; icon.style.borderWidth = ''; }
+            setChipState(btn, wasSub);
+        });
+    });
 })();
 </script>
