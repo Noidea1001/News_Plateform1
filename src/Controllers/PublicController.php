@@ -48,7 +48,7 @@ class PublicController
              FROM articles a 
              JOIN categories c ON a.category_id = c.id 
              WHERE a.status = 'published' AND a.is_breaking = 1 
-             ORDER BY a.published_at DESC LIMIT 3"
+             ORDER BY a.published_at DESC LIMIT 5"
         );
 
         // 2. Fetch categories
@@ -642,13 +642,11 @@ class PublicController
 
         foreach ($notifications as &$n) {
             // Ensure Khmer/English localized title & message
-            if ($isKhmer && !empty($n['title_kh'])) {
-                $n['title'] = km_num($n['title_kh']);
-            } elseif (!$isKhmer && !empty($n['title_en'])) {
-                $n['title'] = $n['title_en'];
-            } else {
-                $n['title'] = article_title($n['title'] ?? '', $currentLang);
-            }
+            $n['title'] = article_title([
+                'title' => $n['title'] ?? ($n['article_title'] ?? ''),
+                'title_kh' => $n['title_kh'] ?? '',
+                'title_en' => $n['title_en'] ?? ''
+            ], $currentLang);
 
             if ($isKhmer && !empty($n['summary_kh'])) {
                 $n['message'] = $n['summary_kh'];
