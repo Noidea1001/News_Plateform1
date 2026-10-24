@@ -131,7 +131,16 @@ if (!function_exists('get_translation_maps')) {
                 'បទវិចារណកថា៖ ស្ថាបត្យកម្មទីក្រុងឆ្លាតវៃ និងការរស់នៅប្រកបដោយនិរន្តរភាព' => 'Opinion: Smart City Architecture, Electric Transit & Sustainable Living',
                 'ប្រព័ន្ធ AI ស្វ័យតជំនាន់ថ្មីផ្លាស់ប្តូរស្ថាបត្យកម្មសូហ្វវែរសហគ្រាស' => 'Next-Generation Autonomous AI Systems Reshape Enterprise Architecture',
                 'ការស៊ើបអង្កេតជម្រៅលើបណ្តាញខ្សែកាបបាតសមុទ្រពិភពលោក' => 'Silent Subsea Cable Revolution: Deep-Dive into Global Fiber Optics',
-                'ហេតុអ្វីបានជាវិចារណញាណរបស់មនុស្សនៅតែមានសារៈសំខាន់ក្នុងយុគសម័យស្វ័យប្រវត្តិកម្ម' => 'Why Human Intuition Remains Imperative in an Automated Era'
+                'ហេតុអ្វីបានជាវិចារណញាណរបស់មនុស្សនៅតែមានសារៈសំខាន់ក្នុងយុគសម័យស្វ័យប្រវត្តិកម្ម' => 'Why Human Intuition Remains Imperative in an Automated Era',
+                'ហុងកុង និងកម្ពុជា ប៉ះគ្នាក្នុងការប្រកួតកាត់សេចក្តីស្មើគ្នាជើងឯក' => 'Hong Kong and Cambodia Clash in ASEAN Championship Decider',
+                'ហុងកុង និង កម្ពុជា ប៉ះគ្នាក្នុងការប្រកួតកាត់សេចក្តីស្មើគ្នាជើងឯក' => 'Hong Kong and Cambodia Clash in ASEAN Championship Decider',
+                'Google ប្រកាសចេញ Gemini 4 Argon ជំនាន់ថ្មី ជាមួយសមត្ថភាព AI កាន់តែខ្លាំង' => 'Google Unveils Next-Gen Gemini 4 Argon with Advanced AI Capabilities',
+                'Google ប្រកាសចេញ Gemini 4 Argon ជំនាន់ថ្មី ជាមួយសមត្ថភាព AI កាន់តែខ្លាំងក្លា' => 'Google Unveils Next-Gen Gemini 4 Argon with Advanced AI Capabilities',
+                'Google ប្រកាសចេញ Gemini 4 Argon ជំនាន់ថ្មី' => 'Google Unveils Next-Gen Gemini 4 Argon',
+                'គ្រាប់បាល់ដ៏អស្ចារ្យនៅចុងម៉ោងរបស់ Cristiano Ronaldo ជួយក្រុមទទួលបានជ័យជម្នះ' => 'Cristiano Ronaldo Late Stunning Goal Secures Victory',
+                'កម្ពុជា ត្រៀមប៉ះម្ចាស់ផ្ទះ' => 'Cambodia Prepares to Face Host Nation',
+                'ហុងកុង គ្រងតំណែងជើងឯកពានរង្វាន់ FIFA ASEAN Challenge Cup លើកដំបូង' => 'Hong Kong Crowned Maiden FIFA ASEAN Challenge Cup Champions',
+                'កម្ពុជា ត្រៀមប៉ះហុងកុង ក្នុងការប្រកួតកាត់សេចក្តី' => 'Cambodia Prepares to Face Hong Kong in Decider Match'
             ]
         ];
     }
@@ -432,27 +441,55 @@ if (!function_exists('article_title')) {
                 return !empty($tRaw) ? km_num($tRaw) : '';
             } else {
                 // English requested
-                if (!empty($tEn) && $tEnHasLatin) {
-                    $split = split_dual_language($tEn);
-                    return $split['en'] ?: $tEn;
+                // 1. If dedicated $tEn is provided and is genuine English (has Latin, NO Khmer characters)
+                if (!empty($tEn)) {
+                    $splitEn = split_dual_language($tEn);
+                    $candidateEn = !empty($splitEn['en']) ? $splitEn['en'] : $tEn;
+                    $hasKhmerInCandidate = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $candidateEn);
+                    $hasLatinInCandidate = (bool) preg_match('/[a-zA-Z]/', $candidateEn);
+                    if ($hasLatinInCandidate && !$hasKhmerInCandidate) {
+                        return $candidateEn;
+                    }
                 }
+
+                // 2. Check if $tRaw or $tKh has a clean dual-language split that yielded an English part without Khmer
                 if (!empty($tRaw)) {
-                    $split = split_dual_language($tRaw);
-                    if (!empty($split['en'])) return $split['en'];
+                    $splitRaw = split_dual_language($tRaw);
+                    if (!empty($splitRaw['en'])) {
+                        $rawHasKhmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $splitRaw['en']);
+                        $rawHasLatin = (bool) preg_match('/[a-zA-Z]/', $splitRaw['en']);
+                        if ($rawHasLatin && !$rawHasKhmer) {
+                            return $splitRaw['en'];
+                        }
+                    }
                 }
                 if (!empty($tKh)) {
-                    $split = split_dual_language($tKh);
-                    if (!empty($split['en'])) return $split['en'];
+                    $splitKh = split_dual_language($tKh);
+                    if (!empty($splitKh['en'])) {
+                        $khHasKhmer = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $splitKh['en']);
+                        $khHasLatin = (bool) preg_match('/[a-zA-Z]/', $splitKh['en']);
+                        if ($khHasLatin && !$khHasKhmer) {
+                            return $splitKh['en'];
+                        }
+                    }
                 }
 
-                // Check static dictionary mapping fallback
+                // 3. Check static dictionary mapping fallback across all available candidate strings
                 $maps = get_translation_maps();
-                $checkStr = $tKh ?: $tRaw;
-                if (!empty($checkStr) && isset($maps['titles'][$checkStr])) {
-                    return $maps['titles'][$checkStr];
+                foreach ([$tKh, $tRaw, $tEn] as $checkCandidate) {
+                    if (!empty($checkCandidate)) {
+                        $chk = trim($checkCandidate);
+                        if (isset($maps['titles'][$chk])) {
+                            return $maps['titles'][$chk];
+                        }
+                    }
                 }
 
-                // Safe fallback for old data
+                // 4. Safe fallback: if $tEn was provided and has Latin, use it
+                if (!empty($tEn) && $tEnHasLatin) {
+                    return $tEn;
+                }
+
                 return $tEn ?: ($tKh ?: $tRaw);
             }
         }
@@ -472,14 +509,22 @@ if (!function_exists('article_title')) {
             $enToKmTitle = array_flip($maps['titles']);
             return isset($enToKmTitle[$str]) ? km_num($enToKmTitle[$str]) : km_num($str);
         } else {
+            // English requested
+            // 1. If dual language delimiter gave a clean English part without Khmer
             if (!empty($split['en'])) {
-                return $split['en'];
+                $hasKh = (bool) preg_match('/[\x{1780}-\x{17FF}]/u', $split['en']);
+                $hasEn = (bool) preg_match('/[a-zA-Z]/', $split['en']);
+                if ($hasEn && !$hasKh) {
+                    return $split['en'];
+                }
             }
+            // 2. Check dictionary
             $maps = get_translation_maps();
             if (isset($maps['titles'][$str])) {
                 return $maps['titles'][$str];
             }
-            return $str;
+            // 3. Fallback
+            return !empty($split['en']) ? $split['en'] : $str;
         }
     }
 }
