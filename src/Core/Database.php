@@ -134,8 +134,8 @@ class Database
                     $this->pdo->exec("ALTER TABLE articles ADD COLUMN `content_en` LONGTEXT NULL AFTER `content_kh`");
                 }
 
-                // Sync existing articles into dedicated title_kh / title_en columns if empty
-                $unsynced = $this->fetchAll("SELECT id, title, summary, content FROM articles WHERE title_kh IS NULL OR title_en IS NULL");
+                // Sync existing articles into dedicated title_kh / title_en columns if empty or unlocalized
+                $unsynced = $this->fetchAll("SELECT id, title, summary, content, title_kh, title_en FROM articles WHERE title_kh IS NULL OR title_en IS NULL OR title_en = title");
                 foreach ($unsynced as $uArt) {
                     $tKh = function_exists('article_title') ? article_title($uArt['title'], 'kh') : $uArt['title'];
                     $tEn = function_exists('article_title') ? article_title($uArt['title'], 'en') : $uArt['title'];
