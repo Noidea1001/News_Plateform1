@@ -61,10 +61,16 @@ $isReaderLoggedIn = \App\Core\Auth::readerCheck() || \App\Core\Auth::check();
                 </div>
                 <h6 class="fw-bold text-dark mb-1.5"><?= __('bookmark_login_prompt_title') ?></h6>
                 <p class="text-muted text-xs mb-3 px-2"><?= __('bookmark_login_prompt_desc') ?></p>
-                <button type="button" class="btn btn-danger btn-sm px-3.5 py-2 fw-semibold rounded-2 shadow-2xs"
-                    data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register">
-                    <i class="bi bi-person-plus-fill me-1"></i><?= __('create_account') ?>
-                </button>
+                <div class="d-flex flex-column gap-2 px-3">
+                    <button type="button" class="btn btn-danger btn-sm w-100 py-2 fw-semibold rounded-2 shadow-2xs text-xs"
+                        data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register">
+                        <i class="bi bi-person-plus-fill me-1"></i><?= __('create_account') ?>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm w-100 py-1.5 fw-semibold rounded-2 text-xs"
+                        data-bs-dismiss="offcanvas" data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="login">
+                        <i class="bi bi-box-arrow-in-right me-1"></i><?= __('sign_in') ?>
+                    </button>
+                </div>
             </div>
         <?php } ?>
     </div>
