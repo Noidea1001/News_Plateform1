@@ -268,8 +268,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
         [badge, mobileBadge].forEach(b => {
             if (b) {
-                b.textContent = countText;
-                b.style.display = count > 0 ? 'flex' : 'none';
+                b.textContent = count > 0 ? countText : '';
+                if (count > 0) {
+                    b.classList.remove('d-none');
+                    b.classList.add('d-flex');
+                } else {
+                    b.classList.remove('d-flex');
+                    b.classList.add('d-none');
+                }
             }
         });
         if (clearBtn) {
@@ -648,9 +654,34 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // 5. Web Push API: Browser Push Alerts for Breaking News Ticker Items
-    const pushBtn = document.getElementById('pushSubscribeBtn');
-    const pushIcon = document.getElementById('pushSubscribeIcon');
-    const pushText = document.getElementById('pushSubscribeText');
+    const PUSH_I18N = {
+        en: {
+            subscribe: 'Get Breaking Alerts',
+            subscribed: 'Breaking Alerts Active',
+            denied: 'Alerts Blocked in Browser',
+            title: 'Real-Time Browser Push Alerts',
+            successMsg: 'Push alerts enabled! You will now receive breaking news notifications anytime.',
+            on: 'ON',
+            off: 'OFF',
+            tap: 'TAP'
+        },
+        kh: {
+            subscribe: 'ទទួលដំណឹងបន្ទាន់',
+            subscribed: 'បានបើកការជូនដំណឹង',
+            denied: 'បានបដិសេធក្នុង Browser',
+            title: 'ការជូនដំណឹងរហ័សតាម Browser',
+            successMsg: 'បានបើកការជូនដំណឹងជោគជ័យ! អ្នកនឹងទទួលបានព័ត៌មានទាន់ហេតុការណ៍គ្រប់ពេលវេលា។',
+            on: 'ON',
+            off: 'OFF',
+            tap: 'TAP'
+        }
+    };
+
+    function getPushText(key) {
+        const lang = (window.CURRENT_LANG === 'kh' || window.CURRENT_LANG === 'km') ? 'kh' : 'en';
+        const dict = PUSH_I18N[lang] || PUSH_I18N.en;
+        return dict[key] || '';
+    }
 
     function urlB64ToUint8Array(base64String) {
         const padding = '='.repeat((4 - base64String.length % 4) % 4);
@@ -663,14 +694,100 @@ document.addEventListener('DOMContentLoaded', function () {
         return outputArray;
     }
 
-    async function initPushSubscriptionUi() {
+    window.updatePushBtnState = function(isSubscribed, isDenied = false) {
+        window._lastKnownPushState = { isSubscribed: !!isSubscribed, isDenied: !!isDenied };
+        const toggleBtns = document.querySelectorAll('.push-toggle-action-btn, #pushSubscribeBtn');
+        toggleBtns.forEach(btn => {
+            const icon = btn.querySelector('.push-toggle-icon, #pushSubscribeIcon');
+            const text = btn.querySelector('.push-toggle-text, #pushSubscribeText');
+            const badge = btn.querySelector('.mobile-push-status-badge, #mobilePushStatusBadge');
+            const isMenuItem = btn.classList.contains('mobile-menu-item');
+
+            // Ensure ticker button is always visible and properly styled
+            if (btn.id === 'pushSubscribeBtn') {
+                btn.classList.remove('d-none');
+                btn.classList.add('d-inline-flex');
+                btn.setAttribute('title', getPushText('title'));
+            }
+
+            if (isDenied) {
+                if (icon) {
+                    icon.className = 'bi bi-bell-slash-fill text-secondary';
+                    icon.style.display = isMenuItem ? 'inline-block' : 'none';
+                }
+                if (text) text.textContent = getPushText('denied');
+                btn.disabled = true;
+                if (!isMenuItem) {
+                    btn.classList.remove('btn-outline-danger', 'btn-success');
+                    btn.classList.add('btn-secondary');
+                } else {
+                    btn.style.opacity = '0.5';
+                    if (badge) {
+                        badge.className = 'mobile-push-status-badge badge rounded-pill ms-auto bg-secondary text-white';
+                        badge.textContent = getPushText('off');
+                        badge.style.display = 'inline-flex';
+                    }
+                }
+            } else if (isSubscribed) {
+                if (icon) {
+                    icon.className = 'bi bi-bell-fill text-success';
+                    icon.style.display = isMenuItem ? 'inline-block' : 'none';
+                }
+                if (text) text.textContent = getPushText('subscribed');
+                btn.disabled = false;
+                if (!isMenuItem) {
+                    btn.classList.remove('btn-outline-danger', 'btn-secondary');
+                    btn.classList.add('btn-success');
+                } else {
+                    btn.style.opacity = '1';
+                    if (badge) {
+                        badge.className = 'mobile-push-status-badge badge rounded-pill ms-auto bg-success text-white';
+                        badge.textContent = getPushText('on');
+                        badge.style.display = 'inline-flex';
+                    }
+                }
+            } else {
+                if (icon) {
+                    icon.className = 'bi bi-bell text-warning';
+                    icon.style.display = 'inline-block';
+                }
+                if (text) text.textContent = getPushText('subscribe');
+                btn.disabled = false;
+                if (!isMenuItem) {
+                    btn.classList.remove('btn-success', 'btn-secondary');
+                    btn.classList.add('btn-outline-danger');
+                } else {
+                    btn.style.opacity = '1';
+                    if (badge) {
+                        badge.className = 'mobile-push-status-badge badge rounded-pill ms-auto bg-warning text-dark';
+                        badge.textContent = getPushText('tap');
+                        badge.style.display = 'inline-flex';
+                    }
+                }
+            }
+        });
+
+        const promptEl = document.getElementById('npPushNotificationPrompt');
+        if (isSubscribed && promptEl) {
+            promptEl.classList.add('d-none');
+        }
+    };
+
+    window.initPushSubscriptionUi = async function() {
         if (!('PushManager' in window) || !('serviceWorker' in navigator) || !('Notification' in window)) {
             return;
         }
 
-        if (pushBtn) {
-            pushBtn.classList.remove('d-none');
-            pushBtn.classList.add('d-inline-flex');
+        // Reveal any push buttons immediately
+        const tickerBtns = document.querySelectorAll('#pushSubscribeBtn');
+        tickerBtns.forEach(btn => {
+            btn.classList.remove('d-none');
+            btn.classList.add('d-inline-flex');
+        });
+
+        // Fast path: if state already known in this session, render immediately without waiting for SW
+        if (window._lastKnownPushState) {
+            window.updatePushBtnState(window._lastKnownPushState.isSubscribed, window._lastKnownPushState.isDenied);
         }
 
         try {
@@ -682,25 +799,26 @@ document.addEventListener('DOMContentLoaded', function () {
             const isStandalonePwa = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
 
             if (sub) {
-                updatePushBtnState(true);
+                window.updatePushBtnState(true, false);
                 if (promptEl) promptEl.classList.add('d-none');
             } else if (Notification.permission === 'denied') {
-                updatePushBtnState(false, true);
+                window.updatePushBtnState(false, true);
                 if (promptEl) promptEl.classList.add('d-none');
             } else {
-                updatePushBtnState(false);
+                window.updatePushBtnState(false, false);
 
                 // Show floating opt-in card if not dismissed recently
                 const dismissedUntil = localStorage.getItem('np_push_prompt_dismissed_until');
                 const now = Date.now();
                 if (!dismissedUntil || now > parseInt(dismissedUntil, 10)) {
                     setTimeout(() => {
-                        if (promptEl && (!Notification.permission || Notification.permission === 'default')) {
+                        const curPrompt = document.getElementById('npPushNotificationPrompt');
+                        if (curPrompt && (!Notification.permission || Notification.permission === 'default')) {
                             if (isIOS && !isStandalonePwa) {
                                 const iosHint = document.getElementById('iosSafariPushHint');
                                 if (iosHint) iosHint.classList.remove('d-none');
                             }
-                            promptEl.classList.remove('d-none');
+                            curPrompt.classList.remove('d-none');
                         }
                     }, 2000);
                 }
@@ -708,71 +826,7 @@ document.addEventListener('DOMContentLoaded', function () {
         } catch (err) {
             console.warn('[WebPush] Error checking subscription state:', err);
         }
-    }
-
-    function updatePushBtnState(isSubscribed, isDenied = false) {
-        const toggleBtns = document.querySelectorAll('.push-toggle-action-btn, #pushSubscribeBtn');
-        toggleBtns.forEach(btn => {
-            const icon = btn.querySelector('.push-toggle-icon, #pushSubscribeIcon');
-            const text = btn.querySelector('.push-toggle-text, #pushSubscribeText');
-            const badge = btn.querySelector('.mobile-push-status-badge, #mobilePushStatusBadge');
-            const isMenuItem = btn.classList.contains('mobile-menu-item');
-
-            if (isDenied) {
-                if (icon) {
-                    icon.className = 'bi bi-bell-slash-fill text-secondary';
-                    icon.style.display = isMenuItem ? 'inline-block' : 'none';
-                }
-                if (text) text.textContent = '<?= addslashes(__('push_alerts_denied')) ?>';
-                btn.disabled = true;
-                if (!isMenuItem) {
-                    btn.classList.remove('btn-outline-danger', 'btn-success');
-                    btn.classList.add('btn-secondary');
-                } else {
-                    btn.style.opacity = '0.5';
-                    if (badge) {
-                        badge.className = 'mobile-push-status-badge badge rounded-pill ms-auto bg-secondary text-white';
-                        badge.textContent = 'OFF';
-                        badge.style.display = 'inline-flex';
-                    }
-                }
-            } else if (isSubscribed) {
-                if (icon) {
-                    icon.className = 'bi bi-bell-fill text-success';
-                    icon.style.display = isMenuItem ? 'inline-block' : 'none';
-                }
-                if (text) text.textContent = '<?= addslashes(__('push_alerts_subscribed')) ?>';
-                btn.disabled = false;
-                if (!isMenuItem) {
-                    btn.classList.remove('btn-outline-danger', 'btn-secondary');
-                    btn.classList.add('btn-success');
-                } else {
-                    btn.style.opacity = '1';
-                    if (badge) {
-                        badge.className = 'mobile-push-status-badge badge rounded-pill ms-auto bg-success text-white';
-                        badge.textContent = 'ON';
-                        badge.style.display = 'inline-flex';
-                    }
-                }
-            } else {
-                if (icon) {
-                    icon.className = 'bi bi-bell text-warning';
-                    icon.style.display = 'inline-block';
-                }
-                if (text) text.textContent = '<?= addslashes(__('push_alerts_subscribe')) ?>';
-                btn.disabled = false;
-                if (!isMenuItem) {
-                    btn.classList.remove('btn-success', 'btn-secondary');
-                    btn.classList.add('btn-outline-danger');
-                } else {
-                    btn.style.opacity = '1';
-                    if (badge) {
-                        badge.className = 'mobile-push-status-badge badge rounded-pill ms-auto bg-warning text-dark';
-                        badge.textContent = 'TAP';
-                        badge.style.display = 'inline-flex';
-                    }
-                }
-            }
+    };
         });
 
         const promptEl = document.getElementById('npPushNotificationPrompt');
@@ -851,9 +905,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 const saveResult = await saveRes.json();
                 if (saveResult.success) {
-                    updatePushBtnState(true);
+                    window.updatePushBtnState(true);
                     if (typeof window.showAdminToast === 'function') {
-                        window.showAdminToast('<?= addslashes(__('push_alerts_success_msg')) ?>', 'success');
+                        window.showAdminToast(getPushText('successMsg'), 'success');
                     }
                 } else {
                     throw new Error(saveResult.error || 'Server rejected subscription');
@@ -865,26 +919,23 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // Push Prompt Banner event listeners
-    const dismissBtn = document.getElementById('dismissPushPromptBtn');
-    const laterBtn = document.getElementById('laterPushPromptBtn');
-    const acceptBtn = document.getElementById('acceptPushPromptBtn');
-
+    // Push Prompt Banner event listeners (document delegation for seamless language switches)
     function dismissPushPrompt() {
         const promptEl = document.getElementById('npPushNotificationPrompt');
         if (promptEl) promptEl.classList.add('d-none');
         localStorage.setItem('np_push_prompt_dismissed_until', (Date.now() + 86400000).toString());
     }
 
-    if (dismissBtn) dismissBtn.addEventListener('click', dismissPushPrompt);
-    if (laterBtn) laterBtn.addEventListener('click', dismissPushPrompt);
-    if (acceptBtn) {
-        acceptBtn.addEventListener('click', function(e) {
+    document.addEventListener('click', function(e) {
+        if (e.target.closest('#dismissPushPromptBtn, #laterPushPromptBtn')) {
+            e.preventDefault();
+            dismissPushPrompt();
+        } else if (e.target.closest('#acceptPushPromptBtn')) {
             e.preventDefault();
             handlePushToggleAction(e);
             dismissPushPrompt();
-        });
-    }
+        }
+    });
 
     document.addEventListener('click', function(e) {
         const toggleBtn = e.target.closest('.push-toggle-action-btn, #pushSubscribeBtn');
@@ -978,12 +1029,18 @@ document.addEventListener('DOMContentLoaded', function () {
             // 6. Dismiss any open dropdowns or mobile menus
             document.querySelectorAll('.dropdown-menu.show').forEach(m => m.classList.remove('show'));
 
-            // 7. Sync bookmarks & notification counter
+            // 7. Sync badges, bookmarks, notification counter & push notification UI in new language
+            if (typeof window.restoreBadgesImmediately === 'function') {
+                window.restoreBadgesImmediately();
+            }
             if (typeof syncBookmarkButtonsState === 'function') {
                 syncBookmarkButtonsState();
             }
             if (typeof fetchNotifications === 'function') {
                 fetchNotifications();
+            }
+            if (typeof window.initPushSubscriptionUi === 'function') {
+                window.initPushSubscriptionUi();
             }
 
         } catch (err) {
@@ -1004,7 +1061,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    initPushSubscriptionUi();
+    if (typeof window.initPushSubscriptionUi === 'function') {
+        window.initPushSubscriptionUi();
+    }
 });
 </script>
 </body>
