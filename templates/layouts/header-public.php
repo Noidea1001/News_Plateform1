@@ -329,12 +329,12 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                         data-bs-toggle="offcanvas" data-bs-target="#savedArticlesModal"
                         title="<?= __('saved_reading_list') ?? 'Saved Reading List' ?>">
                         <i class="bi bi-bookmark-fill text-danger" style="font-size: 1.1rem;"></i>
-                        <span id="mobileSavedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-none align-items-center justify-content-center" style="top:-1px; right:-3px; font-size: 0.55rem; width: 15px; height: 15px;"></span>
+                        <span id="mobileSavedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-none align-items-center justify-content-center" style="top:-1px; right:-3px; font-size: 0.55rem; width: 15px; height: 15px; pointer-events: none;"></span>
                     </button>
                 <?php } else { ?>
                     <button type="button"
                         class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative p-0"
-                        data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="login"
+                        data-bs-toggle="offcanvas" data-bs-target="#savedArticlesModal"
                         title="<?= __('saved_reading_list') ?? 'Saved Reading List' ?>">
                         <i class="bi bi-bookmark text-secondary" style="font-size: 1.1rem;"></i>
                     </button>
@@ -460,7 +460,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                             data-bs-toggle="offcanvas" data-bs-target="#savedArticlesModal"
                             title="<?= __('saved_reading_list') ?? 'Saved Reading List' ?>">
                             <i class="bi bi-bookmark-fill text-danger" style="font-size: 1.2rem;"></i>
-                            <span id="savedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-none align-items-center justify-content-center" style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px;"></span>
+                            <span id="savedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-none align-items-center justify-content-center" style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; pointer-events: none;"></span>
                         </button>
 
                         <!-- Real-Time Notification Bell Dropdown (Only for Logged-in Users) -->
@@ -554,6 +554,14 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                             </ul>
                         </div>
                     <?php } else { ?>
+                        <!-- Guest Saved Reading List Trigger (Desktop) -->
+                        <button type="button"
+                            class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
+                            data-bs-toggle="offcanvas" data-bs-target="#savedArticlesModal"
+                            title="<?= __('saved_reading_list') ?? 'Saved Reading List' ?>">
+                            <i class="bi bi-bookmark text-secondary" style="font-size: 1.2rem;"></i>
+                        </button>
+
                         <!-- Guest: Create Account CTA Button -->
                         <div class="d-flex align-items-center ms-1">
                             <button type="button" class="btn btn-danger btn-sm px-2.5 py-1.5 fw-semibold text-xs rounded-2 shadow-2xs text-nowrap"
@@ -680,7 +688,8 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
         (window.restoreBadgesImmediately = function () {
             try {
                 // 1. Saved articles badge
-                const savedList = JSON.parse(localStorage.getItem('np_saved_articles') || '[]');
+                const savedRaw = localStorage.getItem('np_saved_articles_v1') || localStorage.getItem('np_saved_articles') || '[]';
+                const savedList = JSON.parse(savedRaw);
                 const savedCount = Array.isArray(savedList) ? savedList.length : 0;
                 const savedText = savedCount > 99 ? '99+' : savedCount;
                 document.querySelectorAll('#savedCountBadge, #mobileSavedCountBadge').forEach(function (b) {
