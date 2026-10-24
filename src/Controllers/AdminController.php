@@ -230,6 +230,12 @@ class AdminController
             if (empty($titleKh) && !empty($split['kh'])) $titleKh = $split['kh'];
             if (empty($titleEn) && !empty($split['en'])) $titleEn = $split['en'];
         }
+        if (empty($titleEn) || preg_match('/[\x{1780}-\x{17FF}]/u', $titleEn)) {
+            $candidate = function_exists('article_title') ? article_title($title, 'en') : '';
+            if (!empty($candidate) && !preg_match('/[\x{1780}-\x{17FF}]/u', $candidate)) {
+                $titleEn = $candidate;
+            }
+        }
         if (empty($title)) {
             $title = $titleKh !== '' ? $titleKh : $titleEn;
         }
