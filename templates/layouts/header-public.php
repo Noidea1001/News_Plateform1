@@ -329,7 +329,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                         data-bs-toggle="offcanvas" data-bs-target="#savedArticlesModal"
                         title="<?= __('saved_reading_list') ?? 'Saved Reading List' ?>">
                         <i class="bi bi-bookmark-fill text-danger" style="font-size: 1.1rem;"></i>
-                        <span id="mobileSavedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center" style="top:-1px; right:-3px; font-size: 0.55rem; width: 15px; height: 15px; display: none;">0</span>
+                        <span id="mobileSavedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-none align-items-center justify-content-center" style="top:-1px; right:-3px; font-size: 0.55rem; width: 15px; height: 15px;"></span>
                     </button>
                 <?php } else { ?>
                     <button type="button"
@@ -346,15 +346,15 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                         id="mobileNotifBellBtn" data-bs-toggle="dropdown" aria-expanded="false"
                         title="<?= __('notifications_title') ?>">
                         <i class="bi bi-bell-fill text-dark notif-bell-icon" style="font-size: 1.1rem;"></i>
-                        <span id="mobileNotifBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center"
-                            style="top:-1px; right:-3px; font-size: 0.55rem; width: 15px; height: 15px; display: none;">0</span>
+                        <span id="mobileNotifBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-none align-items-center justify-content-center"
+                            style="top:-1px; right:-3px; font-size: 0.55rem; width: 15px; height: 15px;"></span>
                     </button>
                     <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 mt-2" style="width: 330px; max-height: 420px; overflow-y: auto; border-radius: 8px; z-index: 1080;">
                         <div class="p-2.5 px-3 border-bottom d-flex align-items-center justify-content-between bg-white">
                             <div class="d-flex align-items-center gap-1.5">
                                 <i class="bi bi-bell-fill text-danger" style="font-size:0.92rem;"></i>
                                 <span class="fw-bold text-dark" style="font-size:0.88rem;"><?= __('notifications_title') ?></span>
-                                <span class="badge rounded-pill bg-danger text-white text-3xs px-1.5 py-0.5" id="mobileNotifCountLabel">0</span>
+                                <span class="badge rounded-pill bg-danger text-white text-3xs px-1.5 py-0.5" id="mobileNotifCountLabel" style="display:none;"></span>
                             </div>
                             <div class="d-flex align-items-center gap-2">
                                 <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle text-3xs px-2 py-0.5 rounded-pill d-inline-flex align-items-center gap-1" title="Notifications live status">
@@ -460,7 +460,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                             data-bs-toggle="offcanvas" data-bs-target="#savedArticlesModal"
                             title="<?= __('saved_reading_list') ?? 'Saved Reading List' ?>">
                             <i class="bi bi-bookmark-fill text-danger" style="font-size: 1.2rem;"></i>
-                            <span id="savedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center" style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; display: none;">0</span>
+                            <span id="savedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-none align-items-center justify-content-center" style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px;"></span>
                         </button>
 
                         <!-- Real-Time Notification Bell Dropdown (Only for Logged-in Users) -->
@@ -470,15 +470,15 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                                 id="notifBellBtn" data-bs-toggle="dropdown" aria-expanded="false"
                                 title="<?= __('notifications_title') ?>">
                                 <i class="bi bi-bell-fill text-dark notif-bell-icon" style="font-size: 1.2rem;"></i>
-                                <span id="notifBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-flex align-items-center justify-content-center"
-                                    style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; display: none;">0</span>
+                                <span id="notifBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-none align-items-center justify-content-center"
+                                    style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px;"></span>
                             </button>
                             <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 mt-2" style="width: 330px; max-height: 420px; overflow-y: auto; border-radius: 8px; z-index: 1080;">
                                 <div class="p-2.5 px-3 border-bottom d-flex align-items-center justify-content-between bg-white">
                                     <div class="d-flex align-items-center gap-1.5">
                                         <i class="bi bi-bell-fill text-danger" style="font-size:0.95rem;"></i>
                                         <span class="fw-bold text-dark" style="font-size:0.88rem;"><?= __('notifications_title') ?></span>
-                                        <span class="badge rounded-pill bg-danger text-white text-3xs px-1.5 py-0.5" id="notifCountLabel">0</span>
+                                        <span class="badge rounded-pill bg-danger text-white text-3xs px-1.5 py-0.5" id="notifCountLabel" style="display:none;"></span>
                                     </div>
                                     <div class="d-flex align-items-center gap-2">
                                         <span class="badge bg-success bg-opacity-10 text-success border border-success-subtle text-3xs px-2 py-0.5 rounded-pill d-inline-flex align-items-center gap-1" title="Notifications live status">
@@ -674,6 +674,52 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
             </div>
         </div>
     </nav>
+
+    <!-- Instant Badge Hydration (Runs before paint to prevent flashing 0 on page load/navigation) -->
+    <script>
+        (window.restoreBadgesImmediately = function () {
+            try {
+                // 1. Saved articles badge
+                const savedList = JSON.parse(localStorage.getItem('np_saved_articles') || '[]');
+                const savedCount = Array.isArray(savedList) ? savedList.length : 0;
+                const savedText = savedCount > 99 ? '99+' : savedCount;
+                document.querySelectorAll('#savedCountBadge, #mobileSavedCountBadge').forEach(function (b) {
+                    if (savedCount > 0) {
+                        b.textContent = savedText;
+                        b.classList.remove('d-none');
+                        b.classList.add('d-flex');
+                    } else {
+                        b.textContent = '';
+                        b.classList.remove('d-flex');
+                        b.classList.add('d-none');
+                    }
+                });
+
+                // 2. Notifications count & badge
+                const notifCount = parseInt(localStorage.getItem('np_cached_notif_count') || '0', 10);
+                const notifText = notifCount > 99 ? '99+' : notifCount;
+                document.querySelectorAll('#notifBadge, #mobileNotifBadge').forEach(function (b) {
+                    if (notifCount > 0) {
+                        b.textContent = notifText;
+                        b.classList.remove('d-none');
+                        b.classList.add('d-flex');
+                    } else {
+                        b.textContent = '';
+                        b.classList.remove('d-flex');
+                        b.classList.add('d-none');
+                    }
+                });
+                document.querySelectorAll('#notifCountLabel, #mobileNotifCountLabel').forEach(function (cl) {
+                    if (notifCount > 0) {
+                        cl.textContent = notifText;
+                        cl.style.display = 'inline-block';
+                    } else {
+                        cl.style.display = 'none';
+                    }
+                });
+            } catch (e) {}
+        })();
+    </script>
 
     <!-- ── Mobile Collapsible Search Bar (Smooth Dropdown) ────────────────── -->
     <div class="collapse d-lg-none bg-white border-bottom shadow-sm" id="mobileSearchCollapse" style="position:relative; z-index:1034;">
@@ -903,15 +949,29 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                 const count = active.length;
                 const countText = count > 99 ? '99+' : count;
 
+                // Cache active count in localStorage to avoid flashing 0 on next page/navigation
+                try {
+                    localStorage.setItem('np_cached_notif_count', String(count));
+                } catch (e) {}
+
                 // Update badges
                 [badge, mobileBadge].forEach(b => {
                     if (b) {
-                        b.textContent = countText;
-                        b.style.display = count > 0 ? 'flex' : 'none';
+                        b.textContent = count > 0 ? countText : '';
+                        if (count > 0) {
+                            b.classList.remove('d-none');
+                            b.classList.add('d-flex');
+                        } else {
+                            b.classList.remove('d-flex');
+                            b.classList.add('d-none');
+                        }
                     }
                 });
                 [countLabel, mobileCountLabel].forEach(cl => {
-                    if (cl) cl.textContent = count;
+                    if (cl) {
+                        cl.textContent = count > 0 ? countText : '';
+                        cl.style.display = count > 0 ? 'inline-block' : 'none';
+                    }
                 });
 
                 // Build clean minimal notification list
@@ -1010,7 +1070,8 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                 <?php if (!$currentUser) { ?>
                     return; // Guests don't fetch notifications
                 <?php } ?>
-                fetch('<?= url("api/v1/notifications.php") ?>?lang=<?= $currentLang ?>')
+                const reqLang = window.CURRENT_LANG || '<?= $currentLang ?>';
+                fetch('<?= url("api/v1/notifications.php") ?>?lang=' + encodeURIComponent(reqLang))
                     .then(res => res.json())
                     .then(data => {
                         if (data && data.success && Array.isArray(data.notifications)) {
@@ -1112,14 +1173,13 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
             });
             <?php } ?>
 
-            // Dynamic Open/Off toggle state indicator on bell buttons (for both logged-in and guests)
-            ['notifBellBtn', 'mobileNotifBellBtn'].forEach(function(btnId) {
-                const btn = document.getElementById(btnId);
-                if (!btn) return;
-                const parent = btn.closest('.dropdown');
-                if (!parent) return;
-
-                parent.addEventListener('show.bs.dropdown', function () {
+            // Dynamic Open/Off toggle state indicator on bell buttons (global document delegation for seamless language switches)
+            if (!window._notifBellDropdownAttached) {
+                window._notifBellDropdownAttached = true;
+                document.addEventListener('show.bs.dropdown', function (e) {
+                    const dropdown = e.target;
+                    const btn = dropdown?.querySelector('.notif-bell-btn') || (dropdown?.classList.contains('notif-bell-btn') ? dropdown : null);
+                    if (!btn) return;
                     btn.classList.add('notif-open-active');
                     const icon = btn.querySelector('.notif-bell-icon');
                     if (icon) {
@@ -1131,15 +1191,20 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                     }
                 });
 
-                parent.addEventListener('hide.bs.dropdown', function () {
+                document.addEventListener('hide.bs.dropdown', function (e) {
+                    const dropdown = e.target;
+                    const btn = dropdown?.querySelector('.notif-bell-btn') || (dropdown?.classList.contains('notif-bell-btn') ? dropdown : null);
+                    if (!btn) return;
                     btn.classList.remove('notif-open-active');
                     const icon = btn.querySelector('.notif-bell-icon');
                     if (icon) {
                         icon.className = 'bi bi-bell-fill text-dark notif-bell-icon';
                     }
-                    btn.setAttribute('title', '<?= addslashes(__("notifications_title")) ?>');
+                    const titleKh = 'ការជូនដំណឹង';
+                    const titleEn = 'Real-Time Notifications';
+                    btn.setAttribute('title', (window.CURRENT_LANG === 'kh' || window.CURRENT_LANG === 'km') ? titleKh : titleEn);
                 });
-            });
+            }
         });
     </script>
 
