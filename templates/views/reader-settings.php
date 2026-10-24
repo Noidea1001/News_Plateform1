@@ -43,63 +43,64 @@ $memberSince   = !empty($reader['created_at'])
         <?php } ?>
 
         <!-- ── Top Account Overview Hero Card ────────────────────────── -->
-        <div class="settings-hero-card p-4 p-md-4 mb-4">
+        <div class="settings-hero-card p-3 p-sm-4 mb-4">
             <div class="row align-items-center g-3">
                 <!-- User Profile & Avatar -->
-                <div class="col-lg-6 col-md-7">
+                <div class="col-lg-6 col-md-6">
                     <div class="d-flex align-items-center gap-3">
-                        <div class="position-relative flex-shrink-0" style="width:76px; height:76px;">
+                        <div class="position-relative flex-shrink-0" style="width:72px; height:72px;">
                             <?php if (!empty($avatarUrl)) { ?>
                                 <img src="<?= e($avatarUrl) ?>" alt="Avatar" id="heroAvatarImg"
                                      class="rounded-circle border border-2 border-danger shadow-sm"
-                                     style="width:76px; height:76px; object-fit:cover;">
+                                     style="width:72px; height:72px; object-fit:cover;">
                             <?php } else { ?>
                                 <div id="heroAvatarFallback"
                                      class="rounded-circle bg-danger d-flex align-items-center justify-content-center text-white fw-bold shadow-sm"
-                                     style="width:76px; height:76px; font-size:1.85rem;">
+                                     style="width:72px; height:72px; font-size:1.75rem;">
                                     <?= e($avatarInitial) ?>
                                 </div>
                             <?php } ?>
-                            <span class="position-absolute bottom-0 end-0 bg-success border border-white rounded-circle p-1"
-                                  style="width:14px; height:14px;" title="Active"></span>
+                            <span class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle"
+                                  style="width:15px; height:15px;" title="<?= __('account_active') ?? 'Active' ?>"></span>
                         </div>
-                        <div class="overflow-hidden">
+                        <div class="min-w-0 flex-grow-1">
                             <div class="d-flex align-items-center gap-2 flex-wrap mb-1">
-                                <h4 class="fw-bold text-dark mb-0 editorial-title"><?= e(strip_tags($reader['name'])) ?></h4>
-                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-3xs px-2 py-0.5 rounded-pill">
+                                <h4 class="fw-bold text-dark mb-0 editorial-title text-truncate" style="font-size:1.15rem;"><?= e(strip_tags($reader['name'])) ?></h4>
+                                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 text-3xs px-2 py-0.5 rounded-pill flex-shrink-0">
                                     <i class="bi bi-patch-check-fill me-1"></i><?= __('verified_reader_badge') ?>
                                 </span>
                             </div>
                             <div class="text-muted text-xs text-truncate mb-1">
                                 <i class="bi bi-envelope me-1"></i><?= e($reader['email']) ?>
                             </div>
-                            <div class="text-3xs text-muted">
-                                <i class="bi bi-shield-check me-1 text-success"></i><?= __('account_active') ?? 'Active Account' ?>
+                            <div class="text-3xs text-success fw-semibold d-flex align-items-center gap-1.5">
+                                <span class="notif-pulse-dot" style="background:#16a34a; width:7px; height:7px;"></span>
+                                <span><?= __('account_active') ?? 'Active Account' ?></span>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Quick Metrics Chips -->
-                <div class="col-lg-6 col-md-5">
-                    <div class="d-flex flex-wrap gap-2 justify-content-md-end">
+                <!-- Quick Metrics Chips Grid -->
+                <div class="col-lg-6 col-md-6">
+                    <div class="settings-stat-grid">
                         <div class="settings-stat-chip">
-                            <div class="text-3xs text-muted text-uppercase fw-semibold mb-0.5">
+                            <div class="text-3xs text-muted text-uppercase fw-semibold mb-1 text-truncate">
                                 <i class="bi bi-calendar3 me-1 text-danger"></i><?= __('settings_member_since') ?>
                             </div>
-                            <div class="fw-bold text-dark text-xs"><?= $memberSince ?></div>
+                            <div class="fw-bold text-dark text-xs text-truncate"><?= $memberSince ?></div>
                         </div>
                         <div class="settings-stat-chip">
-                            <div class="text-3xs text-muted text-uppercase fw-semibold mb-0.5">
+                            <div class="text-3xs text-muted text-uppercase fw-semibold mb-1 text-truncate">
                                 <i class="bi bi-chat-left-text me-1 text-danger"></i><?= __('settings_comments') ?>
                             </div>
                             <div class="fw-bold text-dark text-xs"><?= km_num($commentCount) ?></div>
                         </div>
                         <div class="settings-stat-chip">
-                            <div class="text-3xs text-muted text-uppercase fw-semibold mb-0.5">
+                            <div class="text-3xs text-muted text-uppercase fw-semibold mb-1 text-truncate">
                                 <i class="bi bi-bookmark-star me-1 text-danger"></i><?= __('settings_topics_sub') ?>
                             </div>
-                            <div class="fw-bold text-dark text-xs"><?= km_num(count($subscribedCatIds)) ?></div>
+                            <div class="fw-bold text-dark text-xs"><span id="heroSubCountNum"><?= km_num(count($subscribedCatIds)) ?></span></div>
                         </div>
                     </div>
                 </div>
@@ -111,11 +112,11 @@ $memberSince   = !empty($reader['created_at'])
 
             <!-- ── Left Column: Nav Pills & Quick Links ──────────────── -->
             <div class="col-lg-3 col-md-4">
-                <div class="settings-nav-card p-3 mb-3">
-                    <div class="text-3xs text-muted text-uppercase fw-bold px-2 mb-2">
+                <div class="settings-nav-card settings-nav-sticky p-2.5 p-md-3 mb-3">
+                    <div class="d-none d-md-block text-3xs text-muted text-uppercase fw-bold px-2 mb-2">
                         <?= __('settings_page_title') ?>
                     </div>
-                    <div class="nav flex-column gap-1" id="settingsTabs" role="tablist">
+                    <div class="nav settings-nav-pills flex-row flex-md-column gap-1" id="settingsTabs" role="tablist">
                         <button class="nav-link active" id="tab-profile-btn"
                                 data-bs-toggle="pill" data-bs-target="#tab-profile" type="button" role="tab">
                             <i class="bi bi-person-circle fs-6"></i>
@@ -138,9 +139,9 @@ $memberSince   = !empty($reader['created_at'])
                         </button>
                     </div>
 
-                    <hr class="my-3 opacity-15">
+                    <hr class="d-none d-md-block my-3 opacity-15">
 
-                    <div class="px-1">
+                    <div class="d-none d-md-block px-1">
                         <a href="<?= url('logout.php') ?>" class="btn btn-outline-danger btn-sm w-100 rounded-2 py-1.5 text-xs fw-semibold d-flex align-items-center justify-content-center gap-1.5">
                             <i class="bi bi-box-arrow-right"></i>
                             <span><?= __('sign_out') ?></span>
@@ -148,8 +149,8 @@ $memberSince   = !empty($reader['created_at'])
                     </div>
                 </div>
 
-                <!-- Helpful Security Info Note -->
-                <div class="p-3 bg-light rounded-3 border small text-muted text-3xs">
+                <!-- Helpful Security Info Note (Desktop only) -->
+                <div class="d-none d-md-block p-3 bg-light rounded-3 border small text-muted text-3xs">
                     <div class="fw-semibold text-dark mb-1">
                         <i class="bi bi-info-circle-fill text-danger me-1"></i><?= __('editorial_integrity') ?? 'Reader Privacy' ?>
                     </div>
@@ -376,26 +377,60 @@ $memberSince   = !empty($reader['created_at'])
                                 </button>
                             </div>
 
-                            <div class="row g-2.5 mb-3" id="settingsTopicList">
-                                <?php foreach ($categories as $cat) {
-                                    $catId   = (int)$cat['id'];
-                                    $subbed  = in_array($catId, $subscribedCatIds, true);
-                                    $catName = cat_name($cat['name']);
+                            <!-- Live Topic Search & Fast Filter Bar -->
+                            <div class="mb-3">
+                                <div class="input-group input-group-sm" style="max-width: 320px;">
+                                    <span class="input-group-text bg-white border-end-0 text-muted">
+                                        <i class="bi bi-search"></i>
+                                    </span>
+                                    <input type="text" id="topicSearchInput" class="form-control border-start-0 ps-1"
+                                           placeholder="ស្វែងរកប្រធានបទ... (Search topics...)" autocomplete="off">
+                                </div>
+                            </div>
+
+                            <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-2.5 mb-3" id="settingsTopicList">
+                                <?php
+                                $catIcons = [
+                                    'Technology & AI' => 'bi-cpu',
+                                    'Global Politics' => 'bi-globe2',
+                                    'Climate & Science' => 'bi-tree',
+                                    'Economy & Markets' => 'bi-graph-up-arrow',
+                                    'Infrastructure & Logistics' => 'bi-truck',
+                                    'Education & Health' => 'bi-mortarboard',
+                                    'National News' => 'bi-flag',
+                                    'International' => 'bi-globe-americas',
+                                    'Business' => 'bi-briefcase',
+                                    'Sports' => 'bi-trophy',
+                                    'Entertainment' => 'bi-film',
+                                    'Culture' => 'bi-palette',
+                                ];
+
+                                foreach ($categories as $cat) {
+                                    $catId     = (int)$cat['id'];
+                                    $subbed    = in_array($catId, $subscribedCatIds, true);
+                                    $rawName   = $cat['name'];
+                                    $catName   = cat_name($rawName);
+                                    $iconClass = $catIcons[$rawName] ?? 'bi-tag';
                                 ?>
-                                    <div class="col-sm-6 col-lg-4">
-                                        <div class="topic-card p-3 d-flex align-items-center justify-content-between gap-2 <?= $subbed ? 'is-subscribed' : '' ?>"
+                                    <div class="col topic-item-col" data-topic-name="<?= e(mb_strtolower($catName . ' ' . $rawName)) ?>">
+                                        <div class="topic-card d-flex align-items-center justify-content-between gap-2 <?= $subbed ? 'is-subscribed' : '' ?>"
                                              id="cat-card-<?= $catId ?>">
-                                            <div class="overflow-hidden">
-                                                <div class="topic-title fw-semibold text-xs text-truncate"><?= e($catName) ?></div>
-                                                <div class="text-3xs text-muted">
-                                                    <?= $subbed ? __('subscribed_topic') : __('subscribe_topic') ?>
+                                            <div class="d-flex align-items-center gap-2 overflow-hidden min-w-0">
+                                                <div class="topic-card-icon">
+                                                    <i class="bi <?= $iconClass ?>"></i>
+                                                </div>
+                                                <div class="overflow-hidden min-w-0">
+                                                    <div class="topic-title fw-semibold text-xs text-truncate"><?= e($catName) ?></div>
+                                                    <div class="text-3xs text-muted topic-sub-status text-truncate">
+                                                        <?= $subbed ? __('subscribed_topic') : __('subscribe_topic') ?>
+                                                    </div>
                                                 </div>
                                             </div>
                                             <button type="button"
                                                 class="btn btn-sm rounded-pill topic-toggle-btn flex-shrink-0 <?= $subbed ? 'btn-danger' : 'btn-outline-secondary' ?>"
                                                 data-cat-id="<?= $catId ?>"
                                                 data-subscribed="<?= $subbed ? '1' : '0' ?>"
-                                                style="font-size:0.75rem; padding: 0.25rem 0.75rem;">
+                                                style="font-size:0.75rem; padding: 0.25rem 0.65rem;">
                                                 <i class="bi <?= $subbed ? 'bi-check2' : 'bi-plus-lg' ?> me-0.5"></i>
                                                 <span class="btn-label"><?= $subbed ? __('subscribed_topic') : __('subscribe_topic') ?></span>
                                             </button>
@@ -457,6 +492,13 @@ $memberSince   = !empty($reader['created_at'])
             </div><!-- /.col-lg-9 -->
         </div><!-- /.row -->
 
+        <!-- Mobile Bottom Sign Out Link -->
+        <div class="d-md-none text-center mt-3 pt-3 border-top">
+            <a href="<?= url('logout.php') ?>" class="btn btn-outline-danger btn-sm rounded-pill px-4 py-1.5 text-xs fw-semibold">
+                <i class="bi bi-box-arrow-right me-1"></i><?= __('sign_out') ?>
+            </a>
+        </div>
+
     </div><!-- /.container -->
 </div>
 
@@ -505,6 +547,22 @@ document.querySelectorAll('.toggle-pw-btn').forEach(btn => {
     });
 });
 
+// ── Topic Live Search Filter ──────────────────────────────────────────────
+const topicSearchInput = document.getElementById('topicSearchInput');
+if (topicSearchInput) {
+    topicSearchInput.addEventListener('input', function () {
+        const query = this.value.trim().toLowerCase();
+        document.querySelectorAll('.topic-item-col').forEach(col => {
+            const name = col.getAttribute('data-topic-name') || '';
+            if (!query || name.includes(query)) {
+                col.classList.remove('d-none');
+            } else {
+                col.classList.add('d-none');
+            }
+        });
+    });
+}
+
 // ── Topic Subscribe/Unsubscribe via REST API ───────────────────────────────
 document.querySelectorAll('.topic-toggle-btn').forEach(btn => {
     btn.addEventListener('click', function () {
@@ -546,6 +604,10 @@ document.querySelectorAll('.topic-toggle-btn').forEach(btn => {
 
                 if (countNum && typeof data.total_subscriptions !== 'undefined') {
                     countNum.textContent = data.total_subscriptions;
+                }
+                const heroSubCount = document.getElementById('heroSubCountNum');
+                if (heroSubCount && typeof data.total_subscriptions !== 'undefined') {
+                    heroSubCount.textContent = data.total_subscriptions;
                 }
 
                 if (msgEl) {
