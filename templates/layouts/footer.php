@@ -1,18 +1,22 @@
 </main><!-- /main -->
 
-<!-- Quick View, Saved Reading List & Reader Auth Modals -->
+<!-- Quick View, Saved Reading List, Reader Auth, Mega Sections & Mobile Bottom Nav -->
 <?php
-$qvModal    = __DIR__ . '/../components/quick-view-modal.php';
-$savedModal = __DIR__ . '/../components/saved-articles-modal.php';
-$authModal  = __DIR__ . '/../components/auth-modal.php';
-$pwaModal   = __DIR__ . '/../components/pwa-install-modal.php';
+$qvModal         = __DIR__ . '/../components/quick-view-modal.php';
+$savedModal      = __DIR__ . '/../components/saved-articles-modal.php';
+$authModal       = __DIR__ . '/../components/auth-modal.php';
+$pwaModal        = __DIR__ . '/../components/pwa-install-modal.php';
 $pushPromptModal = __DIR__ . '/../components/push-prompt-banner.php';
+$sectionsModal   = __DIR__ . '/../components/sections-mega-menu.php';
+$mobileNav       = __DIR__ . '/../components/mobile-bottom-nav.php';
 
-if (file_exists($qvModal))    { include $qvModal; }
-if (file_exists($savedModal)) { include $savedModal; }
-if (file_exists($authModal))  { include $authModal; }
-if (file_exists($pwaModal))   { include $pwaModal; }
+if (file_exists($qvModal))         { include $qvModal; }
+if (file_exists($savedModal))      { include $savedModal; }
+if (file_exists($authModal))       { include $authModal; }
+if (file_exists($pwaModal))        { include $pwaModal; }
 if (file_exists($pushPromptModal)) { include $pushPromptModal; }
+if (file_exists($sectionsModal))   { include $sectionsModal; }
+if (file_exists($mobileNav))       { include $mobileNav; }
 ?>
 
 <!-- ── CNA-Style Footer ────────────────────────────────────────────────── -->
@@ -1115,6 +1119,156 @@ document.addEventListener('DOMContentLoaded', function () {
         window.initPushSubscriptionUi();
     }
 });
+</script>
+
+<!-- Floating Back-to-Top Button with Scroll Progress Ring -->
+<button type="button" id="backToTopBtn" class="back-to-top-btn" title="<?= __('scroll_to_top') ?>" aria-label="<?= __('scroll_to_top') ?>">
+    <svg class="progress-ring" width="46" height="46" viewBox="0 0 46 46">
+        <circle class="progress-ring-track" cx="23" cy="23" r="20" fill="transparent" stroke-width="3"></circle>
+        <circle class="progress-ring-indicator" id="scrollProgressCircle" cx="23" cy="23" r="20" fill="transparent" stroke-width="3"></circle>
+    </svg>
+    <i class="bi bi-arrow-up"></i>
+</button>
+
+<script>
+// ── Worldwide News Platform: Global Interactive Features ───────────────────
+(function() {
+    // 1. Back to Top with Scroll Progress
+    const bttBtn = document.getElementById('backToTopBtn');
+    const circle = document.getElementById('scrollProgressCircle');
+    if (circle) {
+        const radius = circle.r.baseVal.value;
+        const circumference = 2 * Math.PI * radius;
+        circle.style.strokeDasharray = `${circumference} ${circumference}`;
+        circle.style.strokeDashoffset = circumference;
+
+        function setProgress(percent) {
+            const offset = circumference - (percent / 100 * circumference);
+            circle.style.strokeDashoffset = offset;
+        }
+
+        window.addEventListener('scroll', function() {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+            setProgress(scrolled);
+
+            if (bttBtn) {
+                if (winScroll > 300) {
+                    bttBtn.classList.add('visible');
+                } else {
+                    bttBtn.classList.remove('visible');
+                }
+            }
+        }, { passive: true });
+
+        if (bttBtn) {
+            bttBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+    }
+
+    // 2. Global Dark / Light Theme Manager
+    function applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+        try {
+            localStorage.setItem('np_theme', theme);
+        } catch(e) {}
+
+        const isDark = (theme === 'dark');
+        document.querySelectorAll('.global-theme-toggle-btn').forEach(btn => {
+            const icon = btn.querySelector('i');
+            const label = btn.querySelector('.theme-text-label');
+            if (icon) {
+                icon.className = isDark ? 'bi bi-sun-fill text-warning' : 'bi bi-moon-stars text-secondary';
+            }
+            if (label) {
+                label.textContent = isDark ? '<?= addslashes(__('theme_light')) ?>' : '<?= addslashes(__('theme_dark')) ?>';
+            }
+            btn.setAttribute('title', isDark ? '<?= addslashes(__('theme_light')) ?>' : '<?= addslashes(__('theme_dark')) ?>');
+        });
+
+        // Update meta theme-color
+        const metaTheme = document.querySelector('meta[name="theme-color"]');
+        if (metaTheme) {
+            metaTheme.setAttribute('content', isDark ? '#0b0f19' : '#c8102e');
+        }
+    }
+
+    // Initial Theme Detection
+    const savedTheme = localStorage.getItem('np_theme') || 
+        (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    applyTheme(savedTheme);
+
+    // Delegated Theme Toggle
+    document.addEventListener('click', function(e) {
+        const toggleBtn = e.target.closest('.global-theme-toggle-btn');
+        if (!toggleBtn) return;
+        e.preventDefault();
+        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        applyTheme(newTheme);
+    });
+
+    // 3. Global Keyboard Shortcut for Search (Ctrl+K or ⌘K, or '/')
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
+            e.preventDefault();
+            const searchInput = document.getElementById('publicSearchInput') || document.getElementById('mobileSearchInput');
+            if (searchInput) {
+                searchInput.focus();
+                searchInput.select();
+            }
+        }
+        // '/' shortcut when not in input
+        if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
+            e.preventDefault();
+            const searchInput = document.getElementById('publicSearchInput') || document.getElementById('mobileSearchInput');
+            if (searchInput) {
+                searchInput.focus();
+                searchInput.select();
+            }
+        }
+    });
+
+    // 4. Live World Clock Ticker
+    function updateWorldClock() {
+        const clockEl = document.getElementById('liveWorldClock');
+        if (!clockEl) return;
+        try {
+            const tz = clockEl.getAttribute('data-tz') || 'Asia/Phnom_Penh';
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('en-US', {
+                timeZone: tz,
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hour12: false
+            });
+            clockEl.textContent = timeStr;
+        } catch(e) {}
+    }
+    updateWorldClock();
+    setInterval(updateWorldClock, 1000);
+
+    // Timezone switcher dropdown listener
+    document.addEventListener('click', function(e) {
+        const tzItem = e.target.closest('.tz-select-item');
+        if (!tzItem) return;
+        e.preventDefault();
+        const newTz = tzItem.getAttribute('data-tz');
+        const label = tzItem.getAttribute('data-city');
+        const clockEl = document.getElementById('liveWorldClock');
+        const cityLabel = document.getElementById('liveWorldCityLabel');
+        if (clockEl && newTz) {
+            clockEl.setAttribute('data-tz', newTz);
+            if (cityLabel && label) cityLabel.textContent = label;
+            updateWorldClock();
+        }
+    });
+})();
 </script>
 </body>
 </html>
