@@ -46,6 +46,16 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
     <link rel="icon" type="image/png" sizes="192x192" href="<?= url('assets/icons/icon-192.png') ?>">
     <link rel="icon" type="image/png" sizes="32x32" href="<?= url('assets/icons/icon-192.png') ?>">
 
+    <!-- Zero-Flicker Universal Theme Init -->
+    <script>
+        (function() {
+            try {
+                const saved = localStorage.getItem('np_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', saved);
+            } catch(e) {}
+        })();
+    </script>
+
     <style>
         .header-clean-icon-btn {
             background: transparent !important;
@@ -250,17 +260,66 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
 <body class="d-flex flex-column min-vh-100">
     <div id="readingProgressBar"></div>
 
-    <!-- ── CNA-Style Top Utility Bar (Matches Admin Site Fit) ──────────── -->
+    <!-- ── Worldwide Premier Top Utility Bar ─────────────────────────────── -->
     <div class="top-utility-header d-flex align-items-center justify-content-between px-3 px-md-4 py-1">
-        <!-- Left: Date & CDA Badge (hidden on mobile) -->
+        <!-- Left: Date, Live World Clock & Indicative Markets -->
         <div class="d-flex align-items-center gap-2.5 mobile-hide-text" style="font-size:0.72rem; font-weight:600;">
             <span style="color:rgba(255,255,255,0.70);"><?= \App\Core\TemplateEngine::formatDate(date('Y-m-d H:i:s'), 'l, d F Y') ?></span>
             <span class="opacity-40">|</span>
-            <span style="color:rgba(255,255,255,0.90);"><?= __('cda_badge') ?></span>
+            <!-- Interactive Live World Clock -->
+            <div class="dropdown d-inline-block">
+                <button class="btn btn-link text-white p-0 text-decoration-none dropdown-toggle world-clock-badge" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="<?= __('select_timezone') ?>">
+                    <i class="bi bi-clock-history me-1 text-danger"></i>
+                    <span id="liveWorldCityLabel">Phnom Penh (ICT)</span>:
+                    <strong id="liveWorldClock" data-tz="Asia/Phnom_Penh" class="ms-1">--:--:--</strong>
+                </button>
+                <ul class="dropdown-menu shadow-sm" style="font-size:0.75rem; min-width:185px;">
+                    <li><h6 class="dropdown-header text-uppercase text-3xs fw-bold text-muted"><?= __('select_timezone') ?></h6></li>
+                    <li><a class="dropdown-item tz-select-item" href="#" data-tz="Asia/Phnom_Penh" data-city="Phnom Penh (ICT)">Phnom Penh (ICT)</a></li>
+                    <li><a class="dropdown-item tz-select-item" href="#" data-tz="Asia/Singapore" data-city="Singapore (SGT)">Singapore (SGT)</a></li>
+                    <li><a class="dropdown-item tz-select-item" href="#" data-tz="Asia/Tokyo" data-city="Tokyo (JST)">Tokyo (JST)</a></li>
+                    <li><a class="dropdown-item tz-select-item" href="#" data-tz="Europe/London" data-city="London (BST)">London (BST)</a></li>
+                    <li><a class="dropdown-item tz-select-item" href="#" data-tz="America/New_York" data-city="New York (EDT)">New York (EDT)</a></li>
+                </ul>
+            </div>
+            <!-- Financial Market Indicative Mini-Ticker -->
+            <div class="top-markets-ticker d-none d-xl-flex align-items-center gap-1.5 ms-2">
+                <span class="top-market-item"><strong class="text-white">S&P 500</strong> <span class="text-success fw-bold">▲ 0.48%</span></span>
+                <span class="top-market-item"><strong class="text-white">NASDAQ</strong> <span class="text-success fw-bold">▲ 0.62%</span></span>
+                <span class="top-market-item"><strong class="text-white">GOLD</strong> <span class="text-warning fw-bold">$2,745</span></span>
+            </div>
         </div>
 
-        <!-- Right: PWA Install & Language -->
-        <div class="d-flex align-items-center gap-2.5">
+        <!-- Right: Edition Switcher, Live Stream, Theme Toggle, PWA & Language -->
+        <div class="d-flex align-items-center gap-2">
+            <!-- Global Edition Switcher -->
+            <div class="dropdown d-none d-sm-block">
+                <button class="btn btn-link text-white p-0 text-decoration-none dropdown-toggle"
+                    style="font-size:0.72rem; font-weight:700; opacity:0.9;" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false" id="editionDropdownBtn">
+                    <span class="text-white-50"><?= __('edition_label') ?>:</span> <span id="currentEditionLabel"><?= __('edition_global') ?></span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm" style="min-width:150px; font-size:0.78rem;">
+                    <li><a class="dropdown-item active" href="#" onclick="document.getElementById('currentEditionLabel').textContent='<?= addslashes(__('edition_global')) ?>'; return false;"><?= __('edition_global') ?> (Global)</a></li>
+                    <li><a class="dropdown-item" href="#" onclick="document.getElementById('currentEditionLabel').textContent='<?= addslashes(__('edition_asia')) ?>'; return false;"><?= __('edition_asia') ?></a></li>
+                    <li><a class="dropdown-item" href="#" onclick="document.getElementById('currentEditionLabel').textContent='<?= addslashes(__('edition_us')) ?>'; return false;"><?= __('edition_us') ?></a></li>
+                    <li><a class="dropdown-item" href="#" onclick="document.getElementById('currentEditionLabel').textContent='<?= addslashes(__('edition_europe')) ?>'; return false;"><?= __('edition_europe') ?></a></li>
+                </ul>
+            </div>
+
+            <!-- Live Stream Beacon -->
+            <a href="<?= url('index.php?format=investigative') ?>" class="top-live-stream-badge d-none d-md-inline-flex" title="<?= __('live_broadcast') ?>">
+                <span class="live-beacon-dot"></span>
+                <span><?= __('live_broadcast') ?></span>
+            </a>
+
+            <!-- Dark / Light Theme Toggle in Top Bar -->
+            <button type="button" class="btn btn-link text-white p-0 text-decoration-none global-theme-toggle-btn d-flex align-items-center"
+                style="font-size:0.8rem; opacity:0.9;" title="<?= __('theme_toggle') ?>">
+                <i class="bi bi-moon-stars"></i>
+            </button>
+
+            <!-- PWA Install Button -->
             <button type="button" id="pwaInstallBtn"
                 class="btn btn-outline-light btn-sm py-0 px-2 d-none align-items-center gap-1"
                 style="font-size:0.7rem; border-radius:2px; border-color:rgba(255,255,255,0.4); opacity:0.9;"
@@ -269,6 +328,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                 <span class="d-none d-sm-inline"><?= __('pwa_install') ?></span>
             </button>
 
+            <!-- Language Switcher -->
             <div class="dropdown">
                 <button class="btn btn-link text-white p-0 text-decoration-none dropdown-toggle"
                     style="font-size:0.74rem; font-weight:700; opacity:1;" type="button"
@@ -296,9 +356,17 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
         </div>
     </div>
 
-    <!-- ── CNA-Style Main Navbar ──────────────────────────────────────────── -->
+    <!-- ── Worldwide Premier Main Navbar ──────────────────────────────────── -->
     <nav class="navbar navbar-expand-lg navbar-main sticky-top py-0" style="min-height: 60px;">
         <div class="container-fluid px-3 px-md-4 h-100">
+
+            <!-- All Sections Drawer Trigger (Left of Brand, NYT / Guardian style) -->
+            <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline-flex align-items-center gap-1.5 py-1 px-2.5 rounded-2 me-2 me-lg-3 header-sections-btn" 
+                data-bs-toggle="offcanvas" data-bs-target="#sectionsMegaMenu" aria-controls="sectionsMegaMenu" 
+                style="font-size:0.78rem; font-weight:700;" title="<?= __('sections_drawer_title') ?>">
+                <i class="bi bi-list fs-6"></i>
+                <span><?= __('all_sections') ?></span>
+            </button>
 
             <!-- Brand — CNA style: red badge + bold name -->
             <a class="navbar-brand d-flex align-items-center gap-2 py-0 text-decoration-none"
@@ -424,7 +492,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
             </div>
 
             <div class="collapse navbar-collapse" id="mainNavbar">
-                <!-- Inline Search — CNA style with Real-Time Live Filter & Dropdown -->
+                <!-- Inline Search — Worldwide Omni-Search with Real-Time Live Filter & Dropdown -->
                 <form class="d-flex my-2 my-lg-0 mx-lg-3 position-relative" style="max-width:340px; width:100%;"
                     action="<?= url('index.php') ?>" method="GET" id="headerSearchForm">
                     <div class="input-group input-group-sm w-100 align-items-center"
@@ -440,6 +508,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                             title="<?= __('clear_search') ?>">
                             <i class="bi bi-x-circle-fill" style="font-size:0.85rem; color:#9ca3af;"></i>
                         </span>
+                        <kbd class="search-kbd-badge ms-1 me-1 d-none d-xl-inline-block" title="<?= __('keyboard_shortcut_hint') ?>">Ctrl K</kbd>
                     </div>
                     <!-- Live Search Results Dropdown -->
                     <div id="liveSearchDropdown" class="card border-0 shadow-lg position-absolute mt-1 live-search-dropdown-menu"
@@ -450,11 +519,18 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                     </div>
                 </form>
 
-                <!-- Desktop: Reader Controls, Notifications & CTAs (hidden on mobile — icons moved to mobile bar) -->
+                <!-- Desktop: Reader Controls, Notifications & CTAs -->
                 <div class="d-none d-lg-flex align-items-center gap-2 ms-lg-auto pe-1">
                     
+                    <!-- Global Theme Toggle Button (Desktop Navbar) -->
+                    <button type="button"
+                        class="header-clean-icon-btn d-flex align-items-center justify-content-center global-theme-toggle-btn"
+                        title="<?= __('theme_toggle') ?>">
+                        <i class="bi bi-moon-stars text-secondary" style="font-size: 1.15rem;"></i>
+                    </button>
+
                     <?php if ($currentUser) { ?>
-                        <!-- Saved Reading List Offcanvas Trigger (Only for Logged-in Users) -->
+                        <!-- Saved Reading List Offcanvas Trigger (Logged-in Readers) -->
                         <button type="button"
                             class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
                             data-bs-toggle="offcanvas" data-bs-target="#savedArticlesModal"
@@ -463,7 +539,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                             <span id="savedCountBadge" class="position-absolute badge rounded-circle bg-danger p-0 d-none align-items-center justify-content-center" style="top:-2px; right:-4px; font-size: 0.6rem; width: 17px; height: 17px; pointer-events: none;"></span>
                         </button>
 
-                        <!-- Real-Time Notification Bell Dropdown (Only for Logged-in Users) -->
+                        <!-- Real-Time Notification Bell Dropdown (Logged-in Readers) -->
                         <div class="dropdown position-relative">
                             <button type="button"
                                 class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative notif-bell-btn"
@@ -505,7 +581,6 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                             </div>
                         </div>
 
-                        <!-- User Profile Dropdown (Desktop) -->
                         <!-- User Profile Dropdown (Desktop) -->
                         <div class="dropdown ms-1">
                             <?php $headerAvatar = $currentReader['avatar_url'] ?? ($staffUser['avatar_url'] ?? ''); ?>
@@ -562,9 +637,44 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                             <i class="bi bi-bookmark text-secondary" style="font-size: 1.2rem;"></i>
                         </button>
 
-                        <!-- Guest: Create Account CTA Button -->
-                        <div class="d-flex align-items-center ms-1">
-                            <button type="button" class="btn btn-danger btn-sm px-2.5 py-1.5 fw-semibold text-xs rounded-2 shadow-2xs text-nowrap"
+                        <!-- Guest Notification Bell (Desktop) -->
+                        <div class="dropdown position-relative">
+                            <button type="button"
+                                class="header-clean-icon-btn d-flex align-items-center justify-content-center position-relative"
+                                data-bs-toggle="dropdown" aria-expanded="false"
+                                title="<?= __('notifications_title') ?>">
+                                <i class="bi bi-bell text-secondary" style="font-size: 1.2rem;"></i>
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-end shadow-lg border-0 p-0 mt-2" style="width: 320px; border-radius: 8px; z-index: 1080;">
+                                <div class="p-4 text-center bg-white" style="font-size: 0.83rem;">
+                                    <div class="rounded-circle bg-danger bg-opacity-10 text-danger d-inline-flex align-items-center justify-content-center mb-2.5" style="width: 44px; height: 44px;">
+                                        <i class="bi bi-bell-fill fs-5"></i>
+                                    </div>
+                                    <div class="fw-bold text-dark mb-1" style="font-size: 0.88rem;"><?= __('notifications_title') ?></div>
+                                    <p class="text-secondary small mb-3 px-2" style="font-size: 0.76rem; line-height: 1.45;">
+                                        <?= __('login_reader_desc') ?? 'Sign in to receive breaking news alerts and customize topics.' ?>
+                                    </p>
+                                    <div class="d-flex flex-column gap-2 px-2">
+                                        <button type="button" class="btn btn-danger btn-sm w-100 fw-semibold rounded-2 py-1.5 text-xs shadow-2xs"
+                                            data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="login">
+                                            <i class="bi bi-box-arrow-in-right me-1"></i> <?= __('sign_in') ?>
+                                        </button>
+                                        <button type="button" class="btn btn-outline-secondary btn-sm w-100 rounded-2 py-1 text-2xs"
+                                            data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register">
+                                            <?= __('create_account') ?>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Guest: Sign In & Create Account CTAs -->
+                        <div class="d-flex align-items-center gap-1.5 ms-1">
+                            <button type="button" class="btn btn-outline-secondary btn-sm px-2.5 py-1 text-xs rounded-2"
+                                data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="login">
+                                <?= __('sign_in') ?>
+                            </button>
+                            <button type="button" class="btn btn-danger btn-sm px-2.5 py-1 fw-semibold text-xs rounded-2 shadow-2xs text-nowrap"
                                 data-bs-toggle="modal" data-bs-target="#readerAuthModal" data-auth-tab="register">
                                 <?= __('create_account') ?>
                             </button>
@@ -1236,6 +1346,32 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                     </a>
                 <?php } ?>
             </div>
+        </div>
+    </div>
+
+    <!-- ── Worldwide Trending Topics Quick Ribbon ─────────────────────────── -->
+    <div class="trending-ribbon-bar py-1.5">
+        <div class="container-fluid px-3 px-md-4 d-flex align-items-center gap-2 overflow-hidden">
+            <span class="trending-ribbon-badge flex-shrink-0 d-inline-flex align-items-center gap-1">
+                <i class="bi bi-fire text-danger"></i>
+                <span><?= __('trending_label') ?></span>
+            </span>
+            <div class="trending-ribbon-scroll d-flex align-items-center gap-2 flex-grow-1 overflow-x-auto text-nowrap">
+                <a href="<?= url('index.php?q=AI') ?>" class="trending-pill-link">#AIRevolution</a>
+                <a href="<?= url('index.php?q=Markets') ?>" class="trending-pill-link">#GlobalMarkets</a>
+                <a href="<?= url('index.php?q=Climate') ?>" class="trending-pill-link">#ClimateCrisis</a>
+                <a href="<?= url('index.php?q=Tech') ?>" class="trending-pill-link">#DeepTech</a>
+                <a href="<?= url('index.php?q=Trade') ?>" class="trending-pill-link">#GlobalTrade</a>
+                <a href="<?= url('index.php?q=Diplomacy') ?>" class="trending-pill-link">#Diplomacy</a>
+                <a href="<?= url('index.php?format=investigative') ?>" class="trending-pill-link text-danger fw-bold"><i class="bi bi-shield-check me-1"></i><?= __('tmpl_investigative') ?></a>
+                <a href="<?= url('index.php?format=opinion') ?>" class="trending-pill-link text-primary fw-bold"><i class="bi bi-chat-square-quote me-1"></i><?= __('tmpl_opinion') ?></a>
+            </div>
+            <!-- All Sections Shortcut (right aligned) -->
+            <button type="button" class="btn btn-link text-decoration-none p-0 text-muted text-xs d-none d-lg-inline-flex align-items-center gap-1 ms-auto flex-shrink-0" data-bs-toggle="offcanvas" data-bs-target="#sectionsMegaMenu">
+                <i class="bi bi-grid-3x3-gap"></i>
+                <span class="fw-semibold"><?= __('view_all_sections') ?></span>
+                <i class="bi bi-chevron-right" style="font-size:0.65rem;"></i>
+            </button>
         </div>
     </div>
 
