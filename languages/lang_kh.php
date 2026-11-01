@@ -562,5 +562,22 @@ $lang['world_clock'] = "នាឡិកាសកល";
 $lang['select_timezone'] = "ជ្រើសរើសតំបន់ម៉ោង";
 $lang['view_all_sections'] = "មើលផ្នែក និងតុព័ត៌មានទាំងអស់";
 $lang['more_sections'] = "បន្ថែម";
+
+// 27. Cambodia Community & Specialized Features
+$lang['telegram_share'] = "ចែករំលែក Telegram";
+$lang['telegram_channel_title'] = "តាមដាន Telegram ផ្លូវការ";
+$lang['telegram_channel_sub'] = "@newsplatform_kh";
+$lang['telegram_channel_desc'] = "ទទួលព័ត៌មានទាន់ហេតុការណ៍ និងសេចក្តីប្រកាសបន្ទាន់រៀងរាល់ថ្ងៃលើ Telegram។";
+$lang['telegram_channel_btn'] = "ចូលរួម Channel ឥឡូវនេះ";
+$lang['article_telegram_cta'] = "ចូលចិត្តអត្ថបទនេះ? តាមដាន Telegram Channel របស់យើងដើម្បីកុំឱ្យខកខានព័ត៌មានសំខាន់ៗ!";
+
+$lang['audio_news_title'] = "ស្តាប់ព័ត៌មានជាសំឡេង";
+$lang['audio_news_listen'] = "ស្តាប់អត្ថបទ";
+$lang['audio_news_playing'] = "កំពុងចាក់សំឡេង...";
+$lang['audio_news_paused'] = "បានផ្អាក";
+$lang['audio_news_stop'] = "បញ្ឈប់";
+$lang['audio_news_speed'] = "ល្បឿន";
+
+$lang['cat_scholarships_careers'] = "អាហារូបករណ៍ & ឱកាសការងារ";
 return $lang;
 

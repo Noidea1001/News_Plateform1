@@ -28,7 +28,16 @@ $shareTitle = article_title($article ?? ($article['title'] ?? 'NewsPlatform Stor
     <!-- Right: Bookmark & Clean Share Dropdown -->
     <div class="d-flex align-items-center gap-2 ms-auto">
         
-        <!-- 1. Bookmark / Save Button -->
+        <!-- 1. Direct Telegram Share Button (Cambodia Essential) -->
+        <a href="https://t.me/share/url?url=<?= urlencode($currentUrl) ?>&text=<?= urlencode($shareTitle) ?>"
+            target="_blank" rel="noopener"
+            class="btn btn-sm text-white rounded-pill px-3 py-1 d-inline-flex align-items-center gap-1.5 text-xs fw-semibold shadow-none text-decoration-none"
+            style="background-color: #0088cc; height:32px;" title="<?= __('telegram_share') ?>">
+            <i class="bi bi-telegram"></i>
+            <span>Telegram</span>
+        </a>
+
+        <!-- 2. Bookmark / Save Button -->
         <?php if (isset($article) && isset($artData)) { ?>
             <button type="button" class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 bookmark-toggle-btn d-inline-flex align-items-center gap-1.5 shadow-none text-xs fw-semibold"
                 data-id="<?= (int)$article['id'] ?>" data-article='<?= $artData ?>' title="<?= __('save_for_later') ?? 'Save' ?>" style="height:32px;">
@@ -37,7 +46,7 @@ $shareTitle = article_title($article ?? ($article['title'] ?? 'NewsPlatform Stor
             </button>
         <?php } ?>
 
-        <!-- 2. Clean Share Dropdown Button -->
+        <!-- 3. Clean Share Dropdown Button -->
         <div class="dropdown position-relative">
             <button class="btn btn-sm btn-outline-secondary rounded-pill px-3 py-1 d-inline-flex align-items-center gap-1.5 text-xs fw-semibold dropdown-toggle shadow-none"
                 type="button" id="articleShareDropdownBtn" data-bs-toggle="dropdown" aria-expanded="false" style="height:32px;">

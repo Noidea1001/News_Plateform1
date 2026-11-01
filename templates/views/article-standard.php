@@ -95,9 +95,12 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
         </div>
 
         <!-- Top Action Bar: Bookmark & Share Dropdown -->
-        <div class="mb-3">
+        <div class="mb-2">
             <?php include __DIR__ . '/../components/share-buttons.php'; ?>
         </div>
+
+        <!-- Smart Audio News Player (Khmer & English TTS) -->
+        <?php include __DIR__ . '/../components/audio-player.php'; ?>
 
         <!-- Main 2-Column Grid Layout -->
         <div class="row g-4">
@@ -203,6 +206,26 @@ require_once __DIR__ . '/../../src/Core/helpers.php';
                 $referenceSourceName = $article['reference_source_name'] ?? null;
                 include __DIR__ . '/../components/citation-box.php';
                 ?>
+
+                <!-- Telegram Channel Article CTA (Cambodia News Community) -->
+                <div class="my-4 p-3.5 rounded-3 d-flex align-items-center justify-content-between flex-wrap gap-3"
+                     style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border: 1px solid #bae6fd;">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="d-inline-flex align-items-center justify-content-center text-white rounded-circle shadow-sm flex-shrink-0" style="width:44px; height:44px; background:#0088cc;">
+                            <i class="bi bi-telegram fs-4"></i>
+                        </span>
+                        <div>
+                            <div class="fw-bold text-dark" style="font-size:0.95rem; line-height:1.3;"><?= __('telegram_channel_title') ?></div>
+                            <div class="text-secondary text-xs mt-0.5"><?= __('article_telegram_cta') ?></div>
+                        </div>
+                    </div>
+                    <a href="https://t.me/newsplatform_kh" target="_blank" rel="noopener"
+                       class="btn btn-sm text-white fw-bold d-inline-flex align-items-center gap-2 px-3 py-2 rounded-2 text-decoration-none shadow-2xs ms-auto"
+                       style="background:#0088cc; font-size:0.82rem;">
+                        <i class="bi bi-send-fill"></i>
+                        <span><?= __('telegram_channel_btn') ?></span>
+                    </a>
+                </div>
 
                 <!-- Reader Community & Discussion Section -->
                 <?php include __DIR__ . '/../components/comments-section.php'; ?>

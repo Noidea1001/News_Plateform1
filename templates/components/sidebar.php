@@ -213,7 +213,29 @@ $sidebarCats = $sidebarDb->fetchAll("SELECT id, name, slug FROM categories ORDER
     </section>
     <?php } ?>
 
-    <!-- 2. Explore Topics (រករកប្រធានបទ) — compact chips -->
+    <!-- 2. Official Telegram Community Widget (Cambodia Fast Alert Hub) -->
+    <section class="sbw" style="border: 1px solid #bfdbfe; background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);">
+        <div class="sbw-body p-3">
+            <div class="d-flex align-items-center gap-2 mb-2">
+                <span class="d-inline-flex align-items-center justify-content-center text-white rounded-circle shadow-sm flex-shrink-0" style="width:36px; height:36px; background:#0088cc;">
+                    <i class="bi bi-telegram fs-5"></i>
+                </span>
+                <div>
+                    <h6 class="fw-bold mb-0 text-dark" style="font-size:0.86rem;"><?= __('telegram_channel_title') ?></h6>
+                    <span class="text-primary text-3xs fw-semibold"><?= __('telegram_channel_sub') ?></span>
+                </div>
+            </div>
+            <p class="text-secondary text-xs mb-2.5" style="line-height: 1.5;">
+                <?= __('telegram_channel_desc') ?>
+            </p>
+            <a href="https://t.me/newsplatform_kh" target="_blank" rel="noopener" class="btn btn-sm w-100 text-white fw-bold d-flex align-items-center justify-content-center gap-2 rounded-2 shadow-2xs text-decoration-none" style="background:#0088cc; font-size:0.8rem; padding: 0.45rem;">
+                <i class="bi bi-send-fill"></i>
+                <span><?= __('telegram_channel_btn') ?></span>
+            </a>
+        </div>
+    </section>
+
+    <!-- 3. Explore Topics (រករកប្រធានបទ) — compact chips -->
     <?php if (!empty($categories)) { ?>
     <section class="sbw">
         <div class="sbw-head">
