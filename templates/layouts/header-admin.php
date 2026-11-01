@@ -31,6 +31,16 @@ $currentLang = $_SESSION['lang'] ?? 'en';
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= url('assets/css/style.css') ?>">
 
+    <!-- Zero-Flicker Universal Theme Init -->
+    <script>
+        (function() {
+            try {
+                const saved = localStorage.getItem('np_theme') || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', saved);
+            } catch(e) {}
+        })();
+    </script>
+
     <style>
         body {
             background-color: #f8fafc;
