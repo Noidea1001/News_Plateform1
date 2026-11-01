@@ -19,68 +19,68 @@ if (file_exists($sectionsModal))   { include $sectionsModal; }
 if (file_exists($mobileNav))       { include $mobileNav; }
 ?>
 
-<!-- ── CNA-Style Footer ────────────────────────────────────────────────── -->
-<footer class="bg-brand-navy text-white mt-auto" style="border-top: 3px solid #c8102e; padding-top: 3rem; padding-bottom: 2rem;">
+<!-- ── Clean Editorial Footer (Pure White & Light) ────────────────────────── -->
+<footer class="text-dark mt-auto" style="background:#ffffff; border-top: 3px solid #c8102e; border-bottom: 1px solid #e5e7eb; padding-top: 3rem; padding-bottom: 2rem;">
     <div class="container">
         <div class="row g-5 mb-4">
 
             <!-- Brand & Mission -->
             <div class="col-lg-4 col-md-6">
                 <div class="d-flex align-items-center gap-2 mb-3">
-                    <span class="brand-logo-badge" style="width:44px;height:44px;font-size:1.05rem;border-radius:2px;">NP</span>
-                    <span class="fw-bold" style="color:#fff; font-size:1.05rem; letter-spacing:-0.02em;">
+                    <span class="brand-logo-badge" style="width:40px;height:40px;font-size:1rem;border-radius:2px;">NP</span>
+                    <span class="fw-bold" style="color:#0f172a; font-size:1.05rem; letter-spacing:-0.02em;">
                         <?= __('site_title') ?>
                     </span>
                 </div>
-                <p style="font-size:0.875rem; color:rgba(255,255,255,0.55); line-height:1.75; margin-bottom:1.5rem;">
+                <p style="font-size:0.875rem; color:#4b5563; line-height:1.75; margin-bottom:1.5rem;">
                     <?= __('footer_desc') ?>
                 </p>
                 <div class="d-flex gap-2">
-                    <a href="#" class="footer-social-btn" title="X / Twitter"><i class="bi bi-twitter-x"></i></a>
-                    <a href="#" class="footer-social-btn" title="Facebook"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="footer-social-btn" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
-                    <a href="#" class="footer-social-btn" style="color:#fbbf24;" title="RSS"><i class="bi bi-rss-fill"></i></a>
+                    <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0" style="width:34px;height:34px;" title="X / Twitter"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0" style="width:34px;height:34px;" title="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0" style="width:34px;height:34px;" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                    <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0" style="width:34px;height:34px; color:#d97706;" title="RSS"><i class="bi bi-rss-fill"></i></a>
                 </div>
             </div>
 
             <!-- Content Blueprints -->
             <div class="col-lg-4 col-md-6">
-                <!-- CNA-style section title: red left border -->
+                <!-- Section title: red left border -->
                 <div style="border-left:3px solid #c8102e; padding-left:0.75rem; margin-bottom:1.25rem;">
-                    <h6 style="color:#fff; font-size:0.78rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; margin:0;">
+                    <h6 style="color:#0f172a; font-size:0.78rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; margin:0;">
                         <?= __('layout_blueprints_title') ?>
                     </h6>
                 </div>
                 <ul class="list-unstyled d-flex flex-column gap-3" style="font-size:0.875rem;">
                     <li class="d-flex align-items-center gap-3">
-                        <span style="width:28px;height:28px;background:rgba(255,255,255,0.07);display:inline-flex;align-items:center;justify-content:center;border-radius:2px;color:rgba(255,255,255,0.60);">
+                        <span style="width:28px;height:28px;background:#f3f4f6;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;color:#4b5563;">
                             <i class="bi bi-layout-three-columns" style="font-size:0.85rem;"></i>
                         </span>
-                        <span style="color:rgba(255,255,255,0.60);"><?= __('footer_tmpl_1') ?></span>
+                        <span style="color:#374151;"><?= __('footer_tmpl_1') ?></span>
                     </li>
                     <li class="d-flex align-items-center gap-3">
-                        <span style="width:28px;height:28px;background:rgba(200,16,46,0.18);display:inline-flex;align-items:center;justify-content:center;border-radius:2px;color:#fca5a5;">
+                        <span style="width:28px;height:28px;background:rgba(200,16,46,0.1);display:inline-flex;align-items:center;justify-content:center;border-radius:2px;color:#c8102e;">
                             <i class="bi bi-card-text" style="font-size:0.85rem;"></i>
                         </span>
-                        <span style="color:rgba(255,255,255,0.60);"><?= __('footer_tmpl_2') ?></span>
+                        <span style="color:#374151;"><?= __('footer_tmpl_2') ?></span>
                     </li>
                     <li class="d-flex align-items-center gap-3">
-                        <span style="width:28px;height:28px;background:rgba(255,255,255,0.07);display:inline-flex;align-items:center;justify-content:center;border-radius:2px;color:rgba(255,255,255,0.60);">
+                        <span style="width:28px;height:28px;background:#f3f4f6;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;color:#4b5563;">
                             <i class="bi bi-person-lines-fill" style="font-size:0.85rem;"></i>
                         </span>
-                        <span style="color:rgba(255,255,255,0.60);"><?= __('footer_tmpl_3') ?></span>
+                        <span style="color:#374151;"><?= __('footer_tmpl_3') ?></span>
                     </li>
                 </ul>
             </div>
 
-            <!-- Create Account CTA (replaces old email newsletter) -->
+            <!-- Reader CTA -->
             <div class="col-lg-4 col-md-12">
                 <div style="border-left:3px solid #c8102e; padding-left:0.75rem; margin-bottom:1.25rem;">
-                    <h6 style="color:#fff; font-size:0.78rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; margin:0;">
+                    <h6 style="color:#0f172a; font-size:0.78rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; margin:0;">
                         <?= __('notifications_account_required') ?>
                     </h6>
                 </div>
-                <p style="font-size:0.875rem; color:rgba(255,255,255,0.55); line-height:1.75; margin-bottom:1.25rem;">
+                <p style="font-size:0.875rem; color:#4b5563; line-height:1.75; margin-bottom:1.25rem;">
                     <?= __('notifications_login_prompt_desc') ?>
                 </p>
                 <?php if (!\App\Core\Auth::readerCheck()) { ?>
@@ -93,7 +93,7 @@ if (file_exists($mobileNav))       { include $mobileNav; }
                 </button>
                 <?php } else { ?>
                 <a href="<?= url('settings.php') ?>"
-                   class="btn btn-outline-light w-100 d-flex align-items-center justify-content-center gap-2 fw-bold"
+                   class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2 fw-bold"
                    style="font-size:0.85rem; border-radius:2px; padding:0.65rem 1rem;">
                     <i class="bi bi-gear-fill"></i>
                     <?= __('settings_page_title') ?>
@@ -103,16 +103,16 @@ if (file_exists($mobileNav))       { include $mobileNav; }
         </div>
 
         <!-- Bottom bar -->
-        <div style="border-top:1px solid rgba(255,255,255,0.08); padding-top:1.25rem; margin-top:1rem;">
+        <div style="border-top:1px solid #e5e7eb; padding-top:1.25rem; margin-top:1rem;">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2"
-                 style="font-size:0.78rem; color:rgba(255,255,255,0.40);">
-                <p class="mb-0">&copy; <?= date('Y') ?> <?= __('rights_reserved') ?></p>
+                 style="font-size:0.78rem; color:#6b7280;">
+                <p class="mb-0">&copy; <?= date('Y') ?> <?= __('rights_reserved') ?> &mdash; <?= __('site_title') ?></p>
                 <div class="d-flex align-items-center gap-3">
                     <a href="<?= url('index.php') ?>"
                        class="text-decoration-none"
-                       style="color:rgba(255,255,255,0.40);"
-                       onmouseover="this.style.color='rgba(255,255,255,0.80)'"
-                       onmouseout="this.style.color='rgba(255,255,255,0.40)'">
+                       style="color:#6b7280;"
+                       onmouseover="this.style.color='#111827'"
+                       onmouseout="this.style.color='#6b7280'">
                         <?= __('cda_badge') ?>
                     </a>
                 </div>
@@ -1170,49 +1170,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
-    // 2. Global Dark / Light Theme Manager
-    function applyTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
-        try {
-            localStorage.setItem('np_theme', theme);
-        } catch(e) {}
-
-        const isDark = (theme === 'dark');
-        document.querySelectorAll('.global-theme-toggle-btn').forEach(btn => {
-            const icon = btn.querySelector('i');
-            const label = btn.querySelector('.theme-text-label');
-            if (icon) {
-                icon.className = isDark ? 'bi bi-sun-fill text-warning' : 'bi bi-moon-stars text-secondary';
-            }
-            if (label) {
-                label.textContent = isDark ? '<?= addslashes(__('theme_light')) ?>' : '<?= addslashes(__('theme_dark')) ?>';
-            }
-            btn.setAttribute('title', isDark ? '<?= addslashes(__('theme_light')) ?>' : '<?= addslashes(__('theme_dark')) ?>');
-        });
-
-        // Update meta theme-color
-        const metaTheme = document.querySelector('meta[name="theme-color"]');
-        if (metaTheme) {
-            metaTheme.setAttribute('content', isDark ? '#0b0f19' : '#c8102e');
-        }
-    }
-
-    // Initial Theme Detection
-    const savedTheme = localStorage.getItem('np_theme') || 
-        (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    applyTheme(savedTheme);
-
-    // Delegated Theme Toggle
-    document.addEventListener('click', function(e) {
-        const toggleBtn = e.target.closest('.global-theme-toggle-btn');
-        if (!toggleBtn) return;
-        e.preventDefault();
-        const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        applyTheme(newTheme);
-    });
-
-    // 3. Global Keyboard Shortcut for Search (Ctrl+K or ⌘K, or '/')
+    // 2. Global Keyboard Shortcut for Search (Ctrl+K or ⌘K, or '/')
     document.addEventListener('keydown', function(e) {
         if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {
             e.preventDefault();
@@ -1222,7 +1180,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 searchInput.select();
             }
         }
-        // '/' shortcut when not in input
         if (e.key === '/' && !['INPUT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
             e.preventDefault();
             const searchInput = document.getElementById('publicSearchInput') || document.getElementById('mobileSearchInput');
@@ -1230,42 +1187,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 searchInput.focus();
                 searchInput.select();
             }
-        }
-    });
-
-    // 4. Live World Clock Ticker
-    function updateWorldClock() {
-        const clockEl = document.getElementById('liveWorldClock');
-        if (!clockEl) return;
-        try {
-            const tz = clockEl.getAttribute('data-tz') || 'Asia/Phnom_Penh';
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('en-US', {
-                timeZone: tz,
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                hour12: false
-            });
-            clockEl.textContent = timeStr;
-        } catch(e) {}
-    }
-    updateWorldClock();
-    setInterval(updateWorldClock, 1000);
-
-    // Timezone switcher dropdown listener
-    document.addEventListener('click', function(e) {
-        const tzItem = e.target.closest('.tz-select-item');
-        if (!tzItem) return;
-        e.preventDefault();
-        const newTz = tzItem.getAttribute('data-tz');
-        const label = tzItem.getAttribute('data-city');
-        const clockEl = document.getElementById('liveWorldClock');
-        const cityLabel = document.getElementById('liveWorldCityLabel');
-        if (clockEl && newTz) {
-            clockEl.setAttribute('data-tz', newTz);
-            if (cityLabel && label) cityLabel.textContent = label;
-            updateWorldClock();
         }
     });
 })();
