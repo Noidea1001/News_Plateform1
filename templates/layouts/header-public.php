@@ -304,14 +304,6 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
     <nav class="navbar navbar-expand-lg navbar-main sticky-top py-0" style="min-height: 60px; background:#ffffff; border-bottom:1px solid #e5e7eb;">
         <div class="container-fluid px-3 px-md-4 h-100">
 
-            <!-- All Sections Drawer Trigger (Left of Brand) -->
-            <button type="button" class="btn btn-outline-secondary btn-sm d-none d-md-inline-flex align-items-center gap-1.5 py-1 px-2.5 rounded-2 me-2 me-lg-3 header-sections-btn" 
-                data-bs-toggle="offcanvas" data-bs-target="#sectionsMegaMenu" aria-controls="sectionsMegaMenu" 
-                style="font-size:0.78rem; font-weight:700; background:#ffffff; border-color:#d1d5db; color:#1f2937;" title="<?= __('sections_drawer_title') ?>">
-                <i class="bi bi-list fs-6"></i>
-                <span><?= __('all_sections') ?></span>
-            </button>
-
             <!-- Brand — CNA style: red badge + bold name -->
             <a class="navbar-brand d-flex align-items-center gap-2 py-0 text-decoration-none"
                 href="<?= url('index.php') ?>">

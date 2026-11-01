@@ -18,12 +18,6 @@ $mobileBottomUser = $mobileBottomReader ?: $mobileBottomStaff;
             <span><?= __('mobile_nav_home') ?></span>
         </a>
 
-        <!-- Sections (Mega Drawer) -->
-        <button type="button" class="mobile-tab-btn" data-bs-toggle="offcanvas" data-bs-target="#sectionsMegaMenu" aria-controls="sectionsMegaMenu">
-            <i class="bi bi-grid-fill"></i>
-            <span><?= __('mobile_nav_sections') ?></span>
-        </button>
-
         <!-- Search Bar Trigger -->
         <button type="button" class="mobile-tab-btn" data-bs-toggle="collapse" data-bs-target="#mobileSearchCollapse" aria-expanded="false" aria-controls="mobileSearchCollapse" onclick="setTimeout(()=>document.getElementById('mobileSearchInput')?.focus(), 150)">
             <i class="bi bi-search"></i>

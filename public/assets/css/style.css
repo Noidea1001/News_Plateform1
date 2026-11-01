@@ -3729,40 +3729,6 @@ html, body, main {
     color: #dc2626 !important;
 }
 
-/* ── Clean Editorial 'All Sections' Drawer ── */
-.mega-sections-drawer {
-    width: 320px !important;
-    max-width: 85vw !important;
-    background: #ffffff !important;
-    border-right: 1px solid #e5e7eb !important;
-    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08) !important;
-    z-index: 1075 !important;
-}
-
-.sections-clean-link {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.5rem 0.75rem;
-    border-radius: 4px;
-    color: #1f2937;
-    font-size: 0.86rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: all 0.15s ease;
-}
-
-.sections-clean-link:hover {
-    background-color: #f8fafc;
-    color: #c8102e;
-}
-
-.sections-clean-link.active {
-    background-color: #fef2f2;
-    color: #c8102e;
-    font-weight: 700;
-}
-
 /* ── Mobile App-Style Bottom Navigation Bar (Pure White) ── */
 .mobile-bottom-app-bar {
     position: fixed;
