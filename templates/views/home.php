@@ -117,29 +117,29 @@
                 ================================================== -->
                 <div class="lead-article-card mb-4">
                     <!-- Image -->
-                    <div class="lead-article-image position-relative overflow-hidden" style="background:#0f172a;">
+                    <div class="lead-article-image position-relative overflow-hidden">
                         <?php if (!empty($lead['featured_image'])) { ?>
                             <img src="<?= e(image_url($lead['featured_image'])) ?>" alt="<?= e(article_title($lead)) ?>" loading="eager"
                                  style="width:100%; height:100%; object-fit:cover;"
                                  onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.classList.remove('d-none');">
-                            <div class="d-none align-items-center justify-content-center h-100 w-100 fs-1 text-muted"
-                                style="background:#1e293b;">
+                            <div class="d-none align-items-center justify-content-center h-100 w-100 fs-1"
+                                style="background:#f8fafc; color:#94a3b8;">
                                 <i class="bi bi-newspaper"></i>
                             </div>
                         <?php } else { ?>
-                            <div class="d-flex align-items-center justify-content-center h-100 w-100 fs-1 text-muted"
-                                style="background:#1e293b;">
+                            <div class="d-flex align-items-center justify-content-center h-100 w-100 fs-1"
+                                style="background:#f8fafc; color:#94a3b8;">
                                 <i class="bi bi-newspaper"></i>
                             </div>
                         <?php } ?>
                         <!-- Floating badges -->
                         <div class="lead-badge-left">
                             <?php if (!empty($lead['is_breaking'])) { ?>
-                                <span class="lead-badge-pill" style="background:#c8102e; color:#fff;">
+                                <span class="lead-badge-pill lead-badge-breaking">
                                     <i class="bi bi-lightning-fill me-1"></i><?= __('breaking') ?>
                                 </span>
                             <?php } ?>
-                            <span class="lead-badge-pill bg-dark-pill"><?= e(cat_name($lead['category_name'])) ?></span>
+                            <span class="lead-badge-pill lead-badge-cat"><?= e(cat_name($lead['category_name'])) ?></span>
                         </div>
                         <div class="lead-badge-right">
                             <span class="lead-badge-pill tmpl-badge-<?= e($lead['template_type']) ?>">
@@ -209,22 +209,22 @@
                         ]), ENT_QUOTES, 'UTF-8');
                         ?>
                         <div class="secondary-grid-card">
-                            <div class="secondary-grid-thumb position-relative overflow-hidden" style="background:#f1f5f9;">
+                            <div class="secondary-grid-thumb position-relative overflow-hidden">
                                 <?php if (!empty($sItem['featured_image'])) { ?>
                                     <img src="<?= e(image_url($sItem['featured_image'])) ?>" 
                                          alt="<?= e(article_title($sItem)) ?>" 
                                          loading="lazy" 
                                          style="width:100%; height:100%; object-fit:cover;"
                                          onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';">
-                                    <div class="cna-feed-thumb-empty" style="display:none; width:100%; height:100%; align-items:center; justify-content:center; background:#e2e8f0; color:#64748b;">
+                                    <div class="cna-feed-thumb-empty" style="display:none; width:100%; height:100%; align-items:center; justify-content:center; background:#f8fafc; color:#94a3b8;">
                                         <i class="bi bi-newspaper fs-2"></i>
                                     </div>
                                 <?php } else { ?>
-                                    <div class="cna-feed-thumb-empty d-flex align-items-center justify-content-center w-100 h-100" style="background:#e2e8f0; color:#64748b;">
+                                    <div class="cna-feed-thumb-empty d-flex align-items-center justify-content-center w-100 h-100" style="background:#f8fafc; color:#94a3b8;">
                                         <i class="bi bi-newspaper fs-2"></i>
                                     </div>
                                 <?php } ?>
-                                <span class="lead-badge-pill bg-dark-pill position-absolute" style="top:0.6rem; left:0.6rem; z-index:3;">
+                                <span class="lead-badge-pill lead-badge-cat position-absolute" style="top:0.6rem; left:0.6rem; z-index:3;">
                                     <?= e(cat_name($sItem['category_name'])) ?>
                                 </span>
                             </div>
@@ -321,7 +321,7 @@
                                             <?php if (!empty($item['featured_image'])) { ?>
                                                 <img src="<?= e(image_url($item['featured_image'])) ?>" alt="<?= e(article_title($item)) ?>" loading="lazy">
                                             <?php } else { ?>
-                                                <div class="cna-feed-thumb-empty">NP</div>
+                                                <div class="cna-feed-thumb-empty"><i class="bi bi-newspaper fs-4"></i></div>
                                             <?php } ?>
                                         </a>
                                     </div>
