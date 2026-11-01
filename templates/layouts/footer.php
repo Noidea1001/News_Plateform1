@@ -17,8 +17,8 @@ if (file_exists($pushPromptModal)) { include $pushPromptModal; }
 if (file_exists($mobileNav))       { include $mobileNav; }
 ?>
 
-<!-- ── Clean Editorial Footer (Pure White & Light) ────────────────────────── -->
-<footer class="text-dark mt-auto" style="background:#ffffff; border-top: 3px solid #c8102e; border-bottom: 1px solid #e5e7eb; padding-top: 3rem; padding-bottom: 2rem;">
+<!-- ── Editorial Footer (Dark Grey) ────────────────────────── -->
+<footer class="text-light mt-auto" style="background:#1e232a; border-top: 3px solid #c8102e; padding-top: 3rem; padding-bottom: 2rem;">
     <div class="container">
         <div class="row g-5 mb-4">
 
@@ -26,18 +26,18 @@ if (file_exists($mobileNav))       { include $mobileNav; }
             <div class="col-lg-4 col-md-6">
                 <div class="d-flex align-items-center gap-2 mb-3">
                     <span class="brand-logo-badge" style="width:40px;height:40px;font-size:1rem;border-radius:2px;">NP</span>
-                    <span class="fw-bold" style="color:#0f172a; font-size:1.05rem; letter-spacing:-0.02em;">
+                    <span class="fw-bold" style="color:#f9fafb; font-size:1.05rem; letter-spacing:-0.02em;">
                         <?= __('site_title') ?>
                     </span>
                 </div>
-                <p style="font-size:0.875rem; color:#4b5563; line-height:1.75; margin-bottom:1.5rem;">
+                <p style="font-size:0.875rem; color:#9ca3af; line-height:1.75; margin-bottom:1.5rem;">
                     <?= __('footer_desc') ?>
                 </p>
                 <div class="d-flex gap-2">
-                    <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0" style="width:34px;height:34px;" title="X / Twitter"><i class="bi bi-twitter-x"></i></a>
-                    <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0" style="width:34px;height:34px;" title="Facebook"><i class="bi bi-facebook"></i></a>
-                    <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0" style="width:34px;height:34px;" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
-                    <a href="#" class="btn btn-sm btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center p-0" style="width:34px;height:34px; color:#d97706;" title="RSS"><i class="bi bi-rss-fill"></i></a>
+                    <a href="#" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center p-0" style="width:34px;height:34px; background:#2a303a; border:1px solid #374151; color:#d1d5db;" title="X / Twitter"><i class="bi bi-twitter-x"></i></a>
+                    <a href="#" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center p-0" style="width:34px;height:34px; background:#2a303a; border:1px solid #374151; color:#d1d5db;" title="Facebook"><i class="bi bi-facebook"></i></a>
+                    <a href="#" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center p-0" style="width:34px;height:34px; background:#2a303a; border:1px solid #374151; color:#d1d5db;" title="LinkedIn"><i class="bi bi-linkedin"></i></a>
+                    <a href="#" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center p-0" style="width:34px;height:34px; background:#2a303a; border:1px solid #374151; color:#f59e0b;" title="RSS"><i class="bi bi-rss-fill"></i></a>
                 </div>
             </div>
 
@@ -45,28 +45,28 @@ if (file_exists($mobileNav))       { include $mobileNav; }
             <div class="col-lg-4 col-md-6">
                 <!-- Section title: red left border -->
                 <div style="border-left:3px solid #c8102e; padding-left:0.75rem; margin-bottom:1.25rem;">
-                    <h6 style="color:#0f172a; font-size:0.78rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; margin:0;">
+                    <h6 style="color:#f9fafb; font-size:0.78rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; margin:0;">
                         <?= __('layout_blueprints_title') ?>
                     </h6>
                 </div>
                 <ul class="list-unstyled d-flex flex-column gap-3" style="font-size:0.875rem;">
                     <li class="d-flex align-items-center gap-3">
-                        <span style="width:28px;height:28px;background:#f3f4f6;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;color:#4b5563;">
+                        <span style="width:28px;height:28px;background:#2a303a;border:1px solid #374151;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;color:#9ca3af;">
                             <i class="bi bi-layout-three-columns" style="font-size:0.85rem;"></i>
                         </span>
-                        <span style="color:#374151;"><?= __('footer_tmpl_1') ?></span>
+                        <span style="color:#e5e7eb;"><?= __('footer_tmpl_1') ?></span>
                     </li>
                     <li class="d-flex align-items-center gap-3">
-                        <span style="width:28px;height:28px;background:rgba(200,16,46,0.1);display:inline-flex;align-items:center;justify-content:center;border-radius:2px;color:#c8102e;">
+                        <span style="width:28px;height:28px;background:rgba(200,16,46,0.2);border:1px solid rgba(200,16,46,0.3);display:inline-flex;align-items:center;justify-content:center;border-radius:2px;color:#ef4444;">
                             <i class="bi bi-card-text" style="font-size:0.85rem;"></i>
                         </span>
-                        <span style="color:#374151;"><?= __('footer_tmpl_2') ?></span>
+                        <span style="color:#e5e7eb;"><?= __('footer_tmpl_2') ?></span>
                     </li>
                     <li class="d-flex align-items-center gap-3">
-                        <span style="width:28px;height:28px;background:#f3f4f6;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;color:#4b5563;">
+                        <span style="width:28px;height:28px;background:#2a303a;border:1px solid #374151;display:inline-flex;align-items:center;justify-content:center;border-radius:2px;color:#9ca3af;">
                             <i class="bi bi-person-lines-fill" style="font-size:0.85rem;"></i>
                         </span>
-                        <span style="color:#374151;"><?= __('footer_tmpl_3') ?></span>
+                        <span style="color:#e5e7eb;"><?= __('footer_tmpl_3') ?></span>
                     </li>
                 </ul>
             </div>
@@ -74,11 +74,11 @@ if (file_exists($mobileNav))       { include $mobileNav; }
             <!-- Reader CTA -->
             <div class="col-lg-4 col-md-12">
                 <div style="border-left:3px solid #c8102e; padding-left:0.75rem; margin-bottom:1.25rem;">
-                    <h6 style="color:#0f172a; font-size:0.78rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; margin:0;">
+                    <h6 style="color:#f9fafb; font-size:0.78rem; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; margin:0;">
                         <?= __('notifications_account_required') ?>
                     </h6>
                 </div>
-                <p style="font-size:0.875rem; color:#4b5563; line-height:1.75; margin-bottom:1.25rem;">
+                <p style="font-size:0.875rem; color:#9ca3af; line-height:1.75; margin-bottom:1.25rem;">
                     <?= __('notifications_login_prompt_desc') ?>
                 </p>
                 <?php if (!\App\Core\Auth::readerCheck()) { ?>
@@ -92,7 +92,7 @@ if (file_exists($mobileNav))       { include $mobileNav; }
                 <?php } else { ?>
                 <a href="<?= url('settings.php') ?>"
                    class="btn btn-outline-danger w-100 d-flex align-items-center justify-content-center gap-2 fw-bold"
-                   style="font-size:0.85rem; border-radius:2px; padding:0.65rem 1rem;">
+                   style="font-size:0.85rem; border-radius:2px; padding:0.65rem 1rem; color:#ef4444; border-color:#ef4444;">
                     <i class="bi bi-gear-fill"></i>
                     <?= __('settings_page_title') ?>
                 </a>
@@ -101,16 +101,16 @@ if (file_exists($mobileNav))       { include $mobileNav; }
         </div>
 
         <!-- Bottom bar -->
-        <div style="border-top:1px solid #e5e7eb; padding-top:1.25rem; margin-top:1rem;">
+        <div style="border-top:1px solid #2d3748; padding-top:1.25rem; margin-top:1rem;">
             <div class="d-flex flex-column flex-md-row justify-content-between align-items-center gap-2"
-                 style="font-size:0.78rem; color:#6b7280;">
+                 style="font-size:0.78rem; color:#9ca3af;">
                 <p class="mb-0">&copy; <?= date('Y') ?> <?= __('rights_reserved') ?> &mdash; <?= __('site_title') ?></p>
                 <div class="d-flex align-items-center gap-3">
                     <a href="<?= url('index.php') ?>"
                        class="text-decoration-none"
-                       style="color:#6b7280;"
-                       onmouseover="this.style.color='#111827'"
-                       onmouseout="this.style.color='#6b7280'">
+                       style="color:#9ca3af;"
+                       onmouseover="this.style.color='#f3f4f6'"
+                       onmouseout="this.style.color='#9ca3af'">
                         <?= __('cda_badge') ?>
                     </a>
                 </div>
