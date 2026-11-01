@@ -250,10 +250,10 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
 <body class="d-flex flex-column min-vh-100">
     <div id="readingProgressBar"></div>
 
-    <!-- ── Clean Editorial Top Utility Bar (Pure White) ──────────── -->
-    <div class="top-utility-header d-flex align-items-center justify-content-between px-3 px-md-4 py-1" style="background:#ffffff; border-bottom:1px solid #e5e7eb;">
+    <!-- ── Clean Editorial Top Utility Bar (Desktop only, hidden on mobile) ──── -->
+    <div class="top-utility-header d-none d-lg-flex align-items-center justify-content-between px-3 px-md-4 py-1" style="background:#ffffff; border-bottom:1px solid #e5e7eb;">
         <!-- Left: Date & CDA Badge -->
-        <div class="d-flex align-items-center gap-2.5 mobile-hide-text" style="font-size:0.75rem; font-weight:600; color:#4b5563;">
+        <div class="d-flex align-items-center gap-2.5" style="font-size:0.75rem; font-weight:600; color:#4b5563;">
             <span class="d-flex align-items-center gap-1.5" style="color:#374151;">
                 <i class="bi bi-calendar3 text-danger" style="font-size:0.75rem;"></i>
                 <?= \App\Core\TemplateEngine::formatDate(date('Y-m-d H:i:s'), 'l, d F Y') ?>
@@ -262,17 +262,8 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
             <span style="color:#6b7280; font-weight:500;"><?= __('cda_badge') ?></span>
         </div>
 
-        <!-- Right: PWA Install & Language -->
+        <!-- Right: Language Dropdown -->
         <div class="d-flex align-items-center gap-3">
-            <button type="button" id="pwaInstallBtn"
-                class="btn btn-outline-secondary btn-sm py-0 px-2 d-none align-items-center gap-1"
-                style="font-size:0.7rem; border-radius:3px; height:24px;"
-                title="<?= __('pwa_install') ?>">
-                <i class="bi bi-download" style="font-size:0.68rem;"></i>
-                <span class="d-none d-sm-inline"><?= __('pwa_install') ?></span>
-            </button>
-
-            <!-- Language Dropdown -->
             <div class="dropdown">
                 <button class="btn btn-link p-0 text-decoration-none dropdown-toggle d-flex align-items-center gap-1"
                     style="font-size:0.75rem; font-weight:700; color:#1f2937;" type="button"
@@ -705,16 +696,6 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
                                 EN
                             </a>
                         </div>
-                    </div>
-
-                    <!-- Mobile PWA Install Trigger -->
-                    <div class="mobile-menu-section">
-                        <button type="button" id="mobilePwaInstallBtn"
-                            class="btn btn-outline-danger btn-sm w-100 d-none align-items-center justify-content-center gap-1.5 py-1.5 fw-semibold text-xs rounded-2"
-                            title="<?= __('pwa_install') ?>">
-                            <i class="bi bi-download"></i>
-                            <span><?= __('pwa_install') ?></span>
-                        </button>
                     </div>
                 </div>
             </div>

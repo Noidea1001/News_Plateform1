@@ -1,20 +1,16 @@
 </main><!-- /main -->
 
-<!-- Quick View, Saved Reading List, Reader Auth, Mega Sections & Mobile Bottom Nav -->
+<!-- Quick View, Saved Reading List, Reader Auth & Push Alerts -->
 <?php
 $qvModal         = __DIR__ . '/../components/quick-view-modal.php';
 $savedModal      = __DIR__ . '/../components/saved-articles-modal.php';
 $authModal       = __DIR__ . '/../components/auth-modal.php';
-$pwaModal        = __DIR__ . '/../components/pwa-install-modal.php';
 $pushPromptModal = __DIR__ . '/../components/push-prompt-banner.php';
-$mobileNav       = __DIR__ . '/../components/mobile-bottom-nav.php';
 
 if (file_exists($qvModal))         { include $qvModal; }
 if (file_exists($savedModal))      { include $savedModal; }
 if (file_exists($authModal))       { include $authModal; }
-if (file_exists($pwaModal))        { include $pwaModal; }
 if (file_exists($pushPromptModal)) { include $pushPromptModal; }
-if (file_exists($mobileNav))       { include $mobileNav; }
 ?>
 
 <!-- ── Editorial Footer (Dark Grey) ────────────────────────── -->
