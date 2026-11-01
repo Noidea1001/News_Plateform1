@@ -532,5 +532,35 @@ $lang['clear_saved_warning'] = "All articles in your saved reading list will be 
 $lang['notifications_account_required'] = "Account required to receive news alerts";
 $lang['notifications_login_prompt_title'] = "Create Account to Get News Alerts";
 $lang['notifications_login_prompt_desc'] = "Create a free reader account to receive breaking news alerts and personalized updates.";
+
+// 26. Worldwide Platform & Navbar Extensions
+$lang['edition_global'] = "Worldwide";
+$lang['edition_asia'] = "Asia Pacific";
+$lang['edition_us'] = "Americas";
+$lang['edition_europe'] = "Europe";
+$lang['edition_label'] = "Edition";
+$lang['theme_toggle'] = "Toggle Dark / Light Mode";
+$lang['theme_light'] = "Light";
+$lang['theme_dark'] = "Dark";
+$lang['live_broadcast'] = "Live Stream";
+$lang['live_audio'] = "Audio Dispatch";
+$lang['all_sections'] = "Sections";
+$lang['sections_drawer_title'] = "Explore All Sections";
+$lang['sections_quick_links'] = "Special Coverage & Shortcuts";
+$lang['trending_topics'] = "Trending Topics";
+$lang['trending_label'] = "Trending";
+$lang['markets_overview'] = "World Markets";
+$lang['keyboard_shortcut_hint'] = "Press Ctrl+K to search";
+$lang['mobile_nav_home'] = "Home";
+$lang['mobile_nav_sections'] = "Sections";
+$lang['mobile_nav_search'] = "Search";
+$lang['mobile_nav_saved'] = "Saved";
+$lang['mobile_nav_account'] = "Account";
+$lang['worldwide_news'] = "Worldwide Editorial Network";
+$lang['scroll_to_top'] = "Back to Top";
+$lang['world_clock'] = "World Clock";
+$lang['select_timezone'] = "Select Timezone";
+$lang['view_all_sections'] = "View All Categories & Desks";
+$lang['more_sections'] = "More";
 return $lang;
 

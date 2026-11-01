@@ -532,5 +532,35 @@ $lang['clear_saved_warning'] = "អត្ថបទទាំងអស់ក្ន
 $lang['notifications_account_required'] = "តម្រូវឱ្យមានគណនីដើម្បីទទួលបានការជូនដំណឹង";
 $lang['notifications_login_prompt_title'] = "បង្កើតគណនីដើម្បីទទួលបានការជូនដំណឹង";
 $lang['notifications_login_prompt_desc'] = "សូមចុះឈ្មោះគណនីអ្នកអានឥតគិតថ្លៃដើម្បីទទួលបានព័ត៌មានទាន់ហេតុការណ៍ និងការជូនដំណឹងព័ត៌មានថ្មីៗ។";
+
+// 26. Worldwide Platform & Navbar Extensions
+$lang['edition_global'] = "ពិភពលោក";
+$lang['edition_asia'] = "អាស៊ីប៉ាស៊ីហ្វិក";
+$lang['edition_us'] = "អាមេរិក";
+$lang['edition_europe'] = "អឺរ៉ុប";
+$lang['edition_label'] = "ការបោះពុម្ព";
+$lang['theme_toggle'] = "ប្តូរពណ៌ងងឹត/ភ្លឺ";
+$lang['theme_light'] = "ពន្លឺថ្ងៃ";
+$lang['theme_dark'] = "រាត្រី";
+$lang['live_broadcast'] = "ផ្សាយផ្ទាល់";
+$lang['live_audio'] = "សំឡេងព័ត៌មាន";
+$lang['all_sections'] = "ផ្នែកទាំងអស់";
+$lang['sections_drawer_title'] = "រុករកផ្នែកព័ត៌មានទាំងអស់";
+$lang['sections_quick_links'] = "ការផ្សាយពិសេស & ផ្លូវកាត់";
+$lang['trending_topics'] = "ប្រធានបទកំពុងពេញនិយម";
+$lang['trending_label'] = "ពេញនិយម";
+$lang['markets_overview'] = "ទីផ្សារសកល";
+$lang['keyboard_shortcut_hint'] = "ចុច Ctrl+K ដើម្បីស្វែងរក";
+$lang['mobile_nav_home'] = "ទំព័រដើម";
+$lang['mobile_nav_sections'] = "ផ្នែក";
+$lang['mobile_nav_search'] = "ស្វែងរក";
+$lang['mobile_nav_saved'] = "បានរក្សា";
+$lang['mobile_nav_account'] = "គណនី";
+$lang['worldwide_news'] = "បណ្ដាញសារព័ត៌មានសកល";
+$lang['scroll_to_top'] = "ត្រឡប់ទៅលើ";
+$lang['world_clock'] = "នាឡិកាសកល";
+$lang['select_timezone'] = "ជ្រើសរើសតំបន់ម៉ោង";
+$lang['view_all_sections'] = "មើលផ្នែក និងតុព័ត៌មានទាំងអស់";
+$lang['more_sections'] = "បន្ថែម";
 return $lang;
 
