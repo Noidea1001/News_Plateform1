@@ -12,6 +12,28 @@ $currentUser   = $currentReader ?: $staffUser;
 $headerDb      = \App\Core\Database::getInstance();
 $catNavList = $headerDb->fetchAll("SELECT * FROM categories ORDER BY name ASC");
 $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
+
+// Dynamic SEO & Open Graph Metadata (Telegram, Facebook & Google News)
+$isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+$siteBaseUrl = ($isHttps ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? 'localhost');
+$currentCanonicalUrl = $siteBaseUrl . ($_SERVER['REQUEST_URI'] ?? '/');
+
+if (isset($article) && is_array($article)) {
+    $seoTitle = article_title($article) . ' - ' . __('site_title');
+    $seoDesc = article_summary($article);
+    $seoType = 'article';
+    $rawImg = $article['featured_image'] ?? '';
+    if (!empty($rawImg)) {
+        $seoImage = str_starts_with($rawImg, 'http') ? $rawImg : $siteBaseUrl . image_url($rawImg);
+    } else {
+        $seoImage = $siteBaseUrl . url('assets/icons/icon-512.png');
+    }
+} else {
+    $seoTitle = $pageTitle ?? (__('site_title') . ' | ' . __('site_tagline'));
+    $seoDesc = __('site_tagline');
+    $seoType = 'website';
+    $seoImage = $siteBaseUrl . url('assets/icons/icon-512.png');
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= e($currentLang) ?>">
@@ -19,7 +41,52 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= e($pageTitle ?? __('site_title') . ' | ' . __('site_tagline')) ?></title>
+    <title><?= e($seoTitle) ?></title>
+    <meta name="description" content="<?= e($seoDesc) ?>">
+    <link rel="canonical" href="<?= e($currentCanonicalUrl) ?>">
+
+    <!-- Open Graph Protocol (Telegram, Facebook, WhatsApp, LinkedIn) -->
+    <meta property="og:type" content="<?= e($seoType) ?>">
+    <meta property="og:site_name" content="<?= e(__('site_title')) ?>">
+    <meta property="og:title" content="<?= e($seoTitle) ?>">
+    <meta property="og:description" content="<?= e($seoDesc) ?>">
+    <meta property="og:url" content="<?= e($currentCanonicalUrl) ?>">
+    <meta property="og:image" content="<?= e($seoImage) ?>">
+    <meta property="og:locale" content="<?= ($currentLang === 'kh' || $currentLang === 'km') ? 'km_KH' : 'en_US' ?>">
+    <?php if (isset($article) && is_array($article)): ?>
+        <meta property="article:published_time" content="<?= e(date('c', strtotime($article['published_at'] ?? 'now'))) ?>">
+        <meta property="article:author" content="<?= e($article['author_name'] ?? __('site_title')) ?>">
+        <meta property="article:section" content="<?= e(cat_name($article['category_name'] ?? '')) ?>">
+    <?php endif; ?>
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="<?= e($seoTitle) ?>">
+    <meta name="twitter:description" content="<?= e($seoDesc) ?>">
+    <meta name="twitter:image" content="<?= e($seoImage) ?>">
+
+    <?php if (isset($article) && is_array($article)): ?>
+    <!-- Schema.org JSON-LD for Google News & Search Rich Snippets -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "NewsArticle",
+      "headline": <?= json_encode(article_title($article), JSON_UNESCAPED_UNICODE) ?>,
+      "description": <?= json_encode(article_summary($article), JSON_UNESCAPED_UNICODE) ?>,
+      "image": [<?= json_encode($seoImage) ?>],
+      "datePublished": <?= json_encode(date('c', strtotime($article['published_at'] ?? 'now'))) ?>,
+      "dateModified": <?= json_encode(date('c', strtotime($article['updated_at'] ?? $article['published_at'] ?? 'now'))) ?>,
+      "author": [{
+        "@type": "Person",
+        "name": <?= json_encode($article['author_name'] ?? 'Editorial Staff', JSON_UNESCAPED_UNICODE) ?>
+      }],
+      "publisher": {
+        "@type": "Organization",
+        "name": <?= json_encode(__('site_title'), JSON_UNESCAPED_UNICODE) ?>
+      }
+    }
+    </script>
+    <?php endif; ?>
 
     <!-- Bootstrap 5.3 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -256,7 +323,7 @@ $activeCatId = (int) ($activeCategoryId ?? ($_GET['category'] ?? 0));
         <div class="d-flex align-items-center gap-2.5" style="font-size:0.75rem; font-weight:600; color:#4b5563;">
             <span class="d-flex align-items-center gap-1.5" style="color:#374151;">
                 <i class="bi bi-calendar3 text-danger" style="font-size:0.75rem;"></i>
-                <?= \App\Core\TemplateEngine::formatDate(date('Y-m-d H:i:s'), 'l, d F Y') ?>
+                <span><?= khmer_buddhist_date() ?></span>
             </span>
             <span class="opacity-30">|</span>
             <span style="color:#6b7280; font-weight:500;"><?= __('cda_badge') ?></span>

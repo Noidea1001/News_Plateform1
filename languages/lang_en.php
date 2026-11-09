@@ -579,5 +579,21 @@ $lang['audio_news_stop'] = "Stop";
 $lang['audio_news_speed'] = "Speed";
 
 $lang['cat_scholarships_careers'] = "Scholarships & Careers";
+
+// 28. Cambodia Daily Market Data & Reader Accessibility
+$lang['market_cambodia_title'] = "Cambodia Market Indicators";
+$lang['market_currency_tab'] = "Currencies (NBC)";
+$lang['market_fuel_tab'] = "Fuel Prices";
+$lang['market_gold_tab'] = "Gold Price";
+$lang['market_source_nbc'] = "National Bank of Cambodia (NBC)";
+$lang['market_source_moc'] = "Ministry of Commerce";
+$lang['fuel_regular'] = "Regular (EA92)";
+$lang['fuel_super'] = "Super (EA95)";
+$lang['fuel_diesel'] = "Diesel (DO)";
+$lang['fuel_per_liter'] = "KHR/L";
+$lang['gold_kilo'] = "Pure Gold (99.99%)";
+$lang['gold_per_damlung'] = "/Damlung";
+$lang['font_size_label'] = "Text Size";
+$lang['print_article'] = "Print Article";
 return $lang;
 

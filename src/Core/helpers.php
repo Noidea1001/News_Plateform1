@@ -661,3 +661,43 @@ if (!function_exists('cat_desc')) {
         return parse_dual_lang($description, $targetLang);
     }
 }
+
+if (!function_exists('khmer_buddhist_date')) {
+    /**
+     * Format date with Buddhist Era (ព.ស.) and Khmer Day/Month naming
+     */
+    function khmer_buddhist_date(?int $time = null, ?string $targetLang = null): string
+    {
+        $time = $time ?? time();
+        $currentLang = $targetLang ?? ($_SESSION['lang'] ?? 'en');
+        $isKhmer = ($currentLang === 'kh' || $currentLang === 'km');
+
+        $year = (int) date('Y', $time);
+        $month = (int) date('m', $time);
+        $day = (int) date('d', $time);
+        $dayOfWeek = (int) date('w', $time); // 0 (Sun) to 6 (Sat)
+
+        // Buddhist Era in Cambodia:
+        // Before Visak Bochea (approx mid-May): Year + 543; After: Year + 544
+        $beYear = ($month > 5 || ($month === 5 && $day >= 15)) ? ($year + 544) : ($year + 543);
+
+        if ($isKhmer) {
+            $khDays = ['ថ្ងៃអាទិត្យ', 'ថ្ងៃចន្ទ', 'ថ្ងៃអង្គារ', 'ថ្ងៃពុធ', 'ថ្ងៃព្រហស្បតិ៍', 'ថ្ងៃសុក្រ', 'ថ្ងៃសៅរ៍'];
+            $khMonths = [
+                1 => 'មករា', 2 => 'កុម្ភៈ', 3 => 'មីនា', 4 => 'មេសា',
+                5 => 'ឧសភា', 6 => 'មិថុនា', 7 => 'កក្កដា', 8 => 'សីហា',
+                9 => 'កញ្ញា', 10 => 'តុលា', 11 => 'វិច្ឆិកា', 12 => 'ធ្នូ'
+            ];
+            $dayName = $khDays[$dayOfWeek] ?? '';
+            $monthName = $khMonths[$month] ?? '';
+            $dayKm = km_num(str_pad((string)$day, 2, '0', STR_PAD_LEFT));
+            $yearKm = km_num((string)$year);
+            $beYearKm = km_num((string)$beYear);
+
+            return "{$dayName} ទី{$dayKm} ខែ{$monthName} ឆ្នាំ{$yearKm} &bull; ព.ស. {$beYearKm}";
+        } else {
+            $formatted = date('l, d F Y', $time);
+            return "{$formatted} &bull; B.E. {$beYear}";
+        }
+    }
+}

@@ -235,7 +235,10 @@ $sidebarCats = $sidebarDb->fetchAll("SELECT id, name, slug FROM categories ORDER
         </div>
     </section>
 
-    <!-- 3. Explore Topics (រករកប្រធានបទ) — compact chips -->
+    <!-- 3. Cambodia Market & Economic Indicators (NBC Exchange Rate, Fuel & Gold) -->
+    <?php include __DIR__ . '/cambodia-market-widget.php'; ?>
+
+    <!-- 4. Explore Topics (រករកប្រធានបទ) — compact chips -->
     <?php if (!empty($categories)) { ?>
     <section class="sbw">
         <div class="sbw-head">

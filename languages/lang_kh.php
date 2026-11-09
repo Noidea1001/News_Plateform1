@@ -579,5 +579,21 @@ $lang['audio_news_stop'] = "បញ្ឈប់";
 $lang['audio_news_speed'] = "ល្បឿន";
 
 $lang['cat_scholarships_careers'] = "អាហារូបករណ៍ & ឱកាសការងារ";
+
+// 28. Cambodia Daily Market Data & Reader Accessibility
+$lang['market_cambodia_title'] = "សូចនាករទីផ្សារកម្ពុជា";
+$lang['market_currency_tab'] = "អត្រាប្តូរប្រាក់";
+$lang['market_fuel_tab'] = "ប្រេងឥន្ធនៈ";
+$lang['market_gold_tab'] = "តម្លៃមាស";
+$lang['market_source_nbc'] = "ធនាគារជាតិនៃកម្ពុជា (NBC)";
+$lang['market_source_moc'] = "ក្រសួងពាណិជ្ជកម្ម";
+$lang['fuel_regular'] = "សាំងធម្មតា (EA92)";
+$lang['fuel_super'] = "សាំងស៊ុបពែរ (EA95)";
+$lang['fuel_diesel'] = "ប្រេងម៉ាស៊ូត (DO)";
+$lang['fuel_per_liter'] = "៛/លីត្រ";
+$lang['gold_kilo'] = "មាសគីឡូ (99.99%)";
+$lang['gold_per_damlung'] = "/តម្លឹង";
+$lang['font_size_label'] = "ទំហំអក្សរ";
+$lang['print_article'] = "បោះពុម្ពអត្ថបទ";
 return $lang;
 
