@@ -10,7 +10,7 @@ $currentLang = $_SESSION['lang'] ?? 'en';
 $isKh = ($currentLang === 'kh' || $currentLang === 'km');
 ?>
 
-<section class="sbw cambodia-market-card mb-3" style="border: 1px solid #e2e8f0; border-radius: 8px; background: #ffffff; overflow: hidden;">
+<section class="sbw cambodia-market-card mb-4" style="border: 1px solid #e2e8f0; border-radius: 8px; background: #ffffff; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
     <div class="sbw-head d-flex align-items-center justify-content-between p-2.5 px-3 border-bottom" style="background: #fafafa;">
         <div class="d-flex align-items-center gap-2">
             <span class="d-inline-flex align-items-center justify-content-center text-danger flex-shrink-0">

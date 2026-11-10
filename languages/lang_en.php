@@ -595,5 +595,34 @@ $lang['gold_kilo'] = "Pure Gold (99.99%)";
 $lang['gold_per_damlung'] = "/Damlung";
 $lang['font_size_label'] = "Text Size";
 $lang['print_article'] = "Print Article";
+
+// 29. Weather, Reader Poll, Reading History & Telegram Broadcaster
+$lang['weather_cambodia_title'] = "Weather & Air Quality (AQI)";
+$lang['weather_phnom_penh'] = "Phnom Penh";
+$lang['weather_siem_reap'] = "Siem Reap";
+$lang['weather_sihanoukville'] = "Sihanoukville";
+$lang['weather_battambang'] = "Battambang";
+$lang['weather_humidity'] = "Humidity";
+$lang['weather_rain_chance'] = "Rain Chance";
+$lang['weather_aqi'] = "Air Quality (AQI)";
+$lang['weather_aqi_good'] = "Good";
+$lang['weather_source'] = "Cambodia Meteorology Forecast";
+
+$lang['poll_title'] = "Reader Opinion Poll";
+$lang['poll_badge'] = "Topic of the Week";
+$lang['poll_question'] = "What is your perspective on AI integration in Cambodia's education and workplace?";
+$lang['poll_opt_1'] = "Strongly Support — Boosts productivity and skills";
+$lang['poll_opt_2'] = "Support with Caution — Needs clear governance";
+$lang['poll_opt_3'] = "Concerned — Risk of job displacement";
+$lang['poll_vote_btn'] = "Cast Your Vote";
+$lang['poll_total_votes'] = ":count Total Votes";
+$lang['poll_thank_you'] = "Thank you for participating!";
+
+$lang['reading_history_title'] = "Recently Read Stories";
+$lang['reading_history_empty'] = "No recent reading history yet";
+$lang['reading_history_clear'] = "Clear History";
+
+$lang['telegram_broadcast_checkbox'] = "Auto-Broadcast to Official Telegram Channel";
+$lang['telegram_broadcast_hint'] = "Article photo, headline, summary and link will be automatically dispatched to Telegram";
 return $lang;
 

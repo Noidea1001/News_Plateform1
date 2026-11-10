@@ -595,5 +595,34 @@ $lang['gold_kilo'] = "មាសគីឡូ (99.99%)";
 $lang['gold_per_damlung'] = "/តម្លឹង";
 $lang['font_size_label'] = "ទំហំអក្សរ";
 $lang['print_article'] = "បោះពុម្ពអត្ថបទ";
+
+// 29. Weather, Reader Poll, Reading History & Telegram Broadcaster
+$lang['weather_cambodia_title'] = "អាកាសធាតុ & គុណភាពខ្យល់";
+$lang['weather_phnom_penh'] = "រាជធានីភ្នំពេញ";
+$lang['weather_siem_reap'] = "សៀមរាប";
+$lang['weather_sihanoukville'] = "ព្រះសីហនុ";
+$lang['weather_battambang'] = "បាត់ដំបង";
+$lang['weather_humidity'] = "សំណើម";
+$lang['weather_rain_chance'] = "ឱកាសភ្លៀង";
+$lang['weather_aqi'] = "កម្រិតខ្យល់ (AQI)";
+$lang['weather_aqi_good'] = "ល្អប្រសើរ";
+$lang['weather_source'] = "ទិន្នន័យឧតុនិយមកម្ពុជា";
+
+$lang['poll_title'] = "ការស្ទង់មតិអ្នកអាន";
+$lang['poll_badge'] = "ប្រធានបទសប្តាហ៍នេះ";
+$lang['poll_question'] = "តើអ្នកយល់ឃើញយ៉ាងណាចំពោះការប្រើប្រាស់បច្ចេកវិទ្យា AI ក្នុងវិស័យអប់រំ និងការងារនៅកម្ពុជា?";
+$lang['poll_opt_1'] = "គាំទ្រខ្លាំង — ជួយបង្កើនប្រសិទ្ធភាពការងារ";
+$lang['poll_opt_2'] = "គាំទ្រដោយប្រុងប្រយ័ត្ន — ត្រូវមានគោលការណ៍ច្បាស់លាស់";
+$lang['poll_opt_3'] = "បារម្ភ — ខ្លាចបាត់បង់ជំនាញ និងការងារ";
+$lang['poll_vote_btn'] = "បោះឆ្នោតមតិរបស់អ្នក";
+$lang['poll_total_votes'] = ":count សំឡេងបោះឆ្នោត";
+$lang['poll_thank_you'] = "សូមអរគុណសម្រាប់ការចូលរួមបញ្ចេញមតិ!";
+
+$lang['reading_history_title'] = "អត្ថបទដែលអ្នកបានអានថ្មីៗ";
+$lang['reading_history_empty'] = "មិនទាន់មានប្រវត្តិអាននៅឡើយទេ";
+$lang['reading_history_clear'] = "សម្អាតប្រវត្តិ";
+
+$lang['telegram_broadcast_checkbox'] = "ផ្សព្វផ្សាយទៅកាន់ Telegram Channel ផ្លូវការដោយស្វ័យប្រវត្តិ";
+$lang['telegram_broadcast_hint'] = "អត្ថបទនឹងត្រូវបានផ្ញើរូបភាព ចំណងជើង និងតំណភ្ជាប់ទៅកាន់ Telegram Channel ភ្លាមៗ";
 return $lang;
 

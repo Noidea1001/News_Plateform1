@@ -6,7 +6,12 @@
 require_once __DIR__ . '/../../src/Core/helpers.php';
 ?>
 
-<div class="template-standard py-3 py-md-4">
+<div class="template-standard py-3 py-md-4" 
+     data-article-history-id="<?= (int)$article['id'] ?>" 
+     data-article-history-title="<?= e(article_title($article)) ?>" 
+     data-article-history-slug="<?= e($article['slug']) ?>" 
+     data-article-history-category="<?= e(cat_name($article['category_name'])) ?>" 
+     data-article-history-image="<?= e(image_url($article['featured_image'] ?? '')) ?>">
     <div class="container">
 
         <!-- Breadcrumb Navigation (Clean & Minimalist) -->

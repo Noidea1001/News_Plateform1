@@ -498,6 +498,18 @@ $formAction = url('admin/actions/save-article.php');
                         </label>
                     </div>
 
+                    <!-- Auto-Broadcast to Telegram Channel Toggle -->
+                    <div class="form-check form-switch mt-3 pt-2 border-top">
+                        <input class="form-check-input" type="checkbox" id="broadcast_telegram" name="broadcast_telegram" value="1"
+                            <?= (!$isEdit || !empty($article['broadcast_telegram'])) ? 'checked' : '' ?>>
+                        <label class="form-check-label fw-semibold" for="broadcast_telegram" style="color: #0284c7 !important;">
+                            <i class="bi bi-telegram me-1"></i><?= __('telegram_broadcast_checkbox') ?>
+                        </label>
+                        <div class="text-muted text-xs mt-1">
+                            <?= __('telegram_broadcast_hint') ?>
+                        </div>
+                    </div>
+
                 </div>
 
                 <!-- Featured Cover Image Dropzone Card -->

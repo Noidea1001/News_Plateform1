@@ -35,14 +35,16 @@ $sidebarCats = $sidebarDb->fetchAll("SELECT id, name, slug FROM categories ORDER
 ?>
 
 <style>
-/* ===== Compact sidebar widgets (Most Read · Explore Topics · Topic Subscriptions) ===== */
-.public-sidebar { gap: 0.85rem !important; }
+/* ===== Compact sidebar widgets with generous clean breathing room ===== */
+.public-sidebar { gap: 1.25rem !important; display: flex; flex-direction: column; }
 
 .sbw {
     background: #fff;
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     overflow: hidden;
+    margin-bottom: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
 }
 .sbw-head {
     display: flex;
@@ -213,8 +215,14 @@ $sidebarCats = $sidebarDb->fetchAll("SELECT id, name, slug FROM categories ORDER
     </section>
     <?php } ?>
 
-    <!-- 2. Official Telegram Community Widget (Cambodia Fast Alert Hub) -->
-    <section class="sbw" style="border: 1px solid #bfdbfe; background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);">
+    <!-- 2. Cambodia Real-Time Weather & Air Quality (AQI) Widget -->
+    <?php include __DIR__ . '/cambodia-weather-widget.php'; ?>
+
+    <!-- 3. Cambodia Market & Economic Indicators (NBC Exchange Rate, Fuel & Gold) -->
+    <?php include __DIR__ . '/cambodia-market-widget.php'; ?>
+
+    <!-- 4. Official Telegram Community Widget (Cambodia Fast Alert Hub) -->
+    <section class="sbw mb-4" style="border: 1px solid #bfdbfe; background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);">
         <div class="sbw-body p-3">
             <div class="d-flex align-items-center gap-2 mb-2">
                 <span class="d-inline-flex align-items-center justify-content-center text-white rounded-circle shadow-sm flex-shrink-0" style="width:36px; height:36px; background:#0088cc;">
@@ -235,10 +243,13 @@ $sidebarCats = $sidebarDb->fetchAll("SELECT id, name, slug FROM categories ORDER
         </div>
     </section>
 
-    <!-- 3. Cambodia Market & Economic Indicators (NBC Exchange Rate, Fuel & Gold) -->
-    <?php include __DIR__ . '/cambodia-market-widget.php'; ?>
+    <!-- 5. Interactive Reader Opinion Poll Widget -->
+    <?php include __DIR__ . '/reader-poll-widget.php'; ?>
 
-    <!-- 4. Explore Topics (រករកប្រធានបទ) — compact chips -->
+    <!-- 6. Recently Read Stories Widget -->
+    <?php include __DIR__ . '/reading-history-widget.php'; ?>
+
+    <!-- 7. Explore Topics (រករកប្រធានបទ) — compact chips -->
     <?php if (!empty($categories)) { ?>
     <section class="sbw">
         <div class="sbw-head">

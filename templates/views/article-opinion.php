@@ -6,7 +6,12 @@
 require_once __DIR__ . '/../../src/Core/helpers.php';
 ?>
 
-<div class="template-opinion py-4 py-md-5" style="background: #fafafa;">
+<div class="template-opinion py-4 py-md-5" style="background: #fafafa;" 
+     data-article-history-id="<?= (int)$article['id'] ?>" 
+     data-article-history-title="<?= e(article_title($article)) ?>" 
+     data-article-history-slug="<?= e($article['slug']) ?>" 
+     data-article-history-category="<?= e(cat_name($article['category_name'])) ?>" 
+     data-article-history-image="<?= e(image_url($article['featured_image'] ?? '')) ?>">
     <div class="container">
 
         <div class="row justify-content-center">

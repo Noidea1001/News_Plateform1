@@ -11,11 +11,13 @@ require_once __DIR__ . '/../Core/Database.php';
 require_once __DIR__ . '/../Core/Auth.php';
 require_once __DIR__ . '/../Core/TemplateEngine.php';
 require_once __DIR__ . '/../Core/WebPush.php';
+require_once __DIR__ . '/../Services/TelegramService.php';
 
 use App\Core\Auth;
 use App\Core\Database;
 use App\Core\TemplateEngine;
 use App\Core\WebPush;
+use App\Services\TelegramService;
 use Exception;
 
 class AdminController
@@ -448,6 +450,25 @@ class AdminController
             // Real-time reader notification if published
             if ($status === 'published') {
                 $this->dispatchArticleNotification($id, $titleKh, $titleEn, $title, $summaryKh, $summaryEn, $content, (bool)$isBreaking);
+
+                // Auto-broadcast to Official Telegram Channel
+                if (!empty($postData['broadcast_telegram'])) {
+                    $categoryRow = $this->db->fetch("SELECT name FROM categories WHERE id = :id", ['id' => $categoryId]);
+                    $catName = $categoryRow['name'] ?? '';
+                    $fullArticleUrl = function_exists('url') ? url("article.php?slug=" . urlencode($slug)) : "/article.php?slug=" . urlencode($slug);
+                    if (!str_starts_with($fullArticleUrl, 'http')) {
+                        $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+                        $fullArticleUrl = ($isHttps ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? 'localhost') . $fullArticleUrl;
+                    }
+                    TelegramService::broadcastArticle([
+                        'title' => $title,
+                        'title_kh' => $titleKh,
+                        'summary' => $summary,
+                        'summary_kh' => $summaryKh,
+                        'category_name' => $catName,
+                        'featured_image' => $featuredImage
+                    ], $fullArticleUrl);
+                }
             }
 
             $msg = ($status === 'draft') ? 'Article draft successfully updated!' : 'Article successfully updated!';
@@ -491,6 +512,25 @@ class AdminController
             // Real-time reader notification if published
             if ($status === 'published' && $newArticleId > 0) {
                 $this->dispatchArticleNotification($newArticleId, $titleKh, $titleEn, $title, $summaryKh, $summaryEn, $content, (bool)$isBreaking);
+
+                // Auto-broadcast to Official Telegram Channel
+                if (!empty($postData['broadcast_telegram'])) {
+                    $categoryRow = $this->db->fetch("SELECT name FROM categories WHERE id = :id", ['id' => $categoryId]);
+                    $catName = $categoryRow['name'] ?? '';
+                    $fullArticleUrl = function_exists('url') ? url("article.php?slug=" . urlencode($slug)) : "/article.php?slug=" . urlencode($slug);
+                    if (!str_starts_with($fullArticleUrl, 'http')) {
+                        $isHttps = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on') || (isset($_SERVER['HTTP_X_FORWARDED_PROTO']) && $_SERVER['HTTP_X_FORWARDED_PROTO'] === 'https');
+                        $fullArticleUrl = ($isHttps ? 'https://' : 'http://') . ($_SERVER['HTTP_HOST'] ?? 'localhost') . $fullArticleUrl;
+                    }
+                    TelegramService::broadcastArticle([
+                        'title' => $title,
+                        'title_kh' => $titleKh,
+                        'summary' => $summary,
+                        'summary_kh' => $summaryKh,
+                        'category_name' => $catName,
+                        'featured_image' => $featuredImage
+                    ], $fullArticleUrl);
+                }
             }
 
             $msg = ($status === 'draft') ? 'New article draft successfully saved!' : 'New article post successfully created!';
